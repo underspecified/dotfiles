@@ -1,0 +1,28 @@
+#!/bin/bash
+
+PATH="/opt/homebrew/bin:$PATH"
+SCRIPTS_DIR=$(dirname "${BASH_SOURCE:-$0}")
+
+# when loading the script, convert all existing splits to horizontal
+yabai_window_split_vertical () {
+  yabai -m query --windows  | \
+  jq -r '.[] | select(.split == "horizontal").id' | \
+  xargs -I{} yabai -m window {} --toggle split
+}
+
+# register events
+yabai_register_window_focus_event () {
+  for event in window_focused application_front_switched; do
+    yabai -m signal --add label="yabai_window_insert_3col_${event}" event="${event}" action="$SCRIPTS_DIR/yabai_window_insert_3col"
+  done
+}
+
+if [ "${#}" -eq 0 ]; then
+  # enable auto balance
+  yabai -m config auto_balance on
+  yabai_register_window_focus_event
+  yabai_window_split_vertical
+  exit
+fi
+
+yabai_config_layout_bsp

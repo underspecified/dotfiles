@@ -1,0 +1,7 @@
+### yabai config for laptop display
+
+PATH="/opt/homebrew/bin:$PATH"
+YABAI_DIR=$(dirname "${BASH_SOURCE:-$0}")
+
+## use stack on laptop display
+source "$YABAI_DIR/scripts/yabai_config_layout_stack"

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+PATH="/opt/homebrew/bin:$PATH"
+
+yabai_window_focus_up () {
+  yabai -m window --focus north || \
+  yabai -m window --focus stack.prev || \
+  yabai -m window --focus stack.last
+}
+
+yabai_window_focus_up

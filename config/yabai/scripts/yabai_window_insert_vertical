@@ -1,0 +1,12 @@
+#! /usr/bin/env zsh
+
+yabai_window_insert_vertical () {
+  yabai -m window --insert \
+	"$(jq -nr --arg window_placement "$(yabai -m config window_placement)" \
+		      --argjson display "$(yabai -m query --displays --display)" \
+	  '[["west", "east"], ["north", "south"]]\
+	   [if $display | .frame | .w >= .h then 0 else 1 end]\
+	   [if $window_placement == "first_child" then 0 else 1 end]')"
+}
+
+yabai_window_insert_vertical

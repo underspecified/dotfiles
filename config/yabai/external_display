@@ -1,0 +1,7 @@
+### yabai config for external display
+
+PATH="/opt/homebrew/bin:$PATH"
+YABAI_DIR=$(dirname "${BASH_SOURCE:-$0}")
+
+## use bsp on external displays
+source "$YABAI_DIR/scripts/yabai_config_layout_bsp"

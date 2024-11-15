@@ -1,0 +1,22 @@
+#!/bin/bash
+
+PATH="/opt/homebrew/bin:$PATH"
+
+yabai_config_layout_stack () {
+  yabai -m config layout stack
+}
+
+yabai_get_sorted_window_ids () {
+  yabai -m query --windows |
+  jq -e 'sort_by(."stack-index") | sort_by(.space) | .[] | .id'
+}
+
+yabai_restack_windows () {
+  while read id; do
+    yabai -m window $id --stack last
+  done
+}
+
+yabai_config_layout_stack && \
+(yabai_get_sorted_window_ids |
+ yabai_restack_windows)

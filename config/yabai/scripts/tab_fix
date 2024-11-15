@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# ### native tabs fix
+
+### set paths
+PATH="/opt/homebrew/bin:$PATH"
+SCRIPTS_DIR=$(realpath $(dirname "${BASH_SOURCE:-$0}"))
+YABAI_DIR=$(realpath "$SCRIPTS_DIR/..")
+
+APPS=(
+	"CotEditor"
+	"Finder"
+	"Terminal"
+	"Typora"
+)
+
+EVENTS=(
+#	"window_created"
+#	"window_destroyed"
+ 	"window_moved"
+ 	"window_resized"
+)
+
+# Refresh yabai if a tab in finder or terminal is created or moved to new window
+for app in ${APPS[@]}; do
+    for event in ${EVENTS[@]}; do
+		yabai -m signal --remove "${event}_${app}"
+		yabai -m signal --add \
+			label="${event}_${app}" \
+			app="^$app$" \
+			event="$event" \
+			action="$SCRIPTS_DIR/refresh_space"
+	done
+done
