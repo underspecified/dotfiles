@@ -1,0 +1,10 @@
+# Make xterm scrolling work properly with screen.
+termcapinfo xterm*||xs|rxvt ti@:te@
+defscrollback 10000
+
+#other settings
+#startup_message off
+#autodetach on
+#shell -$SHELL
+#vbell off
+#defutf8 on

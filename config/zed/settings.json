@@ -1,0 +1,62 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
+{
+  "assistant": {
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-5-sonnet-latest"
+    },
+    "provider": null,
+    "enabled": true,
+    "version": "2"
+  },
+
+  "jupyter": {
+    "kernel_selections": {
+      "python": "conda-env",
+      "typescript": "deno",
+      "javascript": "deno",
+      "r": "ark"
+    }
+  },
+
+  "language_models": {
+    "openai": {
+      "version": "1",
+      "api_url": "http://localhost:8080/v1",
+      "available_models": [
+        {
+          "name": "llama.cpp",
+          "max_tokens": 32000
+        }
+      ],
+      "low_speed_timeout_in_seconds": 60
+    },
+
+    "ollama": {
+      "available_models": [
+        {
+          "provider": "ollama",
+          "name": "llama3.1:latest",
+          "max_tokens": 65536
+        }
+      ],
+      "low_speed_timeout_in_seconds": 60
+    }
+  },
+
+  "theme": {
+    "mode": "system",
+    "light": "NeoSolarized Light",
+    "dark": "NeoSolarized Dark"
+  },
+  "ui_font_size": 12,
+  "buffer_font_size": 12,
+  "autosave": "on_focus_change"
+}
