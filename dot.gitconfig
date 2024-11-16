@@ -18,7 +18,7 @@
 
 [core]
 	quotepath = false
-	excludesfile = /Users/eric/.gitignore
+	excludesfile = $HOME/.gitignore
 	whitespace = trailing-space,space-before-tab
 	editor = "zed"
 
@@ -46,14 +46,12 @@
 [push]
 	default = matching
 
-# [credential]
-# 	helper = osxkeychain
-
 [gpg]
-	format = ssh
+	format = "ssh"
 
 [gpg "ssh"]
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+	#program = /opt/1Password/op-ssh-sign
 
 [commit]
 	gpgsign = true
