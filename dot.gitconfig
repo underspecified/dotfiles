@@ -1,6 +1,7 @@
 [user]
 	name = Eric Nichols
 	email = REDACTED-USER@jp.REDACTED.example
+	signingkey = ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbja95qg+ZIfL661NLyyQbnXkbTL+5LNTjbNx0+nMn7SLbaMhetUb3YJhQ3yNs93wJFpiPmXBMoWGDtgdgZNwdZL1rX4I8fs03b2HSxLu2S9gHwo8Or1ngwoTEkUbRqtTn1ULA+NuATfKbYO22qeLmVIaecTK9ICPBrG2qGHtIYfbuoT98vvQHga0aI4y2Pujx5DmYobFUra38+Qnynfic5CFcEbuxLxkJAPoOpUjd4yNsUqk3b42AjS26bIpE2Bg+ZbTqUZ69Cfq9/UoSXoOx3uw3BSbF1wjZhW2p3xCHSjQCtGk1wlzqdBcW13FX0Yk1e8Y/mH2NEJY1i4GQ+d8P
 
 [color]
 	ui = auto
@@ -17,20 +18,20 @@
 
 [core]
 	quotepath = false
-	excludesfile = /Users/eric/.gitignore_global
+	excludesfile = /Users/eric/.gitignore
 	whitespace = trailing-space,space-before-tab
-	editor = "TERM=xterm-color emacs -nw"
+	editor = "zed"
 
 [diff]
 	renames = copies
 	mnemonicprefix = true
 	tool = Kaleidoscope
 
-[difftool]
-	prompt = false
-
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+
+[difftool]
+	prompt = false
 
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
@@ -39,11 +40,20 @@
 [mergetool]
 	prompt = false
 
+[alias]
+	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool -y -t Kaleidoscope $BRANCH...$SHA; }; f"
+
 [push]
 	default = matching
 
-[credential]
-	helper = osxkeychain
+# [credential]
+# 	helper = osxkeychain
 
-[alias]
-	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool -y -t Kaleidoscope $BRANCH...$SHA; }; f"
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+
+[commit]
+	gpgsign = true
