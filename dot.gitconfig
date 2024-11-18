@@ -9,10 +9,6 @@
 [branch]
 	autosetupmerge = true
 
-[merge]
-	stat = true
-	tool = Kaleidoscope
-
 [rerere]
 	enabled = true
 
@@ -32,6 +28,10 @@
 
 [difftool]
 	prompt = false
+
+[merge]
+	stat = true
+	tool = Kaleidoscope
 
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
@@ -55,3 +55,6 @@
 
 [commit]
 	gpgsign = true
+
+[credential]
+	helper = 1password --vault=Personal
