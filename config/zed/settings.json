@@ -51,12 +51,16 @@
     }
   },
 
-  "theme": {
-    "mode": "system",
-    "light": "NeoSolarized Light",
-    "dark": "NeoSolarized Dark"
+  "terminal": {
+    "dock": "right"
   },
-  "ui_font_size": 12,
-  "buffer_font_size": 12,
+
+  "theme": {
+    "mode": "dark",
+    "light": "Base16 selenized-light",
+    "dark": "Base16 selenized-dark"
+  },
+  "ui_font_size": 15,
+  "buffer_font_size": 15,
   "autosave": "on_focus_change"
 }
