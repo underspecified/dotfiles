@@ -1,13 +1,13 @@
 #!/bin/bash
 
 dark () {
-    /home/eric/.local/kitty.app/bin/kitty +kitten themes --reload-in=all "Selenized Dark"
+    /home/eric/.local/kitty.app/bin/kitty +kitten themes --config-file-name=themes.conf --reload-in=all "Selenized Dark"
     sed -i.bak -r 's/"mode": ".+"/"mode": "dark"/' ~/.config/zed/settings.json
     #gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
 }
 
 light () {
-    /home/eric/.local/kitty.app/bin/kitty +kitten themes --reload-in=all "Selenized Light"
+    /home/eric/.local/kitty.app/bin/kitty +kitten themes --config-file-name=themes.conf --reload-in=all "Selenized Light"
     sed -i.bak -r 's/"mode": ".+"/"mode": "light"/' ~/.config/zed/settings.json
     #gsettings set org.gnome.desktop.interface gtk-theme "Yaru-light"
 }
