@@ -20,4 +20,4 @@ for f in *; do
 done)
 
 echo_and_eval "(cd dot.ssh && chmod go-rwX github github hri_jp)"
-echo_and_eval "ln -sf $HOME/.zsh/dot.zshrc $HOME/.zshrc"
+echo_and_eval "ln -sf $HOME/.zsh/dot.zprofile $HOME/.zprofile"
