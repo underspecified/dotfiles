@@ -3,3 +3,4 @@ dot.zsh/.zsh_sessions/
 dot.zsh/.zcompdump
 *.bak
 config/kitty/current-theme.conf
+config/kitty/themes.conf
