@@ -1,15 +1,29 @@
 #!/bin/bash
 
 dark () {
-    /home/eric/.local/kitty.app/bin/kitty +kitten themes --config-file-name=themes.conf --reload-in=all "Selenized Dark"
+    $HOME/.local/kitty.app/bin/kitty +kitten themes --config-file-name=themes.conf --reload-in=all "Selenized Dark"
+
     sed -i.bak -r 's/"mode": ".+"/"mode": "dark"/' ~/.config/zed/settings.json
-    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
+
+    gsettings get org.gnome.desktop.interface gtk-theme |
+    sed 's/light/dark/; s/Light/Dark/' |
+    xargs gsettings set org.gnome.desktop.interface gtk-theme
+
+    sed -i.bak -r 's/set \$mode = .+/set \$mode = dark/' ~/.config/i3/config
+    i3 restart
 }
 
 light () {
-    /home/eric/.local/kitty.app/bin/kitty +kitten themes --config-file-name=themes.conf --reload-in=all "Selenized Light"
+    $HOME/.local/kitty.app/bin/kitty +kitten themes --config-file-name=themes.conf --reload-in=all "Selenized Light"
+
     sed -i.bak -r 's/"mode": ".+"/"mode": "light"/' ~/.config/zed/settings.json
-    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-light"
+
+    gsettings get org.gnome.desktop.interface gtk-theme |
+    sed 's/dark/light/; s/Dark/Light/' |
+    xargs gsettings set org.gnome.desktop.interface gtk-theme
+
+    sed -i.bak -r 's/set \$mode = .+/set \$mode = light/' ~/.config/i3/config
+    i3 restart
 }
 
 toggle () {
