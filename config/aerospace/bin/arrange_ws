@@ -1,0 +1,15 @@
+#!/bin/bash
+
+PATH=$HOME/.config/aerospace/bin:/opt/homebrew/bin:$PATH
+
+ls_ws () {
+    aerospace list-workspaces --monitor 1 --empty no
+}
+
+next_ws () {
+    aerospace workspace "$(aerospace list-workspaces --monitor mouse --visible)" && ls_ws | aerospace workspace next --wrap-around
+}
+
+prev_ws () {
+    aerospace workspace "$(aerospace list-workspaces --monitor mouse --visible)" && ls_ws | aerospace workspace prev --wrap-around
+}

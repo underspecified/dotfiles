@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PATH=$HOME/.config/aerospace/bin:/opt/homebrew/bin:$PATH
+
+ls_ws () {
+    aerospace list-workspaces --monitor mouse --empty no
+    aerospace list-workspaces --monitor mouse --empty | head -1
+}
+
+ls_ws
