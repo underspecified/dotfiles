@@ -1,6 +1,10 @@
-dot.ssh/known_hosts*
-dot.zsh/.zsh_sessions/
-dot.zsh/.zcompdump
 *.bak
+*.orig
 config/kitty/current-theme.conf
 config/kitty/themes.conf
+dot.emacs.d/
+dot.gnupg/*
+dot.ssh/1Password/
+dot.ssh/known_hosts*
+dot.zsh/.zcompdump
+dot.zsh/.zsh_sessions/
