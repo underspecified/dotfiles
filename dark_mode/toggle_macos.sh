@@ -80,4 +80,4 @@ fi
 toggle_alfred $mode
 toggle_kitten $mode
 toggle_pdf_expert $mode
-toggle_zed $mode
+#toggle_zed $mode
