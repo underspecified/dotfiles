@@ -1,4 +1,5 @@
 *.bak
+*.log
 *.orig
 config/kitty/current-theme.conf
 config/kitty/themes.conf
