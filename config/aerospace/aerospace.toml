@@ -146,7 +146,7 @@ cmd-ctrl-alt-shift-equal = 'resize smart +50'
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 cmd-ctrl-alt-1 = 'workspace 1'
 cmd-ctrl-alt-2 = 'workspace 2'
-cmd-ctrl-alt-3 = 'workspace 3'
+cmd-ctrl-alt-z = 'workspace 3' # 3 doesn't work with hyper key
 cmd-ctrl-alt-4 = 'workspace 4'
 cmd-ctrl-alt-5 = 'workspace 5'
 cmd-ctrl-alt-6 = 'workspace 6'
@@ -157,7 +157,7 @@ cmd-ctrl-alt-9 = 'workspace 9'
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 cmd-ctrl-alt-shift-1 = 'move-node-to-workspace 1'
 cmd-ctrl-alt-shift-2 = 'move-node-to-workspace 2'
-cmd-ctrl-alt-shift-3 = 'move-node-to-workspace 3'
+cmd-ctrl-alt-shift-z = 'move-node-to-workspace 3' # 3 doesn't work with hyper key
 cmd-ctrl-alt-shift-4 = 'move-node-to-workspace 4'
 cmd-ctrl-alt-shift-5 = 'move-node-to-workspace 5'
 cmd-ctrl-alt-shift-6 = 'move-node-to-workspace 6'
