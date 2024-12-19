@@ -1,18 +1,25 @@
 #!/bin/bash
 
+CUR_DIR=$(dirname $0)
+CONFIG_DIR="$CUR_DIR/../config"
+
 toggle_alfred () {
     osascript -l JavaScript "-" $1 <<- EOF
 
 function run(args) {
    	const systemEvents = Application("System Events")
    	const alfred = Application("Alfred 5")
-    const alfredDarkTheme = "Solarized Dark"
-    const alfredLightTheme = "Solarized Light"
+    const alfredDarkTheme = "Selenized Dark"
+    const alfredLightTheme = "Selenized Light"
     const alfredTheme = args == "dark" ? alfredDarkTheme : alfredLightTheme
     alfred.setTheme(alfredTheme)
 }
 
 EOF
+}
+
+toggle_borders () {
+    bash "$CONFIG_DIR/borders/bordersrc_$1"
 }
 
 toggle_kitten () {
@@ -78,6 +85,7 @@ fi
 #echo "mode: $mode"
 
 toggle_alfred $mode
+toggle_borders $mode
 toggle_kitten $mode
 toggle_pdf_expert $mode
 #toggle_zed $mode
