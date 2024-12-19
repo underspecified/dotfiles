@@ -50,7 +50,7 @@
 	format = "ssh"
 
 [gpg "ssh"]
-	program = ~/git/dotfiles/bin/op-ssh-sign
+	program = bin/op-ssh-sign
 
 [commit]
 	gpgsign = true
