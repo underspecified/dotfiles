@@ -13,7 +13,7 @@
     <key>ProgramArguments</key>
     <array>
        <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify</string>
-       <string>/Users/eric/git/dotfiles/dark_mode/toggle_macos.sh</string>
+       <string>/Users/eric/git/dotfiles/bin/toggle_macos.sh</string>
     </array>
 </dict>
 </plist>
