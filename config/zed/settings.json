@@ -56,7 +56,7 @@
   },
 
   "theme": {
-    "mode": "dark",
+    "mode": "system",
     "light": "Base16 selenized-light",
     "dark": "Base16 selenized-dark"
   },
