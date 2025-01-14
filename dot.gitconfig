@@ -57,3 +57,13 @@
 
 [credential]
 	helper = 1password --vault=Personal
+
+[pull]
+	autostash = true
+	rebase = true
+
+[rebase]
+	autostash = true
+
+[merge]
+	autostash = true
