@@ -1,0 +1,113 @@
+! --------------------------------------------
+! -- This file is in the Xresource file format
+! --------------------------------------------
+
+! --------------------------------------------
+! -- Look name
+! --------------------------------------------
+
+regolith.look: selenized-dark
+
+! --------------------------------------------
+! -- Wallpaper
+! --------------------------------------------
+
+! -- Specify either a complete file path to an image
+
+regolith.wallpaper.file: /usr/share/regolith-look/selenized-dark/cojdev_github_io-lowpoly.png
+regolith.wallpaper.options: zoom
+
+!-- *Or* specify a color
+
+regolith.wallpaper.color.primary:
+
+!-- If specifying a primary color, optional additional settings
+
+regolith.wallpaper.color.secondary:
+regolith.wallpaper.color.shading.type:
+
+! --------------------------------------------
+! -- Lockscreen Wallpaper
+! --------------------------------------------
+
+!-- the following keys can be set to specify the lockscreen background, as above with desktop wallpaper
+
+! -- Specify either a complete file path to an image
+! -- and (optionally) options how to display the file
+
+regolith.lockscreen.wallpaper.file: /usr/share/regolith-look/selenized-dark/cojdev_github_io-lowpoly.png
+regolith.lockscreen.wallpaper.options: zoom
+
+!-- *Or* specify a color
+
+regolith.lockscreen.wallpaper.color.primary:
+
+!-- If specifying a primary color, optional additional settings
+
+regolith.lockscreen.wallpaper.color.secondary:
+regolith.lockscreen.wallpaper.color.shading.type:
+
+! --------------------------------------------
+! -- Theme elements
+! --------------------------------------------
+
+gtk.theme_name: SolArc-Dark
+gtk.icon_theme_name: Arc
+
+! --------------------------------------------
+! -- Fonts
+! --------------------------------------------
+
+#define gtk_font_name MesloLGS Nerd Font 12
+#define gtk_document_font_name Sans 11
+#define gtk_monospace_font_name MesloLGS Nerd Font 11
+
+gtk.font_name: gtk_font_name
+gtk.document_font_name: gtk_document_font_name
+gtk.monospace_font_name: gtk_monospace_font_name
+
+! --------------------------------------------
+! -- Colors
+! --------------------------------------------
+
+! Selenized Dark Colors
+#define color_bg_0          #103c48
+#define color_bg_1          #184956
+#define color_bg_2          #2d5b69
+#define color_dim_0         #72898f
+#define color_fg_0          #adbcbc
+#define color_fg_1          #cad8d9
+
+#define color_red           #fa5750
+#define color_green         #75b938
+#define color_yellow        #dbb32d
+#define color_blue          #4695f7
+#define color_magenta       #f275be
+#define color_cyan          #41c7b9
+#define color_orange        #ed8649
+#define color_violet        #af88eb
+
+#define color_br_red        #ff665c
+#define color_br_green      #84c747
+#define color_br_yellow     #ebc13d
+#define color_br_blue       #58a3ff
+#define color_br_magenta    #ff84cd
+#define color_br_cyan       #53d6c7
+#define color_br_orange     #fd9456
+#define color_br_violet     #bd96fa
+
+
+! --------------------------------------------
+! -- Component resources
+! --------------------------------------------
+
+#include "/usr/share/regolith-look/selenized-dark/i3xrocks"
+#include "/usr/share/regolith-look/selenized-dark/wm"
+#include "/usr/share/regolith-look/selenized-dark/gnome-terminal"
+
+! --------------------------------------------
+! -- Loader Path - Path to script responsible
+! -- for configuring UI from Xres values
+! --------------------------------------------
+
+regolith.look.loader: /usr/share/regolith-look/default_loader.sh
