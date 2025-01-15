@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH="/home/eric/.local/bin:$PATH"
+
 get_gnome_mode () {
     (gsettings get org.gnome.desktop.interface gtk-theme |
      grep -i dark) >/dev/null && \
