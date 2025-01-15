@@ -23,7 +23,7 @@ get_lng () {
 }
 
 get_tzid () {
-    get_geolocation |
+    call_geoloc_api |
     jq -r '.timezone.id'
 }
 
