@@ -7,16 +7,6 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "assistant": {
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-5-sonnet-latest"
-    },
-    "provider": null,
-    "enabled": true,
-    "version": "2"
-  },
-
   "jupyter": {
     "kernel_selections": {
       "python": "conda-env",
@@ -56,13 +46,13 @@
   },
 
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "Base16 selenized-light",
     "dark": "Base16 selenized-dark"
   },
-  "ui_font_size": 15,
-  "buffer_font_size": 15,
+  "ui_font_size": 10,
+  "buffer_font_size": 11,
   "autosave": "on_focus_change",
-  "preferred_line_length": 120,
+  "preferred_line_length": 80,
   "soft_wrap": "preferred_line_length"
 }
