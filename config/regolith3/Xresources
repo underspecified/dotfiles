@@ -2,7 +2,7 @@
 Xft.dpi: 144
 
 ## terminal settings
-wm.program.terminal: /home/eric/.local/bin/kitty
+wm.program.terminal: $HOME/.local/bin/kitty
 
 !regolith.look.path: /usr/share/regolith-look/selenized-light
 regolith.look.path: /usr/share/regolith-look/selenized-dark
