@@ -9,13 +9,13 @@
 regolith.look: solarized-dark
 
 ! --------------------------------------------
-! -- Wallpaper 
+! -- Wallpaper
 ! --------------------------------------------
 
 ! -- Specify either a complete file path to an image
 
-regolith.wallpaper.file: /usr/share/regolith-look/solarized-dark/cojdev_github_io-lowpoly.png
-regolith.wallpaper.options: zoom
+regolith.wallpaper.file: /usr/share/regolith-look/solarized-dark/wallpaper.png
+regolith.wallpaper.options: stretched
 
 !-- *Or* specify a color
 
@@ -27,7 +27,7 @@ regolith.wallpaper.color.secondary:
 regolith.wallpaper.color.shading.type:
 
 ! --------------------------------------------
-! -- Lockscreen Wallpaper 
+! -- Lockscreen Wallpaper
 ! --------------------------------------------
 
 !-- the following keys can be set to specify the lockscreen background, as above with desktop wallpaper
@@ -35,7 +35,7 @@ regolith.wallpaper.color.shading.type:
 ! -- Specify either a complete file path to an image
 ! -- and (optionally) options how to display the file
 
-regolith.lockscreen.wallpaper.file: /usr/share/regolith-look/solarized-dark/cojdev_github_io-lowpoly.png
+regolith.lockscreen.wallpaper.file: /usr/share/regolith-look/solarized-dark/wallpaper.png
 regolith.lockscreen.wallpaper.options: zoom
 
 !-- *Or* specify a color
@@ -97,7 +97,7 @@ gtk.monospace_font_name: gtk_monospace_font_name
 #include "/usr/share/regolith-look/solarized-dark/gnome-terminal"
 
 ! --------------------------------------------
-! -- Loader Path - Path to script responsible 
+! -- Loader Path - Path to script responsible
 ! -- for configuring UI from Xres values
 ! --------------------------------------------
 
