@@ -100,7 +100,7 @@ PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebr
 # end tell'
 # '''
 
-cmd-ctrl-alt-d = 'exec-and-forget toggle.sh'
+cmd-ctrl-alt-d = 'exec-and-forget change_theme.sh'
 cmd-ctrl-alt-f = 'exec-and-forget open ~'
 cmd-ctrl-alt-enter = '''exec-and-forget osascript -e '
 tell application "Kitty"
