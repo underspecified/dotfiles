@@ -1,6 +1,7 @@
 *.bak
 *.log
 *.orig
+.DS_Store
 config/kitty/current-theme.conf
 config/kitty/themes.conf
 dot.emacs.d/
