@@ -224,70 +224,56 @@ shift-down = ['volume set 0', 'mode main']
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Outlook'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 1']
+run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
 if.app-id = 'com.culturedcode.ThingsMac'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 1']
+run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.MobileSMS'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 2']
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 2']
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'org.whispersystems.signal-desktop'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 2']
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'us.zoom.xos'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 2']
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'dev.zed.Zed'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 3']
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 3']
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 4']
+run = 'move-node-to-workspace 4'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Excel'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 5']
+run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Powerpoint'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 5']
+run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Word'
-check-further-callbacks = true
-run = ['layout tiling', 'move-node-to-workspace 5']
+run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.agiletortoise.Drafts-OSX'
-check-further-callbacks = true
-run = ['layout floating']
+run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.ActivityMonitor'
-check-further-callbacks = true
-run = ['layout floating']
+run = 'layout floating'
