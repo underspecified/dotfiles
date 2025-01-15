@@ -6,6 +6,44 @@ get_gnome_mode () {
     echo "dark" || echo "light"
 }
 
+call_geoloc_api () {
+    curl -s "http://ipwho.is/"
+}
+
+get_lat () {
+    call_geoloc_api |
+    jq -r '.latitude'
+}
+
+get_lng () {
+    call_geoloc_api |
+    jq -r '.longitude'
+}
+
+get_tzid () {
+    get_geolocation |
+    jq -r '.timezone.id'
+}
+
+call_sun_api() {
+    lat=$(get_lat)
+    lng=$(get_lng)
+    tzid=$(get_tzid)
+    curl -s "https://api.sunrise-sunset.org/json?lat=$lat&lng=$lng&tzid=$tzid&formatted=0"
+}
+
+get_sunrise () {
+    call_sun_api |
+    jq -r '.results.sunrise' |
+    xargs -I '{}' date "+%H:%M" --date='{}'
+}
+
+get_sunset () {
+    call_sun_api |
+    jq -r '.results.sunset' |
+    xargs -I '{}' date "+%H:%M" --date='{}'
+}
+
 toggle_gnome_dark () {
     gsettings get org.gnome.desktop.interface gtk-theme |
     sed 's/light/dark/; s/Light/Dark/' |
@@ -56,22 +94,3 @@ toggle_zed () {
     sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
         ~/git/dotfiles/config/zed/settings.json
 }
-
-curr=$(get_gnome_mode)
-if [[ $1 == "dark" ]]; then
-    mode="dark"
-elif [[ $1 == "light" ]]; then
-    mode="light"
-else
-    [[ $curr == "light" ]] && mode="dark" || mode="light"
-fi
-echo "$curr => $mode"
-
-if [[ $curr != $mode ]]; then
-    #toggle_firefox $mode
-    toggle_gnome $mode
-    #toggle_i3 $mode
-    toggle_regolith $mode
-    toggle_kitten $mode
-    toggle_zed $mode
-fi
