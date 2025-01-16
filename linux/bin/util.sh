@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CUR_DIR=$(dirname "$0")
 PATH="/home/eric/.local/bin:$PATH"
 
 get_gnome_mode () {
@@ -27,23 +28,38 @@ get_tzid () {
     jq -r '.timezone.id'
 }
 
-call_sun_api() {
+call_sun_api_() {
     lat=$(get_lat)
     lng=$(get_lng)
     tzid=$(get_tzid)
     curl -s "https://api.sunrise-sunset.org/json?lat=$lat&lng=$lng&tzid=$tzid&formatted=0"
 }
 
+heliocron_here() {
+    bash "$CUR_DIR/heliocron_here.sh" "$@"
+}
+
 get_sunrise () {
-    call_sun_api |
-    jq -r '.results.sunrise' |
-    xargs -I '{}' date "+%H:%M" --date='{}'
+    heliocron_here report --json |
+    jq -r '.sunrise' #|
+    #xargs -I '{}' date "+%H:%M" --date='{}'
 }
 
 get_sunset () {
-    call_sun_api |
-    jq -r '.results.sunset' |
-    xargs -I '{}' date "+%H:%M" --date='{}'
+    heliocron_here report --json |
+    jq -r '.sunset' #|
+    #xargs -I '{}' date "+%H:%M" --date='{}'
+}
+
+is_day () {
+    sunrise=$(get_sunrise)
+    sunset=$(get_sunset)
+    now=$(date -Iseconds)
+    [[ $sunrise < $now ]] && [[ $now < $sunset ]]
+}
+
+is_night () {
+    [[ is_day ]]
 }
 
 toggle_gnome_dark () {
@@ -95,4 +111,6 @@ toggle_regolith () {
 toggle_zed () {
     sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
         ~/git/dotfiles/config/zed/settings.json
+    sleep 1
+    touch ~/git/dotfiles/config/zed/settings.json
 }

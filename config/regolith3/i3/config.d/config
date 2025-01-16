@@ -1,2 +1,8 @@
 ## toggle the light/dark theme
 bindsym $mod+Shift+d exec ~/git/dotfiles/linux/bin/change_theme.sh
+
+### programs to launch at startup
+## load custom keymaps
+exec xmodmap ~/.Xmodmap
+## reset theme
+exec ~/git/dotfiles/linux/bin/change_theme.sh reset
