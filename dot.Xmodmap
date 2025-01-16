@@ -1,0 +1,3 @@
+! map hyper key to caps lock
+clear lock
+keycode 66 = Hyper_L
