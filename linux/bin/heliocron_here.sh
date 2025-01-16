@@ -8,5 +8,4 @@ CUR_DIR=$(dirname $0)
 lat=$(get_lat)
 lng=$(get_lng)
 
-echo heliocron --latitude $lat --longitude $lng "$@"
-eval heliocron --latitude $lat --longitude $lng "$@"
+heliocron --latitude $lat --longitude $lng "$@"
