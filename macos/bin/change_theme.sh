@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CUR_DIR=$(dirname $0)
-CONFIG_DIR="$CUR_DIR/../config"
+CONFIG_DIR="$CUR_DIR/../../config"
 PATH=$CONFIG_DIR/bin:$HOME/.local/bin:/opt/homebrew/bin:$PATH
 
 toggle_alfred () {
