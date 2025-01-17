@@ -59,7 +59,7 @@ is_day () {
 }
 
 is_night () {
-    [[ is_day ]]
+    ! [[ is_day ]]
 }
 
 toggle_gnome_dark () {
