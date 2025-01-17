@@ -1,11 +1,15 @@
-## high-res screen
+!! high-res screen
 Xft.dpi: 144
 
-## nvidia GPU
-regolith.sway.unsupported_gpu: true
+!! fonts
+wm.bar.font:            MesloLGS Nerd Font 10
+wm.font:                MesloLGS Nerd Font 10
+i3xrocks.value.font:    MesloLGS Nerd Font 10
+rofi.font:              MesloLGS Nerd Font 10
 
-## terminal settings
+
+!! terminal settings
 wm.program.terminal: $HOME/.local/bin/kitty
 
-!regolith.look.path: /usr/share/regolith-look/selenized-dark
-regolith.look.path: /usr/share/regolith-look/selenized-light
+!regolith.look.path: /usr/share/regolith-look/selenized-light
+regolith.look.path: /usr/share/regolith-look/selenized-dark
