@@ -8,8 +8,8 @@ if [[ $1 == "dark" ]]; then
     mode="dark"
 elif [[ $1 == "light" ]]; then
     mode="light"
-elif [[ $1 == "reset" ]]; then
-    [[ $(is_day) ]] && mode="light" || mode="dark"
+elif [[ $1 == "auto" ]]; then
+    [[ is_day ]] && mode="light" || mode="dark"
 else
     [[ $curr == "light" ]] && mode="dark" || mode="light"
 fi
