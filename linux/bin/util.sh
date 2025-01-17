@@ -1,7 +1,11 @@
 #!/bin/bash
 
 CUR_DIR=$(dirname "$0")
-PATH="/home/eric/.local/bin:$PATH"
+
+echo_and_eval () {
+    echo "$@"
+    eval "$@"
+}
 
 get_gnome_mode () {
     (gsettings get org.gnome.desktop.interface gtk-theme |
@@ -36,30 +40,40 @@ call_sun_api_() {
 }
 
 heliocron_here() {
-    bash "$CUR_DIR/heliocron_here.sh" "$@"
+    lat=$(get_lat)
+    lng=$(get_lng)
+    $HOME/.cargo/bin/heliocron --latitude $lat --longitude $lng $@
+}
+
+get_sunrise_date () {
+    heliocron_here report --json |
+    jq -r '.sunrise'
 }
 
 get_sunrise () {
+    get_sunrise_date |
+    xargs -I '{}' date "+%H:%M" --date='{}'
+}
+
+get_sunset_date () {
     heliocron_here report --json |
-    jq -r '.sunrise' #|
-    #xargs -I '{}' date "+%H:%M" --date='{}'
+    jq -r '.sunset' #|
 }
 
 get_sunset () {
-    heliocron_here report --json |
-    jq -r '.sunset' #|
-    #xargs -I '{}' date "+%H:%M" --date='{}'
+    get_sunset_date |
+    xargs -I '{}' date "+%H:%M" --date='{}'
 }
 
 is_day () {
-    sunrise=$(get_sunrise)
-    sunset=$(get_sunset)
+    sunrise=$(get_sunrise_date)
+    sunset=$(get_sunset_date)
     now=$(date -Iseconds)
-    [[ $sunrise < $now ]] && [[ $now < $sunset ]]
+    [[ $sunrise < $now && $now < $sunset ]]
 }
 
 is_night () {
-    ! [[ is_day ]]
+    [[ ! is_day ]]
 }
 
 toggle_gnome_dark () {
@@ -100,7 +114,9 @@ toggle_i3 () {
 
 toggle_kitten () {
     [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
-    kitten themes --config-file-name=themes.conf --reload-in=all "$theme"
+    /home/eric/.local/bin/kitten themes \
+        --config-file-name=themes.conf \
+        --reload-in=all "$theme"
 }
 
 toggle_regolith () {
@@ -111,6 +127,5 @@ toggle_regolith () {
 toggle_zed () {
     sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
         ~/git/dotfiles/config/zed/settings.json
-    sleep 1
-    touch ~/git/dotfiles/config/zed/settings.json
+    #touch ~/git/dotfiles/config/zed/settings.json
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CUR_DIR=$(dirname $0)
-PATH="$CUR_DIR:$PATH"
+. "$CUR_DIR/util.sh"
 
-heliocron_here.sh wait --event sunset --run-missed-event "$@" &&
-change_theme.sh dark
+/home/eric/.cargo/bin/heliocron wait --event sunset --run-missed-event "$@" &&
+"$CUR_DIR/change_theme.sh" dark
