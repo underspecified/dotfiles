@@ -1,8 +1,11 @@
 ## high-res screen
 Xft.dpi: 144
 
+## nvidia GPU
+regolith.sway.unsupported_gpu: true
+
 ## terminal settings
 wm.program.terminal: $HOME/.local/bin/kitty
 
-!regolith.look.path: /usr/share/regolith-look/selenized-light
-regolith.look.path: /usr/share/regolith-look/selenized-dark
+!regolith.look.path: /usr/share/regolith-look/selenized-dark
+regolith.look.path: /usr/share/regolith-look/selenized-light

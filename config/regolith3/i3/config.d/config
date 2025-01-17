@@ -3,6 +3,6 @@ bindsym $mod+Shift+d exec ~/git/dotfiles/linux/bin/change_theme.sh toggle
 
 ### programs to launch at startup
 ## load custom keymaps
-exec xmodmap ~/.Xmodmap
+exec_always --no-startup-id xmodmap ~/.Xmodmap
 ## reset theme
-exec ~/git/dotfiles/linux/bin/change_theme.sh auto
+#exec_always --no-startup-id ~/git/dotfiles/linux/bin/change_theme.sh auto
