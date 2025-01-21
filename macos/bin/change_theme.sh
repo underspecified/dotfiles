@@ -25,7 +25,10 @@ toggle_borders () {
 
 toggle_kitten () {
     [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
-    kitten themes --config-file-name=themes.conf --reload-in=all "$theme"
+     /opt/homebrew/bin/kitten themes \
+        --cache-age=-1 \
+        --config-file-name=$CONFIG_DIR/kitty/themes.conf --reload-in=all \
+        $theme"
 }
 
 get_macos_mode () {
@@ -71,22 +74,21 @@ toggle_zed () {
         ~/git/dotfiles/config/zed/settings.json
 }
 
+curr=$(get_macos_mode)
 if [[ $1 == "dark" ]]; then
     mode="dark"
 elif [[ $1 == "light" ]]; then
     mode="light"
-elif [[ -z "${DARKMODE+x}" ]]; then
-    [ $(get_macos_mode) == "light" ] && mode="dark" || mode="light"
-    toggle_macos $mode
-elif [[ "$DARKMODE" == "1" ]]; then
-    mode="dark"
 else
-    mode="light"
+    [[ $curr == "light" ]] && mode="dark" || mode="light"
 fi
-#echo "mode: $mode"
+echo "[$(date '+%Y/%m/%d %H:%M:%S')] theme: $curr => $mode"
 
-toggle_alfred $mode
-toggle_borders $mode
-toggle_kitten $mode
-toggle_pdf_expert $mode
-#toggle_zed $mode
+if [[ $curr != $mode ]]; then
+    toggle_macos $mode
+    toggle_borders $mode
+    toggle_kitten $mode
+    toggle_pdf_expert $mode
+    toggle_alfred $mode
+    #toggle_zed $mode
+fi
