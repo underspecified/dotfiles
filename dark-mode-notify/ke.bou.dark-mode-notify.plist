@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
     <key>Label</key>
     <string>ke.bou.dark-mode-notify</string>
-    <key>KeepAlive</key>
-    <true />
-    <key>StandardErrorPath</key>
-    <string>/Users/eric/settings/dark-mode-notify/dark-mode-notify-stderr.log</string>
-    <key>StandardOutPath</key>
-    <string>/Users/eric/settings/dark-mode-notify/dark-mode-notify-stdout.log</string>
+    <key>Program</key>
+    <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify</string>
     <key>ProgramArguments</key>
     <array>
-       <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify</string>
-       <string>/Users/eric/git/dotfiles/bin/toggle_macos.sh</string>
+        <string>/Users/eric/git/dotfiles/macos/bin/change_theme.sh</string>
     </array>
+    <key>StandardOutPath</key>
+    <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify-stderr.log</string>
+    <key>RunAtLoad</key>
+    <true />
+    <key>KeepAlive</key>
+    <true />
 </dict>
 </plist>
