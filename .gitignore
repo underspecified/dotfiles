@@ -10,3 +10,4 @@ dot.zsh/.zsh_sessions/
 .DS_Store
 *.log
 *.orig
+.build/
