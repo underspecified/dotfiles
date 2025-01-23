@@ -67,7 +67,7 @@ outer.right = 8
 inherit-env-vars = true
 
 [exec.env-vars]
-PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
+PATH = '${HOME}/.config/aerospace/bin:${PATH}' #:${HOME}/git/dotfiles/macos/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 
 # 'main' binding mode declaration
@@ -100,7 +100,7 @@ PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebr
 # end tell'
 # '''
 
-cmd-ctrl-alt-d = 'exec-and-forget change_theme.sh'
+cmd-ctrl-alt-d = 'exec-and-forget ${HOME}/git/dotfiles/macos/bin/change_theme.sh'
 cmd-ctrl-alt-f = 'exec-and-forget open ~'
 cmd-ctrl-alt-enter = '''exec-and-forget osascript -e '
 tell application "Kitty"
@@ -138,15 +138,27 @@ cmd-ctrl-alt-down = ['fullscreen off', 'move down']
 cmd-ctrl-alt-up = ['fullscreen off', 'move up']
 cmd-ctrl-alt-right = ['fullscreen off', 'move right']
 
-cmd-ctrl-alt-shift-h = ['fullscreen off', 'join-with left']
-cmd-ctrl-alt-shift-j = ['fullscreen off', 'join-with down']
-cmd-ctrl-alt-shift-k = ['fullscreen off', 'join-with up']
-cmd-ctrl-alt-shift-l = ['fullscreen off', 'join-with right']
+cmd-ctrl-alt-shift-h = ['fullscreen off', 'join-with left', 'layout accordion']
+cmd-ctrl-alt-shift-j = ['fullscreen off', 'join-with down', 'layout accordion']
+cmd-ctrl-alt-shift-k = ['fullscreen off', 'join-with up', 'layout accordion']
+cmd-ctrl-alt-shift-l = ['fullscreen off', 'join-with right', 'layout accordion']
 
-cmd-ctrl-alt-shift-left = ['fullscreen off', 'join-with left']
-cmd-ctrl-alt-shift-down = ['fullscreen off', 'join-with down']
-cmd-ctrl-alt-shift-up = ['fullscreen off', 'join-with up']
-cmd-ctrl-alt-shift-right = ['fullscreen off', 'join-with right']
+cmd-ctrl-alt-shift-left = [
+    'fullscreen off',
+    'join-with left',
+    'layout accordion',
+]
+cmd-ctrl-alt-shift-down = [
+    'fullscreen off',
+    'join-with down',
+    'layout accordion',
+]
+cmd-ctrl-alt-shift-up = ['fullscreen off', 'join-with up', 'layout accordion']
+cmd-ctrl-alt-shift-right = [
+    'fullscreen off',
+    'join-with right',
+    'layout accordion',
+]
 
 cmd-ctrl-alt-u = 'fullscreen on'
 cmd-ctrl-alt-shift-u = 'fullscreen off'
