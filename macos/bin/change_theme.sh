@@ -1,39 +1,12 @@
 #!/bin/bash
 
 CUR_DIR=$(dirname $0)
-CONFIG_DIR="$CUR_DIR/../../config"
+CONFIG_DIR=$(realpath "$CUR_DIR/../../config")
+LOG_DIR=$(realpath "$CUR_DIR/../../log")
 
 echo_and_eval () {
     echo "$@"
     eval "$@"
-}
-
-toggle_alfred () {
-    osascript -l JavaScript "-" $1 <<- EOF
-
-function run(args) {
-   	const systemEvents = Application("System Events")
-   	const alfred = Application("Alfred 5")
-    const alfredDarkTheme = "Selenized Dark"
-    const alfredLightTheme = "Selenized Light"
-    const alfredTheme = args == "dark" ? alfredDarkTheme : alfredLightTheme
-    alfred.setTheme(alfredTheme)
-}
-
-EOF
-}
-
-toggle_borders () {
-    bash "$CONFIG_DIR/borders/bordersrc_$1"
-}
-
-toggle_kitten () {
-    [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
-     echo_and_eval "/opt/homebrew/bin/kitten themes \
-        --config-file-name=$CONFIG_DIR/kitty/themes.conf \
-        --reload-in=all \
-        $theme"
-    echo_and_eval "/opt/homebrew/bin/kitten @load-config --to unix:/tmp/mykitty"
 }
 
 get_macos_mode () {
@@ -59,28 +32,6 @@ function run(args) {
 EOF
 }
 
-toggle_pdf_expert () {
-    osascript -l JavaScript "-" $1 <<- EOF >/dev/null
-
-function run(args) {
-    const se = Application("System Events")
-    const process = se.processes.whose({ name: "PDF Expert" })
-    if (process.length > 0) {
-        const viewMenu = process[0].menuBars[0].menuBarItems.byName("View")
-        const themeMenuItem = viewMenu.menus[0].menuItems.byName("Theme")
-        const theme = args == "dark" ? "Night" : "Day"
-        themeMenuItem.menus[0].menuItems.byName(theme).click()
-    }
-}
-
-EOF
-}
-
-toggle_zed () {
-    sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
-        "$CONFIG_DIR/zed/settings.json"
-}
-
 curr=$(get_macos_mode)
 if [[ $1 == "dark" ]]; then
     mode="dark"
@@ -89,13 +40,9 @@ elif [[ $1 == "light" ]]; then
 else
     [[ $curr == "light" ]] && mode="dark" || mode="light"
 fi
-echo "[$(date '+%Y/%m/%d %H:%M:%S')] theme: $curr => $mode"
+echo "[$(date '+%Y/%m/%d %H:%M:%S')] theme: $curr => $mode" |
+tee -a "$LOG_DIR/change_theme.log" 2>&1
 
 if [[ $curr != $mode ]]; then
-    toggle_macos $mode
-    toggle_borders $mode
-    toggle_kitten $mode
-    toggle_pdf_expert $mode
-    toggle_alfred $mode
-    #toggle_zed $mode
+    toggle_macos $mode | tee -a "$LOG_DIR/change_theme.log" 2>&1
 fi

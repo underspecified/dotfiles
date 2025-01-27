@@ -9,12 +9,13 @@
     <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/eric/git/dotfiles/macos/bin/change_theme.sh</string>
+        <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify</string>
+        <string>/Users/eric/git/dotfiles/dark-mode-notify/darkmode.sh</string>
     </array>
     <key>StandardOutPath</key>
-    <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify-stdout.log</string>
+    <string>/Users/eric/git/dotfiles/log/dark-mode-notify-stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/eric/git/dotfiles/dark-mode-notify/dark-mode-notify-stderr.log</string>
+    <string>/Users/eric/git/dotfiles/log/dark-mode-notify-stderr.log</string>
     <key>RunAtLoad</key>
     <true />
     <key>KeepAlive</key>
