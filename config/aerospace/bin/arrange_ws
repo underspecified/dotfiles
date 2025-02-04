@@ -2,14 +2,38 @@
 
 PATH=$HOME/.config/aerospace/bin:/opt/homebrew/bin:$PATH
 
-ls_ws () {
-    aerospace list-workspaces --monitor 1 --empty no
+echo_and_eval () {
+    echo $@ 1>&2
+    eval $@
 }
 
-next_ws () {
-    aerospace workspace "$(aerospace list-workspaces --monitor mouse --visible)" && ls_ws | aerospace workspace next --wrap-around
+get_all_window_ids () {
+    echo_and_eval "aerospace list-windows --workspace $1 --json | jq '.[].\"window-id\"'"
 }
 
-prev_ws () {
-    aerospace workspace "$(aerospace list-workspaces --monitor mouse --visible)" && ls_ws | aerospace workspace prev --wrap-around
+get_app_window_ids () {
+    echo_and_eval "aerospace list-windows --workspace $1 --json | jq '.[] | select(.\"app-name\" == \"$2\") | .\"window-id\"'"
 }
+
+arrange_ws () {
+    aerospace flatten-workspace-tree --workspace $1
+    windows=( $(get_all_window_ids $1) )
+    echo "windows: ${windows[@]}"
+    for i in ${!windows[@]}; do
+        echo "i: $i"
+        [[ $(($i % 2)) == 0 ]] && dir="left" || dir="right"
+        if [[ $i < 2 ]]; then
+            echo_and_eval aerospace layout h_tiles --window-id ${windows[$i]}
+            echo_and_eval aerospace move $dir --window-id ${windows[$i]}
+        else
+            echo_and_eval aerospace join-with $dir --window-id ${windows[$i]}
+            echo_and_eval aerospace layout accordion --window-id ${windows[$i]}
+        fi
+    done
+}
+
+[[ $# -eq 0 ]] && workspaces=$(ls_ws) || worskpaces="$@"
+echo "workspaces: $# $@"
+for ws in $@; do
+    arrange_ws $ws
+done
