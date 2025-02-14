@@ -2,17 +2,19 @@
 
 ### install 1password
 install_1password () {
-    # Add the key for the 1Password apt repository:
-    curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
-    # Add the 1Password apt repository:
-    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
-    # Add the debsig-verify policy:
-    sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
-    curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
-    sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-    curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-    # Install 1Password:
-    sudo apt update && sudo apt install -y 1password 1password-cli
+    [[ `which op` ]] || (
+        # Add the key for the 1Password apt repository:
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+        # Add the 1Password apt repository:
+        echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
+        # Add the debsig-verify policy:
+        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+        curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
+        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+        # Install 1Password:
+        sudo apt update && sudo apt install -y 1password 1password-cli
+    )
 }
 
 ### install basic packages
@@ -22,20 +24,22 @@ install_apt () {
 }
 
 install_gh () {
-    (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
+    [[ `which gh` ]] || (
+        (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
     	&& sudo mkdir -p -m 755 /etc/apt/keyrings \
     	&& wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
     	&& sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
     	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     	&& sudo apt update \
     	&& sudo apt install gh -y
+    )
 }
 
 install_git_credential_1password() {
     [[ -d ~/git/git-credential-1password ]] || {
         mkdir -p ~/git && \
         cd ~/git && \
-        git clone git@github.com:ethrgeist/git-credential-1password.git
+        git clone https://github.com/ethrgeist/git-credential-1password.git
     }
     [[ -x ~/.local/bin/git-credential-1password ]] || {
         cd ~/git/git-credential-1password && \
@@ -45,8 +49,8 @@ install_git_credential_1password() {
 }
 
 install_heliocron () {
-    sudo apt install cargo
-    cargo install heliocron
+    [[ `which cargo` ]] || sudo apt install cargo
+    [[ `which heliocron` ]] || cargo install heliocron
 }
 
 ### install i3 window manager
@@ -81,19 +85,21 @@ PIN
 
 ### install kitty
 install_kitty () {
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    # Create symbolic links to add kitty and kitten to PATH (assuming ~/.local/bin is in
-    # your system-wide PATH)
-    ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
-    # Place the kitty.desktop file somewhere it can be found by the OS
-    cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
-    # If you want to open text files and images in kitty via your file manager also add the kitty-open.desktop file
-    cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
-    # Update the paths to the kitty and its icon in the kitty desktop file(s)
-    sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
-    sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
-    # Make xdg-terminal-exec (and hence desktop environments that support it use kitty)
-    echo 'kitty.desktop' > ~/.config/xdg-terminals.list
+    [[ `which kitty` ]] || (
+        curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+        # Create symbolic links to add kitty and kitten to PATH (assuming ~/.local/bin is in
+        # your system-wide PATH)
+        ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
+        # Place the kitty.desktop file somewhere it can be found by the OS
+        cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+        # If you want to open text files and images in kitty via your file manager also add the kitty-open.desktop file
+        cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+        # Update the paths to the kitty and its icon in the kitty desktop file(s)
+        sed -i "s|Icon=kitty|Icon=$(readlink -f ~)/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
+        sed -i "s|Exec=kitty|Exec=$(readlink -f ~)/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+        # Make xdg-terminal-exec (and hence desktop environments that support it use kitty)
+        echo 'kitty.desktop' > ~/.config/xdg-terminals.list
+    )
 }
 
 ### install nvidia drivers and cuda
@@ -136,15 +142,17 @@ install_polybar () {
 
 # https://regolith-desktop.com/docs/using-regolith/install/
 install_regolith () {
-    wget -qO - https://regolith-desktop.org/regolith.key | \
-    gpg --dearmor | sudo tee /usr/share/keyrings/regolith-archive-keyring.gpg > /dev/null
+    [[ `which regolith-sesion` ]] || (
+        wget -qO - https://regolith-desktop.org/regolith.key | \
+        gpg --dearmor | sudo tee /usr/share/keyrings/regolith-archive-keyring.gpg > /dev/null
 
-    echo deb "[arch=amd64 signed-by=/usr/share/keyrings/regolith-archive-keyring.gpg] \
-    https://regolith-desktop.org/testing-ubuntu-focal-amd64 focal main" | \
-    sudo tee /etc/apt/sources.list.d/regolith.list
+        echo deb "[arch=amd64 signed-by=/usr/share/keyrings/regolith-archive-keyring.gpg] \
+        https://regolith-desktop.org/testing-ubuntu-focal-amd64 focal main" | \
+        sudo tee /etc/apt/sources.list.d/regolith.list
 
-    sudo apt update
-    sudo apt install regolith-desktop regolith-session-flashback regolith-look-solarized-dark
+        sudo apt update
+        sudo apt install regolith-desktop regolith-session-flashback regolith-look-solarized-dark
+    )
 }
 
 ### install from snap
@@ -160,7 +168,7 @@ install_snap () {
 
 ### install zed
 install_zed () {
-    curl -f https://zed.dev/install.sh | sh
+    [[ `which zed` ]] || curl -f https://zed.dev/install.sh | sh
 }
 
 ### update git
@@ -182,12 +190,14 @@ update_less () {
 
 install_apt
 install_snap
-install_nvidia_drivers
 update_git
 update_less
-[[ `which op` ]] || (install_1password && install_git_credential_1password)
-[[ `which gh` ]] || install_gh
-[[ `which heliocron` ]] || install_heliocron
-[[ `which kitty` ]] || install_kitty
-[[ `which regolith-sesion` ]] || install_regolith
-[[ `which zed` ]] || install_zed
+
+install_1password
+install_git_credential_1password
+install_gh
+install_heliocron
+install_kitty
+install_nvidia_drivers
+install_regolith
+install_zed
