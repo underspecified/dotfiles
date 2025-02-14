@@ -8,7 +8,7 @@ echo_and_eval () {
 }
 
 get_gnome_mode () {
-    (gsettings get org.gnome.desktop.interface gtk-theme |
+    (gsettings get org.gnome.desktop.interface color-scheme |
      grep -i dark) >/dev/null && \
     echo "dark" || echo "light"
 }
@@ -77,21 +77,23 @@ is_night () {
 }
 
 toggle_gnome_dark () {
-    gsettings get org.gnome.desktop.interface gtk-theme |
-    sed 's/light/dark/; s/Light/Dark/' |
-    xargs gsettings set org.gnome.desktop.interface gtk-theme
+    #gsettings get org.gnome.desktop.interface gtk-theme |
+    #sed 's/light/dark/; s/Light/Dark/' |
+    #xargs gsettings set org.gnome.desktop.interface gtk-theme
+    gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 }
 
 toggle_gnome_light () {
-    gsettings get org.gnome.desktop.interface gtk-theme |
-    sed 's/dark/light/; s/Dark/Light/' |
-    xargs gsettings set org.gnome.desktop.interface gtk-theme
+    #gsettings get org.gnome.desktop.interface gtk-theme |
+    #sed 's/dark/light/; s/Dark/Light/' |
+    #xargs gsettings set org.gnome.desktop.interface gtk-theme
+    gsettings set org.gnome.desktop.interface color-scheme default
 }
 
 focus_window () {
     win_id=$(xwininfo -root -tree |
              grep "$@" |
-             awk '{print $1}')
+             awk '{print $1}')R
     xdotool windowactivate $win_id
     xdotool windowfocus $win_id
 }
@@ -107,7 +109,7 @@ toggle_gnome () {
 }
 
 toggle_i3 () {
-    sed -i.bak -r 's/set \$mode = .+/set \$mode = '$1'/' \
+    sed -i.bak -r 's/set \$mode .+/set \$mode '$1'/' \
         ~/git/dotfiles/config/i3/config
     i3 restart
 }
@@ -122,6 +124,12 @@ toggle_kitten () {
 toggle_regolith () {
     [[ "$1" == "dark" ]] && theme="selenized-dark" || theme="selenized-light"
     regolith-look set "$theme" &>/dev/null
+}
+
+toggle_sway () {
+    sed -i.bak -r 's/set \$mode .+/set \$mode '$1'/' \
+        ~/git/dotfiles/config/sway/config
+    sway reload
 }
 
 toggle_zed () {
