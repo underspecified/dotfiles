@@ -20,7 +20,14 @@ install_1password () {
 ### install basic packages
 install_apt () {
     sudo apt update && \
-    sudo apt install -y chrome-gnome-shell curl emacs git golang keychain openssh-server psensor zsh
+    sudo apt install -y chrome-gnome-shell curl emacs git golang jq keychain openssh-server psensor zsh
+}
+
+install_chrome() {
+    sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+    sudo wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+    sudo apt update
+    sudo apt-get install google-chrome-stable
 }
 
 install_gh () {
@@ -34,6 +41,7 @@ install_gh () {
     	&& sudo apt install gh -y
     )
 }
+
 
 install_git_credential_1password() {
     [[ -d ~/git/git-credential-1password ]] || {
@@ -51,6 +59,10 @@ install_git_credential_1password() {
 install_heliocron () {
     [[ `which cargo` ]] || sudo apt install cargo
     [[ `which heliocron` ]] || cargo install heliocron
+    sudo apt install cargo
+    cargo install heliocron
+    [[ -d "$HOME/git/linux/etc/crontab" ]] && \
+    (cat "$HOME/git/linux/etc/crontab" | crontab -)
 }
 
 ### install i3 window manager
