@@ -59,8 +59,6 @@ install_git_credential_1password() {
 install_heliocron () {
     [[ `which cargo` ]] || sudo apt install cargo
     [[ `which heliocron` ]] || cargo install heliocron
-    sudo apt install cargo
-    cargo install heliocron
     [[ -d "$HOME/git/linux/etc/crontab" ]] && \
     (cat "$HOME/git/linux/etc/crontab" | crontab -)
 }
