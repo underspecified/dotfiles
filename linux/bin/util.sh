@@ -13,6 +13,17 @@ get_gnome_mode () {
     echo "dark" || echo "light"
 }
 
+get_i3_mode () {
+    grep -i 'set \$mode ' ~/git/dotfiles/config/i3/config |
+    awk '{print $3}'
+}
+
+get_regolith_mode () {
+    regolith-look get |
+    grep -i 'theme' |
+    awk '{print $2}'
+}
+
 call_geoloc_api () {
     curl -s "http://ipwho.is/"
 }
