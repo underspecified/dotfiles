@@ -6,7 +6,7 @@ include ~/.config/i3/themes/i3-selenized-$mode.conf
 #include ~/.config/i3/themes/i3status-selenized-$mode.conf
 default_border normal 5
 default_floating_border normal 5
-gaps inner 5
+gaps inner 6
 gaps outer 2
 
 ### variables
