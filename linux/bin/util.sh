@@ -77,29 +77,27 @@ is_night () {
 }
 
 toggle_gnome_dark () {
-    #gsettings get org.gnome.desktop.interface gtk-theme |
-    #sed 's/light/dark/; s/Light/Dark/' |
-    #xargs gsettings set org.gnome.desktop.interface gtk-theme
     gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
+    gsettings set org.gnome.desktop.interface icon-theme "Yaru-dark"
 }
 
 toggle_gnome_light () {
-    #gsettings get org.gnome.desktop.interface gtk-theme |
-    #sed 's/dark/light/; s/Dark/Light/' |
-    #xargs gsettings set org.gnome.desktop.interface gtk-theme
-    gsettings set org.gnome.desktop.interface color-scheme default
+    gsettings set org.gnome.desktop.interface color-scheme prefer-light
+    gsettings set org.gnome.desktop.interface gtk-theme "Yaru"
+    gsettings set org.gnome.desktop.interface icon-theme "Yaru"
 }
 
 focus_window () {
     win_id=$(xwininfo -root -tree |
-             grep "$@" |
-             awk '{print $1}')R
+             grep -i "$@" |
+             awk '{print $1}')
     xdotool windowactivate $win_id
     xdotool windowfocus $win_id
 }
 
 toggle_firefox () {
-    focus_window '("Navigator" "firefox")'
+    focus_window '"Navigator.+firefox)'
     xdotool key "alt+shift+d"
     focus_window '("kitty" "kitty")'
 }

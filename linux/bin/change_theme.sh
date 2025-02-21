@@ -16,7 +16,7 @@ fi
 echo "[$(date '+%Y/%m/%d %H:%M:%S')] theme: $curr => $mode"
 
 if [[ $curr != $mode ]]; then
-    #toggle_firefox $mode
+    toggle_firefox $mode
     toggle_gnome $mode
     toggle_i3 $mode
     #toggle_regolith $mode
