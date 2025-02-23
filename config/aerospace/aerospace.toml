@@ -38,8 +38,10 @@ default-root-container-orientation = 'auto'
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
-# You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
-# Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
+# You can effectively turn off macOS "Hide application" (cmd-h) feature by
+# toggling this flag
+# Useful if you don't use this macOS feature, but accidentally hit cmd-h or
+# cmd-alt-h key
 # Also see: https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
 automatically-unhide-macos-hidden-apps = false
 
@@ -52,9 +54,11 @@ preset = 'qwerty'
 # Possible values:
 # - Constant:     gaps.outer.top = 8
 # - Per monitor:  gaps.outer.top = [{ monitor.main = 16 }, { monitor."some-pattern" = 32 }, 24]
-#                 In this example, 24 is a default value when there is no match.
-#                 Monitor pattern is the same as for 'workspace-to-monitor-force-assignment'.
-#                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+# In this example, 24 is a default value when there is no match.
+# Monitor pattern is the same as for
+# 'workspace-to-monitor-force-assignment'.
+# See:
+# https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
 inner.horizontal = 14
 inner.vertical = 14
@@ -67,7 +71,7 @@ outer.right = 8
 inherit-env-vars = true
 
 [exec.env-vars]
-PATH = '${HOME}/.config/aerospace/bin:${PATH}' #:${HOME}/git/dotfiles/macos/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
+PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 
 # 'main' binding mode declaration
@@ -81,10 +85,11 @@ PATH = '${HOME}/.config/aerospace/bin:${PATH}' #:${HOME}/git/dotfiles/macos/bin:
 # - Numbers.        0, 1, 2, ..., 9
 # - Keypad numbers. keypad0, keypad1, keypad2, ..., keypad9
 # - F-keys.         f1, f2, ..., f20
-# - Special keys.   minus, equal, period, comma, slash, backslash, quote, semicolon, backtick,
-#                   leftSquareBracket, rightSquareBracket, space, enter, esc, backspace, tab
-# - Keypad special. keypadClear, keypadDecimalMark, keypadDivide, keypadEnter, keypadEqual,
-#                   keypadMinus, keypadMultiply, keypadPlus
+# - Special keys.   minus, equal, period, comma, slash, backslash, quote,
+#                   semicolon, backtick, leftSquareBracket, rightSquareBracket,
+#                   space, enter, esc, backspace, tab
+# - Keypad special. keypadClear, keypadDecimalMark, keypadDivide, keypadEnter,
+#                   keypadEqual, keypadMinus, keypadMultiply, keypadPlus
 # - Arrows.         left, down, up, right
 
 # All possible modifiers: cmd, alt, ctrl, shift
@@ -92,7 +97,8 @@ PATH = '${HOME}/.config/aerospace/bin:${PATH}' #:${HOME}/git/dotfiles/macos/bin:
 # All possible commands: https://nikitabobko.github.io/AeroSpace/commands
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
-# You can uncomment the following lines to open up terminal with alt + enter shortcut (like in i3)
+# You can uncomment the following lines to open up terminal with alt + enter s
+# shortcut (like in i3)
 # alt-enter = '''exec-and-forget osascript -e '
 # tell application "Terminal"
 #     do script
@@ -100,7 +106,7 @@ PATH = '${HOME}/.config/aerospace/bin:${PATH}' #:${HOME}/git/dotfiles/macos/bin:
 # end tell'
 # '''
 
-cmd-ctrl-alt-d = 'exec-and-forget ${HOME}/git/dotfiles/macos/bin/change_theme.sh'
+cmd-ctrl-alt-d = 'exec-and-forget change_theme.sh'
 cmd-ctrl-alt-f = 'exec-and-forget open ~'
 cmd-ctrl-alt-enter = '''exec-and-forget osascript -e '
 tell application "Kitty"
@@ -128,34 +134,62 @@ ctrl-alt-up = 'focus up'
 ctrl-alt-right = 'focus right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
-cmd-ctrl-alt-h = ['fullscreen off', 'move left']
-cmd-ctrl-alt-j = ['fullscreen off', 'move down']
-cmd-ctrl-alt-k = ['fullscreen off', 'move up']
-cmd-ctrl-alt-l = ['fullscreen off', 'move right']
+cmd-ctrl-alt-h = ['fullscreen off', 'layout tiling', 'move left']
+cmd-ctrl-alt-j = ['fullscreen off', 'layout tiling', 'move down']
+cmd-ctrl-alt-k = ['fullscreen off', 'layout tiling', 'move up']
+cmd-ctrl-alt-l = ['fullscreen off', 'layout tiling', 'move right']
 
-cmd-ctrl-alt-left = ['fullscreen off', 'move left']
-cmd-ctrl-alt-down = ['fullscreen off', 'move down']
-cmd-ctrl-alt-up = ['fullscreen off', 'move up']
-cmd-ctrl-alt-right = ['fullscreen off', 'move right']
+cmd-ctrl-alt-left = ['fullscreen off', 'layout tiling', 'move left']
+cmd-ctrl-alt-down = ['fullscreen off', 'layout tiling', 'move down']
+cmd-ctrl-alt-up = ['fullscreen off', 'layout tiling', 'move up']
+cmd-ctrl-alt-right = ['fullscreen off', 'layout tiling', 'move right']
 
-cmd-ctrl-alt-shift-h = ['fullscreen off', 'join-with left', 'layout accordion']
-cmd-ctrl-alt-shift-j = ['fullscreen off', 'join-with down', 'layout accordion']
-cmd-ctrl-alt-shift-k = ['fullscreen off', 'join-with up', 'layout accordion']
-cmd-ctrl-alt-shift-l = ['fullscreen off', 'join-with right', 'layout accordion']
+cmd-ctrl-alt-shift-h = [
+    'fullscreen off',
+    'layout tiling',
+    'join-with left',
+    'layout accordion',
+]
+cmd-ctrl-alt-shift-j = [
+    'fullscreen off',
+    'layout tiling',
+    'join-with down',
+    'layout accordion',
+]
+cmd-ctrl-alt-shift-k = [
+    'fullscreen off',
+    'layout tiling',
+    'join-with up',
+    'layout accordion',
+]
+cmd-ctrl-alt-shift-l = [
+    'fullscreen off',
+    'layout tiling',
+    'join-with right',
+    'layout accordion',
+]
 
 cmd-ctrl-alt-shift-left = [
     'fullscreen off',
+    'layout tiling',
     'join-with left',
     'layout accordion',
 ]
 cmd-ctrl-alt-shift-down = [
     'fullscreen off',
+    'layout tiling',
     'join-with down',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-up = ['fullscreen off', 'join-with up', 'layout accordion']
+cmd-ctrl-alt-shift-up = [
+    'fullscreen off',
+    'layout tiling',
+    'join-with up',
+    'layout accordion',
+]
 cmd-ctrl-alt-shift-right = [
     'fullscreen off',
+    'layout tiling',
     'join-with right',
     'layout accordion',
 ]
@@ -191,37 +225,10 @@ cmd-ctrl-alt-shift-7 = 'move-node-to-workspace 7'
 cmd-ctrl-alt-shift-8 = 'move-node-to-workspace 8'
 cmd-ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
-cmd-ctrl-alt-tab = 'exec-and-forget next_ws'
-cmd-ctrl-alt-shift-tab = 'exec-and-forget prev_ws'
-
-ctrl-left = 'exec-and-forget prev_ws'
-ctrl-right = 'exec-and-forget next_ws'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#mode
-cmd-ctrl-alt-shift-semicolon = 'mode service'
-
-# 'service' binding mode declaration.
-# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
-[mode.service.binding]
-esc = ['reload-config', 'mode main']
-r = ['flatten-workspace-tree', 'mode main'] # reset layout
-f = [
-    'layout floating tiling',
-    'mode main',
-] # Toggle between floating and tiling layout
-backspace = ['close-all-windows-but-current', 'mode main']
-
-# sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
-#s = ['layout sticky tiling', 'mode main']
-
-cmd-ctrl-alt-shift-h = ['join-with left', 'mode main']
-cmd-ctrl-alt-shift-j = ['join-with down', 'mode main']
-cmd-ctrl-alt-shift-k = ['join-with up', 'mode main']
-cmd-ctrl-alt-shift-l = ['join-with right', 'mode main']
-
-down = 'volume down'
-up = 'volume up'
-shift-down = ['volume set 0', 'mode main']
+ctrl-left = ' workspace prev --wrap-around'
+ctrl-right = 'workspace next --wrap-around'
+cmd-ctrl-alt-shift-tab = 'workspace prev --wrap-around'
+cmd-ctrl-alt-tab = 'workspace next --wrap-around'
 
 
 # [[on-window-detected]]
