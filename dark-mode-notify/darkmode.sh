@@ -53,6 +53,32 @@ function run(args) {
 EOF
 }
 
+toggle_rstudio_dark () {
+    tmp=$(mktemp)
+    jq '.theme.name = "Solarized Dark"' rstudio-desktop.json | \
+    jq '.theme.url = "theme/default/solarized_dark.rstheme"' | \
+    jq '.theme.isDark = true' > $tmp && \
+    mv $tmp ~/.local/share/rstudio/rstudio-desktop.json || \
+    rm $tmp
+}
+
+toggle_rstudio_light () {
+    tmp=$(mktemp)
+    jq '.theme.name = "Solarized Light"' rstudio-desktop.json | \
+    jq '.theme.url = "theme/default/solarized_light.rstheme"' | \
+    jq '.theme.isDark = false' > $tmp && \
+    mv $tmp ~/.local/share/rstudio/rstudio-desktop.json || \
+    rm $tmp
+}
+
+toggle_rstudio () {
+    if [[ $mode == "dark" ]]; then
+        toggle_rstudio_dark
+    else
+        toggle_rstudio_light
+    fi
+}
+
 toggle_zed () {
     echo_and_eval sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
         "$CONFIG_DIR/zed/settings.json"
@@ -67,6 +93,7 @@ if [[ -n ${DARKMODE+x} ]]; then
     (toggle_borders $mode
     toggle_kitten $mode
     toggle_pdf_expert $mode
+    #toggle_rstudio $mode
     toggle_alfred $mode) |
     tee -a "$LOG_DIR/darkmode.log" 2>&1
 fi
