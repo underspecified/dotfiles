@@ -23,31 +23,6 @@
     }
   },
 
-  "language_models": {
-    "openai": {
-      "version": "1",
-      "api_url": "http://localhost:8080/v1",
-      "available_models": [
-        {
-          "name": "llama.cpp",
-          "max_tokens": 32000
-        }
-      ],
-      "low_speed_timeout_in_seconds": 60
-    },
-
-    "ollama": {
-      "available_models": [
-        {
-          "provider": "ollama",
-          "name": "llama3.1:latest",
-          "max_tokens": 65536
-        }
-      ],
-      "low_speed_timeout_in_seconds": 60
-    }
-  },
-
   "terminal": {
     "dock": "right"
   },
