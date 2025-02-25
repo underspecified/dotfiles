@@ -1,0 +1,37 @@
+{
+  "minimal-style@@color-red": "#color-red",
+  "minimal-style@@color-orange": "#color-orange",
+  "minimal-style@@color-yellow": "#color-yellow",
+  "minimal-style@@color-green": "#color-green",
+  "minimal-style@@color-cyan": "#color-cyan",
+  "minimal-style@@color-blue": "#color-blue",
+  "minimal-style@@color-purple": "#color-violet",
+  "minimal-style@@color-pink": "#color-magenta",
+
+  "minimal-style@@base": "#color-bg0",
+  "minimal-style@@bg1": "#color-bg0",
+  "minimal-style@@bg2": "#color-bg1",
+  "minimal-style@@bg3": "#color-bg2",
+
+  "minimal-style@@ui1": "#color-bg1",
+  "minimal-style@@ui2": "#color-bg0",
+  "minimal-style@@ui3": "#color-bg2",
+
+  "minimal-style@@ax1": "#color-blue",
+  "minimal-style@@ax2": "#color-blue",
+  "minimal-style@@ax3": "#color-blue",
+  "minimal-style@@sp1": "#color-dim0",
+
+  "minimal-style@@tx1": "#color-fg0",
+  "minimal-style@@tx2": "#color-dim0",
+  "minimal-style@@tx3": "#color-dim0",
+
+  "minimal-style@@italic-color": "#color-fg1",
+  "minimal-style@@bold-color": "#color-fg1",
+  "minimal-style@@title-color": "#color-fg1",
+  "minimal-style@@title-color-inactive": "#color-dim0",
+  "minimal-style@@inline-title-color": "#color-fg1",
+
+  "minimal-style@@hl1": "#color-bg2",
+  "minimal-style@@hl2": "#color-bg2"
+}
