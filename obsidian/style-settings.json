@@ -32,6 +32,6 @@
   "minimal-style@@title-color-inactive": "#color-dim0",
   "minimal-style@@inline-title-color": "#color-fg1",
 
-  "minimal-style@@hl1": "#color-bg2",
+  "minimal-style@@hl1": "#color-bg1",
   "minimal-style@@hl2": "#color-bg2"
 }
