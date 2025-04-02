@@ -1,13 +1,24 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 ### theme and visuals
-set $mode light
-include ~/.config/i3/themes/i3-selenized-$mode.conf
-#include ~/.config/i3/themes/i3status-selenized-$mode.conf
+
+# borders
 default_border normal 5
 default_floating_border normal 5
 gaps inner 6
 gaps outer 2
+
+# theme
+set $mode dark
+include ~/.config/i3/themes/i3-selenized-$mode.conf
+#include ~/.config/i3/themes/i3status-selenized-$mode.conf
+
+# start dmenu (a program launcher)
+#bindsym $mod+d exec --no-startup-id dmenu_run
+#bindsym $mod+space exec --no-startup-id dmenu_run
+bindsym $mod+d exec --no-startup-id ~/.config/i3/themes/dmenu_selenized_$mode
+bindsym $mod+space exec --no-startup-id ~/.config/i3/themes/dmenu_selenized_$mode
+
 
 ### variables
 
@@ -29,16 +40,16 @@ exec_always --no-startup-id xmodmap ~/.Xmodmap
 ### key bindings
 
 # Custom bindsyms
-bindsym $mod+p exec ~/.config/i3/bin/logout
-bindsym $mod+l exec i3lock -i $wallpaper
-bindsym $mod+r mode "resize"
-bindsym $mod+Shift+f exec $HOME/.config/i3/bin/rofifinder
+#bindsym $mod+p exec ~/.config/i3/bin/logout
+#bindsym $mod+l exec i3lock -i $wallpaper
+#bindsym $mod+r mode "resize"
+#bindsym $mod+Shift+f exec $HOME/.config/i3/bin/rofifinder
 
 # start terminal by pressing Mod key + ENTER
 bindsym $mod+Return exec $term
 
 # start browser by pressing Mod key + Shift + ENTER
-bindsym $mod+Shift+Return exec google-chrome
+bindsym $mod+Shift+Return exec $browser
 
 # kill focused window
 bindsym $mod+q kill
