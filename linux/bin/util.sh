@@ -133,31 +133,32 @@ toggle_gnome_light () {
 
 get_winid () {
     xwininfo -root -tree |
-    grep -v "xwininfo" |
     grep -i "$@" |
+    head -1 |
     awk '{print $1}'
 }
 
 focus_window () {
     echo "focus_window: $@"
-    win_id=$(get_winid "$@")
-    echo_and_eval xdotool windowactivate $win_id
-    echo_and_eval xdotool windowfocus $win_id
+    winid=$(get_winid "$@")
+    echo "win_id: \"$winid\""
+    echo_and_eval xdotool windowactivate $winid
+    echo_and_eval xdotool windowfocus $winid
 }
 
 toggle_firefox () {
     echo "toggle firefox => $1"
-    pgrep -fl "firefox" >/dev/null && \
-    focus_window '"Navigator.+firefox)' && \
-    xdotool key "alt+shift+d" && \
+    (pgrep -fl "firefox" >/dev/null && \
+     focus_window '("Navigator" "firefox")' && \
+     xdotool key "alt+shift+d")
     focus_window '("kitty" "kitty")'
 }
 
 toggle_google_chrome () {
     echo "toggle google chrome => $1"
-    pgrep -fl "chrome" >/dev/null && \
-    focus_window 'Google Chrome":' && \
-    xdotool key "alt+shift+d" && \
+    (pgrep -fl "chrome" >/dev/null && \
+     focus_window '("google-chrome" "Google-chrome")' && \
+     xdotool key "alt+shift+d")
     focus_window '("kitty" "kitty")'
 }
 
@@ -198,6 +199,7 @@ toggle_sway () {
 toggle_zed () {
     sed -i.bak -r 's/"mode": ".*"/"mode": "'$1'"/' \
         $HOME/git/dotfiles/config/zed/settings.json
+    sleep 1
     touch $HOME/git/dotfiles/config/zed/settings.json
 }
 

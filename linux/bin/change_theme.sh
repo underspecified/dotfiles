@@ -15,7 +15,7 @@ else
 fi
 echo "[$(date '+%Y/%m/%d %H:%M:%S')] theme: $curr => $mode"
 
-toggle_kitty $mode
 toggle_desktop $mode
-toggle_zed $mode
 toggle_browser $mode
+toggle_kitty $mode
+toggle_zed $mode
