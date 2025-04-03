@@ -151,7 +151,7 @@ toggle_firefox () {
     (pgrep -fl "firefox" >/dev/null && \
      focus_window '("Navigator" "firefox")' && \
      xdotool key "alt+shift+d")
-    focus_window '("kitty" "kitty")'
+    #focus_window '("kitty" "kitty")'
 }
 
 toggle_google_chrome () {
@@ -159,13 +159,14 @@ toggle_google_chrome () {
     (pgrep -fl "chrome" >/dev/null && \
      focus_window '("google-chrome" "Google-chrome")' && \
      xdotool key "alt+shift+d")
-    focus_window '("kitty" "kitty")'
+    #focus_window '("kitty" "kitty")'
 }
 
 toggle_browser () {
     echo "toggle browser => $1"
     toggle_color_scheme "$1" || \
-    toggle_google_chrome "$1"
+    (toggle_google_chrome "$1"
+     toggle_firefox "$1")
 }
 
 toggle_gnome () {
@@ -200,7 +201,7 @@ toggle_zed () {
     sed -i.bak -r 's/"mode": ".*"/"mode": "'$1'"/' \
         $HOME/git/dotfiles/config/zed/settings.json
     sleep 1
-    touch $HOME/git/dotfiles/config/zed/settings.json
+    zed $HOME/git/dotfiles/config/zed/settings.json
 }
 
 toggle_desktop () {
