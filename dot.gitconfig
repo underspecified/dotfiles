@@ -16,7 +16,6 @@
 	quotepath = false
 	excludesfile = $HOME/.gitignore
 	whitespace = trailing-space,space-before-tab
-	editor = "zed"
 
 [diff]
 	renames = copies
