@@ -20,8 +20,8 @@ set_color_scheme () {
 }
 
 toggle_color_scheme () {
-    [[ "$1" == "dark" ]] && mode="prefer-dark" || mode="prefer-light"
-    set_color_scheme "$mode"
+    [[ "$1" == "dark" ]] && scheme="prefer-dark" || scheme="prefer-light"
+    set_color_scheme "$scheme"
 }
 
 get_gtk_theme () {
@@ -121,14 +121,12 @@ is_night () {
 
 toggle_gnome_dark () {
     toggle_color_scheme "dark"
-    gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
     gsettings set org.gnome.desktop.interface icon-theme "Yaru-dark"
 }
 
 toggle_gnome_light () {
     toggle_color_scheme "light"
-    gsettings set org.gnome.desktop.interface color-scheme prefer-light
     gsettings set org.gnome.desktop.interface gtk-theme "Yaru-light"
     gsettings set org.gnome.desktop.interface icon-theme "Yaru-light"
 }
@@ -148,22 +146,25 @@ focus_window () {
 }
 
 toggle_firefox () {
+    echo "toggle firefox => $1"
+    pgrep -fl "firefox" >/dev/null && \
     focus_window '"Navigator.+firefox)' && \
-    xdotool key "alt+shift+d"
+    xdotool key "alt+shift+d" && \
     focus_window '("kitty" "kitty")'
 }
 
 toggle_google_chrome () {
+    echo "toggle google chrome => $1"
+    pgrep -fl "chrome" >/dev/null && \
     focus_window 'Google Chrome":' && \
-    xdotool key "alt+shift+d"
+    xdotool key "alt+shift+d" && \
     focus_window '("kitty" "kitty")'
 }
 
 toggle_browser () {
     echo "toggle browser => $1"
-    toggle_color_scheme "$1"  # ||
-    #(pgrep -fl "chrome-gnome-shell" >/dev/null && toggle_google_chrome) ||
-    #(pgrep -fl "firefox" >/dev/null && toggle_firefox)
+    toggle_color_scheme "$1" || \
+    toggle_google_chrome "$1"
 }
 
 toggle_gnome () {
