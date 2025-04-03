@@ -21,9 +21,8 @@ install_1password () {
 install_apt () {
     sudo apt update && \
     sudo apt install -y chrome-gnome-shell curl emacs git golang jq keychain openssh-server psensor zsh
-}
 
-install_chrome() {
+install_google_chrome() {
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
     sudo wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sudo apt update
@@ -41,7 +40,6 @@ install_gh () {
     	&& sudo apt install gh -y
     )
 }
-
 
 install_git_credential_1password() {
     [[ -d ~/git/git-credential-1password ]] || {
@@ -83,12 +81,12 @@ PIN
     sudo apt install feh fonts-font-awesome rofi pulseaudio-utils xbacklight alsa-tools clipit gcc git terminator locate pcmanfm acpi libnotify-bin htop
 
     sudo add-apt-repository -y -u ppa:linuxuprising/shutter
-    apt install shutter
+    sudo apt install shutter
 
     (cd ~/git
     git clone https://github.com/szekelyszilv/ybacklight.git
     cd ybacklight/src
-    gcc ybacklight.c -o ~/.local/bin/ybacklight)
+    gcc src/ybacklight.c -o ~/.local/bin/ybacklight)
 
     sudo apt install mlocate && sudo updatedb
 }
@@ -206,6 +204,7 @@ update_less
 install_1password
 install_git_credential_1password
 install_gh
+install_google_chrome
 install_heliocron
 install_kitty
 install_nvidia_drivers
