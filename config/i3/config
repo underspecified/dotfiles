@@ -2,23 +2,14 @@
 
 ### theme and visuals
 
+# load theme and theme-dependent settings
+include theme.config
+
 # borders
 default_border normal 5
 default_floating_border normal 5
 gaps inner 6
 gaps outer 2
-
-# theme
-set $mode dark
-include ~/.config/i3/themes/i3-selenized-$mode.conf
-#include ~/.config/i3/themes/i3status-selenized-$mode.conf
-
-# start dmenu (a program launcher)
-#bindsym $mod+d exec --no-startup-id dmenu_run
-#bindsym $mod+space exec --no-startup-id dmenu_run
-bindsym $mod+d exec --no-startup-id ~/.config/i3/themes/dmenu_selenized_$mode
-bindsym $mod+space exec --no-startup-id ~/.config/i3/themes/dmenu_selenized_$mode
-
 
 ### variables
 
@@ -35,15 +26,9 @@ font pango:Meslo LG S Regular Nerd Font Complete 12
 
 
 ### hyper key
-exec_always --no-startup-id xmodmap ~/.Xmodmap
+exec_always --no-startup-id xmodmap "$HOME/.Xmodmap"
 
 ### key bindings
-
-# Custom bindsyms
-#bindsym $mod+p exec ~/.config/i3/bin/logout
-#bindsym $mod+l exec i3lock -i $wallpaper
-#bindsym $mod+r mode "resize"
-#bindsym $mod+Shift+f exec $HOME/.config/i3/bin/rofifinder
 
 # start terminal by pressing Mod key + ENTER
 bindsym $mod+Return exec $term
@@ -55,7 +40,7 @@ bindsym $mod+Shift+Return exec $browser
 bindsym $mod+q kill
 
 # Toggle your theme
-bindsym $mod+Shift+d exec ~/git/dotfiles/linux/bin/change_theme.sh
+bindsym $mod+d exec $HOME/git/dotfiles/linux/bin/change_theme.sh
 
 # screenshots
 bindsym --release $mod+Print exec shutter -s
