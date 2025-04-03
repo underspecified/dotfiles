@@ -1,4 +1,4 @@
-*.bak
+config/i3/theme.config
 config/kitty/current-theme.conf
 config/kitty/themes.conf
 dot.emacs.d/
@@ -8,6 +8,7 @@ dot.ssh/known_hosts*
 dot.zsh/.zcompdump
 dot.zsh/.zsh_sessions/
 .DS_Store
+*.bak
 *.log
 *.orig
 .build/
