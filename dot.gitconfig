@@ -21,6 +21,7 @@
 	renames = copies
 	mnemonicprefix = true
 	tool = Kaleidoscope
+	editor = "emacs -nw"
 
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
