@@ -9,7 +9,9 @@ echo_and_eval () {
 
 get_gnome_mode () {
     (gsettings get org.gnome.desktop.interface color-scheme |
-     grep -i dark) >/dev/null && \
+     grep -i dark) || \
+    (gsettings get org.gnome.desktop.interface gtk-theme |
+    grep -i dark) && \
     echo "dark" || echo "light"
 }
 
@@ -142,7 +144,19 @@ toggle_sway () {
 }
 
 toggle_zed () {
-    sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
+    sed -i.bak -r 's/"mode": ".*"/"mode": "'$1'"/' \
         ~/git/dotfiles/config/zed/settings.json
     #touch ~/git/dotfiles/config/zed/settings.json
+}
+
+toggle_desktop () {
+    if [[ $XDG_CURRENT_DESKTOP="ubuntu:GNOME" ]]; then
+        toggle_gnome $1
+    elif [[ $XDG_CURRENT_DESKTOP="i3" ]]; then
+        toggle_i3 $1
+    elif [[ $XDG_CURRENT_DESKTOP="Regolith" ]]; then
+        toggle_regolith $1
+    elif [[ $XDG_CURRENT_DESKTOP="sway" ]]; then
+        toggle_sway $1
+    fi
 }
