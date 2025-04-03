@@ -173,11 +173,17 @@ toggle_gnome () {
     echo_and_eval "toggle_gnome_$1"
 }
 
+toggle_i3status () {
+    cp $HOME/git/dotfiles/config/i3status/themes/i3staus-selenized-$1.config \
+       $HOME/git/dotfiles/config/i3status/config
+}
+
 toggle_i3 () {
     sed -E 's/\$mode .+/$mode '$1'/' \
         $HOME/git/dotfiles/config/i3/theme.config.in > \
         $HOME/git/dotfiles/config/i3/theme.config
-    i3 restart 2>/dev/null >/dev/null
+    i3 restart 2>/dev/null >/dev/null && \
+    toggle_i3status
 }
 
 toggle_kitty () {

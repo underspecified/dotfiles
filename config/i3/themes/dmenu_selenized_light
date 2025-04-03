@@ -25,7 +25,6 @@ br_cyan="\#00978a"
 br_orange="\#bc5819"
 br_violet="\#825dc0"
 
-
 echo_and_eval() {
     echo "$@"
     eval "$@"

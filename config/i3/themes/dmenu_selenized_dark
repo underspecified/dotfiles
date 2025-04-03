@@ -30,7 +30,6 @@ echo_and_eval() {
     eval "$@"
 }
 
-
 j4-dmenu-desktop --term=kitty --dmenu="\
     dmenu_run \
         -fn 'Meslo LG S Regular Nerd Font Complete 20' \

@@ -2,7 +2,6 @@
 set $mode light
 include $HOME/.config/i3/theme.config
 include $HOME/.config/i3/themes/i3-selenized-$mode.conf
-#include $HOME/.config/i3/themes/i3status-selenized-$mode.conf
 
 # start dmenu (a program launcher)
 bindsym $mod+space exec --no-startup-id $HOME/.config/i3/themes/dmenu_selenized_$mode
