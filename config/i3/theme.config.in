@@ -8,7 +8,7 @@ include $themes/i3-selenized-$mode.conf
 bindsym $mod+space exec --no-startup-id $themes/dmenu_selenized_$mode
 
 # lock screen
-bindsym $mod+l exec i3lock -i $themes/selenized-$mode-wallpaper.png -u
+bindsym $mod+l exec $themes/i3lock-selenized-$mode.sh
 
 # wallpaper
 exec_always --no-startup-id feh --bg-fill $themes/selenized-$mode-wallpaper.png
