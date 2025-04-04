@@ -206,8 +206,8 @@ toggle_sway () {
 toggle_zed () {
     sed -i.bak -r 's/"mode": ".*"/"mode": "'$1'"/' \
         $HOME/git/dotfiles/config/zed/settings.json
-    sleep 1
-    zed $HOME/git/dotfiles/config/zed/settings.json
+    #sleep 1
+    #zed $HOME/git/dotfiles/config/zed/settings.json
 }
 
 toggle_desktop () {
