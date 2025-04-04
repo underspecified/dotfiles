@@ -65,30 +65,25 @@ install_heliocron () {
 ### https://i3wm.org/docs/repositories.html
 ### https://kifarunix.com/install-and-setup-i3-windows-manager-on-ubuntu-20-04/
 install_i3 () {
-    /usr/lib/apt/apt-helper download-file https://debian.sur5r.net/i3/pool/main/s/sur5r-keyring/sur5r-keyring_2024.03.04_all.deb keyring.deb SHA256:f9bb4340b5ce0ded29b7e014ee9ce788006e9bbfe31e96c09b2118ab91fca734
+    /usr/lib/apt/apt-helper download-file https://debian.sur5r.net/i3/pool/main/s/sur5r-keyring/sur5r-keyring_2025.03.09_all.deb keyring.deb SHA256:2c2601e6053d5c68c2c60bcd088fa9797acec5f285151d46de9c830aaba6173c
     sudo apt install ./keyring.deb
-    echo "deb http://debian.sur5r.net/i3/ $(grep '^DISTRIB_CODENAME=' /etc/lsb-release | cut -f2 -d=) universe" | sudo tee /etc/apt/sources.list.d/sur5r-i3.list
-
-    sudo cat << PIN > /etc/apt/preferences.d/00-i3-autobuild.pref
-Package: i3*
-Pin: origin "baltocdn.com"
-Pin-Priority: 1001
-PIN
+    echo "deb [signed-by=/usr/share/keyrings/sur5r-keyring.gpg] http://debian.sur5r.net/i3/ $(grep '^VERSION_CODENAME=' /etc/os-release | cut -f2 -d=) universe" | sudo tee /etc/apt/sources.list.d/sur5r-i3.list
 
     sudo apt update
     sudo apt install i3
+    sudo apt install feh j4-dmenu-desktop
 
-    sudo apt install feh fonts-font-awesome rofi pulseaudio-utils xbacklight alsa-tools clipit gcc git terminator locate pcmanfm acpi libnotify-bin htop
+    # sudo apt install feh fonts-font-awesome rofi pulseaudio-utils xbacklight alsa-tools clipit gcc git terminator locate pcmanfm acpi libnotify-bin htop
 
-    sudo add-apt-repository -y -u ppa:linuxuprising/shutter
-    sudo apt install shutter
+    # sudo add-apt-repository -y -u ppa:linuxuprising/shutter
+    # sudo apt install shutter
 
-    (cd ~/git
-    git clone https://github.com/szekelyszilv/ybacklight.git
-    cd ybacklight/src
-    gcc src/ybacklight.c -o ~/.local/bin/ybacklight)
+    # (cd ~/git
+    # git clone https://github.com/szekelyszilv/ybacklight.git
+    # cd ybacklight/src
+    # gcc src/ybacklight.c -o ~/.local/bin/ybacklight)
 
-    sudo apt install mlocate && sudo updatedb
+    # sudo apt install mlocate && sudo updatedb
 }
 
 ### install kitty
@@ -122,12 +117,16 @@ install_nvidia_drivers () {
 }
 
 install_nvidia_repo () {
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb
-    sudo dpkg -i cuda-keyring_1.0-1_all.deb
-    rm cuda-keyring_1.0-1_all.deb
-    sudo wget -O /etc/apt/preferences.d/cuda-repository-pin-600 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
-    sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
-    sudo add-apt-repository "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb
+    sudo dpkg -i cuda-keyring_1.1-1_all.deb
+    rm cuda-keyring_1.1-1_all.deb
+    sudo apt update
+
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-archive-keyring.gpg
+    sudo mv cuda-archive-keyring.gpg /usr/share/keyrings/cuda-archive-keyring.gpg
+
+    echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/repos/ubuntu2004/ /" \
+        | tee /etc/apt/sources.list.d/cuda-repos-ubuntu2004.list
 }
 
 install_polybar () {
@@ -206,7 +205,8 @@ install_git_credential_1password
 install_gh
 install_google_chrome
 install_heliocron
+install_i3
 install_kitty
 install_nvidia_drivers
-install_regolith
+#install_regolith
 install_zed
