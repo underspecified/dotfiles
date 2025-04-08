@@ -28,12 +28,12 @@
   },
 
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "Base16 selenized-light",
     "dark": "Base16 selenized-dark"
   },
-  //"ui_font_size": 12,
-  //"buffer_font_size": 12,
+  "ui_font_size": 12,
+  "buffer_font_size": 12,
   "autosave": "on_focus_change",
   "preferred_line_length": 80,
   "soft_wrap": "preferred_line_length"

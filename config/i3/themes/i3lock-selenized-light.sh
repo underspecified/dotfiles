@@ -71,3 +71,6 @@ LC_ALL="en_US.UTF-8" i3lock \
   --pass-screen-keys \
   --pass-volume-keys \
   --image=$CURDIR/selenized-light-wallpaper.png
+
+  # Turn the screen off after a delay.
+  sleep 60; pgrep i3lock && xset dpms force off
