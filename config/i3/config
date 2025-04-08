@@ -174,18 +174,17 @@ mode "resize" {
     bindsym Escape mode "default"
 }
 
-#
-# Pulse Audio controls
+
+### Pulse Audio controls
 # run pactl list sinks
-#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-#bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume#
+#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% # increase sound volume
+#bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% # decrease sound volume0
 #bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 1 toggle # mute sound
 
-# Amixer
-
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master 5%+ #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master 5%- #decrease sound volume#
-bindsym XF86AudioMute exec --no-startup-id amixer -q set Master toggle # mute sound
+### Amixer
+#bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master 5%+ #increase sound volume
+#bindsym XF86AudioLowerVolume exec --no-startup-id amixer -D pulse sset Master 5%- #decrease sound volume#
+#bindsym XF86AudioMute exec --no-startup-id amixer -q set Master toggle # mute sound
 
 # Sreen brightness controls
 # enable passwordless sudo for ybacklight. echo "koromicha ALL=NOPASSWD: /usr/bin/ybacklight" > /etc/sudoers.d/ybacklight
@@ -193,12 +192,19 @@ bindsym XF86MonBrightnessUp exec sudo ybacklight -inc 5 # increase screen bright
 bindsym XF86MonBrightnessDown exec sudo ybacklight -dec 5 # decrease screen brightness
 
 
-# Startup programs
-exec --no-startup-id dunst
-exec_always compton &;
-exec --no-startup-id clipit &;
-exec_always feh --bg-scale $wallpaper
-exec_always --no-startup-id nm-applet
+### Startup programs
+
+# notification manager
+#exec --no-startup-id dunst
+
+# composite manager
+exec_always --no-startup-id picom &;
+
+# clipboard manager
+#exec --no-startup-id clipit &;
+
+# network manager
+#exec_always --no-startup-id nm-applet
 
 
 # Bind App to workspace
