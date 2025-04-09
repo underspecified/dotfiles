@@ -5,7 +5,7 @@ CONFIG_DIR=$(realpath "$CUR_DIR/../config")
 LOG_DIR=$(realpath "$CUR_DIR/../log")
 
 echo_and_eval () {
-    echo "$@"
+    [[ "$DEBUG" ]] && echo "$@"
     eval "$@"
 }
 
@@ -29,10 +29,11 @@ toggle_borders () {
 
 toggle_kitten () {
     [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
-     echo_and_eval "/opt/homebrew/bin/kitten themes \
+    cmd="/opt/homebrew/bin/kitten themes \
         --config-file-name=$CONFIG_DIR/kitty/themes.conf \
-        --reload-in=all \
-        $theme"
+        --reload-in=all"
+    echo_and_eval "$cmd $theme" || \
+    echo_and_eval "$cmd --cache-age=-1 $theme"
     #echo_and_eval "/opt/homebrew/bin/kitten @ load-config --to unix:/tmp/mykitty"
 }
 
