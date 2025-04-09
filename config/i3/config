@@ -206,6 +206,8 @@ exec_always --no-startup-id picom &;
 # network manager
 #exec_always --no-startup-id nm-applet
 
+#1password
+exec_always --no-startup-id 1password --silent
 
 # Bind App to workspace
 # Check class by using xprop command
