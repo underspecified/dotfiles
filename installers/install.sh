@@ -70,8 +70,7 @@ install_i3 () {
     echo "deb [signed-by=/usr/share/keyrings/sur5r-keyring.gpg] http://debian.sur5r.net/i3/ $(grep '^VERSION_CODENAME=' /etc/os-release | cut -f2 -d=) universe" | sudo tee /etc/apt/sources.list.d/sur5r-i3.list
 
     sudo apt update
-    sudo apt install i3
-    sudo apt install feh j4-dmenu-desktop
+    sudo apt install i3 i3-wm feh j4-dmenu-desktop xautolock
 
     # sudo apt install feh fonts-font-awesome rofi pulseaudio-utils xbacklight alsa-tools clipit gcc git terminator locate pcmanfm acpi libnotify-bin htop
 
