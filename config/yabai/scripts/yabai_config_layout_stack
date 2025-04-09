@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PATH="/opt/homebrew/bin:$PATH"
+PATH="$HOME/git/dotfiles/config/yabai/scripts:$PATH"
 
 yabai_config_layout_stack () {
   yabai -m config layout stack
@@ -13,10 +14,11 @@ yabai_get_sorted_window_ids () {
 
 yabai_restack_windows () {
   while read id; do
-    yabai -m window $id --stack last
+    yabai -m window $id --focus &&
+    yabai3 stack-enter west
   done
 }
 
-yabai_config_layout_stack && \
-(yabai_get_sorted_window_ids |
- yabai_restack_windows)
+yabai_config_layout_stack
+# (yabai_get_sorted_window_ids |
+#  yabai_restack_windows)

@@ -1,91 +1,128 @@
+### Launch apps
+# application launcher: Alfred
+ctrl + alt - space : osascript -e 'tell application id "com.runningwithcrayons.Alfred" to search'
+# change themes
+ctrl + alt - d : change_theme.sh
+# terminal: kitty
+ctrl + alt - return : open_kitty
+# broswer: Safari
+shift + ctrl + alt - return : open_safari
+# finder
+ ctrl + alt - f : open ~
+
+### Configuration
+ctrl + alt - c : skhd --reload
+ctrl + alt - r : yabai --restart-service; skhd --restart-service
+
+
 # Launch : Help
-cmd + alt + ctrl - space : yabai -m rule --add app="^yabai-help-overlay$" sticky=on layer=above manage=off && open /Applications/yabai-help-overlay.app
+#cmd + alt + ctrl - space : yabai -m rule --add app="^yabai-help-overlay$" sticky=on layer=above manage=off && open /Applications/yabai-help-overlay.app
 
 # Layout : 3 column
-cmd + alt + ctrl - 3 : $HOME/.config/yabai/scripts/yabai_config_layout_3col
+cmd + alt + ctrl - 3 : yabai_config_layout_3col
 # Layout : BSP
-cmd + alt + ctrl - b : $HOME/.config/yabai/scripts/yabai_config_layout_bsp
+cmd + alt + ctrl - b : yabai_config_layout_bsp
 # Layout : Stack
-cmd + alt + ctrl - s : $HOME/.config/yabai/scripts/yabai_config_layout_stack
+cmd + alt + ctrl - s : yabai_config_layout_stack
 
 # Focus : Focus recent window
-cmd + alt + ctrl - 0x2C : $HOME/.config/yabai/scripts/yabai_window_focus_recent
+ctrl + alt - 0x2C : yabai_window_focus_recent
 # Focus : Focus left window
-cmd + alt + ctrl - left : $HOME/.config/yabai/scripts/yabai_window_focus_left
+ctrl + alt - h : yabai3 focus west
 # Focus : Focus bottom window
-cmd + alt + ctrl - down : $HOME/.config/yabai/scripts/yabai_window_focus_down
+ctrl + alt - j : yabai3 focus south
 # Focus : Focus top window
-cmd + alt + ctrl - up : $HOME/.config/yabai/scripts/yabai_window_focus_up
+ctrl + alt - k : yabai3 focus north
 # Focus : Focus right window
-cmd + alt + ctrl - right : $HOME/.config/yabai/scripts/yabai_window_focus_right
+ctrl + alt - l : yabai3 focus east
+# Focus : Focus left window
+ctrl + alt - left : yabai3 focus west
+# Focus : Focus bottom window
+ctrl + alt - down : yabai3 focus south
+# Focus : Focus top window
+ctrl + alt - up : yabai3 focus north
+# Focus : Focus right window
+ctrl + alt - right : yabai3 focus east
 
 # Swap : Swap recent window
-shift + cmd + alt + ctrl - 0x2C : $HOME/.config/yabai/scripts/yabai_window_swap_recent
+shift + ctrl + alt - 0x2C : yabai_window_swap_recent
 # Swap : Swap left window
-shift + cmd + alt + ctrl - left : $HOME/.config/yabai/scripts/yabai_window_swap_left
+shift + ctrl + alt - h : yabai3 move west
 # Swap : Swap bottom window
-shift + cmd + alt + ctrl - down : $HOME/.config/yabai/scripts/yabai_window_swap_down
+shift + ctrl + alt - j : yabai3 move north
 # Swap : Swap top window
-shift + cmd + alt + ctrl - up : $HOME/.config/yabai/scripts/yabai_window_swap_up
+shift + ctrl + alt - k : yabai3 move south
 # Swap : Swap right window
-shift + cmd + alt + ctrl - right : $HOME/.config/yabai/scripts/yabai_window_swap_right
+shift + ctrl + alt - l : yabai3 move east
+# Swap : Swap left window
+shift + ctrl + alt - left : yabai3 move west
+# Swap : Swap bottom window
+shift + ctrl + alt - down : yabai3 move north
+# Swap : Swap top window
+shift + ctrl + alt - up : yabai3 move south
+# Swap : Swap right window
+shift + ctrl + alt - right : yabai3 move east
 
+# Warp : Warp recent window
+ctrl + alt + cmd - 0x2C : yabai_window_swap_recent
 # Warp : Warp window to left
-shift + cmd - left : yabai -m window --warp west
+ctrl + alt + cmd - h : yabai3 stack-enter west
 # Warp : Warp window to bottom
-shift + cmd - down : yabai -m window --warp south
+ctrl + alt + cmd - j : yabai3 stack-enter south
 # Warp : Warp window to top
-shift + cmd - up : yabai -m window --warp north
+ctrl + alt + cmd - k : yabai3 stack-enter north
 # Warp : Warp window to left
-shift + cmd - right : yabai -m window --warp east
+ctrl + alt + cmd - l : yabai3 stack-enter east
+# Warp : Warp window to left
+ctrl + alt + cmd - left : yabai3 stack-enter west
+# Warp : Warp window to bottom
+ctrl + alt + cmd - down : yabai3 stack-enter south
+# Warp : Warp window to top
+ctrl + alt + cmd - up : yabai3 stack-enter north
+# Warp : Warp window to left
+ctrl + alt + cmd - right : yabai3 stack-enter east
 
-# Move : Move window left
-shift + ctrl - a : yabai -m window --move rel:-20:0
-# Move : Move window top
-shift + ctrl - s : yabai -m window --move rel:0:20
-# Move : Move window bottom
-shift + ctrl - w : yabai -m window --move rel:0:-20
-# Move : Move window right
-shift + ctrl - d : yabai -m window --move rel:20:0
+# Grow window: ctrl + alt - equals
+ctrl + alt - 0x18 : ( \
+    ((yabai -m window west --resize right:-20:0 && echo "W<-") && \
+     (yabai -m window east --resize left:20:0 && echo "E->")) || \
+    (yabai -m window --resize right:20:0 && echo "R->") || \
+    (yabai -m window --resize left:-20:0 && echo "L->") \
+)
 
-# Resize : Stretch window left
-shift + cmd + alt + ctrl - a : yabai -m window --resize left :-20:0
-# Resize : Stretch window top
-shift + cmd + alt + ctrl - s : yabai -m window --resize bottom:0:20
-# Resize : Stretch window bottom
-shift + cmd + alt + ctrl - w : yabai -m window --resize top:0:-20
-# Resize : Stretch window right
-shift + cmd + alt + ctrl - d : yabai -m window --resize right:20:0
-
-# Resize : Shrink window left
-shift + cmd - a : yabai -m window --resize left :20:0
-# Resize : Shrink window bottom
-shift + cmd - s : yabai -m window --resize bottom:0:-20
-# Resize : Shrink window top
-shift + cmd - w : yabai -m window --resize top:0:20
-# Resize : Shrink window right
-shift + cmd - d : yabai -m window --resize right:-20:0
-
-# Misc: Rotate tree
-cmd + alt + ctrl - r : yabai -m space --rotate 90
-
-# Misc: Mirror tree y-axis
-cmd + alt + ctrl - y : yabai -m space --mirror y-axis
-
-# Misc: Mirror tree x-axis
-cmd + alt + ctrl - x : yabai -m space --mirror x-axis
-
-# Misc: Toggle desktop offset
-cmd + alt + ctrl - a : yabai -m space --toggle padding && yabai -m space --toggle gap
+# Shrink windows: ctrl - alt - minus
+ctrl + alt - 0x1B : ( \
+    ((yabai -m window east --resize left:-20:0 && echo "E<-") && \
+     (yabai -m window west --resize right:20:0 && echo "W->")) || \
+    (yabai -m window --resize left:20:0 && echo "L->") || \
+    (yabai -m window --resize right:-20:0 && echo "R<-") \
+)
 
 # Resize: Toggle window fullscreen zoom
-cmd + alt + ctrl - f : yabai -m window --toggle zoom-fullscreen
-
-# Resize: Toggle window native fullscreen
-shift + cmd + alt + ctrl - f : yabai -m window --toggle native-fullscreen
-
-# Misc: Toggle window split type
-cmd + alt + ctrl - e : yabai -m window --toggle split
+shift + ctrl + alt - f : yabai -m window --toggle zoom-fullscreen
 
 # Misc: Float / unfloat window
-cmd + alt + ctrl - t : yabai -m window --toggle float && yabai -m window --grid 4:4:1:1:2:2
+ctrl + alt + shift - space : yabai -m window --toggle float && \
+    yabai -m window --grid 4:4:1:1:2:2
+
+# Spaces navigation: move between spaces
+ctrl + alt - 1 : yabai -m space --focus 1
+ctrl + alt - 2 : yabai -m space --focus 2
+ctrl + alt - 3 : yabai -m space --focus 3
+ctrl + alt - 4 : yabai -m space --focus 4
+ctrl + alt - 5 : yabai -m space --focus 5
+ctrl + alt - 6 : yabai -m space --focus 6
+ctrl + alt - 7 : yabai -m space --focus 7
+ctrl + alt - 8 : yabai -m space --focus 8
+ctrl + alt - 9 : yabai -m space --focus 9
+
+# Spaces navigation: move apps between spaces
+shift + ctrl + alt - 1 : yabai -m window --space 1
+shift + ctrl + alt - 2 : yabai -m window --space 2
+shift + ctrl + alt - 3 : yabai -m window --space 3
+shift + ctrl + alt - 4 : yabai -m window --space 4
+shift + ctrl + alt - 5 : yabai -m window --space 5
+shift + ctrl + alt - 6 : yabai -m window --space 6
+shift + ctrl + alt - 7 : yabai -m window --space 7
+shift + ctrl + alt - 8 : yabai -m window --space 8
+shift + ctrl + alt - 9 : yabai -m window --space 9

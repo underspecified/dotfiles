@@ -5,7 +5,7 @@ PATH="/opt/homebrew/bin:$PATH"
 yabai_window_focus_left () {
   yabai -m window --focus west || \
   yabai -m window --focus stack.prev || \
-  yabai -m window --focus stack.last
+  yabai -m window --focus stack.first
 }
 
 yabai_window_focus_left
