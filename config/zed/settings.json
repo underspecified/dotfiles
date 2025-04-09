@@ -28,7 +28,7 @@
   },
 
   "theme": {
-    "mode": "dark",
+    "mode": "light",
     "light": "Base16 selenized-light",
     "dark": "Base16 selenized-dark"
   },
