@@ -12,7 +12,7 @@ after-login-command = []
 after-startup-command = ['exec-and-forget /opt/homebrew/bin/borders']
 
 # Start AeroSpace at login
-start-at-login = true
+start-at-login = false
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
 enable-normalization-flatten-containers = true
@@ -106,9 +106,9 @@ PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebr
 # end tell'
 # '''
 
-cmd-ctrl-alt-d = 'exec-and-forget change_theme.sh'
-cmd-ctrl-alt-f = 'exec-and-forget open ~'
-cmd-ctrl-alt-enter = '''exec-and-forget osascript -e '
+ctrl-alt-d = 'exec-and-forget change_theme.sh'
+ctrl-alt-f = 'exec-and-forget open ~'
+ctrl-alt-enter = '''exec-and-forget osascript -e '
 tell application "Kitty"
     activate
 end tell
@@ -118,9 +118,9 @@ end tell'
 '''
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-cmd-ctrl-alt-slash = 'layout tiles horizontal vertical'
-cmd-ctrl-alt-comma = 'layout accordion horizontal vertical'
-cmd-ctrl-alt-period = 'layout floating tiling'
+ctrl-alt-slash = 'layout tiles horizontal vertical'
+ctrl-alt-comma = 'layout accordion horizontal vertical'
+ctrl-alt-period = 'layout floating tiling'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
 ctrl-alt-h = 'focus left'
@@ -134,101 +134,101 @@ ctrl-alt-up = 'focus up'
 ctrl-alt-right = 'focus right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
-cmd-ctrl-alt-h = ['fullscreen off', 'layout tiling', 'move left']
-cmd-ctrl-alt-j = ['fullscreen off', 'layout tiling', 'move down']
-cmd-ctrl-alt-k = ['fullscreen off', 'layout tiling', 'move up']
-cmd-ctrl-alt-l = ['fullscreen off', 'layout tiling', 'move right']
+ctrl-alt-shift-h = ['fullscreen off', 'layout tiling', 'move left']
+ctrl-alt-shift-j = ['fullscreen off', 'layout tiling', 'move down']
+ctrl-alt-shift-k = ['fullscreen off', 'layout tiling', 'move up']
+ctrl-alt-shift-l = ['fullscreen off', 'layout tiling', 'move right']
 
-cmd-ctrl-alt-left = ['fullscreen off', 'layout tiling', 'move left']
-cmd-ctrl-alt-down = ['fullscreen off', 'layout tiling', 'move down']
-cmd-ctrl-alt-up = ['fullscreen off', 'layout tiling', 'move up']
-cmd-ctrl-alt-right = ['fullscreen off', 'layout tiling', 'move right']
+ctrl-alt-shift-left = ['fullscreen off', 'layout tiling', 'move left']
+ctrl-alt-shift-down = ['fullscreen off', 'layout tiling', 'move down']
+ctrl-alt-shift-up = ['fullscreen off', 'layout tiling', 'move up']
+ctrl-alt-shift-right = ['fullscreen off', 'layout tiling', 'move right']
 
-cmd-ctrl-alt-shift-h = [
+cmd-ctrl-alt-h = [
     'fullscreen off',
     'layout tiling',
     'join-with left',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-j = [
+cmd-ctrl-alt-j = [
     'fullscreen off',
     'layout tiling',
     'join-with down',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-k = [
+cmd-ctrl-alt-k = [
     'fullscreen off',
     'layout tiling',
     'join-with up',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-l = [
+cmd-ctrl-alt-l = [
     'fullscreen off',
     'layout tiling',
     'join-with right',
     'layout accordion',
 ]
 
-cmd-ctrl-alt-shift-left = [
+cmd-ctrl-alt-left = [
     'fullscreen off',
     'layout tiling',
     'join-with left',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-down = [
+cmd-ctrl-alt-down = [
     'fullscreen off',
     'layout tiling',
     'join-with down',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-up = [
+cmd-ctrl-alt-up = [
     'fullscreen off',
     'layout tiling',
     'join-with up',
     'layout accordion',
 ]
-cmd-ctrl-alt-shift-right = [
+cmd-ctrl-alt-right = [
     'fullscreen off',
     'layout tiling',
     'join-with right',
     'layout accordion',
 ]
 
-cmd-ctrl-alt-u = 'fullscreen on'
-cmd-ctrl-alt-shift-u = 'fullscreen off'
+ctrl-alt-u = 'fullscreen on'
+ctrl-alt-shift-u = 'fullscreen off'
 
-cmd-ctrl-alt-w = 'enable toggle'
+ctrl-alt-w = 'enable toggle'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
-cmd-ctrl-alt-minus = 'resize smart -50'
-cmd-ctrl-alt-equal = 'resize smart +50'
+ctrl-alt-minus = 'resize smart -50'
+ctrl-alt-equal = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-cmd-ctrl-alt-1 = 'workspace 1'
-cmd-ctrl-alt-2 = 'workspace 2'
-cmd-ctrl-alt-z = 'workspace 3' # 3 doesn't work with hyper key
-cmd-ctrl-alt-4 = 'workspace 4'
-cmd-ctrl-alt-5 = 'workspace 5'
-cmd-ctrl-alt-6 = 'workspace 6'
-cmd-ctrl-alt-7 = 'workspace 7'
-cmd-ctrl-alt-8 = 'workspace 8'
-cmd-ctrl-alt-9 = 'workspace 9'
+ctrl-alt-1 = 'workspace 1'
+ctrl-alt-2 = 'workspace 2'
+ctrl-alt-z = 'workspace 3' # 3 doesn't work with hyper key
+ctrl-alt-4 = 'workspace 4'
+ctrl-alt-5 = 'workspace 5'
+ctrl-alt-6 = 'workspace 6'
+ctrl-alt-7 = 'workspace 7'
+ctrl-alt-8 = 'workspace 8'
+ctrl-alt-9 = 'workspace 9'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-cmd-ctrl-alt-shift-1 = 'move-node-to-workspace 1'
-cmd-ctrl-alt-shift-2 = 'move-node-to-workspace 2'
-cmd-ctrl-alt-shift-z = 'move-node-to-workspace 3' # 3 doesn't work with hyper key
-cmd-ctrl-alt-shift-4 = 'move-node-to-workspace 4'
-cmd-ctrl-alt-shift-5 = 'move-node-to-workspace 5'
-cmd-ctrl-alt-shift-6 = 'move-node-to-workspace 6'
-cmd-ctrl-alt-shift-7 = 'move-node-to-workspace 7'
-cmd-ctrl-alt-shift-8 = 'move-node-to-workspace 8'
-cmd-ctrl-alt-shift-9 = 'move-node-to-workspace 9'
+ctrl-alt-shift-1 = 'move-node-to-workspace 1'
+ctrl-alt-shift-2 = 'move-node-to-workspace 2'
+ctrl-alt-shift-z = 'move-node-to-workspace 3' # 3 doesn't work with hyper key
+ctrl-alt-shift-4 = 'move-node-to-workspace 4'
+ctrl-alt-shift-5 = 'move-node-to-workspace 5'
+ctrl-alt-shift-6 = 'move-node-to-workspace 6'
+ctrl-alt-shift-7 = 'move-node-to-workspace 7'
+ctrl-alt-shift-8 = 'move-node-to-workspace 8'
+ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 
 ctrl-left = ' workspace prev --wrap-around'
 ctrl-right = 'workspace next --wrap-around'
-cmd-ctrl-alt-shift-tab = 'workspace prev --wrap-around'
-cmd-ctrl-alt-tab = 'workspace next --wrap-around'
+ctrl-alt-shift-tab = 'workspace prev --wrap-around'
+ctrl-alt-tab = 'workspace next --wrap-around'
 
 
 # [[on-window-detected]]
@@ -284,17 +284,17 @@ run = 'move-node-to-workspace 4'
 if.app-id = 'com.google.Chrome'
 run = 'move-node-to-workspace 4'
 
-[[on-window-detected]]
-if.app-id = 'com.microsoft.Excel'
-run = 'move-node-to-workspace 5'
+# [[on-window-detected]]
+# if.app-id = 'com.microsoft.Excel'
+# run = 'move-node-to-workspace 5'
 
-[[on-window-detected]]
-if.app-id = 'com.microsoft.Powerpoint'
-run = 'move-node-to-workspace 5'
+# [[on-window-detected]]
+# if.app-id = 'com.microsoft.Powerpoint'
+# run = 'move-node-to-workspace 5'
 
-[[on-window-detected]]
-if.app-id = 'com.microsoft.Word'
-run = 'move-node-to-workspace 5'
+# [[on-window-detected]]
+# if.app-id = 'com.microsoft.Word'
+# run = 'move-node-to-workspace 5'
 
 [[on-window-detected]]
 if.app-id = 'com.agiletortoise.Drafts-OSX'
