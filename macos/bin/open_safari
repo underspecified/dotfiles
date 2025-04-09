@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#/usr/bin/osascript -e 'tell application "Safari" to get front document'
+#/usr/bin/osascript -e 'tell application "Safari" to make new document'
+
+unset -v TabCreationPolicy ExitStatus
+if ! TabCreationPolicy="$(defaults read -app Safari TabCreationPolicy 2>/dev/null)"; then
+  TabCreationPolicy=1
+fi
+if [[ $TabCreationPolicy != 0 ]]; then
+  defaults write -app Safari TabCreationPolicy 0
+fi
+open -a Safari "topsites://"
+ExitStatus=$?
+if [[ $TabCreationPolicy != 0 ]]; then
+  defaults write -app Safari TabCreationPolicy "$TabCreationPolicy"
+fi
+exit $ExitStatus

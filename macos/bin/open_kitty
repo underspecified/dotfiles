@@ -1,0 +1,12 @@
+#!/usr/bin/env zsh
+
+# osascript -e << EOS
+
+# tell application "kitty"
+#     activate
+#     make new document
+# end tell
+
+# EOS
+
+kitty @ --to /tmp/mykitty launch --copy-env --cwd=/Users/eric zsh --login -c "cd ~"
