@@ -8,8 +8,8 @@ include $themes/i3-selenized-$mode.conf
 bindsym $mod+space exec --no-startup-id $themes/dmenu_selenized_$mode
 
 # lock screen
-bindsym $mod+l exec $themes/i3lock-selenized-$mode.sh
-exec xautolock -time 1 -locker "$themes/i3lock-selenized-$mode.sh" -corners "00+-" &
+bindsym $mod+l exec --no-startup-id $themes/i3lock-selenized-$mode.sh
+exec_always --no-startup-id xautolock -time 1 -locker "$themes/i3lock-selenized-$mode.sh" -corners "00+-" -restart &
 
 # wallpaper
 exec_always --no-startup-id feh --bg-fill $themes/selenized-$mode-wallpaper.png
