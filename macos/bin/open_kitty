@@ -1,12 +1,9 @@
-#!/usr/bin/env zsh
+#!/bin/bash
 
-# osascript -e << EOS
-
-# tell application "kitty"
-#     activate
-#     make new document
-# end tell
-
-# EOS
-
-kitty @ --to /tmp/mykitty launch --copy-env --cwd=/Users/eric zsh --login -c "cd ~"
+osascript -e '
+tell application "Kitty"
+    activate
+end tell
+tell application "System Events"
+    keystroke "n" using {command down}
+end tell'
