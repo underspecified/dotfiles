@@ -60,6 +60,7 @@ LC_ALL="en_US.UTF-8" i3lock \
   --noinput="No Input" \
   --lock-text="Locking..." \
   --lockfailed="Lock Failed" \
+  --ignore-empty-password \
   --time-font="$font" \
   --date-font="$font" \
   --layout-font="$font" \
