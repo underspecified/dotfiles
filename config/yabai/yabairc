@@ -76,4 +76,11 @@ yabai -m config mouse_drop_action            swap
 # yabai -m signal --add label=display_removed event=display_removed \
 #   action="source ${BASH_SOURCE:-$0}"
 
+yabai -m rule --add title='Settings$' manage=off
+yabai -m rule --add app="^System Preferences$" manage=off
+yabai -m rule --add app="^System Information$" manage=off
+yabai -m rule --add title="^Preferences$" manage=off
+yabai -m rule --add title="^Digital Colour Meter$" manage=off
+yabai -m rule --add title="^General.*" manage=off
+
 echo "yabai configuration loaded."
