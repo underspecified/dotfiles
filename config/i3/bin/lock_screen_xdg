@@ -1,0 +1,13 @@
+#!/bin/bash
+
+LOCK_MIN=1
+LOCK_SEC=60
+IDLE_MIN=2
+IDLE_SEC=120
+
+gsettings set org.gnome.desktop.background picture-uri "file://$1"
+#gsettings set org.gnome.desktop.session idle-delay $IDLE_SEC
+#gsettings set org.gnome.desktop.screensaver lock-delay $LOCK_SEC
+
+#xdg-screensaver lock
+gnome-screensaver-command -l

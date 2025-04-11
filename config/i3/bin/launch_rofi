@@ -1,0 +1,8 @@
+#!/bin/bash
+
+[[ -f "$1" ]] && \
+source "$1" && \
+theme="$HOME/git/dotfiles/config/rofi/selenized-$mode.rasi"
+
+# Run rofi app launcher
+j4-dmenu-desktop --dmenu="rofi -dmenu -i -p 'apps' -theme $theme"

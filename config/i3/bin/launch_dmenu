@@ -1,0 +1,16 @@
+#!/bin/bash
+
+fmt () {
+    echo "#$(echo $1 | tr 'a-z' 'A-Z')"
+}
+
+[[ -f "$1" ]] && source "$1"
+font_pt="$font 20"
+
+j4-dmenu-desktop --term=kitty --dmenu="\
+    dmenu_run \
+        -fn \"$font_pt\" \
+        -nb \"$(fmt $bg_0)\" \
+        -nf \"$(fmt $fg_0)\" \
+        -sb \"$(fmt $blue)\" \
+        -sf \"$(fmt $bg_0)\""

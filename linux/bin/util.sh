@@ -169,6 +169,10 @@ toggle_browser () {
      toggle_firefox "$1")
 }
 
+toggle_env () {
+    source "$HOME/git/dotfiles/config/i3/themes/selenized_$1.env"
+}
+
 toggle_gnome () {
     echo_and_eval "toggle_gnome_$1"
 }
@@ -179,11 +183,9 @@ toggle_i3status () {
 }
 
 toggle_i3 () {
-    sed -E 's/\$mode .+/$mode '$1'/' \
-        $HOME/git/dotfiles/config/i3/theme.config.in > \
-        $HOME/git/dotfiles/config/i3/theme.config
-    i3 restart 2>/dev/null >/dev/null && \
-    toggle_i3status
+    $HOME/git/dotfiles/config/i3/bin/i3_update_config $1
+    #toggle_i3status
+    i3 restart
 }
 
 toggle_kitty () {
@@ -211,6 +213,8 @@ toggle_zed () {
 }
 
 toggle_desktop () {
+    # echo "toggle env => $1"
+    # toggle_env $1
     #if [[ "$XDG_CURRENT_DESKTOP" == "ubuntu:GNOME" ]]; then
         echo "toggle gnome => $1"
         toggle_gnome $1
