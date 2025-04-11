@@ -106,15 +106,15 @@ ctrl + alt + shift - space : yabai -m window --toggle float && \
     yabai -m window --grid 4:4:1:1:2:2
 
 # Spaces navigation: move between spaces
-ctrl + alt - 1 : yabai -m space --focus 1
-ctrl + alt - 2 : yabai -m space --focus 2
-ctrl + alt - 3 : yabai -m space --focus 3
-ctrl + alt - 4 : yabai -m space --focus 4
-ctrl + alt - 5 : yabai -m space --focus 5
-ctrl + alt - 6 : yabai -m space --focus 6
-ctrl + alt - 7 : yabai -m space --focus 7
-ctrl + alt - 8 : yabai -m space --focus 8
-ctrl + alt - 9 : yabai -m space --focus 9
+ctrl + alt - 1 : yabai -m space --focus 1 || yabai -m space --focus recent
+ctrl + alt - 2 : yabai -m space --focus 2 || yabai -m space --focus recent
+ctrl + alt - 3 : yabai -m space --focus 3 || yabai -m space --focus recent
+ctrl + alt - 4 : yabai -m space --focus 4 || yabai -m space --focus recent
+ctrl + alt - 5 : yabai -m space --focus 5 || yabai -m space --focus recent
+ctrl + alt - 6 : yabai -m space --focus 6 || yabai -m space --focus recent
+ctrl + alt - 7 : yabai -m space --focus 7 || yabai -m space --focus recent
+ctrl + alt - 8 : yabai -m space --focus 8 || yabai -m space --focus recent
+ctrl + alt - 9 : yabai -m space --focus 9 || yabai -m space --focus recent
 
 # Spaces navigation: move apps between spaces
 shift + ctrl + alt - 1 : yabai -m window --space 1
