@@ -96,7 +96,6 @@ install_i3lock () {
      git clone https://github.com/Raymo111/i3lock-color.git
      cd i3lock-color
      sudo ./install-i3lock-color.sh)
-)
 }
 
 ### install kitty
