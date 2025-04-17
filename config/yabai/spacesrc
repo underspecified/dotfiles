@@ -1,33 +1,38 @@
-## desktop labels
-#yabai -m space 1 --label mail
-#yabai -m space 2 --label social
-#yabai -m space 3 --label code
-#yabai -m space 4 --label web
-#yabai -m space 5 --label misc
+### space labels
+yabai -m space 1 --label mail
+yabai -m space 2 --label social
+yabai -m space 3 --label code
+yabai -m space 4 --label web
+yabai -m space 5 --label misc
 
-## app-specific settings
-#yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
-#yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
-#yabai -m rule --add label="App Store" app="^App Store$" manage=off
-#yabai -m rule --add label="Color Picker" app="^Color Picker$" title=".*" manage=off
-#yabai -m rule --add label="ColorSlurp" app="ColorSlurp" title=".*" manage=off
-#yabai -m rule --add label="Dictionary" app="^Dictionary$" manage=off
-#yabai -m rule --add label="Microsoft Teams (float)" app="Microsoft Teams" title="^(Meeting|\[.*\]).*|" manage=off
-#yabai -m rule --add label="Safari" app="^Safari$" title="^(General|Tabs|Passwords|Websites|Extensions|AutoFill|Search|Security|Privacy|Advanced)$" manage=off 
-#yabai -m rule --add label="Software Update" title="Software Update" manage=off
-#yabai -m rule --add label="System Settings" app="System Settings" manage=off
-##yabai -m rule --add label="yabai-help-overlay" app="yabai-help-overlay" manage=off
 
 ## default spaces
-#yabai -m rule --add label="Microsoft Outlook" app="Microsoft Outlook" space=mail
-#yabai -m rule --add label="Things" app="Things" space=mail
-#yabai -m rule --add label="Microsoft Teams" app="Microsoft Teams" space=social
-#yabai -m rule --add label="Messages" app="Messages" space=social
-#yabai -m rule --add label="Signal" app="Signal" space=social
-#yabai -m rule --add label="Slack" app="Slack" space=social
-#yabai -m rule --add label="Zoom" app="zoom.us" space=social
-#yabai -m rule --add label="kitty" app="kitty" space=code
-#yabai -m rule --add label="Visual Studio Code" app="Code" space=code
-#yabai -m rule --add app="Safari" title!="(reddit|YouTube)" space=code
-#yabai -m rule --add label="Chrome" app="Chrome" space=web
-#yabai -m rule --add app="Safari" title="(reddit|YouTube)" space=web
+yabai -m rule --add label="space_1__microsoft_outlook" app="Microsoft Outlook" space=mail
+yabai -m rule --add label="space_1__things" app="Things" space=mail
+yabai -m rule --add label="space_2__microsoft_teams" app="Microsoft Teams" space=social
+yabai -m rule --add label="space_2__messages" app="Messages" space=social
+yabai -m rule --add label="space_2__signal" app="Signal" space=social
+yabai -m rule --add label="space_2__slack" app="Slack" space=social
+yabai -m rule --add label="space_2__zoom" app="zoom.us" space=social
+yabai -m rule --add label="space_3__kitty" app="kitty" space=code
+yabai -m rule --add label="space_3__zed" app="Zed" space=code
+yabai -m rule --add label="space_3__safari" app="Safari" space=code
+yabai -m rule --add label="space_4__chrome" app="Chrome" space=web
+
+
+## app-specific settings
+yabai -m rule --add label="manage_off__activity_monitor" app="^Activity Monitor$" manage=off
+yabai -m rule --add label="manage_off__app_store" app="^App Store$" manage=off
+yabai -m rule --add label="manage_off__colorslurp" app="ColorSlurp" title=".*" manage=off
+yabai -m rule --add label="manage_off__dictionary" app="^Dictionary$" manage=off
+yabai -m rule --add label="manage_off__digital_color_meter" title="^Digital Color Meter$" manage=off
+yabai -m rule --add label="manage_off__drafts" app="^Drafts$" manage=off
+yabai -m rule --add label="manage_off__general" title="^General.*" manage=off
+yabai -m rule --add label="manage_off__microsoft_outlook_calendar" app="^Microsoft Outlook$" title="• Calendar •" manage=off
+yabai -m rule --add label="manage_off__microsoft_teams" app="Microsoft Teams" title="^\(Meeting\|\[.*\]\).*\|" manage=off
+yabai -m rule --add label="manage_off__preferences" title="^Preferences$" manage=off
+yabai -m rule --add label="manage_off__safari_settings" app="^Safari$" title="^(General|Tabs|Passwords|Websites|Extensions|AutoFill|Search|Security|Privacy|Advanced)$" manage=off
+yabai -m rule --add label="manage_off__settings" title='Settings$' manage=off
+yabai -m rule --add label="manage_off__software_update" title="Software Update" manage=off
+yabai -m rule --add label="manage_off__system_information" app="^System Information$" manage=off
+yabai -m rule --add label="manage_off__system_settings" app="System Settings" manage=off

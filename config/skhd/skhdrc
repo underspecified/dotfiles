@@ -3,12 +3,14 @@
 ctrl + alt - space : osascript -e 'tell application id "com.runningwithcrayons.Alfred" to search'
 # change themes
 ctrl + alt - d : change_theme.sh
+# change themes
+shift + ctrl + alt - d : open -a Drafts
 # terminal: kitty
 ctrl + alt - return : open_kitty
 # broswer: Safari
 shift + ctrl + alt - return : open_safari
 # finder
- ctrl + alt - f : open ~
+shift + ctrl + alt - f : open ~
 
 ### Configuration
 ctrl + alt - c : skhd --reload
@@ -24,6 +26,10 @@ cmd + alt + ctrl - 3 : yabai_config_layout_3col
 cmd + alt + ctrl - b : yabai_config_layout_bsp
 # Layout : Stack
 cmd + alt + ctrl - s : yabai_config_layout_stack
+
+# balance size of windows
+ctrl + alt - a : yabai_config_layout_cols
+
 
 # Focus : Focus recent window
 ctrl + alt - 0x2C : yabai_window_focus_recent
@@ -99,22 +105,22 @@ ctrl + alt - 0x1B : ( \
 )
 
 # Resize: Toggle window fullscreen zoom
-shift + ctrl + alt - f : yabai -m window --toggle zoom-fullscreen
+ctrl + alt - f : yabai -m window --toggle zoom-fullscreen
 
 # Misc: Float / unfloat window
-ctrl + alt + shift - space : yabai -m window --toggle float && \
+shift + ctrl + alt - space : yabai -m window --toggle float && \
     yabai -m window --grid 4:4:1:1:2:2
 
 # Spaces navigation: move between spaces
-ctrl + alt - 1 : yabai -m space --focus 1 || yabai -m space --focus recent
-ctrl + alt - 2 : yabai -m space --focus 2 || yabai -m space --focus recent
-ctrl + alt - 3 : yabai -m space --focus 3 || yabai -m space --focus recent
-ctrl + alt - 4 : yabai -m space --focus 4 || yabai -m space --focus recent
-ctrl + alt - 5 : yabai -m space --focus 5 || yabai -m space --focus recent
-ctrl + alt - 6 : yabai -m space --focus 6 || yabai -m space --focus recent
-ctrl + alt - 7 : yabai -m space --focus 7 || yabai -m space --focus recent
-ctrl + alt - 8 : yabai -m space --focus 8 || yabai -m space --focus recent
-ctrl + alt - 9 : yabai -m space --focus 9 || yabai -m space --focus recent
+ctrl + alt - 1 : yabai -m space --focus 1
+ctrl + alt - 2 : yabai -m space --focus 2
+ctrl + alt - 3 : yabai -m space --focus 3
+ctrl + alt - 4 : yabai -m space --focus 4
+ctrl + alt - 5 : yabai -m space --focus 5
+ctrl + alt - 6 : yabai -m space --focus 6
+ctrl + alt - 7 : yabai -m space --focus 7
+ctrl + alt - 8 : yabai -m space --focus 8
+ctrl + alt - 9 : yabai -m space --focus 9
 
 # Spaces navigation: move apps between spaces
 shift + ctrl + alt - 1 : yabai -m window --space 1

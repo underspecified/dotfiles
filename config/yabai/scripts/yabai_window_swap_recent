@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PATH="/opt/homebrew/bin:$PATH"
-
-yabai_window_swap_recent () {
-  yabai -m window --swap recent
-}
-
-yabai_window_swap_recent

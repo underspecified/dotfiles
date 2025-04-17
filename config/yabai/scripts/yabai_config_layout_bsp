@@ -19,12 +19,17 @@ yabai_get_spaces () {
 
 yabai_get_window_ids () {
   yabai -m query --spaces |
-  jq -e '.[] | select(.index=='$1') | .windows | .[]'
+  jq -e ".[] |
+         select(.index==$1) |
+         .windows |
+         .[]"
 }
 
 yabai_get_first_window_id () {
   yabai -m query --spaces |
-  jq -e '.[] | select(.index=='$1') | ."first-window"'
+  jq -e '.[] |
+         select(.index=='$1') |
+         ."first-window"'
 }
 
 yabai_warp_window () {
@@ -52,12 +57,15 @@ yabai_warp_all_space_windows () {
 
 yabai_get_sorted_window_ids () {
   yabai -m query --windows |
-  jq -e 'sort_by(."stack-index") | sort_by(.space) | .[] | .id'
+  jq -e 'sort_by(."stack-index") |
+         sort_by(.space) |
+         .[] |
+         .id'
 }
 
 yabai_unstack_windows () {
   while read id; do
-    yabai -m window $id --focus &&
+    yabai -m window $id --focus && \
     yabai3 move west
   done
 }

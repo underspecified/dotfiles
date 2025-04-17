@@ -5,11 +5,11 @@ PATH="/opt/homebrew/bin:$PATH"
 YABAI_DIR=$(dirname "${BASH_SOURCE:-$0}")
 
 ### start script add-on
-yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+yabai -m signal --add label="dock_did_restart__load_sa" event=dock_did_restart action="sudo yabai --load-sa"
 sudo yabai --load-sa
 
 ### start janky borders
-borders
+borders 2>/dev/null
 
 ### global settings
 yabai -m config layout                       bsp
@@ -17,20 +17,19 @@ yabai -m config mouse_follows_focus          off
 yabai -m config focus_follows_mouse          off
 yabai -m config window_origin_display        default
 yabai -m config window_placement             second_child
-yabai -m config window_topmost               off
 yabai -m config window_shadow                on
 yabai -m config window_opacity               off
 yabai -m config window_opacity_duration      0.0
 yabai -m config active_window_opacity        1.0
-yabai -m config normal_window_opacity        0.9
-yabai -m config top_padding 8
-yabai -m config bottom_padding 8
-yabai -m config left_padding 8
-yabai -m config right_padding 8
-yabai -m config window_gap 14
+yabai -m config normal_window_opacity        1.0
+yabai -m config top_padding                  8
+yabai -m config bottom_padding               8
+yabai -m config left_padding                 8
+yabai -m config right_padding                8
+yabai -m config window_gap                   14
 yabai -m config insert_feedback_color        0xffdd383a
-yabai -m config split_ratio                  0.50
-yabai -m config auto_balance                 on
+#yabai -m config split_ratio                 0.50
+#yabai -m config auto_balance                 on
 yabai -m config mouse_modifier               alt
 yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
@@ -40,33 +39,32 @@ yabai -m config mouse_drop_action            swap
 #source "$YABAI_DIR/scripts/tab_fix"
 
 ### settings for spaces
-#source "$YABAI_DIR/spacesrc"
+source "$YABAI_DIR/spacesrc"
+yabai -m rule --list
 
-#### MS Teams sucks
-#### https://github.com/koekeishiya/yabai/issues/74
-#yabai -m signal --add \
-#      event=application_activated \
-#      app="^Microsoft Teams$" \
-#      action="$YABAI_DIR/scripts/defeat_teams"
-#
-#yabai -m signal --add \
-#      event=window_focused \
-#      app="^Microsoft Teams$" \
-#      title="^Microsoft Teams Notification$" \
-#	  action="$YABAI_DIR/scripts/defeat_teams"
+display_aspect () {
+    jq -nr --argjson display "$(yabai -m query --displays --display)" \
+    'if ($display | .frame | (.w / .h) >= 2.33) then "ULTRAWIDE" else "WIDE" end'
+}
 
-# CONFIG_DIR=$(dirname "${BASH_SOURCE:-$0}")
-# echo "CONFIG_DIR: $CONFIG_DIR"
 
-# # external monitor
-# if yabai -m query --displays --display 1 | jq -e '.frame | .w > 2000' > /dev/null; then
-#     echo "YABAI: EXTERNAL DISPLAY"
-#     source "$YABAI_DIR/external_display"
-# # laptop display
-# else
-#     echo "YABAI: LAPTOP DISPLAY"
-#     source "$YABAI_DIR/laptop_display"
-# fi
+# use columns
+bash "$YABAI_DIR/scripts/yabai_config_layout_cols"
+
+# external monitor
+aspect=$(display_aspect)
+if [[ $aspect = "ULTRAWIDE" ]]; then
+    echo "YABAI: $aspect DISPLAY"
+    yabai -m config split_ratio 0.33
+# laptop display
+else
+    echo "YABAI: $aspect DISPLAY"
+    yabai -m config split_ratio 0.5
+fi
+#yabai -m signal --list
+
+# rebalance
+$YABAI_DIR/scripts/yabai_rebalance
 
 # # reload this file when a display is added
 # yabai -m signal --add label=display_added event=display_added \
@@ -75,12 +73,5 @@ yabai -m config mouse_drop_action            swap
 # # reload this file when a display is removed
 # yabai -m signal --add label=display_removed event=display_removed \
 #   action="source ${BASH_SOURCE:-$0}"
-
-yabai -m rule --add title='Settings$' manage=off
-yabai -m rule --add app="^System Preferences$" manage=off
-yabai -m rule --add app="^System Information$" manage=off
-yabai -m rule --add title="^Preferences$" manage=off
-yabai -m rule --add title="^Digital Colour Meter$" manage=off
-yabai -m rule --add title="^General.*" manage=off
 
 echo "yabai configuration loaded."
