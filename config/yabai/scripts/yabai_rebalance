@@ -1,0 +1,12 @@
+#!/bin/bash
+
+yabai_rebalance() {
+	yabai -m config auto_balance off
+	yabai -m config auto_balance on
+
+	yabai -m query --spaces |
+	jq '.[].index' |
+	xargs -I'{}' yabai -m space '{}' --balance
+}
+
+yabai_rebalance

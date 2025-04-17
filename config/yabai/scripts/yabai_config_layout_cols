@@ -1,0 +1,29 @@
+#!/bin/bash
+
+PATH="/opt/homebrew/bin:$PATH"
+SCRIPTS_DIR=$(realpath $(dirname "${BASH_SOURCE:-$0}"))
+
+echo_and_eval () {
+    echo "$@"
+    eval "$@"
+}
+
+
+# register events
+action="yabai_window_insert_vertical"
+for event in window_focused application_activated; do
+	echo_and_eval yabai -m signal --add \
+	   label="${event}_${action}" \
+	   active=yes \
+	   event="${event}" \
+	   action="${SCRIPTS_DIR}/${action}"
+done
+
+# when loading the script, convert all existing splits to horizontal
+yabai -m query --windows |
+jq -r '.[] |
+       select(."split-type" == "horizontal") |
+       select(."split-child" == "first_child").id' |
+xargs -I{} yabai -m window {} --toggle split
+
+yabai_rebalance
