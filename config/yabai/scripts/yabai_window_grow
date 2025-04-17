@@ -1,0 +1,10 @@
+#!/bin/bash
+
+yabai_window_grow() {
+    ((yabai -m window west --resize right:-20:0 && echo "W<-") && \
+     (yabai -m window east --resize left:20:0 && echo "E->")) || \
+    (yabai -m window --resize right:20:0 && echo "R->") || \
+    (yabai -m window --resize left:-20:0 && echo "L->") \
+}
+
+yabai_window_grow

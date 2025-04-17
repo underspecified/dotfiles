@@ -1,38 +1,26 @@
 ### Launch apps
 # application launcher: Alfred
-ctrl + alt - space : osascript -e 'tell application id "com.runningwithcrayons.Alfred" to search'
+ctrl + alt - space : open_alfred
 # change themes
 ctrl + alt - d : change_theme.sh
 # change themes
-shift + ctrl + alt - d : open -a Drafts
+shift + ctrl + alt - d : open_drafts
 # terminal: kitty
 ctrl + alt - return : open_kitty
 # broswer: Safari
 shift + ctrl + alt - return : open_safari
 # finder
-shift + ctrl + alt - f : open ~
+shift + ctrl + alt - f : open_finder
 
 ### Configuration
 ctrl + alt - c : skhd --reload
 ctrl + alt - r : yabai --restart-service; skhd --restart-service
 
 
-# Launch : Help
-#cmd + alt + ctrl - space : yabai -m rule --add app="^yabai-help-overlay$" sticky=on layer=above manage=off && open /Applications/yabai-help-overlay.app
-
-# Layout : 3 column
-cmd + alt + ctrl - 3 : yabai_config_layout_3col
-# Layout : BSP
-cmd + alt + ctrl - b : yabai_config_layout_bsp
-# Layout : Stack
-cmd + alt + ctrl - s : yabai_config_layout_stack
-
-# balance size of windows
+# load column layout and rebalance apps
 ctrl + alt - a : yabai_config_layout_cols
 
 
-# Focus : Focus recent window
-ctrl + alt - 0x2C : yabai_window_focus_recent
 # Focus : Focus left window
 ctrl + alt - h : yabai3 focus west
 # Focus : Focus bottom window
@@ -50,8 +38,6 @@ ctrl + alt - up : yabai3 focus north
 # Focus : Focus right window
 ctrl + alt - right : yabai3 focus east
 
-# Swap : Swap recent window
-shift + ctrl + alt - 0x2C : yabai_window_swap_recent
 # Swap : Swap left window
 shift + ctrl + alt - h : yabai3 move west
 # Swap : Swap bottom window
@@ -69,8 +55,6 @@ shift + ctrl + alt - up : yabai3 move south
 # Swap : Swap right window
 shift + ctrl + alt - right : yabai3 move east
 
-# Warp : Warp recent window
-ctrl + alt + cmd - 0x2C : yabai_window_swap_recent
 # Warp : Warp window to left
 ctrl + alt + cmd - h : yabai3 stack-enter west
 # Warp : Warp window to bottom
@@ -89,20 +73,9 @@ ctrl + alt + cmd - up : yabai3 stack-enter north
 ctrl + alt + cmd - right : yabai3 stack-enter east
 
 # Grow window: ctrl + alt - equals
-ctrl + alt - 0x18 : ( \
-    ((yabai -m window west --resize right:-20:0 && echo "W<-") && \
-     (yabai -m window east --resize left:20:0 && echo "E->")) || \
-    (yabai -m window --resize right:20:0 && echo "R->") || \
-    (yabai -m window --resize left:-20:0 && echo "L->") \
-)
-
+ctrl + alt - 0x18 : yabai_window_grow
 # Shrink windows: ctrl - alt - minus
-ctrl + alt - 0x1B : ( \
-    ((yabai -m window east --resize left:-20:0 && echo "E<-") && \
-     (yabai -m window west --resize right:20:0 && echo "W->")) || \
-    (yabai -m window --resize left:20:0 && echo "L->") || \
-    (yabai -m window --resize right:-20:0 && echo "R<-") \
-)
+ctrl + alt - 0x1B : yabai_window_shrink
 
 # Resize: Toggle window fullscreen zoom
 ctrl + alt - f : yabai -m window --toggle zoom-fullscreen
