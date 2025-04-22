@@ -7,6 +7,14 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "edit_predictions": {
+    "mode": "subtle",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null
+    },
+    "enabled_in_assistant": false
+  },
   "assistant": {
     "default_model": {
       "provider": "copilot_chat",
@@ -32,9 +40,10 @@
     "light": "Base16 selenized-light",
     "dark": "Base16 selenized-dark"
   },
-  "ui_font_size": 11,
-  "buffer_font_size": 11,
+  //"ui_font_size": 11,
+  //"buffer_font_size": 11,
   "autosave": "on_focus_change",
   "preferred_line_length": 80,
   "soft_wrap": "preferred_line_length"
+  //"show_completions_on_input": false
 }
