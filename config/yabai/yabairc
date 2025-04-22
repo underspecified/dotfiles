@@ -27,7 +27,7 @@ yabai -m config bottom_padding               8
 yabai -m config left_padding                 8
 yabai -m config right_padding                8
 yabai -m config window_gap                   14
-yabai -m config insert_feedback_color        0xffdd383a
+yabai -m config insert_feedback_color        0x00FFFFFF #0xffdd383a
 #yabai -m config split_ratio                 0.50
 #yabai -m config auto_balance                 on
 yabai -m config mouse_modifier               alt
@@ -42,36 +42,22 @@ yabai -m config mouse_drop_action            swap
 source "$YABAI_DIR/spacesrc"
 yabai -m rule --list
 
-display_aspect () {
-    jq -nr --argjson display "$(yabai -m query --displays --display)" \
-    'if ($display | .frame | (.w / .h) >= 2.33) then "ULTRAWIDE" else "WIDE" end'
-}
+# use column layout
+YABAI_COL_WIDTH=800
+bash "$YABAI_DIR/scripts/yabai_config_layout_cols" $YABAI_COL_WIDTH
 
+### reload this file when a display is added
+yabai -m signal --add label=display_changed event=display_added \
+    action="bash $YABAI_DIR/yabairc"
 
-# use columns
-bash "$YABAI_DIR/scripts/yabai_config_layout_cols"
+### reload this file when a display is removed
+#yabai -m signal --add label=display_removed event=display_removed \
+#    action="bash $YABAI_DIR/yabairc"
 
-# external monitor
-aspect=$(display_aspect)
-if [[ $aspect = "ULTRAWIDE" ]]; then
-    echo "YABAI: $aspect DISPLAY"
-    yabai -m config split_ratio 0.33
-# laptop display
-else
-    echo "YABAI: $aspect DISPLAY"
-    yabai -m config split_ratio 0.5
-fi
-#yabai -m signal --list
+# list signals
+yabai -m signal --list
 
 # rebalance
 $YABAI_DIR/scripts/yabai_rebalance
-
-# # reload this file when a display is added
-# yabai -m signal --add label=display_added event=display_added \
-#   action="source ${BASH_SOURCE:-$0}"
-
-# # reload this file when a display is removed
-# yabai -m signal --add label=display_removed event=display_removed \
-#   action="source ${BASH_SOURCE:-$0}"
 
 echo "yabai configuration loaded."
