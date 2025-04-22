@@ -1,0 +1,79 @@
+#!/bin/bash
+
+echo_and_eval() {
+    echo "$@"
+    eval "$@"
+}
+
+yabai_focused_space () {
+    yabai -m query --spaces --space | jq '.index'
+}
+
+yabai_display_width () {
+    yabai -m query --displays --display | jq '.frame.w'
+}
+
+yabai_focused_window_width () {
+   (yabai -m query --windows --window |
+    jq -r --argjson space $(yabai_focused_space) \
+        'select(.space == $space) | .frame.w') || \
+    yabai_display_width
+}
+
+yabai_window_width () {
+    yabai -m query --windows --window $1 | jq '.frame.w'
+
+}
+
+round () {
+    xargs -I{} python -c "print(int(round({})))"
+}
+
+yabai_cols () {
+    echo "1.0 / $(yabai -m config split_ratio)" |
+    bc -l |
+    round
+}
+
+yabai_col_width () {
+    echo "$(yabai_display_width) * $(yabai -m config split_ratio)" |
+    bc -l |
+    round
+}
+
+yabai_auto_balance () {
+    yabai -m config auto_balance
+}
+
+yabai_split_ratio () {
+    yabai -m config split_ratio
+}
+
+yabai_window_last_id () {
+    yabai -m query --windows --window last | jq '.id'
+}
+
+yabai_window_space () {
+    yabai -m query --windows --window $1 | jq '.space'
+}
+
+yabai_space_min_width () {
+    yabai -m query --windows --space $1 | jq '[.[].frame.w] | min'
+}
+
+yabai_window_insert_col () {
+    window_placement=$(yabai -m config window_placement)
+    win_width=$(yabai_space_min_width $space || yabai_window_width)
+    col_width=$(yabai_col_width)
+    direction="$(jq -nr \
+           --arg window_placement "$window_placement" \
+           --argjson win_width "$win_width" \
+           --argjson col_width "$col_width" \
+        '[["west", "east"], ["north", "south"]]
+         [if $win_width >= (1.1 * $col_width) then 0 else 1 end]
+	     [if $window_placement == "first_child" then 0 else 1 end]')"
+
+	echo_and_eval yabai -m window --insert $direction
+}
+
+yabai_window_insert_col $@
