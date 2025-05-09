@@ -28,6 +28,7 @@ yabai -m rule --add label="manage_off__dictionary" app="^Dictionary$" manage=off
 yabai -m rule --add label="manage_off__digital_color_meter" title="^Digital Color Meter$" manage=off
 yabai -m rule --add label="manage_off__drafts" app="^Drafts$" manage=off
 yabai -m rule --add label="manage_off__general" title="^General.*" manage=off
+yabai -m rule --add label="manage_off__kaleidoscope" app="^Kaleidoscope$" manage=off
 yabai -m rule --add label="manage_off__microsoft_outlook_calendar" app="^Microsoft Outlook$" title="• Calendar •" manage=off
 yabai -m rule --add label="manage_off__microsoft_teams" app="Microsoft Teams" title="^\(Meeting\|\[.*\]\).*\|" manage=off
 yabai -m rule --add label="manage_off__preferences" title="^Preferences$" manage=off
@@ -36,3 +37,5 @@ yabai -m rule --add label="manage_off__settings" title='Settings$' manage=off
 yabai -m rule --add label="manage_off__software_update" title="Software Update" manage=off
 yabai -m rule --add label="manage_off__system_information" app="^System Information$" manage=off
 yabai -m rule --add label="manage_off__system_settings" app="System Settings" manage=off
+
+yabai -m rule --add label="manage_on__citrix" app="Citrix" manage=on

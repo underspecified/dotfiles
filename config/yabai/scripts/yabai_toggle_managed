@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Get the current window ID
+window_id=$(yabai -m query --windows --window | jq '.id')
+
+# Check if the window is currently managed
+is_managed=$(yabai -m query --windows --window | jq '.["is-managed"]')
+
+if [ "$is_managed" = "true" ]; then
+    # If managed, turn off management
+    yabai -m rule --add label="temp_unmanage_$window_id" app=".*" title=".*" manage=off --one-shot
+else
+    # If unmanaged, remove any existing rules for this window and let it be managed
+    # First identify the app and title
+    window_info=$(yabai -m query --windows --window)
+    app=$(echo $window_info | jq -r '.app')
+    title=$(echo $window_info | jq -r '.title')
+
+    # Remove existing unmanage rules for this app/title
+    yabai -m rule --remove "temp_unmanage_$window_id"
+
+    # Force a refresh by moving the window slightly
+    yabai -m window --move rel:1:0
+    yabai -m window --move rel:-1:0
+fi
+
+# Restart yabai to apply changes
+#yabai --restart-service

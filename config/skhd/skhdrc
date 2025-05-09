@@ -80,9 +80,12 @@ ctrl + alt - 0x1B : yabai_window_shrink
 # Resize: Toggle window fullscreen zoom
 ctrl + alt - f : yabai -m window --toggle zoom-fullscreen
 
-# Misc: Float / unfloat window
+# Misc: Float + resize / unfloat window
 shift + ctrl + alt - space : yabai -m window --toggle float && \
     yabai -m window --grid 4:4:1:1:2:2
+
+# Misc: Float / unfloat window: ctrl + alt - .
+ctrl + alt - 0x2F : yabai -m window --toggle float
 
 # Spaces navigation: move between spaces
 ctrl + alt - 1 : yabai -m space --focus 1
