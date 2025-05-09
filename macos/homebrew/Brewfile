@@ -87,7 +87,6 @@ cask "apparency"
 cask "appcleaner"
 cask "audio-hijack"
 cask "avast-security"
-cask "background-music"
 cask "balenaetcher"
 cask "bartender"
 cask "betterdisplay"
@@ -159,7 +158,6 @@ cask "parallels-toolbox"
 cask "pearcleaner"
 cask "photosweeper-x"
 cask "popclip"
-cask "pycharm-ce"
 cask "qlcolorcode"
 cask "qlimagesize"
 cask "qlmarkdown"
@@ -170,8 +168,6 @@ cask "quicklookase"
 cask "r"
 cask "raspberry-pi-imager"
 cask "rstudio"
-cask "secretive"
-cask "selfcontrol"
 cask "shottr"
 cask "signal"
 cask "skim"
@@ -180,15 +176,11 @@ cask "slack"
 cask "soundsource"
 cask "spotify"
 cask "suspicious-package"
-cask "swish"
 cask "tg-pro"
 cask "tigervnc-viewer"
-cask "topnotch"
-cask "typora"
 cask "visual-studio-code"
 cask "viz"
 cask "vlc"
-cask "webstorm"
 cask "whatsapp"
 cask "zed"
 cask "zoom"
@@ -206,9 +198,7 @@ mas "Deliveries", id: 290986013
 mas "djay Pro", id: 450527929
 mas "Drafts", id: 1435957248
 mas "Dropover", id: 1355679052
-mas "Enchanted", id: 6474268307
 mas "Focus Matrix", id: 1087284172
-mas "GarageBand", id: 682658836
 mas "Gifski", id: 1351639930
 mas "iA Writer", id: 775737590
 mas "iMovie", id: 408981434
