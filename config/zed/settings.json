@@ -8,12 +8,13 @@
 // from the command palette or from `Zed` application menu.
 {
   "edit_predictions": {
-    "mode": "subtle",
+    //"mode": "subtle",
     "copilot": {
       "proxy": null,
       "proxy_no_verify": null
     }
   },
+
   "agent": {
     "always_allow_tool_actions": true,
     "default_model": {
@@ -22,12 +23,25 @@
     },
     "version": "2"
   },
+
   "jupyter": {
     "kernel_selections": {
       "python": "conda-env",
       "typescript": "deno",
       "javascript": "deno",
       "r": "ark"
+    }
+  },
+
+  "lsp": {
+    "texlab": {
+      "binary": {
+        "env": {
+          "TEXINPUTS": ".:./local:",
+          "BIBINPUTS": ".:./local:",
+          "BSTINPUTS": ".:./local:"
+        }
+      }
     }
   },
 
@@ -40,6 +54,7 @@
     "light": "Base16 selenized-light",
     "dark": "Base16 selenized-dark"
   },
+
   //"ui_font_size": 11,
   //"buffer_font_size": 11,
   "autosave": "on_focus_change",
