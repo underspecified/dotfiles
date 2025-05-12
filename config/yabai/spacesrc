@@ -15,7 +15,7 @@ yabai -m rule --add label="space_2__signal" app="Signal" space=social
 yabai -m rule --add label="space_2__slack" app="Slack" space=social
 yabai -m rule --add label="space_2__zoom" app="zoom.us" space=social
 #yabai -m rule --add label="space_3__kitty" app="kitty" space=code
-yabai -m rule --add label="space_3__zed" app="Zed" space=code
+#yabai -m rule --add label="space_3__zed" app="Zed" space=code
 #yabai -m rule --add label="space_3__safari" app="Safari" space=code
 #yabai -m rule --add label="space_4__chrome" app="Chrome" space=web
 
