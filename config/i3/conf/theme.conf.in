@@ -3,6 +3,7 @@
 ### modifier keys
 set $mod Mod4
 
+
 #set ${mode} {dark,light}
 set $theme_env $HOME/git/dotfiles/config/i3/themes/selenized_$mode.env
 set $wallpaper $HOME/git/dotfiles/wallpaper/selenized_$mode_hd.png
@@ -28,5 +29,5 @@ exec_always --no-startup-id feh --bg-fill $wallpaper
 set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_xdg
 set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_xdg
 
-exec_always --no-startup-id $screensaver $wallpaper &
+exec_always --no-startup-id $screensaver $wallpaper
 bindsym $mod+l exec $locker $wallpaper
