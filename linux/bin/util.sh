@@ -6,22 +6,30 @@ echo_and_eval () {
     echo "$@"
     eval "$@"
 }
+get_freedesktop_color_scheme () {
+    gsettings get org.freedesktop.appearance color-scheme
+}
 
-get_color_scheme () {
-    # Get the current color scheme from gsettings
-    gsettings get org.freedesktop.appearance color-scheme ||
+set_freedesktop_color_scheme () {
+    gsettings set org.freedesktop.appearance color-scheme "$1"
+}
+
+toggle_freedesktop_color_scheme () {
+    [[ "$1" == "dark" ]] && scheme="prefer-dark" || scheme="prefer-light"
+    set_freedesktop_color_scheme "$scheme"
+}
+
+get_gnome_color_scheme () {
     gsettings get org.gnome.desktop.interface color-scheme
 }
 
-set_color_scheme () {
-    # Set the color scheme using gsettings
-    gsettings set org.freedesktop.appearance color-scheme "$1" ||
+set_gnome_color_scheme () {
     gsettings set org.gnome.desktop.interface color-scheme "$1"
 }
 
-toggle_color_scheme () {
+toggle_gnome_color_scheme () {
     [[ "$1" == "dark" ]] && scheme="prefer-dark" || scheme="prefer-light"
-    set_color_scheme "$scheme"
+    set_gnome_color_scheme "$scheme"
 }
 
 get_gtk_theme () {
@@ -38,7 +46,7 @@ toggle_gtk_theme () {
 }
 
 get_gnome_mode () {
-    if [[ `(get_color_scheme || get_gtk_theme) | grep -i 'dark'` ]]; then
+    if [[ `(get_gnome_color_scheme || get_gtk_theme) | grep -i 'dark'` ]]; then
         echo "dark"
     else
         echo "light"
@@ -120,13 +128,13 @@ is_night () {
 }
 
 toggle_gnome_dark () {
-    toggle_color_scheme "dark"
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
     gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
     gsettings set org.gnome.desktop.interface icon-theme "Yaru-dark"
 }
 
 toggle_gnome_light () {
-    toggle_color_scheme "light"
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
     gsettings set org.gnome.desktop.interface gtk-theme "Yaru-light"
     gsettings set org.gnome.desktop.interface icon-theme "Yaru-light"
 }

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bash "$HOME/git/dotfiles/linux/bin/change_theme.sh" light
+bash "$HOME/git/dotfiles/linux/bin/change_desktop.sh" light
