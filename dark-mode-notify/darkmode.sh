@@ -92,7 +92,7 @@ if [[ -n ${DARKMODE+x} ]]; then
     [[ $DARKMODE == "1" ]] && mode="dark" || mode="light"
     #toggle_zed $mode
     (toggle_borders $mode
-    toggle_kitten $mode
+    #toggle_kitten $mode
     toggle_pdf_expert $mode
     #toggle_rstudio $mode
     toggle_alfred $mode) |
