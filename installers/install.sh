@@ -21,6 +21,7 @@ install_1password () {
 install_apt () {
     sudo apt update && \
     sudo apt install -y chrome-gnome-shell curl emacs git golang jq keychain openssh-server psensor zsh
+}
 
 install_google_chrome() {
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
@@ -120,25 +121,25 @@ install_kitty () {
 ### install nvidia drivers and cuda
 install_nvidia_drivers () {
     sudo apt update && \
-    sudo apt install -y --allow-change-held-packages nvidia-settings=560.35.05-0ubuntu1 && \
-    sudo apt install -y --allow-change-held-packages nvidia-open-560=560.35.05-0ubuntu1 nvidia-driver-560-open nvidia-compute-utils-560 nvidia-utils-560 xserver-xorg-video-nvidia-560 \
-                        libnvidia-cfg1-560 libnvidia-common-560 libnvidia-compute-560 libnvidia-decode-560 libnvidia-extra-560 \
-                        libnvidia-encode-560 libnvidia-gl-560 && \
-    sudo apt install -y cuda-12-6 cuda-runtime-12-6 cuda-demo-suite-12-6 && \
-    sudo apt-mark hold nvidia-driver-560-open nvidia-settings cuda-12-6
+    sudo apt install -y \
+         nvidia-driver-575-open nvidia-compute-utils-575 nvidia-utils-575 \
+	 xserver-xorg-video-nvidia-575 libnvidia-cfg1-575 libnvidia-common-575 \
+	 libnvidia-compute-575 libnvidia-decode-575 libnvidia-extra-575 \
+         libnvidia-encode-575 libnvidia-gl-575 && \
+    sudo apt install -y cuda-12-9 cuda-runtime-12-9 cuda-demo-suite-12-9
 }
 
 install_nvidia_repo () {
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
     sudo dpkg -i cuda-keyring_1.1-1_all.deb
     rm cuda-keyring_1.1-1_all.deb
     sudo apt update
 
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-archive-keyring.gpg
+    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-archive-keyring.gpg
     sudo mv cuda-archive-keyring.gpg /usr/share/keyrings/cuda-archive-keyring.gpg
 
-    echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/repos/ubuntu2004/ /" \
-        | tee /etc/apt/sources.list.d/cuda-repos-ubuntu2004.list
+    echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/repos/ubuntu2404/ /" \
+        | tee /etc/apt/sources.list.d/cuda-repos-ubuntu2404.list
 }
 
 install_polybar () {
@@ -216,8 +217,9 @@ install_1password
 install_git_credential_1password
 install_gh
 install_google_chrome
-install_heliocron
+#install_heliocron
 install_i3
+install_i3_lock
 install_kitty
 install_nvidia_drivers
 #install_regolith
