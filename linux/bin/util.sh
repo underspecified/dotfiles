@@ -58,12 +58,6 @@ get_i3_mode () {
     awk '{print $3}'
 }
 
-get_regolith_mode () {
-    regolith-look get |
-    grep -i 'theme' |
-    awk '{print $2}'
-}
-
 call_geoloc_api () {
     curl -s "http://ipwho.is/"
 }
@@ -96,19 +90,9 @@ heliocron_here () {
     $HOME/.cargo/bin/heliocron --latitude $lat --longitude $lng $@
 }
 
-get_sunrise_date () {
-    heliocron_here report --json |
-    jq -r '.sunrise'
-}
-
 get_sunrise () {
     get_sunrise_date |
     xargs -I '{}' date "+%H:%M" --date='{}'
-}
-
-get_sunset_date () {
-    heliocron_here report --json |
-    jq -r '.sunset' #|
 }
 
 get_sunset () {
@@ -117,8 +101,8 @@ get_sunset () {
 }
 
 is_day () {
-    sunrise=$(get_sunrise_date)
-    sunset=$(get_sunset_date)
+    sunrise=$(get_sunrise)
+    sunset=$(get_sunset)
     now=$(date -Iseconds)
     [[ $sunrise < $now && $now < $sunset ]]
 }
