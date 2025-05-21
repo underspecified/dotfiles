@@ -5,11 +5,19 @@ echo_and_eval () {
     eval "$@"
 }
 
+remove_cuda () {
+    dpkg -l |
+    grep -i cuda |
+    cut -d' ' -f3 |
+    xargs sudo apt-get purge -y
+}
+
 remove_nvidia_driver () {
     dpkg -l |
     grep -i nvidia |
     cut -d' ' -f3 |
-    xargs echo sudo apt-get purge
+    xargs sudo apt-get purge -y
 }
 
+remove_cuda
 remove_nvidia_driver

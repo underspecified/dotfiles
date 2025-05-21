@@ -1,21 +1,6 @@
 #!/bin/bash
 
-### install 1password
-install_1password () {
-    [[ `which op` ]] || (
-        # Add the key for the 1Password apt repository:
-        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
-        # Add the 1Password apt repository:
-        echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | sudo tee /etc/apt/sources.list.d/1password.list
-        # Add the debsig-verify policy:
-        sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
-        curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol
-        sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
-        curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
-        # Install 1Password:
-        sudo apt update && sudo apt install -y 1password 1password-cli
-    )
-}
+CUR_DIR=$(realpath $(dirname "$0"))
 
 ### install basic packages
 install_apt () {
@@ -27,7 +12,7 @@ install_google_chrome() {
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
     sudo wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     sudo apt update
-    sudo apt-get install google-chrome-stable
+    sudo apt-get install -y google-chrome-stable
 }
 
 install_gh () {
@@ -188,7 +173,7 @@ install_snap () {
 
 ### install zed
 install_zed () {
-    [[ `which zed` ]] || curl -f https://zed.dev/install.sh | sh
+    curl -f https://zed.dev/install.sh | sh
 }
 
 ### update git
@@ -199,17 +184,21 @@ update_git () {
 }
 
 update_less () {
-    [[ -x $HOME/.local/bin/less ]] || {
-        cd $HOME/Downloads && \
-        curl -f https://www.greenwoodsoftware.com/less/less-668.tar.gz | tar -xzf - && \
-        cd less-668 && \
-        ./configure --prefix=$HOME/.local && \
-        make install
-    }
+    cd $HOME/Downloads && \
+    curl -f https://www.greenwoodsoftware.com/less/less-668.tar.gz | tar -xzf - && \
+    cd less-668 && \
+    ./configure --prefix=$HOME/.local && \
+    make install
 }
 
 install_apt
 install_snap
+
+install_gh
+install_google_chrome
+install_kitty
+install_zed
+
 update_git
 update_less
 
