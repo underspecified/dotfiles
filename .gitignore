@@ -1,4 +1,4 @@
-config/i3/theme.config
+config/i3/conf/theme.conf
 config/kitty/current-theme.conf
 config/kitty/themes.conf
 dot.emacs.d/
