@@ -8,8 +8,8 @@ case "$1" in
         mode="light"
         ;;
     *)
-        mode="toggle"
-    ;;
+	;;
 esac
 
-darkman $mode
+
+[[ -n $mode ]] && darkman set $mode || darkman toggle
