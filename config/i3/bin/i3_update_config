@@ -4,8 +4,7 @@ CURDIR=$(dirname $0)
 DOTFILES=$(realpath $CURDIR/../../..)
 I3_DIR="$DOTFILES/config/i3"
 
-#mode=${1:-$(get_i3_mode)}
-mode=$1
+mode=${1:-$(darkman get)}
 
 sed -E 's/\$mode/'$mode'/g' "$I3_DIR/conf/theme.conf.in" > "$I3_DIR/conf/theme.conf"
 cat "$I3_DIR/themes/selenized_$mode.conf" >> "$I3_DIR/conf/theme.conf"
