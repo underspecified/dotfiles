@@ -6,6 +6,9 @@ GIT_DIR=$(realpath "$CUR_DIR/../..")
 install_darkman() {
     echo "Installing darkman..."
 
+    # install deps
+    sudo apt install -y golang scdoc
+
     # clone repo
     cd "$GIT_DIR"
     git clone https://gitlab.com/WhyNotHugo/darkman.git
