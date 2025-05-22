@@ -1,13 +1,13 @@
 #!/usr/bin/bash
 
-CUR_DIR=$(pwd)
+CUR_DIR=$(realpath $(dirname "$0"))
 GIT_DIR=$(realpath "$CUR_DIR/../..")
 
 install_darkman() {
     echo "Installing darkman..."
 
     # install deps
-    sudo apt install -y golang scdoc
+    sudo apt install -y golang-1.18 scdoc
 
     # clone repo
     cd "$GIT_DIR"
