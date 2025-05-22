@@ -77,6 +77,9 @@ update_less
 # install 1password
 bash "$CUR_DIR/install_1password.sh"
 
+# install darkman
+bash "$CUR_DIR/install_darkman.sh"
+
 # install i3 window manager
 bash "$CUR_DIR/install_i3.sh"
 
