@@ -6,6 +6,8 @@ GIT_DIR=$(realpath "$CUR_DIR/../..")
 install_darkman() {
     echo "Installing darkman..."
 
+    # uninstall old golang
+    dpkg -l | grep golang | grep 1.13 | cut -f3 -d' ' | xargs sudo apt purge -y
     # install deps
     sudo apt install -y golang-1.18 scdoc
 
@@ -19,6 +21,9 @@ install_darkman() {
 
     # install program
     sudo make install PREFIX=/usr
+
+    # reinstall old golang
+    sudo apt install ros-noetic-strawberry-ros-asr -y
 
     # setup service
     systemctl --user enable darkman.service
