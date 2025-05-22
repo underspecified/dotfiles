@@ -8,7 +8,8 @@ install_i3 () {
     sudo apt install ./keyring.deb
     echo "deb [signed-by=/usr/share/keyrings/sur5r-keyring.gpg] http://debian.sur5r.net/i3/ $(grep '^VERSION_CODENAME=' /etc/os-release | cut -f2 -d=) universe" | sudo tee /etc/apt/sources.list.d/sur5r-i3.list
     sudo apt update
-    sudo apt install -y dbus dbus-x11 i3 i3-wm feh gnome-shell gnome-session j4-dmenu-desktop xautolock xdg-desktop-portal-gtk xdg-desktop-portal-wlr
+    sudo apt install -y dbus dbus-x11 i3 i3-wm feh gnome-shell gnome-session j4-dmenu-desktop xautolock xdg-desktop-portal-gtk
+    sudo apt install -y xdg-desktop-portal-wlr
 }
 
 install_i3lock () {
