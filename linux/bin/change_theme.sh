@@ -1,15 +1,8 @@
 #!/bin/bash
 
-case "$1" in
-    dark)
-        mode="dark"
-        ;;
-    light)
-        mode="light"
-        ;;
-    *)
-	;;
-esac
+flip_mode () {
+    [[ $(darkman get) = "light" ]] && echo "dark" || echo "light"
+}
+mode=${1:-$(flip_mode)}
 
-
-[[ -n $mode ]] && darkman set $mode || darkman toggle
+darkman set $mode
