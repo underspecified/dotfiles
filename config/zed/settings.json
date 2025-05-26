@@ -55,7 +55,7 @@
     "dark": "Base16 selenized-dark"
   },
 
-  //"ui_font_size": 11,
+  //"ui_font_size": 8,
   //"buffer_font_size": 11,
   "autosave": "on_focus_change",
   "preferred_line_length": 80,

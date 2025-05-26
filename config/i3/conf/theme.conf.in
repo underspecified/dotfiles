@@ -7,7 +7,16 @@ set $mod Mod4
 #set ${mode} {dark,light}
 set $theme_env $HOME/git/dotfiles/config/i3/themes/selenized_$mode.env
 set $wallpaper $HOME/git/dotfiles/wallpaper/selenized_$mode_hd.png
+
+# Font for window titles.
 set $font "Meslo LG S Regular Nerd Font Complete"
+font pango:$font 8
+
+# clientclass border backgr. text indicator
+client.focused $blue $blue $bg_1 $green
+client.focused_inactive $cyan $cyan $bg_1 $violet
+client.unfocused $bg_1 $bg_1 $fg_0 $dim_0
+client.urgent $red $red $bg_1 $orange
 
 # borders
 default_border normal 5
@@ -24,10 +33,10 @@ bindsym $mod+space exec --no-startup-id $launcher $theme_env
 exec_always --no-startup-id feh --bg-fill $wallpaper
 
 ### lock screen
-#set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_i3lock
-#set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_i3lock
-set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_xdg
-set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_xdg
+set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_i3lock
+set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_i3lock
+#set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_xdg
+#set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_xdg
 
 exec_always --no-startup-id $screensaver $wallpaper
 bindsym $mod+l exec $locker $wallpaper
