@@ -5,5 +5,7 @@ LOCK_SEC=60
 IDLE_MIN=2
 IDLE_SEC=120
 
+pkill -9 xautolock
+
 xset dpms $IDLE_SEC
 xautolock -time $LOCK_MIN -locker "$HOME/git/dotfiles/config/i3/bin/lock_screen_i3lock $1"
