@@ -19,7 +19,7 @@ include conf/apps.conf
 include conf/modes.conf
 
 # load gnome settings
-include conf/gnome.conf
+#include conf/gnome.conf
 
 # load theme and theme-dependent settings
 include conf/theme.conf

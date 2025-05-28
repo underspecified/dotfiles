@@ -8,7 +8,7 @@ set $theme_env $HOME/git/dotfiles/config/i3/themes/selenized_$mode.env
 set $wallpaper $HOME/git/dotfiles/wallpaper/selenized_$mode_hd.png
 
 # cursor theme
-exec --no-startup-id xrdb -merge $HOME/git/dotfiles/config/i3/themes/$mode.Xresources
+#exec --no-startup-id xrdb -merge ~/git/dotfiles/config/i3/themes/$mode.Xresources
 
 # Font for window titles.
 set $font "Meslo LG S Regular Nerd Font Complete"
