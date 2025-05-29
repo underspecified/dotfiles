@@ -1,14 +1,11 @@
 ### i3 theme settings
 
-### modifier keys
-set $mod Mod4
-
 #set ${mode} {dark,light}
 set $theme_env $HOME/git/dotfiles/config/i3/themes/selenized_$mode.env
 set $wallpaper $HOME/git/dotfiles/wallpaper/selenized_$mode_hd.png
 
 # cursor theme
-#exec --no-startup-id xrdb -merge ~/git/dotfiles/config/i3/themes/$mode.Xresources
+#exec-always --no-startup-id ~/.local/bin/profile xrdb -merge ~/git/dotfiles/config/i3/themes/$mode.Xresources
 
 # Font for window titles.
 set $font "Meslo LG S Regular Nerd Font Complete"
@@ -26,19 +23,5 @@ default_floating_border normal 4
 gaps inner 4
 gaps outer 0
 
-# start program launcher
-#set $launcher $HOME/git/dotfiles/config/i3/bin/launch_rofi
-set $launcher $HOME/git/dotfiles/config/i3/bin/launch_dmenu
-bindsym $mod+space exec --no-startup-id $launcher $theme_env
-
 # wallpaper
-exec_always --no-startup-id feh --bg-fill $wallpaper
-
-### lock screen
-set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_xautolock
-set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_i3lock
-#set $screensaver $HOME/git/dotfiles/config/i3/bin/start_screensaver_xdg
-#set $locker $HOME/git/dotfiles/config/i3/bin/lock_screen_xdg
-
-exec_always --no-startup-id $screensaver $wallpaper
-bindsym $mod+l exec $locker $wallpaper
+exec_always --no-startup-id ~/.local/bin/profile feh --bg-fill $wallpaper

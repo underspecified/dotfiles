@@ -175,9 +175,9 @@ toggle_i3status () {
 }
 
 toggle_i3 () {
-    $HOME/git/dotfiles/config/i3/bin/i3_update_config $1
+    ~/.local/bin/profile bash "$HOME/git/dotfiles/config/i3/bin/i3_update_config" $1
     #toggle_i3status
-    i3 restart
+    ~/.local/bin/profile i3 restart
 }
 
 toggle_kitty () {

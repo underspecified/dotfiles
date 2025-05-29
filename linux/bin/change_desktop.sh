@@ -4,10 +4,11 @@ CUR_DIR=$(dirname $0)
 . "$CUR_DIR/util.sh"
 
 
-flip_mode () {
+toggle_mode () {
     [[ $(darkman get) = "light" ]] && echo "dark" || echo "light"
 }
-mode=${1:-$(flip_mode)}
+
+[[ $1 = "toggle" ]] && mode=$(toggle_mode) || mode=$1
 
 toggle_desktop $mode
 #toggle_browser $mode
