@@ -192,14 +192,16 @@ toggle_regolith () {
 }
 
 toggle_sway () {
-    sed -i.bak -r 's/set \$mode .+/set \$mode '$1'/' \
-        $HOME/git/dotfiles/config/sway/config
+    bash "$HOME/git/dotfiles/config/sway/bin/sway_update_config" $1
     sway reload
+    # swaymsg '[class=".*"]' border normal
+    # swaymsg '[class=".*"]' gaps inner 2
+    # swaymsg '[class=".*"]' gaps outer 2
 }
 
 toggle_zed () {
     sed -i.bak -r 's/"mode": ".*"/"mode": "'$1'"/' \
-        $HOME/git/dotfiles/config/zed/settings.json
+    $HOME/git/dotfiles/config/zed/settings.json
     #sleep 1
     #zed $HOME/git/dotfiles/config/zed/settings.json
 }
@@ -216,7 +218,7 @@ toggle_desktop () {
     elif [[ "$XDG_CURRENT_DESKTOP" == "Regolith" ]]; then
         echo "toggle regolith => $1"
         toggle_regolith $1
-    elif [[ "$XDG_CURRENT_DESKTOP" == "sway" ]]; then
+    elif [[ $(pgrep -af sway) ]]; then
         echo "toggle sway => $1"
         toggle_sway $1
     fi

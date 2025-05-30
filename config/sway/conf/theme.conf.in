@@ -1,0 +1,24 @@
+### sway theme settings
+
+#set mode ${mode}
+
+# cursor theme
+seat * xcursor_theme "DMZ-White" 36
+
+# Font for window titles.
+font pango:$font 8
+
+# clientclass border backgr. text indicator
+client.focused #${blue} #${blue} #${bg_1} #${green}
+client.focused_inactive #${cyan} #${cyan} #${bg_1} #${violet}
+client.unfocused #${bg_1} #${bg_1} #${fg_0} #${dim_0}
+client.urgent #${red} #${red} #${bg_1} #${orange}
+
+# borders
+default_border normal 5
+default_floating_border normal 5
+gaps inner 5
+gaps outer 5
+
+# wallpaper
+output * bg $HOME/git/dotfiles/wallpaper/selenized_${mode}_hd.png fill

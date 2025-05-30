@@ -1,0 +1,21 @@
+### Status Bar: needs color definiton from themes/selenized-*.conf
+#
+# Read `man 5 swaybar` for more information about this section.
+
+#set mode ${mode}
+
+bar {
+    font pango:$font 8
+    #mode hide
+    status_command i3status --config $HOME/git/dotfiles/config/i3status/selenized_${mode}.conf
+
+    colors {
+        separator #${blue}
+        background #${bg_0}
+        statusline #${fg_1}
+        focused_workspace #${blue} #${blue} #${bg_0}
+        active_workspace #${cyan} #${blue} #${bg_1}
+        inactive_workspace #${bg_1} #${bg_1} #${fg_0}
+        urgent_workspace #${red} #${red} #${bg_1}
+    }
+}

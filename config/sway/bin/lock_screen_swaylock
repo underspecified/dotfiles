@@ -1,0 +1,52 @@
+#!/bin/bash
+
+CURDIR=$(dirname $0)
+DOTFILES=$(realpath $CURDIR/../../..)
+SWAY_DIR="$DOTFILES/config/i3"
+
+LOCK_MIN=1
+LOCK_SEC=60
+IDLE_MIN=2
+IDLE_SEC=120
+
+mode=$(darkman get)
+font_pt="48"
+
+source "$SWAY_DIR/themes/selenized_${mode}.env"
+
+LC_ALL="en_US.UTF-8" swaylock \
+--inside-ver-color $bg_0 \
+--inside-wrong-color $bg_0 \
+--inside-color $bg_0 \
+--ring-ver-color $green \
+--ring-wrong-color $red \
+--ring-color $blue \
+--line-ver-color $green \
+--line-wrong-color $red \
+--line-color $blue \
+--key-hl-color $magenta \
+--bs-hl-color $orange \
+--separator-color $bg_1 \
+--text-ver-color $green \
+--text-wrong-color $red \
+--layout-text-color $blue \
+--text-color $blue \
+--color $bg_0 \
+--effect-blur 1x1 \
+--clock \
+--indicator \
+--indicator-caps-lock \
+--show-failed-attempts \
+--timestr "%H:%M:%S" \
+--datestr "%a %b %e %Y" \
+--text-ver "Verifying..." \
+--text-wrong "Auth Failed" \
+--text-clear "Cleared" \
+--text-caps "Caps Lock" \
+--text-clear-color $fg_2 \
+--ignore-empty-password \
+--font "$font" \
+--font-size $font_pt \
+--indicator-radius 150 \
+--indicator-thickness 30 \
+--image "$wallpaper"

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo_and_eval () {
+    echo "$@"
+    eval "$@"
+}
+
+CURDIR=$(dirname $0)
+DOTFILES=$(realpath $CURDIR/../../..)
+SWAY_DIR="$DOTFILES/config/sway"
+
+export mode=$(darkman get)
+source "$SWAY_DIR/themes/selenized_${mode}.env"
+
+envsubst < "$SWAY_DIR/conf/theme.conf.in" |
+tee "$SWAY_DIR/conf/theme.conf"
+
+envsubst < "$SWAY_DIR/conf/swaybar.conf.in" |
+tee "$SWAY_DIR/conf/swaybar.conf"

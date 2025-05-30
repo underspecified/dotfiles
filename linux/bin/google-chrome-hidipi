@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export GDK_SCALE=1.25
-export GDK_DPI_SCALE=1.25
-export XCURSOR_SIZE=36
-export XCURSOR_THEME=DMZ-White
-exec google-chrome --force-device-scale-factor=1.25 --high-dpi-support=1 "$@"
+#google-chrome --use-gl-desktop "$@"
+#google-chrome --force-device-scale-factor=1.0 --disable-gpu --disable-software-rasterizer "$@"
+google-chrome --enable-features=UseOzonePlatform --ozone-platform=wayland --use-gl=egl "$@"
