@@ -1,0 +1,30 @@
+color=fbf3db
+inside-color=fbf3db
+inside-ver-color=fbf3db
+inside-clear-color=fbf3db
+inside-wrong-color=fbf3db
+ring-color=0072d4
+ring-ver-color=489100
+ring-clear-color=c25d1e
+ring-wrong-color=d2212d
+line-uses-ring
+key-hl-color=ca4898
+bs-hl-color=c25d1e
+separator-color=ece3cc
+text-color=0072d4
+layout-text-color=0072d4
+text-ver-color=489100
+text-clear-color=c25d1e
+text-wrong-color=d2212d
+effect-blur=1x1
+clock
+indicator
+indicator-caps-lock
+timestr=%H:%M:%S
+datestr=%a %b %e %Y
+ignore-empty-password
+font=Meslo LG S Regular Nerd Font Complete
+font-size=72
+indicator-radius=100
+indicator-thickness=20
+image=/home/eric/git/dotfiles/wallpaper/selenized_light_hd.png

@@ -17,3 +17,6 @@ tee "$SWAY_DIR/conf/theme.conf"
 
 envsubst < "$SWAY_DIR/conf/swaybar.conf.in" |
 tee "$SWAY_DIR/conf/swaybar.conf"
+
+envsubst < "$DOTFILES/config/swaylock/config.in" |
+tee "$DOTFILES/config/swaylock/config"
