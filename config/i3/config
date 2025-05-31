@@ -2,6 +2,9 @@
 
 ### config files
 
+# load wm-specific settings
+include conf/system.conf
+
 # load app settings
 include conf/apps.conf
 

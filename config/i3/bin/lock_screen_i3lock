@@ -12,7 +12,7 @@ IDLE_SEC=120
 mode=$(darkman get)
 font_pt="$font 20"
 
-source "$DOTFILES/color/selenized_${mode}.env"
+source "$DOTFILES/colors/selenized_${mode}.env"
 
 LC_ALL="en_US.UTF-8" i3lock \
   --insidever-color=$bg_0 \
@@ -52,4 +52,5 @@ LC_ALL="en_US.UTF-8" i3lock \
   --pass-media-keys \
   --pass-screen-keys \
   --pass-volume-keys \
-  --image="$wallpaper"
+  --image="$wallpaper" \
+  --fill

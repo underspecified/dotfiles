@@ -12,7 +12,7 @@ include /etc/sway/config.d/*
 
 ### config files
 
-# load sway-specific settings
+# load wm-specific settings
 include conf/system.conf
 
 # load app settings

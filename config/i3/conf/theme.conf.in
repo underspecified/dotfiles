@@ -2,23 +2,20 @@
 
 #set mode ${mode}
 
-# cursor theme
-#exec-always --no-startup-id ~/.local/bin/profile xrdb -merge ~/git/dotfiles/config/i3/themes/$mode.Xresources
-
 # Font for window titles.
 font pango:$font 8
 
 # clientclass border backgr. text indicator
-client.focused $blue $blue $bg_1 $green
-client.focused_inactive $cyan $cyan $bg_1 $violet
-client.unfocused $bg_1 $bg_1 $fg_0 $dim_0
-client.urgent $red $red $bg_1 $orange
+client.focused #${blue} #${blue} #${bg_1} #${green}
+client.focused_inactive #${cyan} #${cyan} #${bg_1} #${violet}
+client.unfocused #${bg_1} #${bg_1} #${fg_0} #${dim_0}
+client.urgent #${red} #${red} #${bg_1} #${orange}
 
 # borders
-default_border normal 4
-default_floating_border normal 4
-gaps inner 4
+default_border normal 5
+default_floating_border normal 5
+gaps inner 5
 gaps outer 0
 
 # wallpaper
-exec_always --no-startup-id ~/.local/bin/profile feh --bg-fill $wallpaper
+exec_always --no-startup-id feh --bg-fill $wallpaper

@@ -5,7 +5,7 @@ DOTFILES=$(realpath $CURDIR/../../..)
 I3_DIR="$DOTFILES/config/i3"
 
 mode=$(darkman get)
-source "$DOTFILES/color/selenized_${mode}.env"
+source "$DOTFILES/colors/selenized_${mode}.env"
 
 fmt () {
     echo "#$(echo $1 | tr 'a-z' 'A-Z')"
