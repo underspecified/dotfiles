@@ -1,8 +1,7 @@
 #!/bin/bash
 
 CURDIR=$(dirname $0)
-DOTFILES=$(realpath $CURDIR/../../..)
-I3_DIR="$DOTFILES/config/i3"
+DOTFILES=$(realpath $CURDIR/../..)
 
 LOCK_MIN=1
 LOCK_SEC=60
@@ -10,7 +9,7 @@ IDLE_MIN=2
 IDLE_SEC=120
 
 mode=$(darkman get)
-source "$I3_DIR/themes/selenized_${mode}.env"
+source "$DOTFILES/colors/selenized_${mode}.env"
 
 gsettings set org.gnome.desktop.background picture-uri "file://$wallpaper"
 #gsettings set org.gnome.desktop.session idle-delay $IDLE_SEC

@@ -7,7 +7,7 @@
 bar {
     font pango:$font 8
     #mode hide
-    status_command i3status --config $HOME/git/dotfiles/config/i3status/selenized_${mode}.conf
+    status_command i3status
 
     colors {
         separator #${blue}

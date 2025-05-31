@@ -9,9 +9,9 @@
 general {
     colors = "true"
     interval = "5"
-    color_good = "#1d9700"
-    color_degraded = "#c49700"
-    color_bad = "#d6000c"
+    color_good = "#4695f7"
+    color_degraded = "#dbb32d"
+    color_bad = "#fa5750"
 }
 
 #order += "ipv6"

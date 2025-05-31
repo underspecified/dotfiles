@@ -1,7 +1,9 @@
 #!/bin/bash
 
-[[ -f "$1" ]] && \
-source "$1" && \
-theme="$HOME/git/dotfiles/config/rofi/selenized-$mode.rasi"
+CURDIR=$(dirname $0)
+DOTFILES=$(realpath $CURDIR/../../..)
+
+mode=$(darkman get)
+theme="$DOTFILES/config/rofi/selenized-$mode.rasi"
 
 xdg-open "$(locate -i / | rofi -threads 0 -width 100 -dmenu -i -p "Find" -theme $theme)"

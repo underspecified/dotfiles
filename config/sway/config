@@ -4,36 +4,16 @@
 #
 # Read `man 5 sway` for a complete reference.
 
-#exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS WLR_RENDERER ELECTRON_OZONE_PLATFORM_HINT PATH
-#exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS WLR_RENDERER ELECTRON_OZONE_PLATFORM_HINT PATH
+exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS WLR_RENDERER ELECTRON_OZONE_PLATFORM_HINT PATH
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS WLR_RENDERER ELECTRON_OZONE_PLATFORM_HINT PATH
 
 include /etc/sway/config-vars.d/*
-
-#
-# Example configuration:
-#
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
-#
-# You can get the names of your outputs by running: swaymsg -t get_outputs
-output * resolution 5120x2160 scale 2.0
-
-### Idle configuration
-#
-# Example configuration:
-#
-# exec swayidle -w \
-#          timeout 300 'swaylock -f -c 000000' \
-#          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-#          before-sleep 'swaylock -f -c 000000'
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
-
 include /etc/sway/config.d/*
 
-
 ### config files
+
+# load sway-specific settings
+include conf/system.conf
 
 # load app settings
 include conf/apps.conf

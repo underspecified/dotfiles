@@ -1,11 +1,22 @@
 #!/bin/bash
 
+echo_and_eval () {
+    echo "$@"
+    eval "$@"
+}
+
 CURDIR=$(dirname $0)
 DOTFILES=$(realpath $CURDIR/../../..)
 I3_DIR="$DOTFILES/config/i3"
 
-mode=${1:-$(darkman get)}
+export mode=$(darkman get)
+source "$DOTFILES/colors/selenized_${mode}.env"
 
-cat "$I3_DIR/themes/selenized_$mode.conf" > "$I3_DIR/conf/theme.conf"
-sed -E 's/\$mode/'$mode'/g' "$I3_DIR/conf/theme.conf.in" >> "$I3_DIR/conf/theme.conf"
-sed -E 's/\$mode/'$mode'/g' "$I3_DIR/conf/i3bar.conf.in" >> "$I3_DIR/conf/theme.conf"
+envsubst < "$I3_DIR/conf/theme.conf.in" |
+tee "$I3_DIR/conf/theme.conf"
+
+envsubst < "$I3_DIR/conf/i3bar.conf.in" |
+tee "$I3_DIR/conf/i3bar.conf"
+
+envsubst < "$DOTFILES/config/i3status/config.in" |
+tee "$DOTFILES/config/i3status/config"

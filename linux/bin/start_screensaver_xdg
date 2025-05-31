@@ -1,8 +1,7 @@
 #!/bin/bash
 
 CURDIR=$(dirname $0)
-DOTFILES=$(realpath $CURDIR/../../..)
-SWAY_DIR="$DOTFILES/config/sway"
+DOTFILES=$(realpath $CURDIR/../..)
 
 LOCK_MIN=1
 LOCK_SEC=60
@@ -10,11 +9,14 @@ IDLE_MIN=2
 IDLE_SEC=120
 
 mode=$(darkman get)
-source "$SWAY_DIR/themes/selenized_${mode}.env"
+source "$DOTFILES/colors/selenized_${mode}.env"
 
 gsettings set org.gnome.desktop.background picture-uri "file://$wallpaper"
 #gsettings set org.gnome.desktop.session idle-delay $IDLE_SEC
 #gsettings set org.gnome.desktop.screensaver lock-delay $LOCK_SEC
 
-#xdg-screensaver lock
-dbus-send --type=method_call --dest=org.gnome.ScreenSaver /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock
+xset dpms $IDLE_SEC
+GDK_BACKEND=x11 gnome-screensaver &
+xautolock -time $LOCK_MIN -locker "$DOTFILES/linux/bin/lock_screen_xdg"
+#sleep $LOCK_SEC
+$DOTFILES/linux/bin/lock_screen_xdg

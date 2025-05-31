@@ -1,11 +1,13 @@
 #!/bin/bash
 
+CURDIR=$(dirname $0)
+DOTFILES=$(realpath $CURDIR/../../..)
+I3_DIR="$DOTFILES/config/i3"
+
 LOCK_MIN=1
 LOCK_SEC=60
 IDLE_MIN=2
 IDLE_SEC=120
 
-#pkill -9 xautolock
-
 xset dpms $IDLE_SEC
-xautolock -time $LOCK_MIN -locker "$HOME/git/dotfiles/config/i3/bin/lock_screen_i3lock"
+xautolock -time $LOCK_MIN -locker "$I3_DIR/bin/lock_screen_i3lock"

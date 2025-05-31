@@ -12,14 +12,12 @@ IDLE_SEC=120
 mode=$(darkman get)
 font_pt="$font 20"
 
-source "$I3_DIR/themes/selenized_${mode}.env"
+source "$DOTFILES/color/selenized_${mode}.env"
 
 LC_ALL="en_US.UTF-8" i3lock \
   --insidever-color=$bg_0 \
   --insidewrong-color=$bg_0 \
   --inside-color=$bg_0 \
-  --ringver-color=$green \
-  --ringwrong-color=$red \
   --ringver-color=$green \
   --ringwrong-color=$red \
   --ring-color=$blue \

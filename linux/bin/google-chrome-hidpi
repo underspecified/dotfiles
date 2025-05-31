@@ -2,4 +2,5 @@
 
 #google-chrome --use-gl-desktop "$@"
 #google-chrome --force-device-scale-factor=1.0 --disable-gpu --disable-software-rasterizer "$@"
+#google-chrome --enable-features=UseOzonePlatform --ozone-platform=wayland --use-angle=gl "$@"
 google-chrome --enable-features=UseOzonePlatform --ozone-platform=wayland --use-gl=egl "$@"

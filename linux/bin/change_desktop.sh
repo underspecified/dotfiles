@@ -11,6 +11,3 @@ toggle_mode () {
 [[ $1 = "toggle" ]] && mode=$(toggle_mode) || mode=$1
 
 toggle_desktop $mode
-#toggle_browser $mode
-#toggle_kitty $mode
-#toggle_zed $mode

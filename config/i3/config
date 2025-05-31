@@ -16,3 +16,4 @@ include conf/modes.conf
 
 # load theme and theme-dependent settings
 include conf/theme.conf
+include conf/i3bar.conf

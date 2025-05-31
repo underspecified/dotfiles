@@ -1,14 +1,11 @@
 ### i3 theme settings
 
-#set ${mode} {dark,light}
-set $theme_env $HOME/git/dotfiles/config/i3/themes/selenized_$mode.env
-set $wallpaper $HOME/git/dotfiles/wallpaper/selenized_$mode_hd.png
+#set mode ${mode}
 
 # cursor theme
 #exec-always --no-startup-id ~/.local/bin/profile xrdb -merge ~/git/dotfiles/config/i3/themes/$mode.Xresources
 
 # Font for window titles.
-set $font "Meslo LG S Regular Nerd Font Complete"
 font pango:$font 8
 
 # clientclass border backgr. text indicator
