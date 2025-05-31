@@ -1,3 +1,3 @@
 #!/bin/bash
 
-~/.local/bin/profile bash "$HOME/git/dotfiles/linux/bin/change_desktop.sh" light
+bash "$HOME/git/dotfiles/linux/bin/change_desktop.sh" light
