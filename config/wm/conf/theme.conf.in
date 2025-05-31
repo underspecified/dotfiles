@@ -1,11 +1,6 @@
-### sway theme settings
+### i3 theme settings
 
 #set mode ${mode}
-
-# cursor theme
-seat * xcursor_theme Adwaita 24
-seat * hide_cursor when-typing disable
-seat * hide_cursor 8000
 
 # Font for window titles.
 font pango:$font 12
@@ -19,8 +14,8 @@ client.urgent #${red} #${red} #${bg_1} #${orange}
 # borders
 default_border normal 5
 default_floating_border normal 5
-gaps inner 6
-gaps outer 2
+gaps inner 5
+gaps outer 0
 
 # wallpaper
-output * bg $HOME/git/dotfiles/wallpaper/selenized_${mode}_hd.png fill
+$WALLPAPER_CMD

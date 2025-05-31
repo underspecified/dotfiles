@@ -4,9 +4,6 @@
 #
 # Read `man 5 sway` for a complete reference.
 
-exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS WLR_RENDERER ELECTRON_OZONE_PLATFORM_HINT PATH
-exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP WLR_NO_HARDWARE_CURSORS WLR_RENDERER ELECTRON_OZONE_PLATFORM_HINT PATH
-
 include /etc/sway/config-vars.d/*
 include /etc/sway/config.d/*
 
@@ -16,17 +13,17 @@ include /etc/sway/config.d/*
 include conf/system.conf
 
 # load app settings
-include conf/apps.conf
+include ../wm/conf/apps.conf
 
 # load keybinding settings
-include conf/keys.conf
+include ../wm/conf/keys.conf
 
 # load gnome settings
-include conf/gnome.conf
+include ../wm/conf/gnome.conf
 
 # load mode settings
-include conf/modes.conf
+include ../wm/conf/modes.conf
 
 # load theme and theme-dependent settings
-include conf/theme.conf
+include ../wm/conf/theme.conf
 include conf/swaybar.conf

@@ -10,7 +10,7 @@ IDLE_MIN=2
 IDLE_SEC=120
 
 mode=$(darkman get)
-font_pt="$font 20"
+font_pt="$font 36"
 
 source "$DOTFILES/colors/selenized_${mode}.env"
 

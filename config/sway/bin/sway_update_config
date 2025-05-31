@@ -8,15 +8,14 @@ echo_and_eval () {
 CURDIR=$(dirname $0)
 DOTFILES=$(realpath $CURDIR/../../..)
 SWAY_DIR="$DOTFILES/config/sway"
+WM_DIR="$DOTFILES/config/wm"
 
 export mode=$(darkman get)
 source "$DOTFILES/colors/selenized_${mode}.env"
+export WALLPAPER_CMD="output * bg $wallpaper fill"
 
-envsubst < "$SWAY_DIR/conf/theme.conf.in" |
-tee "$SWAY_DIR/conf/theme.conf"
-
-envsubst < "$SWAY_DIR/conf/swaybar.conf.in" |
-tee "$SWAY_DIR/conf/swaybar.conf"
-
-envsubst < "$DOTFILES/config/swaylock/config.in" |
-tee "$DOTFILES/config/swaylock/config"
+for conf in "$WM_DIR"/conf/*.conf.in \
+            "$SWAY_DIR"/conf/*.conf.in \
+            "$DOTFILES"/config/swaylock/config.in; do
+    envsubst < "$conf" | tee "${conf%.in}"
+done

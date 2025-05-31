@@ -8,15 +8,14 @@ echo_and_eval () {
 CURDIR=$(dirname $0)
 DOTFILES=$(realpath $CURDIR/../../..)
 I3_DIR="$DOTFILES/config/i3"
+WM_DIR="$DOTFILES/config/wm"
 
 export mode=$(darkman get)
 source "$DOTFILES/colors/selenized_${mode}.env"
+export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
 
-envsubst < "$I3_DIR/conf/theme.conf.in" |
-tee "$I3_DIR/conf/theme.conf"
-
-envsubst < "$I3_DIR/conf/i3bar.conf.in" |
-tee "$I3_DIR/conf/i3bar.conf"
-
-envsubst < "$DOTFILES/config/i3status/config.in" |
-tee "$DOTFILES/config/i3status/config"
+for conf in "$WM_DIR"/conf/*.conf.in \
+            "$I3_DIR"/conf/*.conf.in \
+            "$DOTFILES"/config/i3status/config.in; do
+    envsubst < "$conf" | tee "${conf%.in}"
+done
