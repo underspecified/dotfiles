@@ -4,12 +4,15 @@
 #
 # Read `man 5 sway` for a complete reference.
 
+### update config
+exec_always --no-startup-id bash ../bin/sway_update_config
+
 include /etc/sway/config-vars.d/*
 include /etc/sway/config.d/*
 
 ### config files
 
-# load wm-specific settings
+# load sway-specific settings
 include conf/system.conf
 
 # load app settings
@@ -26,4 +29,6 @@ include ../wm/conf/modes.conf
 
 # load theme and theme-dependent settings
 include ../wm/conf/theme.conf
+
+### load i3-specific configs
 include conf/swaybar.conf

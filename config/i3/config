@@ -1,8 +1,11 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+### update config
+exec_always --no-startup-id ../bin/i3_update_config
+
 ### config files
 
-# load wm-specific settings
+# load i3-specific settings
 include conf/system.conf
 
 # load app settings
@@ -19,4 +22,6 @@ include ../wm/conf/modes.conf
 
 # load theme and theme-dependent settings
 include ../wm/conf/theme.conf
+
+### load i3-specific configs
 include conf/i3bar.conf
