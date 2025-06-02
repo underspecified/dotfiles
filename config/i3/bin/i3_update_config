@@ -10,7 +10,7 @@ DOTFILES=$(realpath $CURDIR/../../..)
 I3_DIR="$DOTFILES/config/i3"
 WM_DIR="$DOTFILES/config/wm"
 
-export mode=$(darkman get)
+export mode=${1:-$(darkman get)}
 source "$DOTFILES/colors/selenized_${mode}.env"
 export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
 

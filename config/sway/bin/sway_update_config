@@ -10,7 +10,7 @@ DOTFILES=$(realpath $CURDIR/../../..)
 SWAY_DIR="$DOTFILES/config/sway"
 WM_DIR="$DOTFILES/config/wm"
 
-export mode=$(darkman get)
+export mode=${1:-$(darkman get)}
 source "$DOTFILES/colors/selenized_${mode}.env"
 export WALLPAPER_CMD="output * bg $wallpaper fill"
 

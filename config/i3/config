@@ -1,7 +1,7 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 ### update config
-exec_always --no-startup-id ../bin/i3_update_config
+exec_always --no-startup-id $HOME/git/dotfiles/config/i3/bin/i3_update_config
 
 ### config files
 
