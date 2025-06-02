@@ -19,6 +19,13 @@ for f in *; do
     echo_and_eval "ln -sf \"$PWD/$f\" \"$HOME/.config/$f\""
 done)
 
+mkdir -p $HOME/.local/share
+(cd local/share/;
+for f in *; do
+    echo_and_eval "ln -sf \"$PWD/$f\" \"$HOME/.config/$f\""
+done)
+
+
 echo_and_eval "(cd dot.ssh && chmod go-rwX github github hri_jp)"
 echo_and_eval "ln -sf $HOME/.zsh/dot.zshenv $HOME/.zshenv"
 echo_and_eval "ln -sf $HOME/.zsh/dot.zshrc $HOME/.zshrc"
