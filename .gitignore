@@ -1,6 +1,8 @@
 config/i3/conf/theme.conf
+config/i3/conf/i3bar.conf
 config/kitty/current-theme.conf
 config/kitty/themes.conf
+config/sway/conf/swaybar.conf
 dot.emacs.d/
 dot.gnupg/*
 dot.ssh/1Password/
