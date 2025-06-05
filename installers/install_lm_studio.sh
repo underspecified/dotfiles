@@ -8,7 +8,7 @@ install_lm_studio () {
 
         cd ~/.local/lm-studio.app
     chmod +x LM-Studio-0.3.16-8-x64.AppImage
-    ln -sf LM-Studio-0.3.16-8-x64.AppImage LM-Studio-0.3.16-8-latest.AppImage
+    ln -sf LM-Studio-0.3.16-8-x64.AppImage LM-Studio-latest-x64.AppImage
 
     cat << 'EOF' > ~/.local/lm-studio.app/lm-studio
 #!/bin/bash
