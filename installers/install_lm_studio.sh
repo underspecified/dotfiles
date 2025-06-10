@@ -1,12 +1,11 @@
 #!/usr/bin/bash
 
 install_lm_studio () {
-    curl https://installers.lmstudio.ai/linux/x64/0.3.16-8/LM-Studio-0.3.16-8-x64.AppImage \
-        --create-dirs \
-        --output-dir ~/.local/lm-studio.app \
-        --output LM-Studio-0.3.16-8-x64.AppImage
+    mkdir -p ~/.local/lm-studio.app
+    cd ~/.local/lm-studio.app
 
-        cd ~/.local/lm-studio.app
+    wget 'https://installers.lmstudio.ai/linux/x64/0.3.16-8/LM-Studio-0.3.16-8-x64.AppImage' -o LM-Studio-0.3.16-8-x64.AppImage
+
     chmod +x LM-Studio-0.3.16-8-x64.AppImage
     ln -sf LM-Studio-0.3.16-8-x64.AppImage LM-Studio-latest-x64.AppImage
 
