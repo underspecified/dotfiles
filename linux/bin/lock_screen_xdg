@@ -3,11 +3,10 @@
 CURDIR=$(dirname $0)
 DOTFILES=$(realpath $CURDIR/../..)
 
-LOCK_MIN=1
-LOCK_SEC=60
-IDLE_MIN=2
-IDLE_SEC=120
-
+LOCK_MIN=5
+LOCK_SEC=$(($LOCK_MIN * 60))
+IDLE_MIN=10
+IDLE_SEC=$(($IDLE_MIN * 60))
 mode=$(darkman get)
 source "$DOTFILES/colors/selenized_${mode}.env"
 
