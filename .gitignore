@@ -14,3 +14,5 @@ dot.zsh/.zsh_sessions/
 *.log
 *.orig
 .build/
+config/i3status/config
+config/wm/conf/theme.conf
