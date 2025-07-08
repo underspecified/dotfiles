@@ -4,9 +4,9 @@ CURDIR=$(dirname $0)
 DOTFILES=$(realpath $CURDIR/../../..)
 I3_DIR="$DOTFILES/config/i3"
 
-LOCK_MIN=15
+LOCK_MIN=5
 LOCK_SEC=$(($LOCK_MIN * 60))
-IDLE_MIN=20
+IDLE_MIN=10
 IDLE_SEC=$(($IDLE_MIN * 60))
 
 xset dpms $IDLE_SEC
