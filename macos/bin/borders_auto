@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mode=$(get_macos_mode)
+borders_$mode

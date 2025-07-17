@@ -1,0 +1,14 @@
+#!/bin/bash
+
+get_macos_mode () {
+    osascript -l JavaScript <<- EOF
+
+function run(args) {
+    const systemEvents = Application("System Events")
+	return systemEvents.appearancePreferences.darkMode() ? "dark" : "light"
+}
+
+EOF
+}
+
+get_macos_mode

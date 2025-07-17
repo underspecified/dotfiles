@@ -1,0 +1,11 @@
+#!/bin/bash
+
+options=(
+	style=round
+	width=10.0
+	hidpi=on
+	active_color=0xff4695f7
+	inactive_color=0xff72898f
+)
+
+/opt/homebrew/bin/borders "${options[@]}"

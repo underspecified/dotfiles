@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+sleep 3
+
 ### set paths
 PATH="/opt/homebrew/bin:$PATH"
 YABAI_DIR=$(dirname "${BASH_SOURCE:-$0}")
@@ -13,11 +15,13 @@ borders 2>/dev/null
 
 ### global settings
 yabai -m config layout                       bsp
+yabai -m config auto_balance                 off
 yabai -m config mouse_follows_focus          off
 yabai -m config focus_follows_mouse          off
 yabai -m config window_origin_display        default
 yabai -m config window_placement             second_child
 yabai -m config window_shadow                on
+yabai -m config window_animation_duration    0.0
 yabai -m config window_opacity               off
 yabai -m config window_opacity_duration      0.0
 yabai -m config active_window_opacity        1.0
@@ -47,8 +51,9 @@ YABAI_COL_WIDTH=800
 bash "$YABAI_DIR/scripts/yabai_config_layout_cols" $YABAI_COL_WIDTH
 
 ### reload this file when a display is added
-yabai -m signal --add label=display_changed event=display_added \
-    action="bash $YABAI_DIR/yabairc"
+yabai -m signal --add event=display_added action="sleep 2; yabai -m space --balance"
+yabai -m signal --add event=display_removed action="sleep 1; yabai -m space --balance"
+yabai -m signal --add event=display_changed action="sleep 1; yabai -m space --balance"
 
 ### reload this file when a display is removed
 #yabai -m signal --add label=display_removed event=display_removed \

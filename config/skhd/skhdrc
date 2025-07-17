@@ -3,7 +3,9 @@
 ctrl + alt - space : open_alfred
 # change themes
 ctrl + alt - d : change_theme.sh
-# change themes
+# refresh borders
+ctrl + alt - b : borders_auto
+# open drafts
 shift + ctrl + alt - d : open_drafts
 # terminal: kitty
 ctrl + alt - return : open_kitty
@@ -16,10 +18,8 @@ shift + ctrl + alt - f : open_finder
 ctrl + alt - c : skhd --reload
 ctrl + alt - r : yabai --restart-service; skhd --restart-service
 
-
 # load column layout and rebalance apps
 ctrl + alt - a : yabai_config_layout_cols
-
 
 # Focus : Focus left window
 ctrl + alt - h : yabai3 focus west
