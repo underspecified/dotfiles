@@ -1,4 +1,5 @@
 -- # popclip
+-- https://github.com/andrewtavis/sf-symbols-online
 -- { name: kitty, icon: symbol:cat.fill, language: applescript }
 
 -- sent selected text to kitty temp file
