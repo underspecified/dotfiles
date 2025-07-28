@@ -1,7 +1,6 @@
 tap "felixkratz/formulae"
 tap "homebrew/cask"
 tap "homebrew/core"
-tap "homebrew/services"
 tap "jepeake/mtop"
 tap "koekeishiya/formulae"
 tap "nikitabobko/tap"
@@ -23,30 +22,24 @@ brew "dlib"
 brew "docker", link: false
 brew "docker-machine", restart_service: :changed
 brew "dvc"
-brew "libidn2"
-brew "unbound"
 brew "gnutls"
 brew "harfbuzz"
-brew "sdl2"
 brew "ffmpeg"
 brew "gdrive"
 brew "gh"
 brew "ghostscript"
 brew "gifski"
 brew "go"
-brew "pkgconf"
 brew "gobject-introspection"
 brew "handbrake", link: false
 brew "htop"
 brew "huggingface-cli"
-brew "libomp"
 brew "imagemagick"
 brew "jq"
 brew "keychain"
 brew "libmagic"
 brew "llama.cpp"
 brew "mas"
-brew "openjdk"
 brew "metals"
 brew "mosh"
 brew "node"
@@ -87,6 +80,7 @@ cask "apparency"
 cask "appcleaner"
 cask "audio-hijack"
 cask "avast-security"
+cask "avg-antivirus"
 cask "balenaetcher"
 cask "bartender"
 cask "betterdisplay"
@@ -96,14 +90,15 @@ cask "box-tools"
 cask "calibre"
 cask "chromedriver"
 cask "claude"
+cask "claude-code"
 cask "coteditor"
 cask "disk-drill"
-cask "docker"
+cask "docker-desktop"
 cask "dropbox"
 cask "emacs-mac"
 cask "fing"
 cask "fission"
-cask "flux"
+cask "flux-app"
 cask "focus"
 cask "font-awesome-terminal-fonts"
 cask "font-courier-new"
@@ -121,19 +116,16 @@ cask "font-montserrat-subrayada"
 cask "font-ocr"
 cask "font-orbitron"
 cask "font-ultra"
-cask "glance"
 cask "google-chrome"
 cask "google-drive"
-cask "handbrake"
-cask "hyperkey"
+cask "handbrake-app"
 cask "iina"
 cask "inkscape"
-cask "intellij-idea-ce"
 cask "jan"
+cask "kaleidoscope"
 cask "karabiner-elements"
 cask "keka"
 cask "keyboardcleantool"
-cask "keycastr"
 cask "kitty"
 cask "little-snitch"
 cask "lm-studio"
@@ -141,43 +133,40 @@ cask "loopback"
 cask "mac-mouse-fix"
 cask "macfuse"
 cask "mactex-no-gui"
-cask "maestral"
 cask "micro-snitch"
 cask "microsoft-auto-update"
 cask "microsoft-edge"
 cask "microsoft-office"
 cask "microsoft-teams"
-cask "msty"
 cask "muzzle"
 cask "notunes"
 cask "obsidian"
-cask "openin"
 cask "oracle-jdk"
 cask "parallels"
 cask "parallels-toolbox"
 cask "pearcleaner"
 cask "photosweeper-x"
 cask "popclip"
+cask "pycharm-ce"
 cask "qlcolorcode"
-cask "qlimagesize"
 cask "qlmarkdown"
 cask "qlstephen"
 cask "qlvideo"
 cask "quicklook-json"
 cask "quicklookase"
-cask "r"
+cask "r-app"
 cask "raspberry-pi-imager"
 cask "rstudio"
 cask "shottr"
 cask "signal"
 cask "skim"
-cask "skype"
 cask "slack"
 cask "soundsource"
 cask "spotify"
 cask "suspicious-package"
 cask "tg-pro"
 cask "tigervnc-viewer"
+cask "typora"
 cask "visual-studio-code"
 cask "viz"
 cask "vlc"
@@ -195,16 +184,17 @@ mas "DaisyDisk", id: 411643860
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dato", id: 1470584107
 mas "Deliveries", id: 290986013
-mas "djay Pro", id: 450527929
 mas "Drafts", id: 1435957248
 mas "Dropover", id: 1355679052
+mas "Enchanted", id: 6474268307
+mas "F5Access", id: 1243219105
 mas "Focus Matrix", id: 1087284172
 mas "Gifski", id: 1351639930
 mas "iA Writer", id: 775737590
-mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
 mas "LINE", id: 539883307
 mas "Messenger", id: 1480068668
+mas "Microsoft Outlook", id: 985367838
 mas "Numbers", id: 409203825
 mas "OmniGraffle", id: 1142578753
 mas "OpenIn", id: 1643649331
@@ -212,12 +202,10 @@ mas "Pages", id: 409201541
 mas "PastePal", id: 1503446680
 mas "Photomator", id: 1444636541
 mas "Pixelmator Pro", id: 1289583905
-mas "QR Pop", id: 1587360435
 mas "Reeder", id: 1529448980
 mas "Tadam", id: 531349534
 mas "Things", id: 904280696
 mas "Xcode", id: 497799835
-vscode "docker.docker"
 vscode "ginfuru.ginfuru-better-solarized-dark-theme"
 vscode "github.copilot"
 vscode "github.copilot-chat"
