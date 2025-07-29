@@ -1,7 +1,0 @@
-# popclip
-# https://github.com/andrewtavis/sf-symbols-online
-name: open
-icon: symbol:square.and.arrow.up
-applescript: |
-    set q to "{popclip text}"
-    do shell script "open " & q
