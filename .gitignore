@@ -7,6 +7,7 @@
 config/i3/conf/i3bar.conf
 config/i3/conf/theme.conf
 config/i3status/config
+config/karabiner/automatic_backups/
 config/kitty/current-theme.conf
 config/kitty/themes.conf
 config/sway/conf/swaybar.conf
