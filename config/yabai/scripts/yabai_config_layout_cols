@@ -1,5 +1,13 @@
 #!/bin/bash
 
+PATH="/opt/homebrew/bin:$PATH"
+SCRIPTS_DIR=$(realpath $(dirname "${BASH_SOURCE:-$0}"))
+
+# column width
+YABAI_COL_WIDTH=${1:-800}
+export YABAI_COL_WIDTH
+echo "YABAI_COL_WIDTH: $YABAI_COL_WIDTH"
+
 echo_and_eval () {
     echo "$@"
     eval "$@"
@@ -32,25 +40,15 @@ yabai_toggle_horizontal () {
     xargs -I{} yabai -m window {} --toggle split
 }
 
-PATH="/opt/homebrew/bin:$PATH"
-SCRIPTS_DIR=$(realpath $(dirname "${BASH_SOURCE:-$0}"))
-
-
 # make sure layout is bsp
 yabai -m config layout bsp
-
-# column width
-YABAI_COL_WIDTH=${1:-800}
-export YABAI_COL_WIDTH
-echo "YABAI_COL_WIDTH: $YABAI_COL_WIDTH"
-
 
 # external monitor
 export YABAI_DISPLAY_ASPECT=$(display_aspect)
 echo "YABAI_DISPLAY_ASPECT: $YABAI_DISPLAY_ASPECT"
-if [[ $(echo "$YABAI_DISPLAY_ASPECT <= 1.77" | bc) ]]; then
+if [[ $(echo "$YABAI_DISPLAY_ASPECT >= 1.77" | bc) ]]; then
     YABAI_DISPLAY="ULTRAWIDE"
-elif [[ $(echo "$YABAI_DISPLAY_ASPECT <= 1.6" | bc) ]]; then
+elif [[ $(echo "$YABAI_DISPLAY_ASPECT >= 1.6" | bc) ]]; then
     YABAI_DISPLAY="4K"
 else
     YABAI_DISPLAY="LAPTOP"
