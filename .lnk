@@ -1,1 +1,12 @@
+.Xmodmap
+.Xresources
+.dircolors
+.emacs
+.gitconfig
 .gitignore
+.gnupg
+.screenrc
+.ssh
+.xinitrc
+.xsettingsd
+.zsh
