@@ -9,4 +9,5 @@
 .ssh
 .xinitrc
 .xsettingsd
+.zprofile
 .zsh
