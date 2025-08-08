@@ -8,6 +8,17 @@
 .config/tofi
 .config/wm
 .config/xdg-desktop-portal
+.local/bin/1password_hidpi
+.local/bin/change_desktop.sh
+.local/bin/change_theme.sh
+.local/bin/google-chrome-wayland
+.local/bin/google-chrome-x11
+.local/bin/lock_screen_xdg
+.local/bin/profile
+.local/bin/slack_hidpi
+.local/bin/start_screensaver_xdg
+.local/bin/util.sh
+.local/bin/xrandr_max_res.sh
 .local/share/dark-mode.d
 .local/share/light-mode.d
 .xinitrc

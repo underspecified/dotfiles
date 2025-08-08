@@ -6,3 +6,13 @@
 .config/skhd
 .config/Typora
 .config/yabai
+.local/bin/borders_auto
+.local/bin/borders_dark
+.local/bin/borders_light
+.local/bin/change_theme.sh
+.local/bin/get_macos_mode
+.local/bin/open_alfred
+.local/bin/open_drafts
+.local/bin/open_finder
+.local/bin/open_kitty
+.local/bin/open_safari
