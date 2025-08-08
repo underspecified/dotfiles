@@ -1,3 +1,10 @@
+.config/dark_reader
+.config/github-copilot
+.config/keymaps
+.config/kitty
+.config/obsidian
+.config/zed
+.config/zsh
 .dircolors
 .emacs
 .gitconfig
@@ -6,4 +13,3 @@
 .screenrc
 .ssh
 .zshenv
-.zsh
