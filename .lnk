@@ -3,6 +3,7 @@
 .config/keymaps
 .config/kitty
 .config/obsidian
+.config/op
 .config/zed
 .config/zsh
 .dircolors
