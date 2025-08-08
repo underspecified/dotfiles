@@ -1,0 +1,14 @@
+.Xmodmap
+.Xresources
+.config/i3
+.config/i3status
+.config/rofi
+.config/sway
+.config/swaylock
+.config/tofi
+.config/wm
+.config/xdg-desktop-portal
+.local/share/dark-mode.d
+.local/share/light-mode.d
+.xinitrc
+.xsettingsd

@@ -1,0 +1,16 @@
+# ROS setup
+[[ -f "/opt/ros/kinetic/setup.zsh" ]] && source "/opt/ros/kinetic/setup.zsh"
+[[ -f "$HOME/catkin_ws/devel/setup.zsh" ]] && source "$HOME/catkin_ws/devel/setup.zsh"
+
+# Haru ROS setup
+export MY_IP=$(ip route get 8.8.8.8 | awk -F"src " 'NR==1{split($2,a," ");print a[1]}')
+export ROS_IP=$MY_IP
+# export ROS_MASTER_HOSTNAME=haru-2      # real robot; update to robot's host name
+export ROS_MASTER_HOSTNAME=$ROS_IP       # simulator
+export ROS_MASTER_URI=http://$ROS_MASTER_HOSTNAME:11311
+
+# tame azure kinect CPU usage
+# https://github.com/microsoft/azure-kinect-sensor-sdk/issues/1007
+# https://www.smcm.iqfr.csic.es/docs/intel/compiler_f/main_for/optaps/common/optaps_par_var.htm
+export OMP_WAIT_POLICY=passive
+export KMP_ALL_THREADS=8

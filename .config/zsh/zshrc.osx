@@ -1,0 +1,63 @@
+#!/bin/env zsh
+
+# yabai scripts
+export PATH="$HOME/.config/yabai/scripts:$PATH"
+
+# Homebrew
+export PATH=/opt/homebrew/bin:$PATH
+export PATH=/opt/homebrew/sbin:$PATH
+export MANPATH=$(brew --prefix)/share/man:$MANPATH
+
+# For homebrew github auth
+export HOMEBREW_GITHUB_API_TOKEN=REDACTED
+
+# Homebrew Cocoa Emacs
+emacs_cli="/opt/homebrew/bin/emacs -nw"
+emacs_cocoa="/Applications/Emacs.app/Contents/MacOS/Emacs"
+alias emacs="$emacs_cli"
+
+# fix POSIX mode zcat appending .Z to all file names
+alias zcat="gzcat"
+
+# Quick way to rebuild the Launch Services database and get rid
+# of duplicates in the Open With submenu.
+alias fixopenwith='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
+
+# MacTex
+#export TEXDIR=/usr/local/texlive/2025
+export TEXDIR=/Library/TeX
+export PATH=$PATH:$TEXDIR/texbin
+export MANPATH=$MANPATH:$TEXDIR/Distributions/.DefaultTeX/Contents/Man
+#export TEXMFHOME=$HOME/Library/texmf
+
+# Plan 9 default browser
+export BROWSER="/Applications/Safari.app"
+alias safari="open -a /Applications/Safari.app"
+
+# YourKit Java profiler
+ykprof() {
+    JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -agentpath:/Applications/YourKit.app/Contents/Resources/bin/mac/libyjpagent.jnilib" $@
+}
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.cache/lm-studio/bin"
+# End of LM Studio CLI section
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<

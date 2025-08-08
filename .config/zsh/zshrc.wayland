@@ -1,0 +1,10 @@
+# wayland
+export WLR_NO_HARDWARE_CURSORS=1
+export WLR_RENDERER=egl2
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+
+# Vulkan fix for ubuntu 22.04
+if [[ $(lsb_release -a -s) = "22.04" ]]; then
+    export VK_LAYER_PATH="/usr/share/vulkan/explicit_layer.d"
+    export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/nvidia_icd.json"
+if

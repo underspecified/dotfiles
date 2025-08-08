@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+
+# local bin
+export PATH=/usr/local/bin:$PATH
+export PATH=/usr/local/sbin:$PATH
+export MANPATH=/usr/local/man:/usr/local/share/man:$MANPATH
+
+# For signing Debian packages
+# export DEBFULLNAME='Eric Nichols'
+# export DEBEMAIL=eric-n@is.naist.jp
+# export GPGKEY=8ABD1965
+
+# Emacs
+#alias emacs="TERM=xterm-color emacs -nw"
+
+# nvtop
+alias nvtop="TERM=xterm-color nvtop"
+
+# pbcopy
+alias pbcopy='xsel --clipboard --input'
+alias pbpaste='xsel --clipboard --output'
+alias pbclear='xsel --clipboard --clear'
+
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+# End of LM Studio CLI section

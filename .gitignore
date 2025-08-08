@@ -1,3 +1,11 @@
+.#*
+.DS_Store
+.emacs.d/elpa/archives
+.emacs.d/url
+.gnupg/random_seed
+.idea
+.ssh/sock
+.zsh_history
 *.iml
 *.o
 *.orig
@@ -6,12 +14,5 @@
 *.swp
 *.zcompdump
 *~
-.#*
-.DS_Store
-.emacs.d/elpa/archives
-.emacs.d/url
-.gnupg/random_seed
-.idea
-.ssh/sock
-Icon
 guide
+Icon
