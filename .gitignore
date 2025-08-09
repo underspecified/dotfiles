@@ -1,4 +1,10 @@
 .#*
+.claude/projects/
+.claude/shell-snapshots/
+.claude/statsig/
+.claude/todos/
+.config/zed/prompts/
+.config/zsh/.zsh_sessions/
 .DS_Store
 .emacs.d/elpa/archives
 .emacs.d/url
