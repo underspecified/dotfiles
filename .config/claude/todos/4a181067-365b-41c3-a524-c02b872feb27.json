@@ -1,8 +1,0 @@
-[
-  {
-    "content": "Fix UTF-8 encoding error with emoji surrogates",
-    "status": "completed",
-    "priority": "high",
-    "id": "fix_utf8_error"
-  }
-]
