@@ -1,0 +1,20 @@
+[
+  {
+    "content": "Find all *.md files in the current directory",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Extract tables from each markdown file",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Save each table as a separate TSV file",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  }
+]

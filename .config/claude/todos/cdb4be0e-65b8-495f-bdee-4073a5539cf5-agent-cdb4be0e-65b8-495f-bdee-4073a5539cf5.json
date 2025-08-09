@@ -1,0 +1,14 @@
+[
+  {
+    "content": "Remove comprehend_it-large from README examples",
+    "status": "completed",
+    "priority": "high",
+    "id": "37"
+  },
+  {
+    "content": "Add notes about model behavior and limitations",
+    "status": "completed",
+    "priority": "medium",
+    "id": "38"
+  }
+]

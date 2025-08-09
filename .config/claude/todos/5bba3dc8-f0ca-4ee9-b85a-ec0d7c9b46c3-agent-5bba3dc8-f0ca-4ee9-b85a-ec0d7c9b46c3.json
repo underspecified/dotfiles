@@ -1,0 +1,14 @@
+[
+  {
+    "content": "Read and analyze all step_*.jpg images",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Write a markdown manual for PC assembly based on the photos",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  }
+]

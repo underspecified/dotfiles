@@ -1,0 +1,26 @@
+[
+  {
+    "content": "Create comprehensive RAC evaluation with threshold and example sweeps",
+    "status": "completed",
+    "priority": "high",
+    "id": "23"
+  },
+  {
+    "content": "Implement threshold sweep 0.1-0.9 in 0.1 increments",
+    "status": "completed",
+    "priority": "high",
+    "id": "24"
+  },
+  {
+    "content": "Implement example sweep 1-10 for RAC analysis",
+    "status": "completed",
+    "priority": "high",
+    "id": "25"
+  },
+  {
+    "content": "Generate comprehensive analysis report",
+    "status": "completed",
+    "priority": "medium",
+    "id": "26"
+  }
+]

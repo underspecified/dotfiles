@@ -1,0 +1,20 @@
+[
+  {
+    "content": "Analyze the subtitle file to identify the corruption pattern",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Extract and preserve the valid dialogue portion (subtitles 1-45)",
+    "status": "in_progress",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Create a cleaned version of the subtitle file",
+    "status": "pending",
+    "priority": "high",
+    "id": "3"
+  }
+]

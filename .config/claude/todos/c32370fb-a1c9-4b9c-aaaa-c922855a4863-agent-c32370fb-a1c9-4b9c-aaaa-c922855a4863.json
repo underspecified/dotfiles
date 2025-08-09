@@ -1,0 +1,20 @@
+[
+  {
+    "content": "Analyze the transcript structure and identify valid content vs corrupted sections",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Extract and preserve the meaningful conversation between Haru and Hugo",
+    "status": "in_progress",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Create a cleaned version of the transcript",
+    "status": "pending",
+    "priority": "medium",
+    "id": "3"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "content": "Filter publications to only include Randy Gomez as author",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Sort publications by reverse chronological order",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Add keywords for each publication based on topic",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "Create final formatted publication list",
+    "status": "completed",
+    "priority": "high",
+    "id": "4"
+  }
+]

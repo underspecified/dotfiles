@@ -1,0 +1,50 @@
+[
+  {
+    "content": "Move gliclass_mps_patch.py to classy/gliclass/mps_patch.py and update imports",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Move bin/evaluate_with_new_framework.py to evaluation/evaluate.py",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Move classy/evaluation/data_converter.py to evaluation/data_converter.py",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "Move specialized scripts to misc/",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  },
+  {
+    "content": "Delete unused files",
+    "status": "completed",
+    "priority": "medium",
+    "id": "5"
+  },
+  {
+    "content": "Fix inference.py vs inference_patched.py situation",
+    "status": "completed",
+    "priority": "high",
+    "id": "6"
+  },
+  {
+    "content": "Test evaluation after cleanup",
+    "status": "completed",
+    "priority": "high",
+    "id": "7"
+  },
+  {
+    "content": "Move analyze_thresholds.py to classy/evaluation/ and create shell wrapper",
+    "status": "completed",
+    "priority": "high",
+    "id": "8"
+  }
+]
