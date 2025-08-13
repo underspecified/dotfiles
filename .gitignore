@@ -3,6 +3,9 @@
 .claude/shell-snapshots/
 .claude/statsig/
 .claude/todos/
+.config/i3/conf/i3bar.conf
+.config/i3status/config
+.config/wm/conf/theme.conf
 .config/zed/prompts/
 .config/zsh/.zsh_sessions/
 .DS_Store
