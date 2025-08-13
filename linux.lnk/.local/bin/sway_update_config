@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export mode=${1:-$(darkman get)}
+source "$HOME/.local/share/colors/selenized_${mode}.env"
+export WALLPAPER_CMD="output * bg $wallpaper fill"
+
+for conf in "$HOME/.config/wm"/conf/*.conf.in \
+            "$HOME/.config/sway"/conf/*.conf.in \
+            "$HOME/.config/swaylock/config.in"; do
+    envsubst < "$conf" | tee "${conf%.in}"
+done

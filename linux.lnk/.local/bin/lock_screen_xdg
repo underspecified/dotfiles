@@ -1,14 +1,12 @@
 #!/bin/bash
 
-CURDIR=$(dirname $0)
-DOTFILES=$(realpath $CURDIR/../..)
-
 LOCK_MIN=5
 LOCK_SEC=$(($LOCK_MIN * 60))
 IDLE_MIN=10
 IDLE_SEC=$(($IDLE_MIN * 60))
+
 mode=$(darkman get)
-source "$DOTFILES/colors/selenized_${mode}.env"
+source "$HOME/.local/share/colors/selenized_${mode}.env"
 
 gsettings set org.gnome.desktop.background picture-uri "file://$wallpaper"
 #gsettings set org.gnome.desktop.session idle-delay $IDLE_SEC

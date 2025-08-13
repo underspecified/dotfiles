@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bash "$HOME/git/dotfiles/linux/bin/change_desktop.sh" dark
+bash "$HOME/.local/bin/change_desktop.sh" dark

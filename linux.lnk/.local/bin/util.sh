@@ -110,12 +110,12 @@ toggle_gnome () {
 }
 
 toggle_i3 () {
-    bash "$HOME/git/dotfiles/config/i3/bin/i3_update_config" $1
+    bash "$HOME/.local/bin/i3_update_config" $1
     i3 restart
 }
 
 toggle_sway () {
-    bash "$HOME/git/dotfiles/config/sway/bin/sway_update_config" $1
+    bash "$HOME/.local/bin/sway_update_config" $1
     sway reload
 }
 

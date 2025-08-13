@@ -5,7 +5,7 @@
 # Read `man 5 sway` for a complete reference.
 
 ### update config
-exec_always --no-startup-id $HOME/git/dotfiles/config/sway/bin/sway_update_config
+exec_always --no-startup-id $HOME/.local/bin/sway_update_config
 
 include /etc/sway/config-vars.d/*
 include /etc/sway/config.d/*

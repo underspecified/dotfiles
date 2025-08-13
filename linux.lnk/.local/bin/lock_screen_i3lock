@@ -1,9 +1,5 @@
 #!/bin/bash
 
-CURDIR=$(dirname $0)
-DOTFILES=$(realpath $CURDIR/../../..)
-I3_DIR="$DOTFILES/config/i3"
-
 LOCK_MIN=5
 LOCK_SEC=$(($LOCK_MIN * 60))
 IDLE_MIN=10
@@ -12,7 +8,7 @@ IDLE_SEC=$(($IDLE_MIN * 60))
 mode=$(darkman get)
 font_pt="$font 36"
 
-source "$DOTFILES/colors/selenized_${mode}.env"
+source "$HOME/.local/share/colors/selenized_${mode}.env"
 
 LC_ALL="en_US.UTF-8" i3lock \
   --insidever-color=$bg_0 \
