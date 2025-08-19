@@ -3,6 +3,7 @@
 .config/i3
 .config/i3status
 .config/rofi
+.config/systemd/user/darkman.service.d
 .config/sway
 .config/swaylock
 .config/tofi

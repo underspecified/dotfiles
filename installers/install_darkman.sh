@@ -6,11 +6,13 @@ GIT_DIR=$(realpath "$CUR_DIR/../..")
 install_darkman() {
     echo "Installing darkman..."
 
-    # uninstall old golang
-    dpkg -l | grep golang | grep 1.13 | cut -f3 -d' ' | xargs sudo apt purge -y
     # install deps
     sudo apt install -y golang-1.18 scdoc
 
+    # manage golang alternatives
+    sudo update-alternatives --install /usr/bin/go go /usr/lib/go-1.18/bin/go 18
+    sudo update-alternatives --install /usr/bin/go go /usr/lib/go-1.13/bin/go 13
+    
     # clone repo
     cd "$GIT_DIR"
     git clone https://gitlab.com/WhyNotHugo/darkman.git
@@ -22,13 +24,12 @@ install_darkman() {
     # install program
     sudo make install PREFIX=/usr
 
-    # reinstall old golang
-    sudo apt install ros-noetic-strawberry-ros-asr -y
+    sudo update-alternatives --install /usr/bin/go go /usr/lib/go-1.13/bin/go 113
 
     # setup service
     systemctl --user enable darkman.service
-    mkdir -p "$HOME/.config/systemd/user/darkman.service.d/"
-    cp "$GIT_DIR/dotfiles/config/darkman/override.conf" "$HOME/.config/systemd/user/darkman.service.d/override.conf"
+    #mkdir -p "$HOME/.config/systemd/user/darkman.service.d/"
+    #cp "$GIT_DIR/dotfiles/config/darkman/override.conf" "$HOME/.config/systemd/user/darkman.service.d/override.conf"
 
     # start service
     systemctl --user daemon-reload
