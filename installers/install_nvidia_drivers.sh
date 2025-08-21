@@ -28,9 +28,10 @@ install_nvidia_drivers () {
 
 install_cuda () {
     sudo apt update && \
-    sudo apt install -y $CUDA_PACKAGE
+    sudo apt install -y $CUDA_PACKAGE nvidia-cuda-toolkit nvidia-cuda-dev
 }
 
 bash "$CUR_DIR/remove_nvidia_drivers.sh"
 install_nvidia_repo
 install_nvidia_drivers
+install_cuda
