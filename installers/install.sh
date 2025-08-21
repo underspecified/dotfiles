@@ -91,6 +91,3 @@ bash "$CUR_DIR/install_nvidia_drivers.sh"
 
 # install profilers
 bash "$CUR_DIR/install_profilers.sh"
-
-# setup env
-(cd "$CUR_DIR/.." && bash setup.sh)
