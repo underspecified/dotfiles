@@ -1,5 +1,6 @@
 .Xmodmap
 .Xresources
+.config/darkman
 .config/i3
 .config/i3status
 .config/rofi
