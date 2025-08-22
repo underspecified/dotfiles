@@ -38,25 +38,24 @@ export LC_PAPER="en_US.UTF-8"
 export LC_TELEPHONE="en_US.UTF-8"
 export LC_TIME="en_US.UTF-8"
 
+# local bin and manpath
+export PATH=/usr/local/bin:$PATH
+export PATH=/usr/local/sbin:$PATH
+export MANPATH=/usr/local/man:/usr/local/share/man:$MANPATH
+
+### Haskell cabal
+export PATH="$HOME/.cabal/bin:$PATH"
+export MANPATH="$HOME/.cabal/share/man:$MANPATH"
+
 ### user bin and manpath
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/sbin:$PATH"
 export MANPATH="$HOME/share/man:$MANPATH"
 
-### local bin and manpath
+### user's local bin and manpath
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/sbin:$PATH"
 export MANPATH="$HOME/.local/man:$HOME/.local/share/man:$MANPATH"
-
-# add dotfiles' bin to path
-export PATH="$HOME/.local/bin:$PATH"
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:$HOME/.cache/lm-studio/bin"
-
-### Haskell cabal
-export PATH="$HOME/.cabal/bin:$PATH"
-export MANPATH="$HOME/.cabal/share/man:$MANPATH"
 
 # 1password
 if [[ -d "/Applications/1Password.app" ]]; then
@@ -70,3 +69,6 @@ export PATH="$OP_DIR:$PATH"
 
 # OpenAI
 export OPENAI_API_KEY=REDACTED
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"

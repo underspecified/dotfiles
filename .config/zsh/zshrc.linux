@@ -20,8 +20,3 @@ alias nvtop="TERM=xterm-color nvtop"
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 alias pbclear='xsel --clipboard --clear'
-
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:$HOME/.lmstudio/bin"
-# End of LM Studio CLI section

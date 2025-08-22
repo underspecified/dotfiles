@@ -49,7 +49,3 @@ export LS_COLORS="$LS_COLORS:ow=1;7;34:st=30;44:su=30;41"
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/eric/.cache/lm-studio/bin"
-# End of LM Studio CLI section

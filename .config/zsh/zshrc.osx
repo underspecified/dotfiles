@@ -32,7 +32,10 @@ export MANPATH=$MANPATH:$TEXDIR/Distributions/.DefaultTeX/Contents/Man
 
 # Plan 9 default browser
 export BROWSER="/Applications/Safari.app"
-alias safari="open -a /Applications/Safari.app"
+
+safari () {
+    open -a /Applications/Safari.app "$@"
+}
 
 # YourKit Java profiler
 ykprof() {
@@ -61,3 +64,10 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+alias claude_cage='container run -it \
+  --volume ${PWD}:/app \
+  --volume ${HOME}/.claude:/app/.claude \
+  --volume ${HOME}/.claude.json:/app/.claude.json \
+  ghcr.io/gendosu/claude-code-docker:latest claude
+'
