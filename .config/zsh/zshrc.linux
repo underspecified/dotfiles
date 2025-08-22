@@ -20,3 +20,6 @@ alias nvtop="TERM=xterm-color nvtop"
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 alias pbclear='xsel --clipboard --clear'
+
+# docker
+export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
