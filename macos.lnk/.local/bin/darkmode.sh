@@ -1,0 +1,1 @@
+../../.config/dark-mode-notify/darkmode.sh

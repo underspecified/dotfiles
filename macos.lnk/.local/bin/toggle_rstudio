@@ -18,7 +18,7 @@ toggle_rstudio_light () {
     rm $tmp
 }
 
-toggle_rstudio () {
+_toggle_rstudio () {
     if [[ $mode == "dark" ]]; then
         toggle_rstudio_dark
     else
@@ -33,6 +33,5 @@ elif [[ $1 == "light" ]]; then
 else
     [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
 fi
-
 
 toggle_rstudio $mode

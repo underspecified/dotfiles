@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo_and_eval () {
+    echo "$@"
+    eval "$@"
+}
+
+echo_and_eval "$@"

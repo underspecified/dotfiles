@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-echo_and_eval () {
-    echo "$@"
-    eval "$@"
-}
-
 toggle_kitty () {
     [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
     cmd="/opt/homebrew/bin/kitten themes \

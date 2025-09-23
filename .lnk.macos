@@ -11,12 +11,17 @@
 .local/bin/borders_dark
 .local/bin/borders_light
 .local/bin/change_theme.sh
+.local/bin/echo_and_eval
+.local/bin/dark-mode-notify
+.local/bin/darkmode.sh
+.local/bin/echo_and_eval
 .local/bin/get_macos_mode
 .local/bin/open_alfred
 .local/bin/open_drafts
 .local/bin/open_finder
 .local/bin/open_kitty
 .local/bin/open_safari
+.local/bin/toggle_alfred
 .local/bin/toggle_borders
 .local/bin/toggle_kitty
 .local/bin/toggle_macos_mode
