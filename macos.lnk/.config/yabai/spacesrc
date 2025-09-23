@@ -22,6 +22,7 @@ yabai -m rule --add label="space_2__zoom" app="zoom.us" space=social
 
 ## app-specific settings
 yabai -m rule --add label="manage_off__activity_monitor" app="^Activity Monitor$" manage=off
+yabai -m rule --add label="manage_off__antinote" app="Antinote" manage=off
 yabai -m rule --add label="manage_off__app_store" app="^App Store$" manage=off
 yabai -m rule --add label="manage_off__colorslurp" app="ColorSlurp" title=".*" manage=off
 yabai -m rule --add label="manage_off__dictionary" app="^Dictionary$" manage=off
@@ -31,11 +32,15 @@ yabai -m rule --add label="manage_off__general" title="^General.*" manage=off
 yabai -m rule --add label="manage_off__kaleidoscope" app="^Kaleidoscope$" manage=off
 yabai -m rule --add label="manage_off__microsoft_outlook_calendar" app="^Microsoft Outlook$" title="• Calendar •" manage=off
 yabai -m rule --add label="manage_off__microsoft_teams" app="Microsoft Teams" title="^\(Meeting\|\[.*\]\).*\|" manage=off
+yabai -m rule --add label="manage_off__numi" title="^Numi$" manage=off
 yabai -m rule --add label="manage_off__preferences" title="^Preferences$" manage=off
+yabai -m rule --add label="manage_off__quick_drafts" app="Quick Drafts" manage=off
+
 yabai -m rule --add label="manage_off__safari_settings" app="^Safari$" title="^(General|Tabs|Passwords|Websites|Extensions|AutoFill|Search|Security|Privacy|Advanced)$" manage=off
 yabai -m rule --add label="manage_off__settings" title='Settings$' manage=off
 yabai -m rule --add label="manage_off__software_update" title="Software Update" manage=off
 yabai -m rule --add label="manage_off__system_information" app="^System Information$" manage=off
 yabai -m rule --add label="manage_off__system_settings" app="System Settings" manage=off
+yabai -m rule --add label="manage_off__tot" app="Tot" manage=off
 
 yabai -m rule --add label="manage_on__citrix" app="Citrix" manage=on
