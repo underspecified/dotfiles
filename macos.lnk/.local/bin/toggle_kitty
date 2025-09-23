@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+echo_and_eval () {
+    echo "$@"
+    eval "$@"
+}
+
+toggle_kitty () {
+    [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
+    cmd="/opt/homebrew/bin/kitten themes \
+        --config-file-name=themes.conf \
+        --reload-in=all"
+    echo_and_eval "$cmd $theme" || \
+    echo_and_eval "$cmd --cache-age=-1 $theme"
+    #echo_and_eval "/opt/homebrew/bin/kitten @ load-config --to unix:/tmp/mykitty"
+}
+
+if [[ $1 == "dark" ]]; then
+    mode="dark"
+elif [[ $1 == "light" ]]; then
+    mode="light"
+else
+    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+fi
+
+toggle_kitty $mode

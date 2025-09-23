@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+toggle_pdf_expert () {
+    osascript -l JavaScript "-" $1 <<- EOF >/dev/null
+
+function run(args) {
+    const se = Application("System Events")
+    const process = se.processes.whose({ name: "PDF Expert" })
+    if (process.length > 0) {
+        const viewMenu = process[0].menuBars[0].menuBarItems.byName("View")
+        const themeMenuItem = viewMenu.menus[0].menuItems.byName("Theme")
+        const theme = args == "dark" ? "Night" : "Day"
+        themeMenuItem.menus[0].menuItems.byName(theme).click()
+    }
+}
+
+EOF
+}
+
+if [[ $1 == "dark" ]]; then
+    mode="dark"
+elif [[ $1 == "light" ]]; then
+    mode="light"
+else
+    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+fi
+
+toggle_pdf_expert $mode

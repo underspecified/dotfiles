@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+toggle_macos_mode () {
+    osascript -l JavaScript "-" $1 <<- EOF
+
+function run(args) {
+	const systemEvents = Application("System Events")
+	const darkMode = args == "dark" ? true : false
+	systemEvents.appearancePreferences.darkMode = darkMode
+}
+
+EOF
+}
+
+curr=$(get_macos_mode)
+if [[ $1 == "dark" ]]; then
+    mode="dark"
+elif [[ $1 == "light" ]]; then
+    mode="light"
+else
+    [[ $curr == "light" ]] && mode="dark" || mode="light"
+fi
+
+toggle_macos_mode $mode

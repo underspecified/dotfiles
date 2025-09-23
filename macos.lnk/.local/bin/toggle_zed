@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+toggle_zed () {
+    echo_and_eval sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
+        "$CONFIG_DIR/zed/settings.json"
+}
+
+if [[ $1 == "dark" ]]; then
+    mode="dark"
+elif [[ $1 == "light" ]]; then
+    mode="light"
+else
+    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+fi
+
+toggle_zed $mode

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CUR_DIR=$(dirname $0)
 CONFIG_DIR=$(realpath "$CUR_DIR/../../config")
@@ -20,7 +20,7 @@ function run(args) {
 EOF
 }
 
-toggle_macos () {
+toggle_macos_mode () {
     osascript -l JavaScript "-" $1 <<- EOF
 
 function run(args) {
@@ -44,5 +44,5 @@ echo "[$(date '+%Y/%m/%d %H:%M:%S')] theme: $curr => $mode" |
 tee -a "$LOG_DIR/change_theme.log" 2>&1
 
 if [[ $curr != $mode ]]; then
-    toggle_macos $mode | tee -a "$LOG_DIR/change_theme.log" 2>&1
+    toggle_macos_mode $mode | tee -a "$LOG_DIR/change_theme.log" 2>&1
 fi

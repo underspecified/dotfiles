@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+toggle_borders () {
+    echo_and_eval "~/.config/borders/bordersrc_$1"
+}
+
+if [[ $1 == "dark" ]]; then
+    mode="dark"
+elif [[ $1 == "light" ]]; then
+    mode="light"
+else
+    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+fi
+
+toggle_borders $mode

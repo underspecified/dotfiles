@@ -17,3 +17,9 @@
 .local/bin/open_finder
 .local/bin/open_kitty
 .local/bin/open_safari
+.local/bin/toggle_borders
+.local/bin/toggle_kitty
+.local/bin/toggle_macos_mode
+.local/bin/toggle_pdf_expert
+.local/bin/toggle_rstudio
+.local/bin/toggle_zed
