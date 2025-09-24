@@ -47,17 +47,13 @@ source "$YABAI_DIR/spacesrc"
 yabai -m rule --list
 
 # use column layout
-YABAI_COL_WIDTH=800
+YABAI_COL_WIDTH=1000
 bash "$YABAI_DIR/scripts/yabai_config_layout_cols" $YABAI_COL_WIDTH
 
-### reload this file when a display is added
-yabai -m signal --add event=display_added action="sleep 2; yabai -m space --balance"
-yabai -m signal --add event=display_removed action="sleep 1; yabai -m space --balance"
-yabai -m signal --add event=display_changed action="sleep 1; yabai -m space --balance"
-
-### reload this file when a display is removed
-#yabai -m signal --add label=display_removed event=display_removed \
-#    action="bash $YABAI_DIR/yabairc"
+### reload this file when a display is added or removed
+yabai -m signal --add event=display_added action="source $YABAI_DIR/yabairc"
+yabai -m signal --add event=display_removed action="source $YABAI_DIR/yabairc"
+yabai -m signal --add event=display_changed action="source $YABAI_DIR/yabairc"
 
 # list signals
 yabai -m signal --list

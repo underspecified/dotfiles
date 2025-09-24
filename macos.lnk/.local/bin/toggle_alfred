@@ -22,5 +22,5 @@ else
     [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
 fi
 
-
+echo "toggle_alfred => $mode"
 toggle_alfred $mode

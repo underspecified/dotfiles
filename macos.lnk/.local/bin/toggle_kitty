@@ -18,4 +18,5 @@ else
     [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
 fi
 
+echo "toggle_kitty => $mode"
 toggle_kitty $mode

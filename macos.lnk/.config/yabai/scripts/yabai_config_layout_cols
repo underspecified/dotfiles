@@ -4,7 +4,7 @@ PATH="/opt/homebrew/bin:$PATH"
 SCRIPTS_DIR=$(realpath $(dirname "${BASH_SOURCE:-$0}"))
 
 # column width
-YABAI_COL_WIDTH=${1:-800}
+YABAI_COL_WIDTH="${YABAI_COL_WIDTH:-800}"
 export YABAI_COL_WIDTH
 echo "YABAI_COL_WIDTH: $YABAI_COL_WIDTH"
 

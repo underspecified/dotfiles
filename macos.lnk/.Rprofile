@@ -6,7 +6,7 @@ if (
   # Use later to delay until RStudio is ready
   later::later(function() {
     rsthemes::set_theme_light("Solarized Light {rsthemes}")  # light theme
-    rsthemes::set_theme_dark("Solarzed Dark {rsthemes}")  # dark theme
+    rsthemes::set_theme_dark("Solarized Dark {rsthemes}")  # dark theme
 
     # To automatically choose theme based on time of day
     # rsthemes::use_theme_auto(dark_start = "17:00", dark_end = "7:00")

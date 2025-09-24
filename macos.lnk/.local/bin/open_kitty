@@ -1,9 +1,12 @@
 #!/bin/bash
 
-osascript -e '
-tell application "Kitty"
-    activate
-end tell
-tell application "System Events"
-    keystroke "n" using {command down}
-end tell'
+# osascript -e '
+# tell application "Kitty"
+#     activate
+# end tell
+# tell application "System Events"
+#     keystroke "n" using {command down}
+# end tell'
+
+#kitty --single-instance
+kitty @ new-window --new-tab=no --window-type=os-window

@@ -21,4 +21,5 @@ else
     [[ $curr == "light" ]] && mode="dark" || mode="light"
 fi
 
+echo "toggle_macos_mode => $mode"
 toggle_macos_mode $mode

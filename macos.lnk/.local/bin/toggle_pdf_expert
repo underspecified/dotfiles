@@ -25,4 +25,5 @@ else
     [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
 fi
 
+echo "toggle_pdf_expert => $mode"
 toggle_pdf_expert $mode
