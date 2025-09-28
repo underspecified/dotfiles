@@ -4,9 +4,9 @@
 .config/i3
 .config/i3status
 .config/rofi
-.config/systemd/user/darkman.service.d
 .config/sway
 .config/swaylock
+.config/systemd/user/darkman.service.d
 .config/tofi
 .config/wm
 .config/xdg-desktop-portal
@@ -15,6 +15,7 @@
 .local/bin/change_theme.sh
 .local/bin/google-chrome-wayland
 .local/bin/google-chrome-x11
+.local/bin/gpu_burn
 .local/bin/i3_update_config
 .local/bin/launch_dmenu
 .local/bin/launch_rofi

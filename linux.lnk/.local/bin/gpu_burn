@@ -1,0 +1,3 @@
+#!/bin/bash
+
+(cd $HOME/git/gpu-burn && ./gpu_burn "$@")
