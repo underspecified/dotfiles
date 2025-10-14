@@ -14,7 +14,7 @@
     <key>ProgramArguments</key>
     <array>
        <string>/Users/eric/.local/bin/dark-mode-notify</string>
-       <string>/Users/eric/.local/bin/darkmode.sh</string>
+       <string>/Users/eric/.local/bin/dark-mode-notify-helper</string>
     </array>
 </dict>
 </plist>
