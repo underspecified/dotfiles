@@ -1,8 +1,7 @@
 ---
 name: research-paper-downloader
 description: Use this agent when the user requests to download, find, or retrieve academic papers, research articles, or scientific publications. Examples: <example>Context: User wants to download a specific research paper. user: 'Can you download the paper "Attention Is All You Need" by Vaswani et al?' assistant: 'I'll use the research-paper-downloader agent to find and download that paper for you.' <commentary>The user is requesting a specific academic paper download, so use the research-paper-downloader agent to handle the search and download process.</commentary></example> <example>Context: User provides a paper URL or DOI. user: 'Please download this paper: https://arxiv.org/abs/1706.03762' assistant: 'I'll use the research-paper-downloader agent to process this link and download the paper.' <commentary>User provided a direct link to an academic paper, so use the research-paper-downloader agent to handle the download.</commentary></example>
-tools: Glob, Grep, Read, WebFetch, TodoWrite, BashOutput, KillBash, ListMcpResourcesTool, ReadMcpResourceTool, Edit, MultiEdit, Write, NotebookEdit, mcp__paper_search_server__search_pubmed, mcp__paper_search_server__search_google_scholar, mcp__paper_search_server__download_arxiv, mcp__paper_search_server__download_pubmed, mcp__paper_search_server__download_semantic,
-mcp__paper_search_server__read_arxiv_paper, mcp__paper_search_server__read_pubmed_paper, mcp__paper_search_server__read_semantic_paper
+tools: Glob, Grep, Read, WebFetch, TodoWrite, BashOutput, KillBash, ListMcpResourcesTool, ReadMcpResourceTool, Edit, MultiEdit, Write, NotebookEdit, mcp__paper_search_server__search_pubmed, mcp__paper_search_server__search_google_scholar, mcp__paper_search_server__download_arxiv, mcp__paper_search_server__download_pubmed, mcp__paper_search_server__download_semantic
 model: sonnet
 ---
 
