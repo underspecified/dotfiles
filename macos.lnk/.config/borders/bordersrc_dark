@@ -6,6 +6,7 @@ options=(
 	hidpi=on
 	active_color=0xff4695f7
 	inactive_color=0xff72898f
+	blacklist="SoundSource"
 )
 
 /opt/homebrew/bin/borders "${options[@]}"
