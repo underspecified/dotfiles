@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 
 toggle_pdf_expert () {
-    osascript -l JavaScript "-" $1 <<- EOF >/dev/null
+    echo "toggle_pdf_expert() ..."
+    osascript -l JavaScript "-" $1 <<- EOF 2>&1
 
 function run(args) {
+    console.log("run() ...")
     const se = Application("System Events")
+    console.log("se:", se.toString())
     const process = se.processes.whose({ name: "PDF Expert" })
+    console.log("process:", process.toString())
     if (process.length > 0) {
+        console.log("process[0]:", process[0].toString())
         const viewMenu = process[0].menuBars[0].menuBarItems.byName("View")
         const themeMenuItem = viewMenu.menus[0].menuItems.byName("Theme")
         const theme = args == "dark" ? "Night" : "Day"
+        console.log("theme:", theme)
         themeMenuItem.menus[0].menuItems.byName(theme).click()
     }
 }

@@ -3,7 +3,7 @@
 LOG_DIR="$HOME/tmp"
 export PATH="$HOME/.local/bin:$PATH"
 
-echo "DARKMODE: $DARKMODE"|
+echo "DARKMODE: $DARKMODE" |
 tee -a "$LOG_DIR/darkmode.log" 2>&1
 
 if [[ -n ${DARKMODE+x} ]]; then
@@ -11,7 +11,6 @@ if [[ -n ${DARKMODE+x} ]]; then
     (
         toggle_borders $mode
         toggle_pdf_expert $mode
-        toggle_rstudio $mode
     ) |
     tee -a "$LOG_DIR/darkmode.log" 2>&1
 fi
