@@ -108,3 +108,6 @@ shift + ctrl + alt - 6 : yabai -m window --space 6
 shift + ctrl + alt - 7 : yabai -m window --space 7
 shift + ctrl + alt - 8 : yabai -m window --space 8
 shift + ctrl + alt - 9 : yabai -m window --space 9
+
+shift + ctrl + alt + tab = 'yabai -m space --focus next || yabai -m space --focus first'
+ctrl + alt + tab = 'yabai -m space --focus prev || yabai -m space --focus last'
