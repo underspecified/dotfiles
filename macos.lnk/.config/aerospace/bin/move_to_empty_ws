@@ -1,0 +1,8 @@
+#!/bin/bash
+
+move_to_empty_ws () {
+    empty=$(aerospace list-workspaces --monitor mouse --empty | head -1)
+    aerospace move-node-to-workspace $empty
+}
+
+move_to_empty_ws

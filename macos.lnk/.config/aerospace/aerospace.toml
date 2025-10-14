@@ -63,16 +63,15 @@ preset = 'qwerty'
 inner.horizontal = 14
 inner.vertical = 14
 outer.left = 8
-outer.bottom = 8
-outer.top = 8
+outer.bottom = 10
+outer.top = 4
 outer.right = 8
 
 [exec]
 inherit-env-vars = true
 
 [exec.env-vars]
-PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
-
+PATH = '${HOME}/.local/bin:${HOME}/.config/aerospace/bin:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -100,22 +99,27 @@ PATH = '${HOME}/.config/aerospace/bin:${HOME}/git/dotfiles/macos/bin:/opt/homebr
 # You can uncomment the following lines to open up terminal with alt + enter s
 # shortcut (like in i3)
 # alt-enter = '''exec-and-forget osascript -e '
-# tell application "Terminal"
+# tell application "kitty"
 #     do script
 #     activate
 # end tell'
 # '''
 
+### Launch apps
+# application launcher: Alfred
+ctrl-alt-space = 'exec-and-forget open_alfred'
+# change themes
 ctrl-alt-d = 'exec-and-forget change_theme.sh'
-ctrl-alt-f = 'exec-and-forget open ~'
-ctrl-alt-enter = '''exec-and-forget osascript -e '
-tell application "Kitty"
-    activate
-end tell
-tell application "System Events"
-    keystroke "n" using {command down}
-end tell'
-'''
+# refresh borders
+ctrl-alt-b = 'exec-and-forget borders_auto'
+# open drafts
+shift-ctrl-alt-d = 'exec-and-forget open_drafts'
+# terminal: kitty
+ctrl-alt-enter = 'exec-and-forget open_kitty'
+# broswer: Safari
+shift-ctrl-alt-enter = 'exec-and-forget open_safari'
+# finder
+shift-ctrl-alt-f = 'exec-and-forget open_finder'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#layout
 ctrl-alt-slash = 'layout tiles horizontal vertical'
@@ -123,15 +127,15 @@ ctrl-alt-comma = 'layout accordion horizontal vertical'
 ctrl-alt-period = 'layout floating tiling'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-ctrl-alt-h = 'focus left'
-ctrl-alt-j = 'focus down'
-ctrl-alt-k = 'focus up'
-ctrl-alt-l = 'focus right'
+ctrl-alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
+ctrl-alt-j = 'focus --boundaries-action wrap-around-the-workspace down'
+ctrl-alt-k = 'focus --boundaries-action wrap-around-the-workspace up'
+ctrl-alt-l = 'focus --boundaries-action wrap-around-the-workspace right'
 
-ctrl-alt-left = 'focus left'
-ctrl-alt-down = 'focus down'
-ctrl-alt-up = 'focus up'
-ctrl-alt-right = 'focus right'
+ctrl-alt-left = 'focus --boundaries-action wrap-around-the-workspace left'
+ctrl-alt-down = 'focus --boundaries-action wrap-around-the-workspace down'
+ctrl-alt-up = 'focus --boundaries-action wrap-around-the-workspace up'
+ctrl-alt-right = 'focus --boundaries-action wrap-around-the-workspace right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
 ctrl-alt-shift-h = ['fullscreen off', 'layout tiling', 'move left']
@@ -194,10 +198,8 @@ cmd-ctrl-alt-right = [
     'layout accordion',
 ]
 
-ctrl-alt-u = 'fullscreen on'
-ctrl-alt-shift-u = 'fullscreen off'
-
-ctrl-alt-w = 'enable toggle'
+ctrl-alt-f = 'fullscreen'
+ctrl-alt-shift-space = 'enable toggle'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
 ctrl-alt-minus = 'resize smart -50'
@@ -206,30 +208,32 @@ ctrl-alt-equal = 'resize smart +50'
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 ctrl-alt-1 = 'workspace 1'
 ctrl-alt-2 = 'workspace 2'
-ctrl-alt-z = 'workspace 3' # 3 doesn't work with hyper key
+ctrl-alt-3 = 'workspace 3'
 ctrl-alt-4 = 'workspace 4'
 ctrl-alt-5 = 'workspace 5'
 ctrl-alt-6 = 'workspace 6'
 ctrl-alt-7 = 'workspace 7'
 ctrl-alt-8 = 'workspace 8'
 ctrl-alt-9 = 'workspace 9'
+ctrl-alt-0 = 'exec-and-forget empty_ws'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 ctrl-alt-shift-1 = 'move-node-to-workspace 1'
 ctrl-alt-shift-2 = 'move-node-to-workspace 2'
-ctrl-alt-shift-z = 'move-node-to-workspace 3' # 3 doesn't work with hyper key
+ctrl-alt-shift-3 = 'move-node-to-workspace 3'
 ctrl-alt-shift-4 = 'move-node-to-workspace 4'
 ctrl-alt-shift-5 = 'move-node-to-workspace 5'
 ctrl-alt-shift-6 = 'move-node-to-workspace 6'
 ctrl-alt-shift-7 = 'move-node-to-workspace 7'
 ctrl-alt-shift-8 = 'move-node-to-workspace 8'
 ctrl-alt-shift-9 = 'move-node-to-workspace 9'
+ctrl-alt-shift-0 = 'exec-and-forget move_to_empty_ws'
 
-ctrl-left = ' workspace prev --wrap-around'
-ctrl-right = 'workspace next --wrap-around'
-ctrl-alt-shift-tab = 'workspace prev --wrap-around'
-ctrl-alt-tab = 'workspace next --wrap-around'
 
+ctrl-left = 'exec-and-forget prev_ws'
+ctrl-right = 'exec-and-forget next_ws'
+ctrl-alt-shift-tab = 'exec-and-forget prev_ws'
+ctrl-alt-tab = 'exec-and-forget next_ws'
 
 # [[on-window-detected]]
 # if.app-id = 'com.apple.systempreferences'
