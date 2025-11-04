@@ -126,52 +126,15 @@ ctrl-alt-slash = 'layout tiles horizontal vertical'
 ctrl-alt-comma = 'layout accordion horizontal vertical'
 ctrl-alt-period = 'layout floating tiling'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#focus
-ctrl-alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
-ctrl-alt-j = 'focus --boundaries-action wrap-around-the-workspace down'
-ctrl-alt-k = 'focus --boundaries-action wrap-around-the-workspace up'
-ctrl-alt-l = 'focus --boundaries-action wrap-around-the-workspace right'
-
 ctrl-alt-left = 'focus --boundaries-action wrap-around-the-workspace left'
 ctrl-alt-down = 'focus --boundaries-action wrap-around-the-workspace down'
 ctrl-alt-up = 'focus --boundaries-action wrap-around-the-workspace up'
 ctrl-alt-right = 'focus --boundaries-action wrap-around-the-workspace right'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move
-ctrl-alt-shift-h = ['fullscreen off', 'layout tiling', 'move left']
-ctrl-alt-shift-j = ['fullscreen off', 'layout tiling', 'move down']
-ctrl-alt-shift-k = ['fullscreen off', 'layout tiling', 'move up']
-ctrl-alt-shift-l = ['fullscreen off', 'layout tiling', 'move right']
-
 ctrl-alt-shift-left = ['fullscreen off', 'layout tiling', 'move left']
 ctrl-alt-shift-down = ['fullscreen off', 'layout tiling', 'move down']
 ctrl-alt-shift-up = ['fullscreen off', 'layout tiling', 'move up']
 ctrl-alt-shift-right = ['fullscreen off', 'layout tiling', 'move right']
-
-cmd-ctrl-alt-h = [
-    'fullscreen off',
-    'layout tiling',
-    'join-with left',
-    'layout accordion',
-]
-cmd-ctrl-alt-j = [
-    'fullscreen off',
-    'layout tiling',
-    'join-with down',
-    'layout accordion',
-]
-cmd-ctrl-alt-k = [
-    'fullscreen off',
-    'layout tiling',
-    'join-with up',
-    'layout accordion',
-]
-cmd-ctrl-alt-l = [
-    'fullscreen off',
-    'layout tiling',
-    'join-with right',
-    'layout accordion',
-]
 
 cmd-ctrl-alt-left = [
     'fullscreen off',
@@ -199,7 +162,10 @@ cmd-ctrl-alt-right = [
 ]
 
 ctrl-alt-f = 'fullscreen'
-ctrl-alt-shift-space = 'enable toggle'
+ctrl-alt-shift-space = 'layout floating tiling'
+ctrl-alt-s = 'layout v_accordion' # 'layout stacking' in i3
+ctrl-alt-w = 'layout h_accordion' # 'layout tabbed' in i3
+ctrl-alt-e = 'layout tiles horizontal vertical' # 'layout toggle split' in i3
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
 ctrl-alt-minus = 'resize smart -50'
@@ -264,29 +230,33 @@ run = 'move-node-to-workspace 2'
 if.app-id = 'org.whispersystems.signal-desktop'
 run = 'move-node-to-workspace 2'
 
-[[on-window-detected]]
-if.app-id = 'us.zoom.xos'
-run = 'move-node-to-workspace 2'
+# [[on-window-detected]]
+# if.app-id = 'us.zoom.xos'
+# run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'dev.zed.Zed'
 run = 'move-node-to-workspace 3'
 
-[[on-window-detected]]
-if.app-id = 'net.kovidgoyal.kitty'
-run = 'move-node-to-workspace 3'
+# [[on-window-detected]]
+# if.app-id = 'net.kovidgoyal.kitty'
+# run = 'move-node-to-workspace 3'
 
-[[on-window-detected]]
-if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace 3'
+# [[on-window-detected]]
+# if.app-id = 'com.apple.Safari'
+# run = 'move-node-to-workspace 3'
 
-[[on-window-detected]]
-if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace 4'
+# [[on-window-detected]]
+# if.app-id = 'md.obsidian'
+# run = 'move-node-to-workspace 4'
 
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome'
-run = 'move-node-to-workspace 4'
+# [[on-window-detected]]
+# if.app-id = 'com.google.Chrome'
+# run = 'move-node-to-workspace 4'
+
+# [[on-window-detected]]
+# if.app-id = 'com.anthropic.claudefordesktop'
+# run = 'move-node-to-workspace 4'
 
 # [[on-window-detected]]
 # if.app-id = 'com.microsoft.Excel'
@@ -306,4 +276,8 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.ActivityMonitor'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.colliderli.iina'
 run = 'layout floating'
