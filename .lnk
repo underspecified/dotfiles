@@ -8,6 +8,11 @@
 .config/zed
 .config/zsh
 .dircolors
+.docker/config.json
+.docker/daemon.json
+.docker/mcp/catalog.json
+.docker/mcp/config.yaml
+.docker/mcp/registry.yaml
 .gitconfig
 .gitignore
 .gnupg

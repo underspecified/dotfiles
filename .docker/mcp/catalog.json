@@ -1,0 +1,14 @@
+{
+  "catalogs": {
+    "docker-mcp": {
+      "displayName": "Docker MCP Catalog",
+      "url": "https://desktop.docker.com/mcp/catalog/v2/catalog.yaml",
+      "lastUpdate": "2025-12-13T20:10:38+09:00"
+    },
+    "my-servers": {
+      "displayName": "Google Workspace MCP Catalog",
+      "url": "/Users/eric/claude/mcp/google_workspace_mcp/my-catalog.yaml",
+      "lastUpdate": "2025-12-12T17:48:36+09:00"
+    }
+  }
+}

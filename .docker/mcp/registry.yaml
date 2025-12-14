@@ -1,0 +1,11 @@
+registry:
+  google-workspace-mcp:
+    ref: ""
+  markdownify:
+    ref: ""
+  markitdown:
+    ref: ""
+  paper-search:
+    ref: ""
+  playwright:
+    ref: ""
