@@ -21,56 +21,61 @@ ctrl + alt - r : yabai --restart-service; skhd --restart-service
 # load column layout and rebalance apps
 ctrl + alt - a : yabai_config_layout_cols
 
-# Focus : Focus left window
-ctrl + alt - h : yabai3 focus west
-# Focus : Focus bottom window
-ctrl + alt - j : yabai3 focus south
-# Focus : Focus top window
-ctrl + alt - k : yabai3 focus north
-# Focus : Focus right window
-ctrl + alt - l : yabai3 focus east
-# Focus : Focus left window
-ctrl + alt - left : yabai3 focus west
-# Focus : Focus bottom window
-ctrl + alt - down : yabai3 focus south
-# Focus : Focus top window
-ctrl + alt - up : yabai3 focus north
-# Focus : Focus right window
-ctrl + alt - right : yabai3 focus east
+# focus on window in specified direction
+ctrl + alt - left : yabai -m window --focus west
+ctrl + alt - down : \
+    yabai -m window --focus stack.next || \
+    yabai -m window --focus south || \
+    yabai -m window --focus stack.first
+ctrl + alt - up : \
+    yabai -m window --focus stack.prev || \
+    yabai -m window --focus north || \
+    yabai -m window --focus stack.last
+ctrl + alt - right : yabai -m window --focus east
 
-# Swap : Swap left window
-shift + ctrl + alt - h : yabai3 move west
-# Swap : Swap bottom window
-shift + ctrl + alt - j : yabai3 move north
-# Swap : Swap top window
-shift + ctrl + alt - k : yabai3 move south
-# Swap : Swap right window
-shift + ctrl + alt - l : yabai3 move east
-# Swap : Swap left window
+# Move windows out of stacks or swap in specified direction
 shift + ctrl + alt - left : yabai3 move west
-# Swap : Swap bottom window
 shift + ctrl + alt - down : yabai3 move north
-# Swap : Swap top window
 shift + ctrl + alt - up : yabai3 move south
-# Swap : Swap right window
 shift + ctrl + alt - right : yabai3 move east
+# shift+ ctrl + alt - left : \
+#     (yabai -m window --insert west && \
+#      yabai -m window --toggle float && \
+#      yabai -m window --toggle float) || \
+#      yabai -m window --warp west
+# shift+ ctrl + alt - down : \
+#      (yabai -m window --insert south && \
+#       yabai -m window --toggle float && \
+#       yabai -m window --toggle float) || \
+#      yabai -m window --warp south
+# shift+ ctrl + alt - up : \
+#      (yabai -m window --insert north) && \
+#       yabai -m window --toggle float && \
+#       yabai -m window --toggle float) || \
+#      yabai -m window --warp north
+# shift+ ctrl + alt - right : \
+#      (yabai -m window --insert east && \
+#       yabai -m window --toggle float && \
+#       yabai -m window --toggle float) || \
+#      yabai -m window --warp east
 
-# Warp : Warp window to left
-ctrl + alt + cmd - h : yabai3 stack-enter west
-# Warp : Warp window to bottom
-ctrl + alt + cmd - j : yabai3 stack-enter south
-# Warp : Warp window to top
-ctrl + alt + cmd - k : yabai3 stack-enter north
-# Warp : Warp window to left
-ctrl + alt + cmd - l : yabai3 stack-enter east
-# Warp : Warp window to left
+# Stack: stack window in specified direction
 ctrl + alt + cmd - left : yabai3 stack-enter west
-# Warp : Warp window to bottom
 ctrl + alt + cmd - down : yabai3 stack-enter south
-# Warp : Warp window to top
 ctrl + alt + cmd - up : yabai3 stack-enter north
-# Warp : Warp window to left
 ctrl + alt + cmd - right : yabai3 stack-enter east
+# ctrl + alt + cmd - left : \
+#     yabai -m window west --insert stack && \
+#     yabai -m window --warp west
+# ctrl + alt + cmd - down : \
+#     yabai -m window south --insert stack && \
+#     yabai -m window --warp south
+# ctrl + alt + cmd - up : \
+#     yabai -m window north --insert stack && \
+#     yabai -m window --warp north
+# ctrl + alt + cmd - right : \
+#     yabai -m window east --insert stack && \
+#     yabai -m window --warp east
 
 # Grow window: ctrl + alt - equals
 ctrl + alt - 0x18 : yabai_window_grow
@@ -97,6 +102,8 @@ ctrl + alt - 6 : yabai -m space --focus 6
 ctrl + alt - 7 : yabai -m space --focus 7
 ctrl + alt - 8 : yabai -m space --focus 8
 ctrl + alt - 9 : yabai -m space --focus 9
+ctrl + alt - 0 :
+    yabai -m space --focus $(yabai -m query --spaces | jq 'last.index')
 
 # Spaces navigation: move apps between spaces
 shift + ctrl + alt - 1 : yabai -m window --space 1
@@ -108,6 +115,19 @@ shift + ctrl + alt - 6 : yabai -m window --space 6
 shift + ctrl + alt - 7 : yabai -m window --space 7
 shift + ctrl + alt - 8 : yabai -m window --space 8
 shift + ctrl + alt - 9 : yabai -m window --space 9
+shift + ctrl + alt - 0 : \
+    yabai -m window --space $(yabai -m query --spaces | jq 'last.index')
 
-shift + ctrl + alt + tab = 'yabai -m space --focus next || yabai -m space --focus first'
-ctrl + alt + tab = 'yabai -m space --focus prev || yabai -m space --focus last'
+ctrl + alt - tab : \
+    yabai -m space --focus next || \
+    yabai -m space --focus first
+shift + ctrl + alt - tab : \
+    yabai -m space --focus prev || \
+    yabai -m space --focus last
+
+ctrl - left : \
+    yabai -m space --focus prev || \
+    yabai -m space --focus last
+ctrl - right : \
+    yabai -m space --focus next || \
+    yabai -m space --focus first

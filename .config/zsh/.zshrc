@@ -49,3 +49,8 @@ export LS_COLORS="$LS_COLORS:ow=1;7;34:st=30;44:su=30;41"
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/eric/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

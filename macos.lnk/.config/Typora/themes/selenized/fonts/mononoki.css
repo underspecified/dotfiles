@@ -1,0 +1,43 @@
+:root {
+    --monospace: Mononoki;
+    --sans-serif: sans-serif;
+    --serif: serif;
+}
+
+@include-when-export url(http://fonts.googleapis.com/css?family=Roboto+Mono:400italic,700italic,700,400&subset=latin,latin-ext);
+
+@font-face {
+    font-family: "Mononoki";
+    font-style: normal;
+    font-weight: normal;
+    src:
+        local("Mononoki Regular"),
+        url("./mononoki-regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Mononoki";
+    font-style: italic;
+    font-weight: normal;
+    src:
+        local("Mononoki Italic"),
+        url("./mononoki-italic.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Mononoki";
+    font-style: normal;
+    font-weight: bold;
+    src:
+        local("Mononoki Bold"),
+        url("./mononoki-bold.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Mononoki";
+    font-style: italic;
+    font-weight: bold;
+    src:
+        local("Mononoki Bold Italic"),
+        url("./mononoki-bolditalic.woff") format("woff");
+}

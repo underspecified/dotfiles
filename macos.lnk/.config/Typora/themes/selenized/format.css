@@ -1,86 +1,34 @@
 :root {
-    --color-bg-0: #fbf3db;
-    --color-bg-1: #ece3cc;
-    --color-bg-2: #d5cdb6;
-    --color-dim-0: #909995;
-    --color-fg-0: #53676d;
-    --color-fg-1: #3a4d53;
+    --bg-color: var(--color-bg-0); /*change background*/
+    --text-color: var(--color-fg-0); /*change text color*/
+    --md-char-color: inherit; /*change color of meta characetrs like `*` in markdown */
+    --meta-content-color: inherit; /*change color of meta contents like image text or link address in markdown */
 
-    --color-red: #d2212d;
-    --color-green: #489100;
-    --color-yellow: #ad8900;
-    --color-blue: #0072d4;
-    --color-magenta: #ca4898;
-    --color-cyan: #009c8f;
-    --color-orange: #c25d1e;
-    --color-violet: #8762c6;
+    --primary-color: inherit; /* color of primary buttons */
+    --primary-btn-border-color: inherit;
+    --primary-btn-text-color: inherit;
 
-    --color-br-red: #cc1729d;
-    --color-br-green: #428b00;
-    --color-br-yellow: #a78300;
-    --color-br-blue: #006dce;
-    --color-br-magenta: #c44392;
-    --color-br-cyan: #00978a;
-    --color-br-orange: #bc5819;
-    --color-br-violet: #825dc0;
+    --window-border: 1px solid var(--color-fg-1); /*border for sidebar, etc*/
 
-    --side-bar-bg-color: #ece3cc; /* --color-bg-1 */
-    --text-color: #53676d; /* --color-fg-0 */
-    --item-hover-bg-color: #ece3cc; /* --color-bg-1 */
-    --window-border: 1px solid #3a4d53; /* --color-fg-1 */
-    --active-file-bg-color: #fbf3db; /* --color-bg-0 */
-    --active-file-text-color: #3a4d53; /* --color-fg-1 */
-    --item-hover-text-color: #3a4d53; /* --color-fg-1 */
+    --active-file-bg-color: inherit; /*background color if list item in file tree or file list*/
+    --active-file-text-color: var(--color-fg-1);
+    --active-file-border-color: inherit;
+
+    --side-bar-bg-color: var(--color-bg-1); /*change background of sidebar*/
+    --item-hover-bg-color: var(
+        --color-bg-1
+    ); /*background of control items when hover, like menu in sidebar*/
+    --item-hover-text-color: var(--color-fg-1);
 }
-
-@include-when-export url(http://fonts.googleapis.com/css?family=Roboto+Mono:400italic,700italic,700,400&subset=latin,latin-ext);
-
-@font-face {
-    font-family: "Mononoki";
-    font-style: normal;
-    font-weight: normal;
-    src:
-        local("Mononoki Regular"),
-        url("./selenized/mononoki-regular.woff") format("woff");
-}
-
-@font-face {
-    font-family: "Mononoki";
-    font-style: italic;
-    font-weight: normal;
-    src:
-        local("Mononoki Italic"),
-        url("./selenized/mononoki-italic.woff") format("woff");
-}
-
-@font-face {
-    font-family: "Mononoki";
-    font-style: normal;
-    font-weight: bold;
-    src:
-        local("Mononoki Bold"),
-        url("./selenized/mononoki-bold.woff") format("woff");
-}
-
-@font-face {
-    font-family: "Mononoki";
-    font-style: italic;
-    font-weight: bold;
-    src:
-        local("Mononoki Bold Italic"),
-        url("./selenized/mononoki-bolditalic.woff") format("woff");
-}
-
-html {
+/*html {
     font-size: 16px;
-}
+}*/
 
 body {
-    font-family:
-        Consolas, Mononoki, "Roboto Sans", "Liberation Mono", monospace;
-    color: var(--color-fg-0);
-    line-height: 1.6;
-    background-color: var(--color-bg-0);
+    font-family: var(--monospace);
+    color: var(--text-color);
+    /*line-height: 1.6;*/
+    background-color: var(--bg-color);
 }
 
 #write {
@@ -107,9 +55,9 @@ body > *:last-child {
 a {
     color: var(--color-blue);
 }
-a:hover {
+/*a:hover {
     color: var(--color-orange);
-}
+}*/
 
 .md-toc-inner {
     color: var(--color-fg-1) !important;
@@ -170,34 +118,34 @@ h6 code {
 }
 
 h1 {
-    padding-bottom: 0.3em;
-    font-size: 2.25em;
+    padding-bottom: 0.3rem;
+    font-size: 2.25rem;
     line-height: 1.2;
     border-bottom: 1px solid var(--color-bg-1);
 }
 
 h2 {
-    padding-bottom: 0.3em;
-    font-size: 1.75em;
+    padding-bottom: 0.3rem;
+    font-size: 1.75rem;
     line-height: 1.225;
     border-bottom: 1px solid var(--color-bg-1);
 }
 
 h3 {
-    font-size: 1.5em;
+    font-size: 1.5rem;
     line-height: 1.43;
 }
 
 h4 {
-    font-size: 1.25em;
+    font-size: 1.25rem;
 }
 
 h5 {
-    font-size: 1em;
+    font-size: 1rem;
 }
 
 h6 {
-    font-size: 1em;
+    font-size: 1rem;
     color: var(--color-fg-1);
 }
 
@@ -206,11 +154,11 @@ ul,
 ol,
 dl,
 table {
-    margin: 0.8em 0;
+    margin: 0.8rem 0;
 }
 
 blockquote {
-    margin: 1.6em 3.2em;
+    margin: 1.6rem 3.2rem;
 }
 
 li > ol,
@@ -351,8 +299,7 @@ tt {
     color: var(--color-orange);
     border-radius: 3px;
     padding: 0;
-    font-family:
-        Consolas, Mononoki, "Roboto Mono", "Liberation Mono", Courier, monospace;
+    font-family: var(--monospace);
     padding: 2px 4px 0px 4px;
     font-size: 0.9em;
 }
@@ -360,7 +307,7 @@ tt {
 .md-fences {
     margin-bottom: 15px;
     margin-top: 15px;
-    padding: 0.2em 1em;
+    padding: 0.2rem 1rem;
     padding-top: 8px;
     padding-bottom: 6px;
 }
@@ -439,10 +386,9 @@ tt {
 
 .md-image > .md-meta {
     border-radius: 3px;
-    font-family:
-        Consolas, Mononoki, "Roboto Mono", "Liberation Mono", Courier, monospace;
+    font-family: var(--monospace);
     padding: 8px 16px;
-    font-size: 0.9em;
+    font-size: 0.9rem;
     color: inherit;
     background-color:;
 }
@@ -486,8 +432,7 @@ header,
 .context-menu,
 .megamenu-content,
 footer {
-    font-family:
-        Consolas, Mononoki, "Roboto Mono", "Liberation Mono", monospace;
+    font-family: var(--monospace);
 }
 
 .file-node-content:hover .file-node-icon,

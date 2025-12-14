@@ -1,4 +1,6 @@
 #!/bin/bash
 
 mode=$(get_macos_mode)
+killall -9 Dropover borders
 borders_$mode
+open -a Dropover

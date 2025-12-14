@@ -1,0 +1,24 @@
+:root {
+    --sans-serif: sans-serif;
+    --serif: serif;
+    --monospace: monospace;
+}
+
+body,
+#write {
+    font-family: var(--sans-serif);
+
+    font-variant-ligatures: common-ligatures discretionary-ligatures
+        historical-ligatures contextual;
+    font-feature-settings:
+        "liga" 1,
+        "calt" 1,
+        "dlig" 1,
+        "hliga" 1,
+        "dalt" 1;
+    -webkit-font-feature-settings:
+        "liga" 1, "calt" 1, "dlig" 1, "hlig" 1, "clig" 1;
+    -moz-font-feature-settings:
+        "liga" 1, "calt" 1, "dlig" 1, "hlig" 1, "clig" 1;
+    }
+}

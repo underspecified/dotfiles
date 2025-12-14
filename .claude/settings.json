@@ -22,5 +22,6 @@
   "statusLine": {
     "type": "command",
     "command": "input=$(cat); printf '%s@%s:%s [%s]' \"$(whoami)\" \"$(hostname -s)\" \"$(echo \"$input\" | jq -r '.workspace.current_dir' | sed 's|.*/||')\" \"$(echo \"$input\" | jq -r '.model.display_name')\""
-  }
+  },
+  "alwaysThinkingEnabled": true
 }

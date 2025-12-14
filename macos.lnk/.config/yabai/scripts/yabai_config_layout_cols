@@ -76,7 +76,7 @@ done
 
 
 # when loading the script, convert all existing splits to horizontal
-yabai_toggle_horizontal
+#yabai_toggle_horizontal
 
 
 # rebalance all windows

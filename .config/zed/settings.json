@@ -7,6 +7,68 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "ui_font_family": ".ZedSans",
+
+  "buffer_font_family": "iA Writer Mono V",
+  "buffer_font_weight": 400.0,
+
+  // "buffer_font_family": "0xProto Nerd Font",
+  // "buffer_font_weight": 300.0,
+  // "buffer_font_features": {
+  //   "calt": true,
+  //   "liga": true,
+  //   "ss01": false
+  // },
+
+  // "buffer_font_family": "Monaspace Argon",
+  // "buffer_font_weight": 300.0,
+  // "buffer_font_features": {
+  //   "calt": true,
+  //   "liga": true,
+  //   "ss01": true,
+  //   "ss02": true,
+  //   "ss03": true,
+  //   "ss04": true,
+  //   "ss05": true,
+  //   "ss06": true,
+  //   "ss07": true,
+  //   "ss08": true,
+  //   "ss09": true,
+  //   "ss10": true,
+  //   "zero": true
+  // },
+
+  // "buffer_font_family": "Victor Mono",
+  // "buffer_font_weight": 300.0,
+  // // "buffer_font_features": {
+  // //   "calt": true,
+  // //   "ss01": true
+  // // },
+
+  // "buffer_font_family": "Fira Code",
+  // "buffer_font_weight": 300.0,
+  // "buffer_font_features": {
+  //   "cv06": 1,
+  //   //"cv14": 1,
+  //   "cv19": 1,
+  //   "cv20": 1,
+  //   "cv21": 1,
+  //   "cv22": 1,
+  //   "cv23": 1,
+  //   "cv24": 1,
+  //   "cv25": 1,
+  //   "cv26": 1,
+  //   "cv27": 1,
+  //   "cv28": 1,
+  //   //"onum": true,
+  //   "ss02": true,
+  //   "ss06": true,
+  //   "ss07": true,
+  //   "ss09": true,
+  //   //"ss10": true,
+  //   "zero": true
+  // },
+
   "edit_predictions": {
     //"mode": "dark",
     "copilot": {
@@ -20,7 +82,7 @@
     "default_model": {
       "provider": "zed.dev",
       "model": "claude-3-7-sonnet-thinking-latest"
-    },
+    }
   },
 
   "jupyter": {
@@ -55,7 +117,7 @@
   },
 
   "ui_font_size": 11,
-  "buffer_font_size": 11,
+  "buffer_font_size": 11.0,
   "autosave": "on_focus_change",
   "preferred_line_length": 80,
   "soft_wrap": "preferred_line_length"

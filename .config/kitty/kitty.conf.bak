@@ -2640,8 +2640,8 @@ linux_display_server auto
 
 
 # BEGIN_KITTY_FONTS
-font_family      family='iAWriterMonoV-Text'
-bold_font        family='iAWriterMonoV-SemiBold'
-italic_font      family='iAWriterMonoV-TextItalic'
-bold_italic_font family='iAWriterMonoV-SemiBoldItalic'
+font_family      family='IBM Plex Mono' postscript_name=IBMPlexMono
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
 # END_KITTY_FONTS

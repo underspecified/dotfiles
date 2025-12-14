@@ -1,0 +1,35 @@
+:root {
+    --color-bg-0: #fbf3db;
+    --color-bg-1: #ece3cc;
+    --color-bg-2: #d5cdb6;
+    --color-dim-0: #909995;
+    --color-fg-0: #53676d;
+    --color-fg-1: #3a4d53;
+
+    --color-red: #d2212d;
+    --color-green: #489100;
+    --color-yellow: #ad8900;
+    --color-blue: #0072d4;
+    --color-magenta: #ca4898;
+    --color-cyan: #009c8f;
+    --color-orange: #c25d1e;
+    --color-violet: #8762c6;
+
+    --color-br-red: #cc1729d;
+    --color-br-green: #428b00;
+    --color-br-yellow: #a78300;
+    --color-br-blue: #006dce;
+    --color-br-magenta: #c44392;
+    --color-br-cyan: #00978a;
+    --color-br-orange: #bc5819;
+    --color-br-violet: #825dc0;
+
+    --bg-color: #fbf3db; /* --color-bg-0 */
+    --side-bar-bg-color: #ece3cc; /* --color-bg-1 */
+    --text-color: #53676d; /* --color-fg-0 */
+    --item-hover-bg-color: #ece3cc; /* --color-bg-1 */
+    --window-border: 1px solid #3a4d53; /* --color-fg-1 */
+    --active-file-bg-color: #fbf3db; /* --color-bg-0 */
+    --active-file-text-color: #3a4d53; /* --color-fg-1 */
+    --item-hover-text-color: #3a4d53; /* --color-fg-1 */
+}

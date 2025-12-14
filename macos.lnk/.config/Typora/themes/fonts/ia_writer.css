@@ -1,0 +1,35 @@
+:root {
+    --sans-serif: "iA Writer Quattro V", sans-serif;
+    --serif: serif;
+    --monospace: "iA Writer Mono V", monospace;
+}
+
+body,
+#write {
+    font-family: var(--sans-serif);
+
+    font-variant-ligatures: common-ligatures discretionary-ligatures
+        historical-ligatures contextual;
+    font-feature-settings:
+        "liga" 1,
+        "calt" 1,
+        "dlig" 1,
+        "hlig" 1,
+        "clig" 1,
+        "zero" 1;
+    -webkit-font-feature-settings:
+        "liga" 1,
+        "calt" 1,
+        "dlig" 1,
+        "hlig" 1,
+        "clig" 1,
+        "zero" 1;
+    -moz-font-feature-settings:
+        "liga" 1,
+        "calt" 1,
+        "dlig" 1,
+        "hlig" 1,
+        "clig" 1,
+        "zero" 1;
+    text-rendering: optimizeLegibility;
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-sleep 3
+#sleep 3
 
 ### set paths
 PATH="/opt/homebrew/bin:$PATH"
@@ -33,7 +33,7 @@ yabai -m config right_padding                8
 yabai -m config window_gap                   14
 yabai -m config insert_feedback_color        0x00FFFFFF #0xffdd383a
 #yabai -m config split_ratio                 0.50
-#yabai -m config auto_balance                 on
+#yabai -m config auto_balance                on
 yabai -m config mouse_modifier               alt
 yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
@@ -44,21 +44,21 @@ yabai -m config mouse_drop_action            swap
 
 ### settings for spaces
 source "$YABAI_DIR/spacesrc"
-yabai -m rule --list
+#yabai -m rule --list
 
 # use column layout
 YABAI_COL_WIDTH=1000
-bash "$YABAI_DIR/scripts/yabai_config_layout_cols" $YABAI_COL_WIDTH
+#bash "$YABAI_DIR/scripts/yabai_config_layout_cols" $YABAI_COL_WIDTH
 
 ### reload this file when a display is added or removed
-yabai -m signal --add event=display_added action="source $YABAI_DIR/yabairc"
-yabai -m signal --add event=display_removed action="source $YABAI_DIR/yabairc"
-yabai -m signal --add event=display_changed action="source $YABAI_DIR/yabairc"
+#yabai -m signal --add event=display_added action="source $YABAI_DIR/yabairc"
+#yabai -m signal --add event=display_removed action="source $YABAI_DIR/yabairc"
+#yabai -m signal --add event=display_changed action="source $YABAI_DIR/yabairc"
 
 # list signals
-yabai -m signal --list
+#yabai -m signal --list
 
 # rebalance
-$YABAI_DIR/scripts/yabai_rebalance
+#$YABAI_DIR/scripts/yabai_rebalance
 
 echo "yabai configuration loaded."

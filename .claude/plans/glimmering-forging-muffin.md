@@ -1,0 +1,214 @@
+# Plan: R-Based Survey Results Visualization
+
+## Goal
+Adapt the existing R Markdown code from a previous paper (magic.rmd) to generate publication-quality Likert scale visualizations for the HRI2026 holistic expression experiment.
+
+## User Preferences
+- **Data source**: JS exports TSV → R reads TSV file (simpler, no extra auth)
+- **Plot layout**: Separate plots for each subscale (4 plots)
+
+---
+
+## Source Files
+
+### Existing R Code (magic.rmd)
+Location: `/Users/eric/.../HRI2026/analysis/magic.rmd`
+
+**Key capabilities:**
+- Centered Likert scale plots using `likert` package
+- Cronbach's alpha reliability analysis using `psych` package
+- Cohen's d effect sizes
+- Statistical tests (paired t-test, Wilcoxon)
+- RColorBrewer color schemes
+
+### Current Data
+- Google Sheets ID: `1SRH4fZjNS2TauAC6etO684y-uNAxPKOir1llTwc5gpI`
+- Sheets: `Baseline`, `Proposed` with participant responses
+- N=24 paired observations
+
+---
+
+## Data Mapping
+
+| Subscale | Items | Sheet Columns |
+|----------|-------|---------------|
+| HRIES Animacy | Alive, Natural, Real, Human-like | C, D, E, F |
+| HRIES Agency | Autonomous, Purposeful, Intentional, Self-directed | G, H, I, J |
+| Voice Expressivity | Conveyal, Contribution, Suitability | L, M, N |
+| Physical Expressivity | Conveyal, Contribution, Suitability | O, P, Q |
+
+---
+
+## Implementation Steps
+
+### Step 1: Add TSV Export to analyze_results.js
+
+Add function to export data in format expected by R:
+
+```javascript
+async function exportToTSV(sheets) {
+  const [baseRes, propRes] = await Promise.all([
+    sheets.spreadsheets.values.get({ spreadsheetId, range: 'Baseline!C:Q' }),
+    sheets.spreadsheets.values.get({ spreadsheetId, range: 'Proposed!C:Q' })
+  ]);
+
+  // Format: System | H01 | H02 | ... | V01 | V02 | V03 | P01 | P02 | P03
+  // Write to ../analysis/survey_data.tsv
+}
+```
+
+Output file: `analysis/survey_data.tsv`
+
+### Step 2: Create hri2026.rmd
+
+Create new R Markdown file:
+
+```r
+# Setup
+library(likert)
+library(psych)
+library(RColorBrewer)
+library(dplyr)
+library(tidyr)
+
+# Read TSV exported by JS
+data <- readr::read_tsv('survey_data.tsv')
+baseline <- data %>% filter(System == "Baseline")
+proposed <- data %>% filter(System == "Proposed")
+```
+
+### Step 2: Define Question Mappings
+
+```r
+# HRIES Animacy items
+animacy_qs <- list(
+  "H01" = "Alive",
+  "H02" = "Natural",
+  "H03" = "Real",
+  "H04" = "Human-like"
+)
+
+# HRIES Agency items
+agency_qs <- list(
+  "H05" = "Autonomous",
+  "H06" = "Purposeful",
+  "H07" = "Intentional",
+  "H08" = "Self-directed"
+)
+
+# Voice Expressivity items
+voice_qs <- list(
+  "V01" = "Voice conveyed emotions",
+  "V02" = "Voice contributed positively",
+  "V03" = "Voice suits personality"
+)
+
+# Physical Expressivity items
+physical_qs <- list(
+  "P01" = "Physical actions conveyed emotions",
+  "P02" = "Physical actions contributed positively",
+  "P03" = "Physical actions suit personality"
+)
+```
+
+### Step 3: Data Transformation Function
+
+```r
+prepare_likert_data <- function(baseline, proposed, columns, labels) {
+  # Extract columns, add System label, combine
+  b_data <- baseline %>%
+    select(all_of(columns)) %>%
+    mutate(System = "Baseline")
+
+  p_data <- proposed %>%
+    select(all_of(columns)) %>%
+    mutate(System = "Proposed")
+
+  combined <- bind_rows(b_data, p_data)
+
+  # Convert to factors for likert package
+  combined[, 1:(ncol(combined)-1)] <- lapply(
+    combined[, 1:(ncol(combined)-1)],
+    factor, levels = 1:7, labels = labels
+  )
+
+  likert(combined[, 1:(ncol(combined)-1)], grouping = combined$System)
+}
+```
+
+### Step 4: Generate 4 Separate Plots
+
+```r
+# Plot 1: HRIES Animacy
+animacy_likert <- prepare_likert_data(
+  baseline, proposed,
+  c("C", "D", "E", "F"),
+  c("Not at all", "2", "3", "4", "5", "6", "Totally")
+)
+plot(animacy_likert, centered = TRUE) + ggtitle("HRIES Animacy")
+
+# Plot 2: HRIES Agency
+agency_likert <- prepare_likert_data(...)
+
+# Plot 3: Voice Expressivity
+voice_likert <- prepare_likert_data(
+  baseline, proposed,
+  c("L", "M", "N"),
+  c("Strongly Disagree", "Disagree", "Somewhat Disagree",
+    "Neutral", "Somewhat Agree", "Agree", "Strongly Agree")
+)
+
+# Plot 4: Physical Expressivity
+physical_likert <- prepare_likert_data(...)
+```
+
+### Step 5: Statistical Analysis Section
+
+Reuse from magic.rmd:
+- `do_alpha()` for Cronbach's alpha per subscale
+- `do_cohen()` for effect sizes
+- `do_sig_tests()` for paired t-tests and Wilcoxon
+
+---
+
+## Output Visualizations
+
+| Plot | Items | Scale Labels |
+|------|-------|--------------|
+| HRIES Animacy | Alive, Natural, Real, Human-like | Not at all → Totally |
+| HRIES Agency | Autonomous, Purposeful, Intentional, Self-directed | Not at all → Totally |
+| Voice Expressivity | 3 items | Strongly Disagree → Strongly Agree |
+| Physical Expressivity | 3 items | Strongly Disagree → Strongly Agree |
+
+---
+
+## Files to Create/Modify
+
+| File | Action |
+|------|--------|
+| `survey/code/analyze_results.js` | Add `exportToTSV()` function |
+| `analysis/survey_data.tsv` | Generated by JS (data export) |
+| `analysis/hri2026.rmd` | Create (adapted from magic.rmd) |
+
+## R Dependencies
+
+Already available from magic.rmd:
+- `likert`, `psych`, `RColorBrewer`, `dplyr`, `tidyr`, `readr`
+
+No new packages needed!
+
+---
+
+## Execution
+
+```bash
+# Step 1: Export data from Google Sheets
+cd survey/code/
+node analyze_results.js
+
+# Step 2: Generate R visualizations
+cd ../../analysis/
+Rscript -e "rmarkdown::render('hri2026.rmd')"
+```
+
+Output: `analysis/hri2026.html` with publication-ready plots
