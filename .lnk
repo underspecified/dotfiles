@@ -4,6 +4,7 @@
 .config/kitty
 .config/obsidian
 .config/rumdl
+.config/tmux
 .config/zed
 .config/zsh
 .dircolors
