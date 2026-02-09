@@ -1,0 +1,16 @@
+[global]
+disable = ["MD013", "MD033"]
+# MD013 (line length): Academic prose uses long single-line paragraphs — auto-fix
+#   would reflow text destructively
+# MD033 (no inline HTML): LaTeX commands (\vspace, \pagebreak) trigger false positives
+
+[per-file-flavor]
+"*.qmd" = "quarto"
+# .qmd files get Quarto flavor (handles [@citations], fenced divs, shortcodes)
+# .md files use default/auto-detection (GFM-compatible)
+
+[MD049]
+style = "underscore"  # _underscores_ for italics
+
+[MD050]
+style = "asterisk"    # **asterisks** for bold
