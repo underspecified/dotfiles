@@ -3,6 +3,7 @@
 .claude/claude-limitline.json
 .claude/commands/do-with-agent.md
 .claude/commands/explore-plan-code-test.md
+.claude/commands/fact-checker-citations.md
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
