@@ -34,8 +34,16 @@ for event in window_focused application_activated; do
         label="$label" \
         active=yes \
         event="$event" \
-        action="$SCRIPTS_DIR/yabai_window_insert_col $col_width"
+        action="$SCRIPTS_DIR/yabai_window_insert_col $max_cols $col_width"
 done
+
+# Rebalance on every new window so columns stay even
+label="window_created_rebalance"
+yabai -m signal --remove "$label" 2>/dev/null
+yabai -m signal --add \
+    label="$label" \
+    event="window_created" \
+    action="yabai -m space --balance"
 
 # Rebalance all spaces
 yabai -m query --spaces | jq -r '.[].index' |
