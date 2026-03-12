@@ -5,6 +5,7 @@
 .claude/commands/explore-plan-code-test.md
 .claude/commands/fact-checker-citations.md
 .claude/commands/grammar-checker.md
+.claude/commands/research-argument-developer.md
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
