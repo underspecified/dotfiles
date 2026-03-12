@@ -1,0 +1,163 @@
+#!/bin/bash
+# Restore yabai window positions from a snapshot file.
+# Usage: yabai_restore [snapshot.json]
+
+PATH="/opt/homebrew/bin:$PATH"
+set -uo pipefail
+
+STATE_DIR="$HOME/.local/state/yabai"
+SNAPSHOT="${1:-$STATE_DIR/snapshot.json}"
+ORDER_FILE=$(mktemp)
+trap 'rm -f "$ORDER_FILE"' EXIT
+
+if [[ ! -f "$SNAPSHOT" ]]; then
+    echo "error: no snapshot found at $SNAPSHOT" >&2
+    exit 1
+fi
+
+# Get current windows
+current_windows=$(yabai -m query --windows | jq '[.[] | select(.["is-hidden"] == false and .["is-minimized"] == false)]')
+
+# Track used window IDs as space-delimited string (bash 3.2 compatible)
+used_ids=" "
+moved=0
+skipped=0
+spaces_touched=""
+
+# --- Phase 1: match windows + move to correct spaces ---
+
+while IFS= read -r entry; do
+    saved_app=$(printf '%s\n' "$entry" | jq -r '.app')
+    saved_title=$(printf '%s\n' "$entry" | jq -r '.title // ""')
+    saved_space=$(printf '%s\n' "$entry" | jq -r '.space')
+    saved_floating=$(printf '%s\n' "$entry" | jq -r '.["is-floating"]')
+    saved_x=$(printf '%s\n' "$entry" | jq -r '.frame.x | floor')
+    saved_y=$(printf '%s\n' "$entry" | jq -r '.frame.y | floor')
+    saved_w=$(printf '%s\n' "$entry" | jq -r '.frame.w | floor')
+    saved_h=$(printf '%s\n' "$entry" | jq -r '.frame.h | floor')
+
+    match_id=""
+
+    # Pass 1: exact app + exact title
+    match_id=$(printf '%s\n' "$current_windows" | jq -r --arg app "$saved_app" --arg title "$saved_title" \
+        '[.[] | select(.app == $app and .title == $title)] | .[0].id // empty')
+    if [[ -n "$match_id" ]] && printf '%s\n' "$used_ids" | grep -qw "$match_id"; then
+        match_id=""
+    fi
+
+    # Pass 2: app only (first unmatched)
+    if [[ -z "$match_id" ]]; then
+        while read -r candidate_id; do
+            if [[ -n "$candidate_id" ]] && ! printf '%s\n' "$used_ids" | grep -qw "$candidate_id"; then
+                match_id="$candidate_id"
+                break
+            fi
+        done < <(printf '%s\n' "$current_windows" | jq -r --arg app "$saved_app" \
+            '[.[] | select(.app == $app)] | .[].id')
+    fi
+
+    # No match — skip
+    if [[ -z "$match_id" ]]; then
+        echo "skip: no window for $saved_app ($saved_title)" >&2
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    used_ids="$used_ids$match_id "
+
+    # Get current state of matched window
+    current_space=$(printf '%s\n' "$current_windows" | jq -r --argjson id "$match_id" \
+        '.[] | select(.id == $id) | .space')
+    current_floating=$(printf '%s\n' "$current_windows" | jq -r --argjson id "$match_id" \
+        '.[] | select(.id == $id) | .["is-floating"]')
+
+    # Move to correct space if needed
+    if [[ "$current_space" != "$saved_space" ]]; then
+        if yabai -m window "$match_id" --space "$saved_space" 2>/dev/null; then
+            echo "moved $saved_app to space $saved_space" >&2
+        else
+            echo "warn: failed to move $saved_app to space $saved_space" >&2
+        fi
+    fi
+
+    spaces_touched="$spaces_touched $saved_space"
+
+    # Restore floating window position
+    if [[ "$saved_floating" == "true" ]]; then
+        if [[ "$current_floating" != "true" ]]; then
+            yabai -m window "$match_id" --toggle float 2>/dev/null || true
+        fi
+        yabai -m window "$match_id" --move "abs:${saved_x}:${saved_y}" 2>/dev/null || true
+        yabai -m window "$match_id" --resize "abs:${saved_w}:${saved_h}" 2>/dev/null || true
+        echo "restored float $saved_app at ${saved_x},${saved_y} ${saved_w}x${saved_h}" >&2
+    else
+        # Record tiled window for ordering: space match_id saved_x
+        echo "$saved_space $match_id $saved_x" >> "$ORDER_FILE"
+    fi
+
+    moved=$((moved + 1))
+
+done < <(jq -c '.windows[]' "$SNAPSHOT")
+
+# --- Phase 2: restore tiled window order within each space ---
+# For each space, sort windows by saved x-position (left to right),
+# then swap into correct positions using selection sort.
+
+for sp in $(printf '%s\n' "$spaces_touched" | tr ' ' '\n' | sort -un); do
+    [[ -z "$sp" ]] && continue
+
+    # Desired order: window IDs sorted by saved x (left to right)
+    desired=$(grep "^$sp " "$ORDER_FILE" | sort -k3 -n | awk '{print $2}')
+    n=$(echo "$desired" | grep -c . || true)
+    [[ "$n" -lt 2 ]] && continue
+
+    # Selection sort: for each position, find where the desired window
+    # currently is and swap it into place
+    for target_id in $desired; do
+        # Re-query current order on this space (x-sorted)
+        current_order=$(yabai -m query --windows --space "$sp" | \
+            jq -r '[.[] | select(.["is-hidden"] == false and .["is-minimized"] == false and .["is-floating"] == false)] | sort_by(.frame.x) | .[].id')
+
+        # Find position of target in current order
+        pos=0
+        target_pos=-1
+        for cid in $current_order; do
+            if [[ "$cid" == "$target_id" ]]; then
+                target_pos=$pos
+                break
+            fi
+            pos=$((pos + 1))
+        done
+
+        # Find what's currently at the desired position
+        desired_pos=0
+        for did in $desired; do
+            [[ "$did" == "$target_id" ]] && break
+            desired_pos=$((desired_pos + 1))
+        done
+
+        # If already in the right position, skip
+        [[ "$target_pos" == "$desired_pos" ]] && continue
+
+        # Get the ID of the window currently at the desired position
+        swap_pos=0
+        swap_id=""
+        for cid in $current_order; do
+            if [[ "$swap_pos" == "$desired_pos" ]]; then
+                swap_id="$cid"
+                break
+            fi
+            swap_pos=$((swap_pos + 1))
+        done
+
+        if [[ -n "$swap_id" && "$swap_id" != "$target_id" ]]; then
+            yabai -m window "$target_id" --swap "$swap_id" 2>/dev/null && \
+                echo "swapped window order on space $sp" >&2 || true
+        fi
+    done
+
+    # Rebalance after ordering
+    yabai -m space "$sp" --balance 2>/dev/null || true
+done
+
+echo "restored $moved windows, skipped $skipped" >&2
