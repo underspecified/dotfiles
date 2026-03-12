@@ -5,6 +5,7 @@
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
 .claude/rules/authoring.md
+.claude/rules/bash.md
 .claude/settings.json
 .config/dark_reader
 .config/github-copilot
