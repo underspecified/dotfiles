@@ -1,0 +1,12 @@
+{
+  "theme": "selenized-light",
+  "model": { "enabled": false },
+  "context": {
+    "enabled": true,
+    "maxTokens": 150000
+  },
+  "budget": {
+    "warningThreshold": 60,
+    "criticalThreshold": 85
+  }
+}

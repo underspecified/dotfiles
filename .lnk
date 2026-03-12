@@ -1,5 +1,6 @@
 .claude/CLAUDE.md
 .claude/README.md
+.claude/claude-limitline.json
 .claude/settings.json
 .config/dark_reader
 .config/github-copilot
