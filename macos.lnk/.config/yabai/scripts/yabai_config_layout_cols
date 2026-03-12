@@ -1,23 +1,19 @@
 #!/bin/bash
 # Configure column layout based on display width.
-# Widescreen (≥3440px): 4 columns
-# External  (≥2560px):  3 columns
-# Laptop    (<2560px):   2 columns
+# Columns = floor(display_width / MIN_COL_WIDTH), minimum 1.
 
 PATH="/opt/homebrew/bin:$PATH"
 SCRIPTS_DIR=$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)
 
+# Minimum column width in pixels (override via env or $1)
+MIN_COL_WIDTH=${1:-${MIN_COL_WIDTH:-750}}
+
 # Display width (integer pixels)
 display_w=$(yabai -m query --displays --display | jq '.frame.w | floor')
 
-# Column count by display width
-if (( display_w >= 3440 )); then
-    max_cols=4
-elif (( display_w >= 2560 )); then
-    max_cols=3
-else
-    max_cols=2
-fi
+# Column count: as many as fit without going below MIN_COL_WIDTH
+max_cols=$(( display_w / MIN_COL_WIDTH ))
+(( max_cols < 1 )) && max_cols=1
 
 col_width=$(( display_w / max_cols ))
 split_ratio=$(jq -n "$col_width / $display_w")
