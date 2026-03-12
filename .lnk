@@ -8,6 +8,7 @@
 .claude/rules/bash.md
 .claude/rules/markdown.md
 .claude/rules/python.md
+.claude/rules/safety.md
 .claude/settings.json
 .config/dark_reader
 .config/github-copilot
