@@ -12,6 +12,7 @@
 .claude/commands/research-paper-section-writer.md
 .claude/commands/research-question-developer.md
 .claude/commands/research-topic-brainstormer.md
+.claude/commands/video-captioner.md
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
