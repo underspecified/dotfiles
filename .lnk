@@ -4,6 +4,7 @@
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
+.claude/rules/authoring.md
 .claude/settings.json
 .config/dark_reader
 .config/github-copilot
