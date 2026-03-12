@@ -2,6 +2,7 @@
 .claude/README.md
 .claude/claude-limitline.json
 .claude/hookify.block-force-push.local.md
+.claude/hookify.block-rm.local.md
 .claude/settings.json
 .config/dark_reader
 .config/github-copilot
