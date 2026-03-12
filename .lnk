@@ -7,6 +7,7 @@
 .claude/hooks/ask_git_commit.sh
 .claude/hooks/commit_guidelines.md
 .claude/hooks/git-commit-docs
+.claude/hooks/nag_docs.sh
 .claude/rules/authoring.md
 .claude/rules/bash.md
 .claude/rules/markdown.md
