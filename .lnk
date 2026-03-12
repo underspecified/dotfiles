@@ -8,6 +8,7 @@
 .claude/commands/research-argument-developer.md
 .claude/commands/research-citation-generator.md
 .claude/commands/research-hypothesis-developer.md
+.claude/commands/research-outline-creator.md
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
