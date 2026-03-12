@@ -4,6 +4,7 @@
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
+.claude/hooks/ask_git_commit.sh
 .claude/rules/authoring.md
 .claude/rules/bash.md
 .claude/rules/markdown.md
