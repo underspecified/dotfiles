@@ -10,6 +10,7 @@
 .claude/commands/research-hypothesis-developer.md
 .claude/commands/research-outline-creator.md
 .claude/commands/research-paper-section-writer.md
+.claude/commands/research-question-developer.md
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
