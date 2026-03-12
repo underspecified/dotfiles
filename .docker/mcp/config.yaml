@@ -1,0 +1,14 @@
+# Docker MCP Server Configuration
+# Configure paths for servers that need local file access
+
+markdownify:
+  paths:
+    - /Users/eric
+
+markitdown:
+  paths:
+    - /Users/eric
+
+google-workspace-mcp:
+  paths:
+    - /Users/eric
