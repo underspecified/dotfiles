@@ -46,19 +46,15 @@ yabai -m config mouse_drop_action            swap
 source "$YABAI_DIR/spacesrc"
 #yabai -m rule --list
 
-# use column layout
-YABAI_COL_WIDTH=1000
-#bash "$YABAI_DIR/scripts/yabai_config_layout_cols" $YABAI_COL_WIDTH
+# column layout (auto-detects display width → 2/3/4 columns)
+bash "$YABAI_DIR/scripts/yabai_config_layout_cols"
 
-### reload this file when a display is added or removed
-#yabai -m signal --add event=display_added action="source $YABAI_DIR/yabairc"
-#yabai -m signal --add event=display_removed action="source $YABAI_DIR/yabairc"
-#yabai -m signal --add event=display_changed action="source $YABAI_DIR/yabairc"
-
-# list signals
-#yabai -m signal --list
-
-# rebalance
-#$YABAI_DIR/scripts/yabai_rebalance
+# reconfigure columns when display changes
+for event in display_added display_removed display_moved; do
+    yabai -m signal --add \
+        label="${event}_reconfigure_cols" \
+        event="$event" \
+        action="bash $YABAI_DIR/scripts/yabai_config_layout_cols"
+done
 
 echo "yabai configuration loaded."

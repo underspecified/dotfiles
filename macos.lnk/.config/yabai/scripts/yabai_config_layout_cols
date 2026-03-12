@@ -1,83 +1,44 @@
 #!/bin/bash
+# Configure column layout based on display width.
+# Widescreen (≥3440px): 4 columns
+# External  (≥2560px):  3 columns
+# Laptop    (<2560px):   2 columns
 
 PATH="/opt/homebrew/bin:$PATH"
-SCRIPTS_DIR=$(realpath $(dirname "${BASH_SOURCE:-$0}"))
+SCRIPTS_DIR=$(cd "$(dirname "${BASH_SOURCE:-$0}")" && pwd)
 
-# column width
-YABAI_COL_WIDTH="${YABAI_COL_WIDTH:-800}"
-export YABAI_COL_WIDTH
-echo "YABAI_COL_WIDTH: $YABAI_COL_WIDTH"
+# Display width (integer pixels)
+display_w=$(yabai -m query --displays --display | jq '.frame.w | floor')
 
-echo_and_eval () {
-    echo "$@"
-    eval "$@"
-}
-
-display_aspect () {
-    yabai -m query --displays --display |
-    jq '.frame | (.w / .h)'
-}
-
-display_width () {
-    yabai -m query --displays --display | jq '.frame.w'
-}
-
-max_cols () {
-    col_width=${1:-$YABAI_COL_WIDTH}
-    echo "$(display_width) / $col_width" | bc
-}
-
-split_ratio () {
-    cols=${1:-$(max_cols)}
-    echo "$YABAI_COL_WIDTH / $(display_width)" | bc -l
-}
-
-yabai_toggle_horizontal () {
-    yabai -m query --windows |
-    jq -r '.[] |
-        select(."split-type" == "horizontal") |
-        select(."split-child" == "first_child").id' |
-    xargs -I{} yabai -m window {} --toggle split
-}
-
-# make sure layout is bsp
-yabai -m config layout bsp
-
-# external monitor
-export YABAI_DISPLAY_ASPECT=$(display_aspect)
-echo "YABAI_DISPLAY_ASPECT: $YABAI_DISPLAY_ASPECT"
-if [[ $(echo "$YABAI_DISPLAY_ASPECT >= 1.77" | bc) ]]; then
-    YABAI_DISPLAY="ULTRAWIDE"
-elif [[ $(echo "$YABAI_DISPLAY_ASPECT >= 1.6" | bc) ]]; then
-    YABAI_DISPLAY="4K"
+# Column count by display width
+if (( display_w >= 3440 )); then
+    max_cols=4
+elif (( display_w >= 2560 )); then
+    max_cols=3
 else
-    YABAI_DISPLAY="LAPTOP"
+    max_cols=2
 fi
-export YABAI_DISPLAY
-echo "YABAI_DISPLAY: $YABAI_DISPLAY"
 
+col_width=$(( display_w / max_cols ))
+split_ratio=$(jq -n "$col_width / $display_w")
 
-export YABAI_COLS=$(max_cols)
-echo "YABAI_COLS: $YABAI_COLS"
-yabai -m config split_ratio $(split_ratio $YABAI_COLS)
-echo "YABAI split_ratio: $(yabai -m config split_ratio)"
+# Apply layout
+yabai -m config layout bsp
+yabai -m config split_ratio "$split_ratio"
 
-
-### register events
-#action="yabai_window_insert_vertical"
-action="yabai_window_insert_col"
+# Register signal handlers (replace any existing)
 for event in window_focused application_activated; do
-	echo_and_eval yabai -m signal --add \
-	   label="${event}_${action}" \
-	   active=yes \
-	   event="${event}" \
-	   action="$SCRIPTS_DIR/${action}"
+    label="${event}_yabai_window_insert_col"
+    yabai -m signal --remove "$label" 2>/dev/null
+    yabai -m signal --add \
+        label="$label" \
+        active=yes \
+        event="$event" \
+        action="$SCRIPTS_DIR/yabai_window_insert_col $col_width"
 done
 
+# Rebalance all spaces
+yabai -m query --spaces | jq -r '.[].index' |
+    xargs -I{} yabai -m space {} --balance
 
-# when loading the script, convert all existing splits to horizontal
-#yabai_toggle_horizontal
-
-
-# rebalance all windows
-yabai_rebalance
+echo "columns: ${max_cols}, col_width: ${col_width}px, split_ratio: ${split_ratio}, display: ${display_w}px"

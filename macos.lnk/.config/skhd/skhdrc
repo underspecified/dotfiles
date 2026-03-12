@@ -18,7 +18,7 @@ shift + ctrl + alt - f : open_finder
 ctrl + alt - c : skhd --reload
 ctrl + alt - r : yabai --restart-service; skhd --restart-service
 
-# load column layout and rebalance apps
+# reconfigure column layout and rebalance
 ctrl + alt - a : yabai_config_layout_cols
 
 # focus on window in specified direction
