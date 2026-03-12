@@ -1,44 +1,72 @@
 # ~/.claude
 
-Claude Code user configuration directory. It contains settings, hooks, plugins, custom skills, agents, commands, and status line customizations. This is NOT a code project — it is the config layer that governs how Claude Code behaves across all projects.
+Claude Code user configuration directory. Config files are tracked by `lnk` (symlinked from `~/.config/lnk/.claude/`). Runtime state stays as real files and is not tracked.
 
-## Directory Structure
+## What's Tracked (lnk)
 
-- **`settings.json`** — Global settings: permissions, hooks, enabled plugins, env vars, status line config
-- **`hooks/`** — Shell-based hooks that intercept tool usage (PreToolUse/PostToolUse)
-- **`skills/`** — Symlinks to `~/claude/skills/` (research, presentation, gantt-chart, hansei, computation-graph, etc.)
-- **`commands/`** — Slash command definitions (`.md` files): research workflows, grammar checker, fact checker, video captioner, etc.
-- **`agents/`** — Custom agent definitions (currently `dont-ask.md` symlinked from research skills)
-- **`plugins/`** — Plugin marketplace cache (`plugins/marketplaces/claude-plugins-official/`)
-- **`hookify.*.local.md`** — Hookify safety rules (block force push, restrict `rm`, warn on destructive git)
-- **`claude-limitline-fork/`** — Custom Node.js status line (fork of claude-limitline), configured via `claude-limitline.json`
-- **`projects/`** — Per-project settings and session data (directory names are path-encoded)
-- **`plans/`**, **`todos/`**, **`tasks/`**, **`teams/`** — Agent coordination state
-- **`rules/`** — Convention files auto-loaded into every session (python, bash, markdown, skill, authoring, safety)
+| Item | Description |
+|------|-------------|
+| `CLAUDE.md` | Global instructions loaded into every session |
+| `README.md` | This file |
+| `settings.json` | Permissions, hooks, plugins, env vars, status line |
+| `claude-limitline.json` | Status line theme config |
+| `hookify.*.local.md` | Safety rules (3 files, must stay at root — plugin constraint) |
+| `rules/` | Convention files (python, bash, markdown, skill, authoring, safety) |
+| `hooks/` | Shell hook scripts (commit workflow, doc nag) |
+| `commands/` | Slash command definitions (12 `.md` files) |
+| `agents/dont-ask.md` | Auto-approve agent definition |
 
-## PostToolUse Hooks
+## What's Not Tracked (runtime state)
 
-- **Python files**: Auto-formatted with `ruff format` after Write/Edit
-- **Markdown/QMD files**: Auto-linted with `rumdl` after Write/Edit
+- `history.jsonl`, `file-history/`, `shell-snapshots/`, `session-env/`
+- `projects/`, `plans/`, `tasks/`, `teams/`, `todos/`
+- `plugins/`, `cache/`, `debug/`, `telemetry/`, `statsig/`, `paste-cache/`
+- `claude-limitline-fork/` — cloned repo, set up by bootstrap
+- `skills/` — symlinks to `~/claude/skills/`, set up by bootstrap
+
+## Skills Architecture
+
+Skills live at `~/claude/skills/` (each is its own GitHub repo). Symlinks in `~/.claude/skills/` point there. The research skill has sub-skills nested under `research/skills/`.
+
+```
+~/claude/skills/
+├── computation-graph/    github:underspecified/computation-graph
+├── gantt-chart/          github:underspecified/gantt-chart
+├── hansei/               github:underspecified/hansei
+├── presentation/         github:underspecified/presentation
+├── research/             github:underspecified/research
+│   └── skills/           (research-download, research-summarize, etc.)
+├── sync-latex/           github:underspecified/sync-latex
+└── travel/               github:underspecified/travel
+```
+
+## Bootstrap
+
+After `lnk pull` on a new machine, run `bash ~/.config/lnk/.claude/bootstrap.sh` to:
+- Clone claude-limitline fork and build it
+- Clone all skill repos into `~/claude/skills/`
+- Create symlinks in `~/.claude/skills/`
+- Clone MCP server repos into `~/claude/mcp/`
+
+## Status Line
+
+`claude-limitline-fork/` — Node.js status line (selenized-light theme), tracks context window with warning/critical thresholds (60%/85%). Configured via `claude-limitline.json`.
 
 ## Enabled Plugins
 
-- `pyright-lsp` and `typescript-lsp` — Language server support
+- `pyright-lsp`, `typescript-lsp` — Language server support
 - `code-simplifier` — Code simplification agent
 - `hookify` — Safety rule management
 - `commit-commands` — Git commit/push/PR workflows
 - `security-guidance` — Security hook enforcement
 - `explanatory-output-style` — Educational insight formatting
 
-## Skills Architecture
+## PostToolUse Hooks
 
-Skills in `skills/` are symlinks to `~/claude/skills/<name>`. The research skill suite includes: research, research-download, research-summarize, research-review, research-survey, research-profile, research-queue, research-inbox, research-audit. Other skills: gantt-chart, presentation, hansei (retrospectives), computation-graph.
-
-## Status Line
-
-**`claude-limitline-fork/`** — Node.js-based (active via settings.json): uses selenized-light theme, tracks context window with warning/critical thresholds (60%/85%)
+- **Python files**: Auto-formatted with `ruff format` after Write/Edit
+- **Markdown/QMD files**: Auto-linted with `rumdl` after Write/Edit
 
 ## Environment
 
-- `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is enabled globally
-- Always-thinking mode is enabled (`alwaysThinkingEnabled: true`)
+- `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` enabled globally
+- Always-thinking mode enabled (`alwaysThinkingEnabled: true`)
