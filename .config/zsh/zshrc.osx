@@ -8,9 +8,6 @@ export PATH=/opt/homebrew/bin:$PATH
 export PATH=/opt/homebrew/sbin:$PATH
 export MANPATH=/opt/homebrew/share/man:$MANPATH
 
-# For homebrew github auth (fetched from 1Password)
-export HOMEBREW_GITHUB_API_TOKEN="$(op read 'op://Personal/Homebrew GitHub Token/credential' 2>/dev/null)"
-
 # Homebrew Cocoa Emacs
 emacs_cli="/opt/homebrew/bin/emacs -nw"
 emacs_cocoa="/Applications/Emacs.app/Contents/MacOS/Emacs"
