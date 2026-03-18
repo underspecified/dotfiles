@@ -2,9 +2,9 @@
 
 ##### ENVIRONMENT SETUP #####
 
-if [ `uname` = Darwin ] && [ -f "$ZDOTDIR/zshrc.osx" ]; then
+if [ $(uname) = Darwin ] && [ -f "$ZDOTDIR/zshrc.osx" ]; then
     . "$ZDOTDIR/zshrc.osx"
-elif [ `uname` = Linux ] && [ -f "$ZDOTDIR/zshrc.linux" ]; then
+elif [ $(uname) = Linux ] && [ -f "$ZDOTDIR/zshrc.linux" ]; then
     . "$ZDOTDIR/zshrc.linux"
 fi
 
@@ -47,7 +47,13 @@ export PATH="$OP_DIR:$PATH"
 
 ##### ZSH CONFIGURATIONS #####
 
-SCREEN_NAME=`echo $STY | awk -F. '{ print $NF }'`
+setopt AUTO_CD
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+setopt EXTENDED_GLOB
+
+SCREEN_NAME=$(echo $STY | awk -F. '{ print $NF }')
 PROMPT="%B%n%b@%B%m%b:%~ [%B${SCREEN_NAME}%b] [%*] [%!]
 %(0?.:%).:() "
 
@@ -78,7 +84,7 @@ alias diff="diff --color=auto"
 ##### COMPLETIONS #####
 
 # Docker CLI completions
-fpath=(/Users/eric/.docker/completions $fpath)
+fpath=("$HOME/.docker/completions" $fpath)
 
 # Single compinit with cache (-C skips compaudit security scan)
 autoload -Uz compinit

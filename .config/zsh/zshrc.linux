@@ -1,10 +1,5 @@
 #!/usr/bin/env zsh
 
-# local bin
-export PATH=/usr/local/bin:$PATH
-export PATH=/usr/local/sbin:$PATH
-export MANPATH=/usr/local/man:/usr/local/share/man:$MANPATH
-
 # For signing Debian packages
 # export DEBFULLNAME='Eric Nichols'
 # export DEBEMAIL=eric-n@is.naist.jp

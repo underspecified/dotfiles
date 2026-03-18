@@ -7,4 +7,4 @@ export ELECTRON_OZONE_PLATFORM_HINT=wayland
 if [[ $(lsb_release -a -s) = "22.04" ]]; then
     export VK_LAYER_PATH="/usr/share/vulkan/explicit_layer.d"
     export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/nvidia_icd.json"
-if
+fi
