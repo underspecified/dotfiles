@@ -9,9 +9,7 @@ export PATH=/opt/homebrew/sbin:$PATH
 export MANPATH=/opt/homebrew/share/man:$MANPATH
 
 # Homebrew Cocoa Emacs
-emacs_cli="/opt/homebrew/bin/emacs -nw"
-emacs_cocoa="/Applications/Emacs.app/Contents/MacOS/Emacs"
-alias emacs="$emacs_cli"
+alias emacs="/opt/homebrew/bin/emacs -nw"
 
 # fix POSIX mode zcat appending .Z to all file names
 alias zcat="gzcat"

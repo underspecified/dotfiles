@@ -18,23 +18,6 @@ elif [ "$XDG_SESSION_TYPE" = wayland ] && [ -f "$ZDOTDIR/zshrc.wayland" ]; then
     . "$ZDOTDIR/zshrc.wayland"
 fi
 
-##### PATH #####
-
-# local bin and manpath
-export PATH=/usr/local/bin:$PATH
-export PATH=/usr/local/sbin:$PATH
-export MANPATH=/usr/local/man:/usr/local/share/man:$MANPATH
-
-### user bin and manpath
-export PATH="$HOME/bin:$PATH"
-export PATH="$HOME/sbin:$PATH"
-export MANPATH="$HOME/share/man:$MANPATH"
-
-### user's local bin and manpath
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.local/sbin:$PATH"
-export MANPATH="$HOME/.local/man:$HOME/.local/share/man:$MANPATH"
-
 # 1password
 if [[ -d "/Applications/1Password.app" ]]; then
     export OP_DIR="/Applications/1Password.app/Contents/MacOS/"
@@ -42,7 +25,7 @@ elif [[ -d "/opt/1Password" ]]; then
     export OP_DIR="/opt/1Password"
 fi
 [[ -f $HOME/.config/op/plugins.sh ]] && source $HOME/.config/op/plugins.sh
-export SSH_AUTH_SOCK=~/.1password/agent.sock
+[[ -S ~/.1password/agent.sock ]] && export SSH_AUTH_SOCK=~/.1password/agent.sock
 export PATH="$OP_DIR:$PATH"
 
 ##### ZSH CONFIGURATIONS #####
@@ -58,8 +41,8 @@ PROMPT="%B%n%b@%B%m%b:%~ [%B${SCREEN_NAME}%b] [%*] [%!]
 %(0?.:%).:() "
 
 HISTFILE=$HOME/.zsh_history
-HISTSIZE=2000
-SAVEHIST=20000
+HISTSIZE=100000
+SAVEHIST=100000
 
 ### editor settings
 export EDITOR="emacs -nw"
