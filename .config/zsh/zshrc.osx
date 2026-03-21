@@ -1,5 +1,9 @@
 #!/bin/env zsh
 
+# BSD ls colors (LSCOLORS format)
+export LSCOLORS="exfxcxdxbxegedabagacad"
+alias ls="ls -G"
+
 # yabai scripts
 export PATH="$HOME/.config/yabai/scripts:$PATH"
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+# GNU ls colors (LS_COLORS format) with selenized customizations
+export LS_COLORS="$LS_COLORS:ow=1;7;34:st=30;44:su=30;41"
+alias ls="ls --color=auto"
+
 # For signing Debian packages
 # export DEBFULLNAME='Eric Nichols'
 # export DEBEMAIL=eric-n@is.naist.jp

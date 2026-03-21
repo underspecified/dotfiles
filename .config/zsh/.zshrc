@@ -56,11 +56,7 @@ else
     export TERM="xterm-color"
 fi
 
-# Selenized customizations
-export LS_COLORS="$LS_COLORS:ow=1;7;34:st=30;44:su=30;41"
-
 # color programs
-alias ls="ls --color=auto"
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 
