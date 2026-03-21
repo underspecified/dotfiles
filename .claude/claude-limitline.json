@@ -1,9 +1,9 @@
 {
   "theme": "selenized-light",
+  "display": { "compactMode": "auto", "compactWidth": 90 },
   "model": { "enabled": false },
   "context": {
-    "enabled": true,
-    "maxTokens": 150000
+    "enabled": true
   },
   "budget": {
     "warningThreshold": 60,
