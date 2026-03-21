@@ -44,7 +44,6 @@
 .docker/mcp/registry.yaml
 .gitconfig
 .gitignore
-.gnupg
 .screenrc
 .ssh
 .zshenv
