@@ -38,7 +38,7 @@ safari () {
 
 # YourKit Java profiler
 ykprof() {
-    JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -agentpath:/Applications/YourKit.app/Contents/Resources/bin/mac/libyjpagent.jnilib" $@
+    JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -agentpath:/Applications/YourKit.app/Contents/Resources/bin/mac/libyjpagent.jnilib" "$@"
 }
 
 # bun completions (added to fpath; compinit in .zshrc handles loading)
