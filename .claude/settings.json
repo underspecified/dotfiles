@@ -25,8 +25,15 @@
       "Write(~/git/**)",
       "Write(~/haru.md/**)",
       "Write(~/projects/**)",
+      "Skill",
+      "Skill(*)",
       "mcp__MCP_DOCKER__*",
+      "mcp__apple-mail-imdinu__*",
+      "mcp__apple-mail-patrickfreyer__*",
+      "mcp__che-ical-mcp__*",
       "mcp__claude_ai_Google_Calendar__*",
+      "mcp__google-workspace__*",
+      "mcp__plugin_che-ical-mcp_ical__*",
       "mcp__plugin_context7_context7__*",
       "Bash(awk *)",
       "Bash(bash ~/claude/skills/**/*.sh)",
@@ -78,6 +85,10 @@
       "Bash(mkdir *)",
       "Bash(mv *)",
       "Bash(open *)",
+      "Bash(pbcopy)",
+      "Bash(pbcopy *)",
+      "Bash(pbpaste)",
+      "Bash(pbpaste *)",
       "Bash(printf *)",
       "Bash(pyright *)",
       "Bash(quarto *)",
@@ -89,8 +100,8 @@
       "Bash(sed *)",
       "Bash(stat *)",
       "Bash(tail)",
-      "Bash(time *)",
       "Bash(tail *)",
+      "Bash(time *)",
       "Bash(touch *)",
       "Bash(uv *)",
       "Bash(uv run *)",
@@ -112,7 +123,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/eric/.claude/hooks/block_pip.sh"
+            "command": "/Users/eric/.claude/hooks/audit_python.sh"
           }
         ]
       }
@@ -145,7 +156,7 @@
   "enabledPlugins": {
     "pyright-lsp@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "hookify@claude-plugins-official": false,
+    "hookify@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": false,
     "security-guidance@claude-plugins-official": true,
     "explanatory-output-style@claude-plugins-official": true,
@@ -156,7 +167,16 @@
     "feature-dev@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true
+    "lua-lsp@claude-plugins-official": true,
+    "che-ical-mcp@psychquant-claude-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "psychquant-claude-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "PsychQuant/psychquant-claude-plugins"
+      }
+    }
   },
   "alwaysThinkingEnabled": true,
   "voiceEnabled": true
