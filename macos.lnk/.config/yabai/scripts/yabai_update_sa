@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Usage: yabai_update_sa [--check]
+# Updates the yabai sudoers entry with the current binary hash.
+# With --check, exits 0 if hash matches, 1 if stale (no changes made).
+set -euo pipefail
+
+YABAI="$(command -v yabai)"
+SUDOERS="/private/etc/sudoers.d/yabai"
+USER="$(whoami)"
+
+if [[ ! -x "${YABAI}" ]]; then
+  echo "error: yabai not found in PATH" >&2
+  exit 1
+fi
+
+current_hash="$(shasum -a 256 "${YABAI}" | awk '{print $1}')"
+
+# Extract existing hash from sudoers (if any)
+existing_hash=""
+if [[ -f "${SUDOERS}" ]]; then
+  existing_hash="$(sed -n 's/.*sha256:\([0-9a-f]*\).*/\1/p' "${SUDOERS}" 2>/dev/null || true)"
+fi
+
+if [[ "${current_hash}" == "${existing_hash}" ]]; then
+  echo "sudoers hash is current — no update needed"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--check" ]]; then
+  echo "sudoers hash is stale"
+  echo "  current: ${current_hash}"
+  echo "  sudoers: ${existing_hash:-<missing>}"
+  exit 1
+fi
+
+echo "updating yabai sudoers entry..."
+echo "  old: ${existing_hash:-<missing>}"
+echo "  new: ${current_hash}"
+
+entry="${USER} ALL=(root) NOPASSWD: sha256:${current_hash} ${YABAI} --load-sa"
+sudo sh -c "echo '${entry}' > '${SUDOERS}'"
+
+echo "reloading scripting addition..."
+sudo yabai --load-sa
+
+echo "done — scripting addition loaded"
