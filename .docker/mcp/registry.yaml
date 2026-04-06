@@ -1,6 +1,5 @@
 registry:
-  google-workspace-mcp:
-    ref: ""
+  # google-workspace-mcp: removed — runs standalone, see ~/.claude.json
   markdownify:
     ref: ""
   markitdown:

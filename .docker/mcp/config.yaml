@@ -9,6 +9,4 @@ markitdown:
   paths:
     - /Users/eric
 
-google-workspace-mcp:
-  paths:
-    - /Users/eric
+# google-workspace-mcp: removed — runs standalone, see ~/.claude.json
