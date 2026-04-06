@@ -1,6 +1,6 @@
 {
   "theme": "selenized-light",
-  "display": { "compactMode": "auto", "compactWidth": 90 },
+  "display": { "compactMode": "auto", "compactWidth": 60 },
   "model": { "enabled": false },
   "context": {
     "enabled": true
