@@ -73,3 +73,6 @@ if [[ -n $ZDOTDIR/.zcompdump(#qN.mh+24) ]]; then
 else
     compinit -C
 fi
+
+test -e "${ZDOTDIR}/.iterm2_shell_integration.zsh" && source "${ZDOTDIR}/.iterm2_shell_integration.zsh"
+
