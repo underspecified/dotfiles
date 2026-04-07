@@ -22,24 +22,17 @@ split_ratio=$(jq -n "$col_width / $display_w")
 yabai -m config layout bsp
 yabai -m config split_ratio "$split_ratio"
 
-# Register signal handlers (replace any existing)
-for event in window_focused application_activated; do
-    label="${event}_yabai_window_insert_col"
+# Set insert direction + rebalance only when a new window is created.
+# Previous approach fired on window_focused/application_activated, which
+# caused BSP tree mutations on every space switch (reordering windows).
+for label in window_focused_yabai_window_insert_col application_activated_yabai_window_insert_col window_created_rebalance; do
     yabai -m signal --remove "$label" 2>/dev/null
-    yabai -m signal --add \
-        label="$label" \
-        active=yes \
-        event="$event" \
-        action="$SCRIPTS_DIR/yabai_window_insert_col $max_cols $col_width"
 done
 
-# Rebalance on every new window so columns stay even
-label="window_created_rebalance"
-yabai -m signal --remove "$label" 2>/dev/null
 yabai -m signal --add \
-    label="$label" \
+    label="window_created_insert_and_balance" \
     event="window_created" \
-    action="yabai -m space --balance"
+    action="$SCRIPTS_DIR/yabai_window_insert_col $max_cols $col_width && yabai -m space --balance"
 
 # Rebalance all spaces
 yabai -m query --spaces | jq -r '.[].index' |
