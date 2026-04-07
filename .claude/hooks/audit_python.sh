@@ -8,6 +8,12 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 # Strip heredoc bodies and quoted strings
 CMD_LINE=$(echo "$COMMAND" | head -1 | sed 's/<<.*//')
 
+# Allow uv-prefixed commands (uv pip, uv run python, etc.)
+if [[ "$CMD_LINE" =~ (^|[[:space:]]|&&|;)uv[[:space:]] ]] || \
+   [[ "$CMD_LINE" =~ (^|[[:space:]]|&&|;)uvx[[:space:]] ]]; then
+    exit 0
+fi
+
 # Check for pip or pipx commands (standalone or chained)
 if [[ "$CMD_LINE" =~ (^|[[:space:]]|&&|;)pip[[:space:]] ]] || \
    [[ "$CMD_LINE" =~ (^|[[:space:]]|&&|;)pip3[[:space:]] ]] || \
