@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+"""Change the X11 cursor theme globally for all windows using XFixes.
+
+Usage: change_cursor_theme <theme_name> <size>
+Example: change_cursor_theme DMZ-White 36
+"""
+
+import ctypes
+import ctypes.util
+import os
+import sys
+
+
+def load_lib(name):
+    path = ctypes.util.find_library(name)
+    if not path:
+        sys.exit(f"error: lib{name} not found")
+    return ctypes.CDLL(path)
+
+
+def main():
+    if len(sys.argv) != 3:
+        sys.exit(f"usage: {sys.argv[0]} <theme> <size>")
+
+    theme = sys.argv[1]
+    size = int(sys.argv[2])
+
+    x11 = load_lib("X11")
+    xcursor = load_lib("Xcursor")
+    xfixes = load_lib("Xfixes")
+
+    # Open display
+    x11.XOpenDisplay.restype = ctypes.c_void_p
+    display = x11.XOpenDisplay(None)
+    if not display:
+        sys.exit("error: cannot open X display")
+
+    # Set cursor theme for loading
+    xcursor.XcursorSetTheme(display, theme.encode())
+    xcursor.XcursorSetDefaultSize(display, size)
+
+    # Standard cursor names to replace
+    cursor_names = [
+        "left_ptr", "default", "top_left_arrow", "arrow",
+        "xterm", "text", "ibeam",
+        "hand2", "hand1", "pointer", "pointing_hand",
+        "watch", "wait",
+        "left_ptr_watch", "progress",
+        "cross", "crosshair",
+        "fleur", "move", "grabbing",
+        "top_side", "bottom_side", "left_side", "right_side",
+        "top_left_corner", "top_right_corner",
+        "bottom_left_corner", "bottom_right_corner",
+        "sb_v_double_arrow", "row-resize", "ns-resize",
+        "sb_h_double_arrow", "col-resize", "ew-resize",
+        "question_arrow", "help",
+        "X_cursor", "pirate",
+    ]
+
+    # Load and replace each cursor
+    xcursor.XcursorLibraryLoadCursor.restype = ctypes.c_ulong
+    for name in cursor_names:
+        cursor = xcursor.XcursorLibraryLoadCursor(display, name.encode())
+        if cursor:
+            xfixes.XFixesChangeCursorByName(display, cursor, name.encode())
+            x11.XFreeCursor(display, cursor)
+
+    x11.XFlush(display)
+    x11.XCloseDisplay(display)
+
+
+if __name__ == "__main__":
+    main()

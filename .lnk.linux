@@ -12,6 +12,7 @@
 .config/wm
 .config/xdg-desktop-portal
 .local/bin/1password_hidpi
+.local/bin/change_cursor_theme
 .local/bin/change_desktop.sh
 .local/bin/change_theme.sh
 .local/bin/google-chrome-wayland
