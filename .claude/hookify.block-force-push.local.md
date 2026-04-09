@@ -1,1 +1,0 @@
-../.config/lnk/.claude/hookify.block-force-push.local.md

@@ -97,12 +97,20 @@ toggle_gnome_dark () {
     gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
     gsettings set org.gnome.desktop.interface gtk-theme "Yaru-dark"
     gsettings set org.gnome.desktop.interface icon-theme "Yaru-dark"
+    gsettings set org.gnome.desktop.interface cursor-theme "Yaru"
+    mkdir -p "$HOME/.icons/default"
+    printf '[Icon Theme]\nInherits=Yaru\n' > "$HOME/.icons/default/index.theme"
+    xsetroot -xcf /usr/share/icons/Yaru/cursors/left_ptr 36 2>/dev/null
 }
 
 toggle_gnome_light () {
     gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
     gsettings set org.gnome.desktop.interface gtk-theme "Yaru-light"
     gsettings set org.gnome.desktop.interface icon-theme "Yaru-light"
+    gsettings set org.gnome.desktop.interface cursor-theme "Yaru"
+    mkdir -p "$HOME/.icons/default"
+    printf '[Icon Theme]\nInherits=Yaru\n' > "$HOME/.icons/default/index.theme"
+    xsetroot -xcf /usr/share/icons/Yaru/cursors/left_ptr 36 2>/dev/null
 }
 
 toggle_gnome () {

@@ -1,1 +1,0 @@
-../.config/lnk/.claude/hookify.warn-destructive-git.local.md
