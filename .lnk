@@ -1,6 +1,7 @@
 .claude/CLAUDE.md
 .claude/README.md
 .claude/agents/dont-ask.md
+.claude/bootstrap.sh
 .claude/claude-limitline.json
 .claude/commands/do-with-agent.md
 .claude/commands/explore-plan-code-test.md
