@@ -9,8 +9,11 @@
 {
   "ui_font_family": ".ZedSans",
 
-  "buffer_font_family": "MesloLGSDZ Nerd Font",
+  "buffer_font_family": "iMWritingMono Nerd Font",
   "buffer_font_weight": 400.0,
+
+  // "buffer_font_family": "MesloLGSDZ Nerd Font",
+  // "buffer_font_weight": 400.0,
 
   // "buffer_font_family": "0xProto Nerd Font",
   // "buffer_font_weight": 300.0,

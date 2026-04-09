@@ -126,14 +126,18 @@ toggle_sway () {
 }
 
 toggle_desktop () {
-    #if [[ "$XDG_CURRENT_DESKTOP" == "ubuntu:GNOME" ]]; then
-        echo "toggle gnome => $1"
-        toggle_gnome $1
     if [[ "$XDG_CURRENT_DESKTOP" == "i3" ]]; then
+        echo "toggle gnome => $1"
+        toggle_gnome "$1"
         echo "toggle i3 => $1"
-        toggle_i3 $1
+        toggle_i3 "$1"
     elif [[ "$XDG_CURRENT_DESKTOP" == "sway" ]]; then
+        echo "toggle gnome => $1"
+        toggle_gnome "$1"
         echo "toggle sway => $1"
-        toggle_sway $1
+        toggle_sway "$1"
+    else
+        echo "toggle gnome => $1"
+        toggle_gnome "$1"
     fi
 }

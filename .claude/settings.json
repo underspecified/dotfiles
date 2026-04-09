@@ -136,7 +136,8 @@
       "Bash(which *)",
       "Bash(whisply *)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "auto"
   },
   "statusLine": {
     "type": "command",
@@ -168,6 +169,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
   "voiceEnabled": true,
-  "effortLevel": "high"
+  "skipAutoPermissionPrompt": true
 }

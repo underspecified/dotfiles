@@ -10,6 +10,8 @@ enabled_layouts grid, *
 
 # Window borders
 window_border_width 2.5pt
+active_border_color #4695f7
+inactive_border_color #325b66
 
 # Behavior
 confirm_os_window_close 0
@@ -20,7 +22,7 @@ linux_display_server auto
 
 
 # BEGIN_KITTY_FONTS
-font_family      family="MesloLGMDZ Nerd Font"
+font_family      family="iMWritingMono Nerd Font Mono"
 bold_font        auto
 italic_font      auto
 bold_italic_font auto

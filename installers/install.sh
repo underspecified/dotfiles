@@ -5,7 +5,7 @@ CUR_DIR=$(realpath $(dirname "$0"))
 ### install basic packages
 install_apt () {
     sudo apt update && \
-    sudo apt install -y chrome-gnome-shell curl emacs git golang jq keychain openssh-server psensor zsh
+    sudo apt install -y chrome-gnome-shell curl emacs git golang jq keychain nodejs npm openssh-server psensor zsh
 }
 
 install_google_chrome() {
@@ -29,9 +29,9 @@ install_gh () {
 install_snap () {
     sudo snap refresh
     # install VS code
-    sudo snap install --classic code
+    #sudo snap install --classic code
     # install cpu/gpu monitors
-    sudo snap install htop nvtop
+    #sudo snap install htop nvtop
     # install slack
     sudo snap install slack
 }
@@ -59,7 +59,7 @@ update_less () {
 
 # install packages
 install_apt
-install_snap
+#install_snap
 
 # install github
 install_gh
