@@ -7,13 +7,10 @@ CLAUDE_DIR="$HOME/.claude"
 
 echo "=== Claude Code bootstrap ==="
 
-# Status line fork
-if [[ ! -d "${CLAUDE_DIR}/claude-limitline-fork" ]]; then
-    echo "Cloning claude-limitline fork..."
-    git clone https://github.com/tylergraydev/claude-limitline.git \
-        "${CLAUDE_DIR}/claude-limitline-fork"
-    (cd "${CLAUDE_DIR}/claude-limitline-fork" && npm install && npm run build)
-fi
+# Status line
+echo ""
+echo "--- Bootstrapping status line ---"
+bash "${CLAUDE_DIR}/statusline/bootstrap.sh"
 
 # Skills
 echo ""
