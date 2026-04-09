@@ -45,6 +45,7 @@
 *.swp
 *~
 guide
+hansei/
 Icon
 linux.lnk/.config/i3/conf/i3bar.conf
 linux.lnk/.config/i3status/config
