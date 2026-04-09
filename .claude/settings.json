@@ -138,6 +138,10 @@
     ],
     "deny": []
   },
+  "statusLine": {
+    "type": "command",
+    "command": "node ~/.claude/claude-limitline-fork/dist/index.js"
+  },
   "enabledPlugins": {
     "pyright-lsp@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
