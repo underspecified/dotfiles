@@ -1,0 +1,39 @@
+[global]
+    font = $font 10
+    origin = top-right
+    offset = 10x10
+    width = 300
+    height = 100
+    padding = 10
+    horizontal_padding = 10
+    frame_width = 2
+    frame_color = "#${blue}"
+    separator_color = frame
+    corner_radius = 5
+    icon_position = left
+    max_icon_size = 48
+    markup = full
+    format = "<b>%s</b>\n%b"
+    show_age_threshold = 60
+    idle_threshold = 120
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#${bg_1}"
+    foreground = "#${fg_0}"
+    frame_color = "#${dim_0}"
+    timeout = 5
+
+[urgency_normal]
+    background = "#${bg_1}"
+    foreground = "#${fg_1}"
+    frame_color = "#${blue}"
+    timeout = 10
+
+[urgency_critical]
+    background = "#${bg_1}"
+    foreground = "#${fg_1}"
+    frame_color = "#${red}"
+    timeout = 0
