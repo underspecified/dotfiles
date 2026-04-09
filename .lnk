@@ -29,6 +29,7 @@
 .claude/rules/skill.md
 .claude/settings.json
 .config/dark_reader
+.config/dunst
 .config/github-copilot
 .config/keymaps
 .config/kitty
