@@ -1,6 +1,6 @@
-# X11 hidpi
-export QT_AUTO_SCREEN_SCALE_FACTOR=1
-export QT_SCALE_FACTOR=2.0  # Adjust this value (1.0, 1.25, 1.5, 2.0)
-export GDK_SCALE=2  # Same scale factor as Qt
-export GDK_DPI_SCALE=0.5  # Usually 1/scale_factor
+# X11 hidpi (1.5x scaling)
+# GTK scaling is driven by Xft.dpi=144 in .Xresources (96 * 1.5)
+# GDK_SCALE only supports integers so we don't set it
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+export QT_SCALE_FACTOR=1.5
 export XCURSOR_SIZE=36

@@ -5,7 +5,7 @@
 #set mode ${mode}
 
 bar {
-    font pango:$font 8
+    font pango:$font 10
     #mode hide
     status_command i3status
 

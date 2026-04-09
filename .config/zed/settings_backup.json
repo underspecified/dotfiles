@@ -9,7 +9,7 @@
 {
   "ui_font_family": ".ZedSans",
 
-  "buffer_font_family": "MesloLGSDZ Nerd Font",
+  "buffer_font_family": "iA Writer Mono V",
   "buffer_font_weight": 400.0,
 
   // "buffer_font_family": "0xProto Nerd Font",
@@ -73,18 +73,16 @@
     //"mode": "dark",
     "copilot": {
       "proxy": null,
-      "proxy_no_verify": null,
-    },
+      "proxy_no_verify": null
+    }
   },
 
   "agent": {
-    "tool_permissions": {
-      "default": "allow",
-    },
+    "always_allow_tool_actions": true,
     "default_model": {
       "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-thinking-latest",
-    },
+      "model": "claude-3-7-sonnet-thinking-latest"
+    }
   },
 
   "jupyter": {
@@ -92,8 +90,8 @@
       "python": "conda-env",
       "typescript": "deno",
       "javascript": "deno",
-      "r": "ark",
-    },
+      "r": "ark"
+    }
   },
 
   "lsp": {
@@ -102,25 +100,25 @@
         "env": {
           "TEXINPUTS": ".:./local:",
           "BIBINPUTS": ".:./local:",
-          "BSTINPUTS": ".:./local:",
-        },
-      },
-    },
+          "BSTINPUTS": ".:./local:"
+        }
+      }
+    }
   },
 
   "terminal": {
-    "dock": "right",
+    "dock": "right"
   },
 
   "theme": {
     "mode": "system",
     "light": "Base16 selenized-light",
-    "dark": "Base16 selenized-dark",
+    "dark": "Base16 selenized-dark"
   },
 
   "ui_font_size": 11,
-  "buffer_font_size": 8.0,
+  "buffer_font_size": 11.0,
   "autosave": "on_focus_change",
   "preferred_line_length": 80,
-  "soft_wrap": "preferred_line_length",
+  "soft_wrap": "preferred_line_length"
 }

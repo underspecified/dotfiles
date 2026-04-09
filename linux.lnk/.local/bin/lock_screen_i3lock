@@ -10,6 +10,11 @@ font_pt="$font 36"
 
 source "$HOME/.local/share/colors/selenized_${mode}.env"
 
+# Pause notifications to avoid X grab race on unlock
+command -v dunstctl &>/dev/null && dunstctl set-paused true
+
+sleep 0.5
+
 LC_ALL="en_US.UTF-8" i3lock \
   --insidever-color=$bg_0 \
   --insidewrong-color=$bg_0 \
@@ -51,3 +56,6 @@ LC_ALL="en_US.UTF-8" i3lock \
   --image="$wallpaper" \
   --fill \
   --nofork
+
+# Resume notifications after unlock
+command -v dunstctl &>/dev/null && dunstctl set-paused false

@@ -6,6 +6,7 @@ export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
 
 for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/i3"/conf/*.conf.in \
-            "$HOME/.config/i3status/config.in"; do
+            "$HOME/.config/i3status/config.in" \
+            "$HOME/.config/dunst/dunstrc.in"; do
     envsubst < "$conf" | tee "${conf%.in}"
 done
