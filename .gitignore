@@ -15,6 +15,10 @@
 .claude/settings.local.json
 .claude/statsig/
 .claude/todos/
+.claude/skills/*/
+!.claude/skills/bootstrap.sh
+.claude/mcp/*/
+!.claude/mcp/bootstrap.sh
 .claude.json
 .ssh/known_hosts.old
 .config/zed/prompts/
