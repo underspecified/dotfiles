@@ -1,0 +1,12 @@
+{
+  "theme": "selenized-light",
+  "display": { "compactMode": "auto", "compactWidth": 60 },
+  "model": { "enabled": false },
+  "context": {
+    "enabled": true
+  },
+  "budget": {
+    "warningThreshold": 60,
+    "criticalThreshold": 85
+  }
+}

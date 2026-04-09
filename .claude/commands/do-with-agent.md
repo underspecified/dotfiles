@@ -1,1 +1,1 @@
-../../.config/lnk/.claude/commands/do-with-agent.md
+Run the $1 agent with $2 as input and write the results and ONLY THE RESULTS to $3.
