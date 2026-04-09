@@ -28,6 +28,7 @@
 .claude/rules/safety.md
 .claude/rules/skill.md
 .claude/settings.json
+.claude/statusline/bootstrap.sh
 .config/dark_reader
 .config/github-copilot
 .config/keymaps
