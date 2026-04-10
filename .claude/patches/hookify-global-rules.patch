@@ -1,0 +1,47 @@
+Subject: hookify: also load rules from ~/.claude/ (not just CWD/.claude/)
+
+Upstream hookify only globs `.claude/hookify.*.local.md` relative to the
+current working directory, so global user-level rules in ~/.claude/ are
+silently skipped unless Claude Code is launched from $HOME. Extend the
+search to include ~/.claude/ as well, deduping by realpath so symlinked
+rules don't match twice.
+
+Target file:
+  ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/hookify/core/config_loader.py
+
+Apply with:
+  cd ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/hookify
+  patch -p1 < ~/.config/lnk/.claude/patches/hookify-global-rules.patch
+
+--- a/core/config_loader.py
++++ b/core/config_loader.py
+@@ -204,13 +204,26 @@ def load_rules(event: Optional[str] = None) -> List[Rule]:
+     Returns:
+         List of enabled Rule objects matching the event.
+     """
+     rules = []
+
+-    # Find all hookify.*.local.md files
+-    pattern = os.path.join('.claude', 'hookify.*.local.md')
+-    files = glob.glob(pattern)
++    # Find all hookify.*.local.md files.
++    # Search both the project-local .claude/ (relative to CWD) and the global
++    # ~/.claude/ directory so user-level rules apply regardless of CWD.
++    search_dirs = [
++        os.path.join(os.getcwd(), '.claude'),
++        os.path.expanduser('~/.claude'),
++    ]
++    seen: set[str] = set()
++    files: list[str] = []
++    for directory in search_dirs:
++        for path in glob.glob(os.path.join(directory, 'hookify.*.local.md')):
++            real = os.path.realpath(path)
++            if real in seen:
++                continue
++            seen.add(real)
++            files.append(path)
+
+     for file_path in files:
+         try:
+             rule = load_rule_file(file_path)
+             if not rule:

@@ -23,6 +23,9 @@
 .claude/hooks/git-commit-docs
 .claude/hooks/nag_docs.sh
 .claude/mcp/bootstrap.sh
+.claude/patches/README.md
+.claude/patches/bootstrap.sh
+.claude/patches/hookify-global-rules.patch
 .claude/rules/authoring.md
 .claude/rules/bash.md
 .claude/rules/markdown.md
