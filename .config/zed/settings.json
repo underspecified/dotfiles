@@ -7,7 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "ui_font_family": ".ZedSans",
+  "ui_font_family": "iMWritingQuat Nerd Font Propo",
 
   "buffer_font_family": "iMWritingMono Nerd Font",
   "buffer_font_weight": 400.0,

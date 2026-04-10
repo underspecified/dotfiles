@@ -6,9 +6,9 @@ IDLE_MIN=10
 IDLE_SEC=$(($IDLE_MIN * 60))
 
 mode=$(darkman get)
-font_pt="$font 36"
-
 source "$HOME/.local/share/colors/selenized_${mode}.env"
+font_pt="iMWritingQuat Nerd Font Propo:style=Regular"
+font_sz=36
 
 # Pause notifications to avoid X grab race on unlock
 command -v dunstctl &>/dev/null && dunstctl set-paused true
@@ -48,8 +48,13 @@ LC_ALL="en_US.UTF-8" i3lock \
   --layout-font="$font_pt" \
   --verif-font="$font_pt" \
   --wrong-font="$font_pt" \
-  --radius=100 \
-  --ring-width=20 \
+  --time-size=$font_sz \
+  --date-size=$font_sz \
+  --layout-size=$font_sz \
+  --verif-size=$font_sz \
+  --wrong-size=$font_sz \
+  --radius=200 \
+  --ring-width=40 \
   --pass-media-keys \
   --pass-screen-keys \
   --pass-volume-keys \

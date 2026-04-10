@@ -1,5 +1,5 @@
 [global]
-    font = MesloLGSDZ Nerd Font 12
+    font = iMWritingQuat Nerd Font Propo:style=Regular 12
     origin = top-center
     width = 10000
     height = (0, 50)
