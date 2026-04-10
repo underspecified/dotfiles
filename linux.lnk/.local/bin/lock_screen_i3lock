@@ -8,7 +8,7 @@ IDLE_SEC=$(($IDLE_MIN * 60))
 mode=$(darkman get)
 source "$HOME/.local/share/colors/selenized_${mode}.env"
 font_pt="iMWritingQuat Nerd Font Propo:style=Regular"
-font_sz=36
+font_sz=72
 
 # Pause notifications to avoid X grab race on unlock
 command -v dunstctl &>/dev/null && dunstctl set-paused true
@@ -37,6 +37,7 @@ LC_ALL="en_US.UTF-8" i3lock \
   --indicator \
   --time-str="%H:%M:%S" \
   --date-str="%a %b %e %Y" \
+  --date-pos="tx:ty+80" \
   --verif-text="Verifying..." \
   --wrong-text="Auth Failed" \
   --noinput="No Input" \
@@ -53,8 +54,8 @@ LC_ALL="en_US.UTF-8" i3lock \
   --layout-size=$font_sz \
   --verif-size=$font_sz \
   --wrong-size=$font_sz \
-  --radius=200 \
-  --ring-width=40 \
+  --radius=400 \
+  --ring-width=80 \
   --pass-media-keys \
   --pass-screen-keys \
   --pass-volume-keys \
