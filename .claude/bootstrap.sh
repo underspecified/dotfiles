@@ -22,5 +22,10 @@ echo ""
 echo "--- Bootstrapping MCP servers ---"
 bash "${CLAUDE_DIR}/mcp/bootstrap.sh"
 
+# Plugin patches
+echo ""
+echo "--- Applying plugin patches ---"
+bash "${CLAUDE_DIR}/patches/bootstrap.sh"
+
 echo ""
 echo "=== Bootstrap complete ==="

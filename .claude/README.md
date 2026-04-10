@@ -17,6 +17,7 @@ Claude Code user configuration directory. Config files are tracked by `lnk` (sym
 | `agents/dont-ask.md` | Auto-approve agent definition |
 | `skills/bootstrap.sh` | Skills bootstrap script |
 | `mcp/bootstrap.sh` | MCP server bootstrap script |
+| `patches/` | Local patches against marketplace plugins + idempotent applier |
 
 ## What's Not Tracked (runtime state)
 
@@ -73,6 +74,7 @@ After `lnk pull` on a new machine, run `bash ~/.claude/bootstrap.sh` to:
 - Clone all skill repos into `~/.claude/skills/`
 - Create sub-skill symlinks
 - Register MCP servers via `claude mcp add`
+- Apply local plugin patches from `patches/` (idempotent — safe to re-run)
 
 ## Status Line
 
