@@ -173,7 +173,7 @@
     "feature-dev@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true
+    "lua-lsp@claude-plugins-official": true,
     "che-ical-mcp@psychquant-claude-plugins": true
   },
   "extraKnownMarketplaces": {
@@ -186,6 +186,5 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
-  "voiceEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "voiceEnabled": true
 }
