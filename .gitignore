@@ -30,7 +30,8 @@
 .DS_Store
 .emacs.d/elpa/archives
 .emacs.d/url
-.gnupg/random_seed
+.gnupg/*
+!.gnupg/gpg-agent.conf
 .idea
 .ssh/1Password/
 .ssh/known_hosts
