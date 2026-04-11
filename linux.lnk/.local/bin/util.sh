@@ -2,11 +2,6 @@
 
 CUR_DIR=$(dirname "$0")
 
-echo_and_eval () {
-    echo "$@"
-    eval "$@"
-}
-
 get_freedesktop_color_scheme () {
     gsettings get org.freedesktop.appearance color-scheme
 }
@@ -59,7 +54,7 @@ toggle_gnome_light () {
 }
 
 toggle_gnome () {
-    echo_and_eval "toggle_gnome_$1"
+    "toggle_gnome_$1"
     gsettings set org.gnome.desktop.interface text-scaling-factor 1.5
     gsettings set org.gnome.desktop.interface cursor-theme "Yaru"
     gsettings set org.gnome.desktop.interface cursor-size 48
@@ -69,12 +64,12 @@ toggle_gnome () {
 }
 
 toggle_i3 () {
-    bash "$HOME/.local/bin/i3_update_config" $1
+    bash "$HOME/.local/bin/i3_update_config" "$1"
     i3 restart
 }
 
 toggle_sway () {
-    bash "$HOME/.local/bin/sway_update_config" $1
+    bash "$HOME/.local/bin/sway_update_config" "$1"
     sway reload
 }
 
