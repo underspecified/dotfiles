@@ -1,1 +1,0 @@
-Option "XkbOptions" "caps:hyper"
