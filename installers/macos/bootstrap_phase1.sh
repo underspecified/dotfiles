@@ -101,7 +101,7 @@ print_next_steps() {
 
   Then clone the dotfiles — lnk will auto-run bootstrap.sh, which
   dispatches to phase 2 on macOS:
-      lnk init -r git@github.com:<you>/lnk.git
+      lnk init -r git@github.com:underspecified/dotfiles.git
   ──────────────────────────────────────────────────────────────
 EOF
 }
