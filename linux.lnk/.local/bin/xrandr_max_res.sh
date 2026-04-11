@@ -37,19 +37,19 @@ is_connected() {
 }
 
 # Get all connected outputs
-connected_outputs=$(xrandr --query | grep " connected" | cut -d' ' -f1)
+mapfile -t connected_outputs < <(xrandr --query | awk '/ connected/ {print $1}')
 
-if [[ -z "$connected_outputs" ]]; then
+if [[ ${#connected_outputs[@]} -eq 0 ]]; then
     echo "Error: No connected displays found"
     exit 1
 fi
 
 echo "Connected displays found:"
-echo "$connected_outputs"
+printf '%s\n' "${connected_outputs[@]}"
 echo
 
 # Process each connected output
-for output in $connected_outputs; do
+for output in "${connected_outputs[@]}"; do
     echo "Processing $output..."
     
     if ! is_connected "$output"; then
