@@ -7,7 +7,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 case "$(uname -s)" in
   Darwin)
-    exec bash "${REPO_DIR}/installers/macos/bootstrap_phase2.sh"
+    exec bash "${REPO_DIR}/installers/macos/bootstrap_finish.sh"
     ;;
   Linux)
     exec bash "${REPO_DIR}/installers/linux/install.sh"

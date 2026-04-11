@@ -99,9 +99,16 @@ print_next_steps() {
   Verify the SSH agent is live:
       ssh-add -l
 
-  Then clone the dotfiles — lnk will auto-run bootstrap.sh, which
-  dispatches to phase 2 on macOS:
-      lnk init -r git@github.com:underspecified/dotfiles.git
+  Then run these three commands to clone, restore host-specific
+  symlinks, and trigger phase 2 via bootstrap.sh:
+
+      lnk init -r git@github.com:underspecified/dotfiles.git --no-bootstrap
+      lnk pull --host macos
+      lnk bootstrap
+
+  (--no-bootstrap on init is important: the macOS host manifest must
+  be restored by `lnk pull --host macos` before `lnk bootstrap` runs,
+  so yabai/skhd/borders services start with their configs in place.)
   ──────────────────────────────────────────────────────────────
 EOF
 }

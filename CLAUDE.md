@@ -36,7 +36,7 @@ lnk doctor          # Diagnose broken symlinks or issues
 | `macos.lnk/` | macOS-only configs and scripts (`.config/`, `.local/bin/`, `.Rprofile`) |
 | `linux.lnk/` | Linux-only configs and scripts (`.config/`, `.local/`, X11 dotfiles) |
 | `.docker/mcp/` | Docker MCP server configuration (markdownify, markitdown) |
-| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/`, `macos/` (mac bootstrap is `macos/bootstrap_phase1.sh` + `bootstrap_phase2.sh`, auto-run via `bootstrap.sh` dispatcher at repo root) |
+| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/`, `macos/` (mac bootstrap is `macos/bootstrap_start.sh` for bare-machine bring-up + `macos/bootstrap_finish.sh` auto-run via repo-root `bootstrap.sh` dispatcher after `lnk init -r`) |
 | `.gnupg/`, `.ssh/` | Key material (sensitive — managed but gitignored selectively) |
 
 ## Key Conventions
