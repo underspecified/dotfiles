@@ -22,6 +22,7 @@
 !.claude/mcp/bootstrap.sh
 .claude.json
 .ssh/known_hosts.old
+.config/github-copilot/
 .config/zed/prompts/
 .config/zsh/.iterm2/
 .config/zsh/.iterm2_shell_integration.zsh
