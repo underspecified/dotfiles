@@ -7,53 +7,6 @@ echo_and_eval () {
     eval "$@"
 }
 
-call_geoloc_api () {
-    curl -s "http://ipwho.is/"
-}
-
-get_lat () {
-    call_geoloc_api |
-    jq -r '.latitude'
-}
-
-get_lng () {
-    call_geoloc_api |
-    jq -r '.longitude'
-}
-
-get_tzid () {
-    call_geoloc_api |
-    jq -r '.timezone.id'
-}
-
-call_sun_api_ () {
-    lat=$(get_lat)
-    lng=$(get_lng)
-    tzid=$(get_tzid)
-    curl -s "https://api.sunrise-sunset.org/json?lat=$lat&lng=$lng&tzid=$tzid&formatted=0"
-}
-
-get_sunrise () {
-    get_sunrise_date |
-    xargs -I '{}' date "+%H:%M" --date='{}'
-}
-
-get_sunset () {
-    get_sunset_date |
-    xargs -I '{}' date "+%H:%M" --date='{}'
-}
-
-is_day () {
-    sunrise=$(get_sunrise)
-    sunset=$(get_sunset)
-    now=$(date -Iseconds)
-    [[ $sunrise < $now && $now < $sunset ]]
-}
-
-is_night () {
-    [[ ! is_day ]]
-}
-
 get_freedesktop_color_scheme () {
     gsettings get org.freedesktop.appearance color-scheme
 }
