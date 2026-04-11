@@ -1,6 +1,9 @@
 #!/bin/bash
 
-export mode=${1:-$(darkman get)}
+set -euo pipefail
+shopt -s nullglob
+
+export mode="${1:-$(darkman get)}"
 source "$HOME/.local/share/colors/selenized_${mode}.env"
 export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
 
@@ -8,5 +11,6 @@ for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/i3"/conf/*.conf.in \
             "$HOME/.config/i3status/config.in" \
             "$HOME/.config/dunst/dunstrc.in"; do
-    envsubst < "$conf" | tee "${conf%.in}"
+    [[ -f "$conf" ]] || continue
+    envsubst < "$conf" > "${conf%.in}"
 done
