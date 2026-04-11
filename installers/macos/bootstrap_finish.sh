@@ -49,6 +49,35 @@ run_all_installers() {
   done
 }
 
+link_1password_agent_dir() {
+  # .ssh/config references ~/.1password/agent.sock (a convention that works
+  # natively on Linux). On macOS the actual socket lives inside 1P's sandboxed
+  # Group Containers directory, so a symlink is required to bridge the paths.
+  # By the time phase 2 runs, 1Password has been launched (the user signed in
+  # during phase 1), so the container dir exists and we can detect it
+  # dynamically rather than hardcoding the Apple Team ID.
+  local link="${HOME}/.1password"
+  if [[ -L "${link}" ]]; then
+    log "1Password agent symlink already present: ${link}"
+    return
+  fi
+  if [[ -e "${link}" ]]; then
+    warn "${link} exists but is not a symlink — leaving alone"
+    return
+  fi
+  local base="${HOME}/Library/Group Containers"
+  local container
+  container="$(/usr/bin/find "${base}" -maxdepth 2 -type d -name '*.1password' 2>/dev/null | head -1)"
+  if [[ -z "${container}" || ! -d "${container}/t" ]]; then
+    warn "1Password container dir not found under ${base}"
+    warn "Launch 1Password once, then create the symlink manually:"
+    warn "  ln -s \"\$(ls -d ~/Library/Group\\ Containers/*.1password)/t\" ~/.1password"
+    return
+  fi
+  log "Linking ${link} → ${container}/t"
+  ln -s "${container}/t" "${link}"
+}
+
 pull_private_configs_from_1password() {
   log "Pulling private config overlays from 1Password"
   if ! command -v op >/dev/null 2>&1; then
@@ -126,6 +155,7 @@ main() {
   check_preconditions
   install_brewfile
   run_all_installers
+  link_1password_agent_dir
   pull_private_configs_from_1password
   start_services
   print_manual_checklist
