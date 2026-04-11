@@ -33,6 +33,7 @@
 .emacs.d/url
 .gnupg/*
 !.gnupg/gpg-agent.conf
+.gitconfig
 .idea
 .ssh/1Password/
 .ssh/config.d/

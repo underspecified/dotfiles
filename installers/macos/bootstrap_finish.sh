@@ -49,6 +49,24 @@ run_all_installers() {
   done
 }
 
+pull_private_configs_from_1password() {
+  log "Pulling private config overlays from 1Password"
+  if ! command -v op >/dev/null 2>&1; then
+    warn "op CLI missing — skipping 1P config pull"
+    return
+  fi
+  if ! op whoami >/dev/null 2>&1; then
+    warn "op CLI not signed in — skipping 1P config pull"
+    warn "  sign in with:  eval \"\$(op signin)\""
+    warn "  then re-run:   bash ${ALL_DIR}/op-config-pull.sh ssh-config-honda ~/.ssh/config.d/work-honda"
+    return
+  fi
+  bash "${ALL_DIR}/op-config-pull.sh" ssh-config-honda ~/.ssh/config.d/work-honda \
+    || warn "failed to pull ssh-config-honda"
+  log "note: pull your desired gitconfig variant manually, e.g."
+  log "      bash ${ALL_DIR}/op-config-pull.sh gitconfig-work ~/.gitconfig"
+}
+
 start_services() {
   log "Starting background services"
   local svc
@@ -103,6 +121,7 @@ main() {
   check_preconditions
   install_brewfile
   run_all_installers
+  pull_private_configs_from_1password
   start_services
   print_manual_checklist
 }
