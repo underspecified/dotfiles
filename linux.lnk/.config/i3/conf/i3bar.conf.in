@@ -3,7 +3,7 @@
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-    font pango:$font 10
+    font pango:$font 16
     #mode hide
     status_command i3status
 

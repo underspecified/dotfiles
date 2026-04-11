@@ -3,7 +3,7 @@
 #set mode ${mode}
 
 # Font for window titles.
-font pango:$font 10
+font pango:$font 16
 
 # clientclass border backgr. text indicator
 client.focused #${blue} #${blue} #${bg_1} #${green}

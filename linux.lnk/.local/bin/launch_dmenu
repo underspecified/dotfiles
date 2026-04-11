@@ -8,7 +8,7 @@ fmt () {
 }
 
 [[ -f "$1" ]] && source "$1"
-font_pt="$font 32"
+font_pt="$font:size=16"
 
 j4-dmenu-desktop --term=kitty --dmenu="\
     dmenu_run \

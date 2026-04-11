@@ -3,4 +3,4 @@
 # GDK_SCALE only supports integers so we don't set it
 export QT_AUTO_SCREEN_SCALE_FACTOR=0
 export QT_SCALE_FACTOR=1.5
-export XCURSOR_SIZE=36
+export XCURSOR_SIZE=48
