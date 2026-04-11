@@ -1,0 +1,74 @@
+[user]
+	name = Eric Nichols
+	# email + signingkey come from the machine-local include below,
+	# pulled from 1Password on bootstrap (see installers/all/op-config-pull.sh
+	# and bootstrap_finish.sh's pull_private_configs_from_1password step).
+
+[include]
+	path = ~/.config/git/identity.conf
+
+[color]
+	ui = auto
+
+[branch]
+	autosetupmerge = true
+
+[rerere]
+	enabled = true
+
+[core]
+	quotepath = false
+	excludesfile = $HOME/.gitignore
+	whitespace = trailing-space,space-before-tab
+
+[init]
+	defaultBranch = main
+
+[diff]
+	renames = copies
+	mnemonicprefix = true
+	algorithm = histogram
+	colorMoved = default
+	tool = Kaleidoscope
+	editor = "emacs -nw"
+
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+
+[difftool]
+	prompt = false
+
+[merge]
+	stat = true
+	conflictstyle = zdiff3
+	autostash = true
+	tool = Kaleidoscope
+
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+
+[mergetool]
+	prompt = false
+
+[alias]
+	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-main}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool -y -t Kaleidoscope $BRANCH...$SHA; }; f"
+
+[push]
+	default = current
+
+[gpg]
+	format = "ssh"
+
+[gpg "ssh"]
+	program = op-ssh-sign
+
+[commit]
+	gpgsign = true
+
+[pull]
+	autostash = true
+	rebase = true
+
+[rebase]
+	autostash = true
