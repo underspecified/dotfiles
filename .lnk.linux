@@ -13,7 +13,6 @@
 .config/xdg-desktop-portal
 .local/bin/1password_hidpi
 .local/bin/change_desktop.sh
-.local/bin/change_theme.sh
 .local/bin/google-chrome-wayland
 .local/bin/google-chrome-x11
 .local/bin/gpu_burn
