@@ -109,10 +109,10 @@ toggle_gnome () {
     echo_and_eval "toggle_gnome_$1"
     gsettings set org.gnome.desktop.interface text-scaling-factor 1.5
     gsettings set org.gnome.desktop.interface cursor-theme "Yaru"
-    gsettings set org.gnome.desktop.interface cursor-size 36
+    gsettings set org.gnome.desktop.interface cursor-size 48
     mkdir -p "$HOME/.icons/default"
     printf '[Icon Theme]\nInherits=Yaru\n' > "$HOME/.icons/default/index.theme"
-    xsetroot -xcf /usr/share/icons/Yaru/cursors/left_ptr 36 2>/dev/null
+    xsetroot -xcf /usr/share/icons/Yaru/cursors/left_ptr 48 2>/dev/null
 }
 
 toggle_i3 () {
