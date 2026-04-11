@@ -36,14 +36,11 @@
       "Write(~/Google_Drive/HRI-JP/projects/**)",
       "Write(~/haru.md/**)",
       "Write(~/projects/**)",
-      "mcp__*",
-      "mcp__apple-mail-imdinu__*",
-      "mcp__apple-mail-patrickfreyer__*",
       "mcp__claude_ai_Gmail__*",
       "mcp__claude_ai_Google_Calendar__*",
       "mcp__google-workspace__*",
-      "mcp__MCP_DOCKER__*",
-      "mcp__plugin_che-ical-mcp_ical__*",
+      "mcp__markitdown-mcp__*",
+      "mcp__plugin_context7_context7__*",
       "Bash(awk *)",
       "Bash(bash ~/.claude/hooks/*.sh *)",
       "Bash(bash ~/claude/skills/**/*.sh)",
@@ -136,7 +133,9 @@
       "Bash(which *)",
       "Bash(whisply *)"
     ],
-    "deny": [],
+    "deny": [
+      "mcp__claude_ai_Mermaid_Chart__*"
+    ],
     "defaultMode": "auto"
   },
   "statusLine": {
@@ -157,8 +156,7 @@
     "feature-dev@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "che-ical-mcp@psychquant-claude-plugins": true
+    "lua-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "psychquant-claude-plugins": {
@@ -169,7 +167,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "voiceEnabled": true,
   "skipAutoPermissionPrompt": true
 }
