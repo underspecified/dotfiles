@@ -15,17 +15,4 @@ install_1password () {
     sudo apt update && sudo apt install -y 1password 1password-cli
 }
 
-install_git_credential_1password() {
-    # clone repo
-    mkdir -p ~/git && \
-    cd ~/git && \
-    git clone https://github.com/ethrgeist/git-credential-1password.git
-
-    # build and install
-    cd ~/git/git-credential-1password && \
-    go build -o git-credential-1password && \
-    cp git-credential-1password ~/.local/bin
-}
-
 install_1password
-install_git_credential_1password

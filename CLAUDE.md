@@ -36,14 +36,14 @@ lnk doctor          # Diagnose broken symlinks or issues
 | `macos.lnk/` | macOS-only configs and scripts (`.config/`, `.local/bin/`, `.Rprofile`) |
 | `linux.lnk/` | Linux-only configs and scripts (`.config/`, `.local/`, X11 dotfiles) |
 | `.docker/mcp/` | Docker MCP server configuration (markdownify, markitdown) |
-| `installers/` | Setup scripts for various tools (1password, kitty, docker, i3, ROS, etc.) |
+| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/`, `macos/` (mac bootstrap is `macos/bootstrap_phase1.sh` + `bootstrap_phase2.sh`, auto-run via `bootstrap.sh` dispatcher at repo root) |
 | `.gnupg/`, `.ssh/` | Key material (sensitive — managed but gitignored selectively) |
 
 ## Key Conventions
 
 - Commits follow `lnk: description` or `component: description` format (e.g., `kitty: change font`, `macos: darkmode fixes`)
 - Git commits are GPG-signed via 1Password SSH agent (`op-ssh-sign`)
-- Git credential helper uses 1Password (`credential.helper = 1password --vault=Personal`)
+- Git auth standardizes on SSH (no HTTPS credential helper) — the 1Password SSH agent handles all git auth
 - The legacy `setup.sh` is an older symlink installer; prefer `lnk` commands instead
 
 ## Platform-Specific Notes
