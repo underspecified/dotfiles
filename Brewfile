@@ -177,6 +177,8 @@ cask "betterzip"
 cask "calibre"
 # Desktop client that supports multiple LLM providers
 cask "cherry-studio"
+# Anthropic's desktop client for Claude
+cask "claude"
 # Compress any video/image into a tiny size
 cask "codeforreal1/tap/compresso"
 # Create and run Linux containers using lightweight virtual machines
