@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 LOCK_MIN=5
 LOCK_SEC=$(($LOCK_MIN * 60))
 IDLE_MIN=10
@@ -10,8 +12,13 @@ source "$HOME/.local/share/colors/selenized_${mode}.env"
 font_pt="iMWritingQuat Nerd Font Propo:style=Regular"
 font_sz=72
 
+# Ensure dunst always unpauses, even if i3lock crashes or the script is killed
+trap 'dunstctl set-paused false 2>/dev/null || true' EXIT INT TERM HUP
+
 # Pause notifications to avoid X grab race on unlock
-command -v dunstctl &>/dev/null && dunstctl set-paused true
+if command -v dunstctl &>/dev/null; then
+    dunstctl set-paused true
+fi
 
 sleep 0.5
 
@@ -62,6 +69,3 @@ LC_ALL="en_US.UTF-8" i3lock \
   --image="$wallpaper" \
   --fill \
   --nofork
-
-# Resume notifications after unlock
-command -v dunstctl &>/dev/null && dunstctl set-paused false
