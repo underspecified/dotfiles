@@ -21,6 +21,7 @@
 .claude/hooks/ask_git_commit.sh
 .claude/hooks/commit_guidelines.md
 .claude/hooks/git-commit-docs
+.claude/hooks/git_gate.sh
 .claude/hooks/nag_docs.sh
 .claude/mcp/bootstrap.sh
 .claude/patches/README.md
