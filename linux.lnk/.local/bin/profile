@@ -1,8 +1,0 @@
-#/usr/bin/bash
-
-echo "[START: $(date +%Y%m%d_%H%M%S)] $@" >> ~/tmp/profile.log
-start=$(date +%s%3N)
-eval "$@"
-end=$(date +%s%3N)
-echo "[END: $(date +%Y%m%d_%H%M%S)] $@" >> ~/tmp/profile.log
-echo "[TIME: $(($end - $start))ms] $@" >> ~/tmp/profile.log
