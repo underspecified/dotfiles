@@ -36,6 +36,9 @@
       "Write(~/Google_Drive/HRI-JP/projects/**)",
       "Write(~/haru.md/**)",
       "Write(~/projects/**)",
+      "mcp__*",
+      "mcp__apple-mail-imdinu__*",
+      "mcp__apple-mail-patrickfreyer__*",
       "mcp__claude_ai_Gmail__*",
       "mcp__claude_ai_Google_Calendar__*",
       "mcp__google-workspace__*",
@@ -171,6 +174,7 @@
     "claude-md-management@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true
+    "che-ical-mcp@psychquant-claude-plugins": true
   },
   "extraKnownMarketplaces": {
     "psychquant-claude-plugins": {
