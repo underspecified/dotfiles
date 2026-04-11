@@ -51,3 +51,7 @@ Icon
 linux.lnk/.config/i3/conf/i3bar.conf
 linux.lnk/.config/i3status/config
 linux.lnk/.config/wm/conf/theme.conf
+linux.lnk/.config/dunst/dunstrc
+linux.lnk/.config/xdg-desktop-portal/portals.conf
+linux.lnk/.config/sway/conf/swaybar.conf
+linux.lnk/.config/swaylock/config

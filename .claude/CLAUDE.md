@@ -5,11 +5,11 @@ See `rules/` for development conventions (python, bash, skill, authoring, safety
 
 ## Commit Workflow
 
-A hook-based commit workflow is enforced via `hooks/nag_docs.sh`:
+A hook-based git safety gate is enforced via `hooks/git_gate.sh` (registered as a PreToolUse Bash hook in `settings.json`):
 
-- Running `git commit` directly is **denied** by the PreToolUse hook
-- Review project docs first, then use `~/.claude/hooks/ask_git_commit.sh -m "message"` to commit
-- That script triggers an "ask" flow for final user approval
+- Running `git commit` directly is **denied** — review project docs first, then use `~/.claude/hooks/ask_git_commit.sh -m "message"` to commit
+- `ask_git_commit.sh` triggers an "ask" flow for final user approval
+- `cd <dir> && git ...` compounds are **auto-rewritten** to `git -C <dir> ...` before execution (avoids compound-expression permission failures — prefer writing `git -C` directly)
 - See `hooks/commit_guidelines.md` for full criteria on when docs need updating
 
 ## Safety Rules (Hook-Enforced)
