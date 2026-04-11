@@ -35,6 +35,7 @@
 !.gnupg/gpg-agent.conf
 .idea
 .ssh/1Password/
+.ssh/config.d/
 .ssh/known_hosts
 .ssh/sock
 .zcompdump
