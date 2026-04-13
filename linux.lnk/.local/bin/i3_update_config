@@ -15,7 +15,7 @@ export font_sz_ui="${FONT_UI}"
 export font_sz_dunst="${FONT_DUNST}"
 export font_sz_lock="${FONT_LOCK}"
 export font_sz_dmenu="${FONT_DMENU}"
-# FONT_TERM and FONT_ZED_UI pass through directly into kitty/zed templates
+# FONT_TERM, FONT_ZED_EDITOR, FONT_ZED_UI pass through directly to kitty/zed
 
 # Pixel geometry scales with SCALE; XFT_DPI is set independently
 export xft_dpi="${XFT_DPI}"
@@ -47,7 +47,8 @@ printf 'font_size %s\nwindow_border_width %spx\nactive_border_color #%s\ninactiv
 pkill -USR1 -x kitty 2>/dev/null || true
 
 # Zed: patch font sizes in-place, preserving comments and all other settings
+# sed -i uses an atomic rename which triggers Zed's inotify watcher
 sed -i "s/\"ui_font_size\": [0-9.]*/\"ui_font_size\": ${FONT_ZED_UI}/" \
     "$HOME/.config/zed/settings.json"
-sed -i "s/\"buffer_font_size\": [0-9.]*/\"buffer_font_size\": ${FONT_TERM}/" \
+sed -i "s/\"buffer_font_size\": [0-9.]*/\"buffer_font_size\": ${FONT_ZED_EDITOR}/" \
     "$HOME/.config/zed/settings.json"
