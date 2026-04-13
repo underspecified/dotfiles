@@ -40,6 +40,8 @@ for conf in "$HOME/.config/wm"/conf/*.conf.in \
 done
 
 xrdb -merge "$HOME/.Xresources"
+xsetroot -cursor_name left_ptr
+systemctl --user set-environment CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
 
 # Kitty: write host-specific display.conf (included by kitty.conf), then reload
 printf 'font_size %s\nwindow_border_width %spx\nactive_border_color #%s\ninactive_border_color #%s\n' \

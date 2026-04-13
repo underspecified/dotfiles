@@ -5,3 +5,4 @@ source "$HOME/.config/display.env"
 export QT_AUTO_SCREEN_SCALE_FACTOR=0
 export QT_SCALE_FACTOR=$QT_SCALE
 export XCURSOR_SIZE=$(awk "BEGIN{printf \"%d\", int(${BASE_CURSOR} * ${SCALE} + 0.5)}")
+export CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
