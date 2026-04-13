@@ -4,13 +4,14 @@ set -euo pipefail
 
 mode=$(darkman get)
 source "$HOME/.local/share/colors/selenized_${mode}.env"
+source "$HOME/.config/display.env"
 
 fmt () {
     echo "#$(echo "$1" | tr 'a-z' 'A-Z')"
 }
 
 [[ -f "${1:-}" ]] && source "$1"
-font_pt="$font:size=16"
+font_pt="$font:size=${FONT_DMENU}"
 
 j4-dmenu-desktop --term=kitty --dmenu="\
     dmenu_run \

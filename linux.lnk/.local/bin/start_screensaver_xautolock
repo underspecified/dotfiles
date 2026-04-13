@@ -6,5 +6,5 @@ IDLE_MIN=10
 IDLE_SEC=$(($IDLE_MIN * 60))
 
 xset s $LOCK_SEC 5
-xset dpms $IDLE_SEC $IDLE_SEC $IDLE_SEC
+xset dpms 0 0 $IDLE_SEC
 xss-lock --transfer-sleep-lock -- "$HOME/.local/bin/lock_screen_i3lock" &

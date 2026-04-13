@@ -141,6 +141,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
@@ -184,7 +185,7 @@
       }
     }
   },
-    "alwaysThinkingEnabled": true,
-    "showThinkingSummaries": true,
-    "effortLevel": "medium"
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "medium",
+  "showThinkingSummaries": true
 }

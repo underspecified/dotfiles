@@ -5,12 +5,48 @@ shopt -s nullglob
 
 export mode="${1:-$(darkman get)}"
 source "$HOME/.local/share/colors/selenized_${mode}.env"
+source "$HOME/.config/display.env"
+
+# Scale a pixel base value: round(base * SCALE)
+_scale() { awk "BEGIN{printf \"%d\", int($1 * ${SCALE} + 0.5)}"; }
+
+# Font sizes pass through directly — SCALE doesn't affect them
+export font_sz_ui="${FONT_UI}"
+export font_sz_dunst="${FONT_DUNST}"
+export font_sz_lock="${FONT_LOCK}"
+export font_sz_dmenu="${FONT_DMENU}"
+# FONT_TERM and FONT_ZED_UI pass through directly into kitty/zed templates
+
+# Pixel geometry scales with SCALE; XFT_DPI is set independently
+export xft_dpi="${XFT_DPI}"
+export cursor_size=$(_scale "${BASE_CURSOR}")
+export border_px=$(_scale "${BASE_BORDER}")
+export gap_inner_px=$(_scale "${BASE_BORDER}")
+export ring_width=$(_scale "${BASE_RING_WIDTH}")
+export i3lock_radius=$(_scale "${BASE_I3LOCK_RADIUS}")
+export date_offset_px=$(_scale "${BASE_DATE_OFFSET}")
+export ring_radius=$(_scale "${BASE_RING_RADIUS}")
+export ring_thick=$(_scale "${BASE_RING_THICK}")
+
 export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
 
 for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/i3"/conf/*.conf.in \
             "$HOME/.config/i3status/config.in" \
-            "$HOME/.config/dunst/dunstrc.in"; do
+            "$HOME/.config/dunst/dunstrc.in" \
+            "$HOME/.Xresources.in"; do
     [[ -f "$conf" ]] || continue
     envsubst < "$conf" > "${conf%.in}"
 done
+
+xrdb -merge "$HOME/.Xresources"
+
+# Kitty: write host-specific display.conf (included by kitty.conf)
+printf 'font_size %s\nwindow_border_width %spx\nactive_border_color #%s\ninactive_border_color #%s\n' \
+    "${FONT_TERM}" "${border_px}" "${blue}" "${bg_2}" > "$HOME/.config/kitty/display.conf"
+
+# Zed: patch font sizes in-place, preserving comments and all other settings
+sed -i "s/\"ui_font_size\": [0-9.]*/\"ui_font_size\": ${FONT_ZED_UI}/" \
+    "$HOME/.config/zed/settings.json"
+sed -i "s/\"buffer_font_size\": [0-9.]*/\"buffer_font_size\": ${FONT_TERM}/" \
+    "$HOME/.config/zed/settings.json"

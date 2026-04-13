@@ -54,13 +54,16 @@ toggle_gnome_light () {
 }
 
 toggle_gnome () {
+    source "$HOME/.config/display.env"
+    local cursor_sz
+    cursor_sz=$(awk "BEGIN{printf \"%d\", int(${BASE_CURSOR} * ${SCALE} + 0.5)}")
     "toggle_gnome_$1"
-    gsettings set org.gnome.desktop.interface text-scaling-factor 1.5
+    gsettings set org.gnome.desktop.interface text-scaling-factor "${QT_SCALE}"
     gsettings set org.gnome.desktop.interface cursor-theme "Yaru"
-    gsettings set org.gnome.desktop.interface cursor-size 48
+    gsettings set org.gnome.desktop.interface cursor-size "${cursor_sz}"
     mkdir -p "$HOME/.icons/default"
     printf '[Icon Theme]\nInherits=Yaru\n' > "$HOME/.icons/default/index.theme"
-    xsetroot -xcf /usr/share/icons/Yaru/cursors/left_ptr 48 2>/dev/null
+    xsetroot -xcf /usr/share/icons/Yaru/cursors/left_ptr "${cursor_sz}" 2>/dev/null
 }
 
 toggle_i3 () {

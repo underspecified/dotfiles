@@ -1,5 +1,5 @@
 [global]
-    font = $font 12
+    font = $font $font_sz_dunst
     origin = top-center
     width = 10000
     height = (0, 50)

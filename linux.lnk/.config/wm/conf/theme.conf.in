@@ -3,7 +3,7 @@
 #set mode ${mode}
 
 # Font for window titles.
-font pango:$font 16
+font pango:$font $font_sz_ui
 
 # clientclass border backgr. text indicator
 client.focused #${blue} #${blue} #${bg_1} #${green}
@@ -12,9 +12,9 @@ client.unfocused #${bg_1} #${bg_1} #${fg_0} #${dim_0}
 client.urgent #${red} #${red} #${bg_1} #${orange}
 
 # borders
-default_border normal 5
-default_floating_border normal 5
-gaps inner 5
+default_border normal $border_px
+default_floating_border normal $border_px
+gaps inner $gap_inner_px
 gaps outer 0
 
 # wallpaper
