@@ -184,7 +184,7 @@
       }
     }
   },
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
-  "voiceEnabled": true
+    "alwaysThinkingEnabled": true,
+    "showThinkingSummaries": true,
+    "effortLevel": "medium"
 }
