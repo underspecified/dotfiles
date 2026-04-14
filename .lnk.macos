@@ -5,6 +5,7 @@
 .config/btt
 .config/darkman
 .config/karabiner
+.config/kitty/display.conf
 .config/op
 .config/skhd
 .config/yabai
