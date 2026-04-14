@@ -54,7 +54,7 @@ toggle_gnome_light () {
 }
 
 toggle_gnome () {
-    source "$HOME/.config/display.env"
+    source "$HOME/.config/display/env"
     local cursor_sz
     cursor_sz=$(awk "BEGIN{printf \"%d\", int(${BASE_CURSOR} * ${SCALE} + 0.5)}")
     "toggle_gnome_$1"

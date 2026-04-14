@@ -4,7 +4,7 @@ set -euo pipefail
 
 mode=$(darkman get)
 source "$HOME/.local/share/colors/selenized_${mode}.env"
-source "$HOME/.config/display.env"
+source "$HOME/.config/display/env"
 
 fmt () {
     echo "#$(echo "$1" | tr 'a-z' 'A-Z')"

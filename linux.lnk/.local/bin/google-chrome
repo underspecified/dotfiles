@@ -1,4 +1,4 @@
 #!/bin/bash
 
-source "$HOME/.config/display.env"
+source "$HOME/.config/display/env"
 exec /usr/bin/google-chrome --force-device-scale-factor="${SCALE}" "$@"
