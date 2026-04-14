@@ -44,8 +44,8 @@ xsetroot -cursor_name left_ptr
 systemctl --user set-environment CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
 
 # Kitty: write host-specific display.conf (included by kitty.conf), then reload
-printf 'font_size %s\nwindow_border_width %spx\nactive_border_color #%s\ninactive_border_color #%s\n' \
-    "${FONT_TERM}" "${border_px}" "${blue}" "${bg_2}" > "$HOME/.config/kitty/display.conf"
+printf 'font_size %s\nwindow_border_width %spx\n' \
+    "${FONT_TERM}" "${border_px}" > "$HOME/.config/kitty/display.conf"
 pkill -USR1 -x kitty 2>/dev/null || true
 
 # Zed: patch font sizes in-place, preserving comments and all other settings

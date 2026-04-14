@@ -8,9 +8,10 @@
 // from the command palette or from `Zed` application menu.
 {
   "ui_font_family": "iMWritingQuat Nerd Font Propo",
-
   "buffer_font_family": "iMWritingMono Nerd Font",
   "buffer_font_weight": 400.0,
+  "ui_font_size": 12,
+  "buffer_font_size": 12,
 
   // "buffer_font_family": "MesloLGSDZ Nerd Font",
   // "buffer_font_weight": 400.0,
@@ -72,44 +73,7 @@
   //   "zero": true
   // },
 
-  "edit_predictions": {
-    //"mode": "dark",
-    "copilot": {
-      "proxy": null,
-      "proxy_no_verify": null,
-    },
-  },
-
-  "agent": {
-    "tool_permissions": {
-      "default": "allow",
-    },
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-thinking-latest",
-    },
-  },
-
-  "jupyter": {
-    "kernel_selections": {
-      "python": "conda-env",
-      "typescript": "deno",
-      "javascript": "deno",
-      "r": "ark",
-    },
-  },
-
-  "lsp": {
-    "texlab": {
-      "binary": {
-        "env": {
-          "TEXINPUTS": ".:./local:",
-          "BIBINPUTS": ".:./local:",
-          "BSTINPUTS": ".:./local:",
-        },
-      },
-    },
-  },
+  "autosave": "on_focus_change",
 
   "terminal": {
     "dock": "right",
@@ -122,15 +86,12 @@
   },
 
   "unstable.ui_density": "compact",
-
-  "ui_font_size": 10,
-  "buffer_font_size": 10,
-  "autosave": "on_focus_change",
   "preferred_line_length": 80,
   "soft_wrap": "preferred_line_length",
   "scrollbar": {
     "show": "never",
   },
+
   "title_bar": {
     "show_branch_icon": false,
     "show_branch_name": false,
@@ -140,6 +101,6 @@
     //"show_user_menu": false,
     //"show_sign_in": false,
     "show_menus": false,
-    //  "button_layout": "platform_default",
+    //"button_layout": "platform_default",
   },
 }
