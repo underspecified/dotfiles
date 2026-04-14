@@ -9,7 +9,7 @@ IDLE_SEC=$(($IDLE_MIN * 60))
 
 mode=$(darkman get)
 source "$HOME/.local/share/colors/selenized_${mode}.env"
-source "$HOME/.config/display.env"
+source "$HOME/.config/display/env"
 
 _scale() { awk "BEGIN{printf \"%d\", int($1 * ${SCALE} + 0.5)}"; }
 font_pt="${font}"
