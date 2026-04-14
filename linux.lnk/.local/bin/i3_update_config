@@ -5,7 +5,7 @@ shopt -s nullglob
 
 export mode="${1:-$(darkman get)}"
 source "$HOME/.local/share/colors/selenized_${mode}.env"
-source "$HOME/.config/display.env"
+source "$HOME/.config/display/env"
 
 # Scale a pixel base value: round(base * SCALE)
 _scale() { awk "BEGIN{printf \"%d\", int($1 * ${SCALE} + 0.5)}"; }
