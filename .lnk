@@ -39,6 +39,11 @@
 .config/dark_reader
 .config/github-copilot
 .config/keymaps
+.config/kitty/dark-theme.auto.conf
+.config/kitty/kitty.app.png
+.config/kitty/kitty.conf
+.config/kitty/light-theme.auto.conf
+.config/kitty/no-preference-theme.auto.conf
 .config/obsidian
 .config/rumdl
 .config/tmux
