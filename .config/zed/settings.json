@@ -123,7 +123,7 @@
 
   "unstable.ui_density": "compact",
 
-  "ui_font_size": 8,
+  "ui_font_size": 10,
   "buffer_font_size": 10,
   "autosave": "on_focus_change",
   "preferred_line_length": 80,
@@ -136,9 +136,9 @@
     "show_branch_name": false,
     "show_project_items": false,
     "show_onboarding_banner": false,
-    "show_user_picture": false,
-    "show_user_menu": false,
-    "show_sign_in": false,
+    //"show_user_picture": false,
+    //"show_user_menu": false,
+    //"show_sign_in": false,
     "show_menus": false,
     //  "button_layout": "platform_default",
   },

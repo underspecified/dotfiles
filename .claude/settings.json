@@ -136,9 +136,7 @@
       "Bash(which *)",
       "Bash(whisply *)"
     ],
-    "deny": [
-      "mcp__claude_ai_Mermaid_Chart__*"
-    ],
+    "deny": ["mcp__claude_ai_Mermaid_Chart__*"],
     "defaultMode": "auto"
   },
   "model": "sonnet",
@@ -186,6 +184,6 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
-  "showThinkingSummaries": true
+  "showThinkingSummaries": true,
+  "effortLevel": "high"
 }
