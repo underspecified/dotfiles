@@ -18,7 +18,7 @@
 .claude/hookify.block-force-push.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
-.claude/hooks/ask_git_commit.sh
+.claude/hooks/audit_python.sh
 .claude/hooks/commit_guidelines.md
 .claude/hooks/git-commit-docs
 .claude/hooks/git_gate.sh
