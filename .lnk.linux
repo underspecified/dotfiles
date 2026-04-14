@@ -1,10 +1,9 @@
 .Xmodmap
-.Xresources
 .Xresources.in
 .xinputrc
 .config/darkman
-.config/display.env
-.config/xsettingsd
+.config/display
+.config/xsettingsd/xsettingsd.conf.in
 .config/dunst
 .config/i3
 .config/i3status
