@@ -10,8 +10,8 @@
   "ui_font_family": "iMWritingQuat Nerd Font Propo",
   "buffer_font_family": "iMWritingMono Nerd Font",
   "buffer_font_weight": 400.0,
-  "ui_font_size": 10,
-  "buffer_font_size": 10,
+  "ui_font_size": 12,
+  "buffer_font_size": 12,
 
   // "buffer_font_family": "MesloLGSDZ Nerd Font",
   // "buffer_font_weight": 400.0,
