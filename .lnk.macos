@@ -6,6 +6,7 @@
 .config/darkman
 .config/karabiner
 .config/kitty/display.conf
+.config/kitty/macos-launch-services-cmdline
 .config/op
 .config/skhd
 .config/yabai
