@@ -35,6 +35,7 @@ Skills are private git repos on `underspecified`, cloned directly into `~/.claud
 ```
 ~/.claude/skills/
 ├── computation-graph/    github:underspecified/computation-graph
+├── dispatch/             github:underspecified/dispatch
 ├── figure/               github:underspecified/figure
 ├── gantt-chart/          github:underspecified/gantt-chart
 ├── hansei/               github:underspecified/hansei

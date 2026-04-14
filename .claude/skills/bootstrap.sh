@@ -9,7 +9,7 @@ GITHUB_ORG="underspecified"
 mkdir -p "${SKILLS_DIR}"
 
 # Standalone skills
-STANDALONE=(computation-graph figure gantt-chart hansei meeting presentation sync-latex travel)
+STANDALONE=(computation-graph dispatch figure gantt-chart hansei meeting presentation sync-latex travel)
 for skill in "${STANDALONE[@]}"; do
     if [[ ! -d "${SKILLS_DIR}/${skill}" ]]; then
         echo "Cloning skill: ${skill}"
