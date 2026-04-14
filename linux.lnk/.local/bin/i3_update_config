@@ -30,10 +30,23 @@ export ring_thick=$(_scale "${BASE_RING_THICK}")
 
 export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
 
+# XSettings DPI: multiply by 1024 (XSettings integer format)
+export xft_dpi_xsettings=$(awk "BEGIN{printf \"%d\", ${XFT_DPI} * 1024}")
+
+# GTK/icon theme follows dark/light mode
+if [[ "${mode}" == "dark" ]]; then
+    export gtk_theme="Yaru-dark"
+    export icon_theme="Yaru-dark"
+else
+    export gtk_theme="Yaru"
+    export icon_theme="Yaru"
+fi
+
 for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/i3"/conf/*.conf.in \
             "$HOME/.config/i3status/config.in" \
             "$HOME/.config/dunst/dunstrc.in" \
+            "$HOME/.config/xsettingsd/xsettingsd.conf.in" \
             "$HOME/.Xresources.in"; do
     [[ -f "$conf" ]] || continue
     envsubst < "$conf" > "${conf%.in}"
@@ -41,6 +54,7 @@ done
 
 xrdb -merge "$HOME/.Xresources"
 xsetroot -cursor_name left_ptr
+pkill -HUP xsettingsd 2>/dev/null || true
 systemctl --user set-environment CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
 
 # Kitty: write host-specific display.conf (included by kitty.conf), then reload

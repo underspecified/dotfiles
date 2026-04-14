@@ -1,0 +1,14 @@
+Net/ThemeName "$gtk_theme"
+Net/IconThemeName "$icon_theme"
+Net/SoundThemeName "Yaru"
+Gtk/CursorThemeName "Yaru"
+Gtk/CursorThemeSize $cursor_size
+Gtk/FontName "Cantarell 11"
+Gtk/IMModule ""
+Xft/Antialias 1
+Xft/Hinting 1
+Xft/HintStyle "hintslight"
+Xft/RGBA "none"
+Xft/DPI $xft_dpi_xsettings
+Gdk/WindowScalingFactor 1
+Gdk/UnscaledDPI $xft_dpi_xsettings
