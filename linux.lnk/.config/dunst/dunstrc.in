@@ -2,7 +2,7 @@
     font = $font $font_sz_dunst
     origin = top-center
     width = 10000
-    height = (0, 50)
+    height = (0, 40)
     offset = 0x0
     padding = 4
     horizontal_padding = 8
