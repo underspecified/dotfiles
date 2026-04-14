@@ -58,3 +58,4 @@ linux.lnk/.config/dunst/dunstrc
 linux.lnk/.config/xdg-desktop-portal/portals.conf
 linux.lnk/.config/sway/conf/swaybar.conf
 linux.lnk/.config/swaylock/config
+linux.lnk/.config/display/env
