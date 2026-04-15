@@ -16,7 +16,6 @@
 .config/wm
 .config/xdg-desktop-portal
 .local/bin/1password
-.local/bin/1password_hidpi
 .local/bin/change_desktop.sh
 .local/bin/google-chrome
 .local/bin/google-chrome-wayland
