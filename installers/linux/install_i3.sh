@@ -13,17 +13,22 @@ install_i3 () {
 }
 
 install_i3lock () {
-    # remove old version
-    sudo apt remove i3lock
+    sudo apt remove -y i3lock 2>/dev/null || true
 
-    # install build deps
-    sudo apt install -y autoconf gcc make pkg-config libpam0g-dev libcairo2-dev libfontconfig1-dev libxcb-composite0-dev libev-dev libgif-dev libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev libxcb-randr0-dev libxcb-image0-dev libxcb-util-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev
+    sudo apt install -y autoconf gcc make pkg-config \
+        libpam0g-dev libcairo2-dev libfontconfig1-dev \
+        libxcb-composite0-dev libev-dev libgif-dev \
+        libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev \
+        libxcb-randr0-dev libxcb-image0-dev libxcb-util-dev \
+        libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev
 
-    (mkdir -p ~/git && \
-     cd ~/git && \
-     git clone https://github.com/Raymo111/i3lock-color.git
-     cd i3lock-color && \
-     sudo ./install-i3lock-color.sh)
+    mkdir -p ~/git
+    if [[ -d ~/git/i3lock-color ]]; then
+        git -C ~/git/i3lock-color pull
+    else
+        git clone https://github.com/Raymo111/i3lock-color.git ~/git/i3lock-color
+    fi
+    cd ~/git/i3lock-color && sudo ./install-i3lock-color.sh
 }
 
 install_i3
