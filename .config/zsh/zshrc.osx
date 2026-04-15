@@ -1,4 +1,4 @@
-#!/bin/env zsh
+!/bin/env zsh
 
 # BSD ls colors (LSCOLORS format)
 export LSCOLORS="exfxcxdxbxegedabagacad"
@@ -29,12 +29,10 @@ export PATH=$PATH:$TEXDIR/texbin
 export MANPATH=$MANPATH:$TEXDIR/Distributions/.DefaultTeX/Contents/Man
 #export TEXMFHOME=$HOME/Library/texmf
 
-# Plan 9 default browser
-export BROWSER="/Applications/Safari.app"
+alias safari="open -a /Applications/Safari.app"
 
-safari () {
-    open -a /Applications/Safari.app "$@"
-}
+# Plan 9 default browser
+export BROWSER="open"
 
 # YourKit Java profiler
 ykprof() {
