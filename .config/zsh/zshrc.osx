@@ -1,4 +1,4 @@
-!/bin/env zsh
+#!/bin/env zsh
 
 # BSD ls colors (LSCOLORS format)
 export LSCOLORS="exfxcxdxbxegedabagacad"
