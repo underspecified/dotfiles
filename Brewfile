@@ -133,18 +133,12 @@ brew "wget"
 brew "yt-dlp"
 # UNIX shell (command interpreter)
 brew "zsh"
-# Offline meeting transcription for macOS — auto-detects meetings, transcribes locally, saves to Claude Desktop via MCP
-brew "ajayrmk/tap/trnscrb"
-# Command-line interface for interacting with MCP (Model Context Protocol) servers
-brew "f/mcptools/mcp"
 # A window border system for macOS
 brew "felixkratz/formulae/borders"
-# Power Usage Monitor for Apple Silicon
-brew "graelo/tap/pumas"
 # Simple hotkey-daemon for macOS.
 brew "koekeishiya/formulae/skhd"
 # A tiling window manager for macOS based on binary space partitioning.
-brew "koekeishiya/formulae/yabai", args: ["HEAD"]
+brew "asmvik/formulae/yabai", args: ["HEAD"]
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line interface for 1Password
@@ -181,8 +175,6 @@ cask "cherry-studio"
 cask "claude"
 # Compress any video/image into a tiny size
 cask "codeforreal1/tap/compresso"
-# Create and run Linux containers using lightweight virtual machines
-cask "container"
 # Plain-text editor for web pages, program source codes and more
 cask "coteditor"
 # Data recovery software
@@ -252,7 +244,7 @@ cask "keyboardcleantool"
 # Open-source keystroke visualiser
 cask "keycastr"
 # GPU-based terminal emulator
-cask "kitty@nightly"
+cask "kitty"
 # Free cross-platform office suite, fresh version
 cask "libreoffice"
 # Host-based application firewall
@@ -292,9 +284,9 @@ cask "openin"
 # JDK from Oracle
 cask "oracle-jdk"
 # Desktop virtualization software
-cask "parallels"
+#cask "parallels"
 # Bundle with over 30 tools
-cask "parallels-toolbox"
+#cask "parallels-toolbox"
 # Utility to uninstall apps and remove leftover files from old/uninstalled apps
 cask "pearcleaner"
 # Tool to eliminate similar or duplicate photos
@@ -375,7 +367,6 @@ mas "PastePal", id: 1503446680
 mas "Peek", id: 1554235898
 mas "Photomator", id: 1444636541
 mas "Pixelmator Pro", id: 1289583905
-mas "QR Pop", id: 1587360435
 mas "Reeder", id: 1529448980
 mas "Square Sketch", id: 6477753172
 mas "Tadam", id: 531349534

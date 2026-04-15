@@ -31,7 +31,7 @@ check_preconditions() {
 
 install_brewfile() {
   log "Installing packages from Brewfile (this takes a while)"
-  brew bundle --file="${BREWFILE}" --no-lock
+  brew bundle --file="${BREWFILE}"
 }
 
 run_all_installers() {

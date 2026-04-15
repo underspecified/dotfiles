@@ -43,12 +43,10 @@ main() {
   command -v git >/dev/null 2>&1 || die "git is required"
   command -v make >/dev/null 2>&1 || die "make is required"
 
-  local cxx
   cxx="$(pick_compiler)"
   log "Compiler: ${cxx}"
   log "Prefix:   ${PREFIX}"
 
-  local workdir
   workdir="$(mktemp -d -t btop-build.XXXXXX)"
   trap 'rm -rf "${workdir}"' EXIT
 

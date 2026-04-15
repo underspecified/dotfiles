@@ -11,7 +11,7 @@ yabai -m signal --add label="dock_did_restart__load_sa" event=dock_did_restart a
 sudo yabai --load-sa
 
 ### start janky borders
-borders 2>/dev/null
+$HOME/.local/bin/borders_auto 2>/dev/null
 
 ### global settings
 yabai -m config layout                       bsp
