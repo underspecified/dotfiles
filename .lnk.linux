@@ -1,9 +1,7 @@
 .Xmodmap
 .Xresources.in
-.xinputrc
 .config/darkman
 .config/display
-.config/xsettingsd/xsettingsd.conf.in
 .config/dunst
 .config/i3
 .config/i3status
@@ -16,6 +14,7 @@
 .config/tofi
 .config/wm
 .config/xdg-desktop-portal
+.config/xsettingsd/xsettingsd.conf.in
 .local/bin/1password
 .local/bin/change_desktop.sh
 .local/bin/google-chrome
@@ -38,3 +37,5 @@
 .local/share/dark-mode.d
 .local/share/light-mode.d
 .local/share/wallpaper
+.ssh/1Password/socket
+.xinputrc
