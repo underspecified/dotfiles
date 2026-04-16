@@ -1,11 +1,9 @@
-[user]
-	name = Eric Nichols
-	# email + signingkey come from the machine-local include below,
-	# pulled from 1Password on bootstrap (see installers/all/op-config-pull.sh
-	# and bootstrap_finish.sh's pull_private_configs_from_1password step).
+# email + signingkey come from the machine-local include below,
+# pulled from 1Password on bootstrap (see installers/all/op-config-pull.sh
+# and bootstrap_finish.sh's pull_private_configs_from_1password step).
 
 [include]
-	path = ~/.config/git/identity.conf
+	path = $HOME/.config/git/identity.conf
 
 [color]
 	ui = auto
@@ -18,7 +16,7 @@
 
 [core]
 	quotepath = false
-	excludesfile = $HOME/.gitignore
+	excludesfile = $HOME/.config/git/ignore
 	whitespace = trailing-space,space-before-tab
 
 [init]

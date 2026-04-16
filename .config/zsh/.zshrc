@@ -24,8 +24,6 @@ if [[ -d "/Applications/1Password.app" ]]; then
 elif [[ -d "/opt/1Password" ]]; then
     export OP_DIR="/opt/1Password"
 fi
-[[ -f $HOME/.config/op/plugins.sh ]] && source $HOME/.config/op/plugins.sh
-[[ -S ~/.1password/agent.sock ]] && export SSH_AUTH_SOCK=~/.1password/agent.sock
 export PATH="$OP_DIR:$PATH"
 
 ##### ZSH CONFIGURATIONS #####

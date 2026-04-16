@@ -55,5 +55,5 @@
 .gitconfig
 .gitignore
 .screenrc
-.ssh
+.ssh/config
 .zshenv
