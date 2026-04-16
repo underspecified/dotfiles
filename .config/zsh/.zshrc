@@ -18,14 +18,6 @@ elif [ "$XDG_SESSION_TYPE" = wayland ] && [ -f "$ZDOTDIR/zshrc.wayland" ]; then
     . "$ZDOTDIR/zshrc.wayland"
 fi
 
-# 1password
-if [[ -d "/Applications/1Password.app" ]]; then
-    export OP_DIR="/Applications/1Password.app/Contents/MacOS/"
-elif [[ -d "/opt/1Password" ]]; then
-    export OP_DIR="/opt/1Password"
-fi
-export PATH="$OP_DIR:$PATH"
-
 ##### ZSH CONFIGURATIONS #####
 
 setopt AUTO_CD
@@ -59,6 +51,9 @@ fi
 alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 
+# nvtop
+alias nvtop="TERM=xterm-color nvtop"
+
 ##### COMPLETIONS #####
 
 # Docker CLI completions
@@ -74,3 +69,9 @@ fi
 
 # cargo
 test -e "$HOME/.cargo/env" && source "$HOME/.cargo/env"
+
+# bun completions (added to fpath; compinit in .zshrc handles loading)
+[[ -d "$HOME/.bun" ]] && fpath=("$HOME/.bun" $fpath)
+
+# LM Studio CLI
+export PATH="$PATH:$HOME/.cache/lm-studio/bin"

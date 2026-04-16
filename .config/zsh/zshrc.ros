@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # ROS setup
 [[ -f "/opt/ros/kinetic/setup.zsh" ]] && source "/opt/ros/kinetic/setup.zsh"
 [[ -f "$HOME/catkin_ws/devel/setup.zsh" ]] && source "$HOME/catkin_ws/devel/setup.zsh"
