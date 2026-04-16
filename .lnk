@@ -36,7 +36,7 @@
 .claude/skills/bootstrap.sh
 .claude/statusline/bootstrap.sh
 .config/dark_reader
-.config/keymaps
+.config/git
 .config/kitty/dark-theme.auto.conf
 .config/kitty/kitty.app.png
 .config/kitty/kitty.conf
