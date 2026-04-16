@@ -28,3 +28,4 @@
 .local/bin/toggle_macos_mode
 .local/bin/toggle_pdf_expert
 .local/bin/toggle_zed
+.ssh/1Password/socket
