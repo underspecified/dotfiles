@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Minimal wrapper over slock (suckless simple X display locker).
+#
+# slock has no runtime configuration -- colors and behavior are set at
+# compile time in config.h. The Ubuntu package uses upstream defaults:
+#   INIT:   black    (idle / locked / nothing typed)
+#   INPUT:  blue     (user is typing a password)
+#   FAILED: red      (last attempt was wrong)
+#
+# slock forks into the background by default. This wrapper pauses dunst
+# notifications, invokes slock, waits for the forked child to exit, then
+# unpauses dunst. The wait loop tolerates multiple slock invocations
+# (slock itself refuses to run twice via a shared lock file).
+#
+# Used by:
+#   - $mod+l in i3 (manual lock)
+#   - start_screensaver_slock via xautolock (idle lock)
+set -euo pipefail
+
+_unpause_dunst() {
+    if command -v dunstctl &>/dev/null; then
+        dunstctl set-paused false 2>/dev/null || true
+    fi
+}
+
+if command -v dunstctl &>/dev/null; then
+    dunstctl set-paused true 2>/dev/null || true
+fi
+trap _unpause_dunst EXIT INT TERM HUP
+
+# slock forks immediately. The parent returns 0 after a successful fork.
+slock
+
+# Block until no slock process remains for this user. When the forked
+# child exits (user types correct password), the EXIT trap unpauses dunst.
+while pgrep -u "$USER" -x slock >/dev/null 2>&1; do
+    sleep 1
+done

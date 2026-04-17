@@ -26,8 +26,10 @@
 .local/bin/launch_rofi
 .local/bin/launch_rofi_finder
 .local/bin/lock_screen_i3lock
+.local/bin/lock_screen_slock
 .local/bin/lock_screen_xdg
 .local/bin/slack_hidpi
+.local/bin/start_screensaver_slock
 .local/bin/start_screensaver_xautolock
 .local/bin/start_screensaver_xdg
 .local/bin/sway_update_config

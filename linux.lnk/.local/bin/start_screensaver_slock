@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Idle-triggered screen lock using slock + xautolock.
+#
+# WHY xautolock not xss-lock:
+#   xss-lock expects its child (the locker) to stay in the foreground
+#   and tracks the child's exit as the unlock signal. slock forks by
+#   default and returns immediately -- xss-lock would see the fork as
+#   an instant exit and unlock the session.
+#
+#   xautolock is a simpler idle daemon: it just runs the locker command
+#   when idle time crosses a threshold, without tracking the locker's
+#   lifecycle. Works cleanly with forking lockers like slock.
+#
+#   Trade-off: xautolock does NOT handle `loginctl lock-session`
+#   events or systemd sleep inhibitors. On this host sleep targets are
+#   masked by install_display_fix.sh, so the sleep-inhibitor path is
+#   moot. Manual lock via $mod+l goes directly to lock_screen_slock.
+#
+# Timings:
+#   LOCK_MIN   idle minutes before lock triggers
+#   IDLE_MIN   idle minutes before monitor DPMS power-off
+# Kill any prior xautolock from a previous i3 session to avoid
+# duplicate locker spawns (the -exit -detectsleep pair cleanly replaces).
+set -euo pipefail
+
+LOCK_MIN=5
+IDLE_MIN=10
+
+# DPMS monitor power-off (display-side only, unrelated to the locker).
+xset dpms 0 0 $(( IDLE_MIN * 60 ))
+
+# Replace any existing xautolock instance.
+pkill -x xautolock 2>/dev/null || true
+
+# -time N        : idle threshold in MINUTES (not seconds)
+# -locker CMD    : command to run when idle threshold crosses
+# -detectsleep   : reset idle timer on system wake (harmless here since
+#                  sleep is masked, but cheap insurance)
+# -corners 0...0 : disable hot-corner behaviors (no accidental
+#                  early-lock or lock-disable from cursor corners)
+xautolock \
+    -time "${LOCK_MIN}" \
+    -locker "${HOME}/.local/bin/lock_screen_slock" \
+    -detectsleep \
+    -corners 0000 \
+    &
