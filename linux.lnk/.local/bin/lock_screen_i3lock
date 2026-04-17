@@ -18,13 +18,19 @@ ring_width_px=$(_scale "${BASE_RING_WIDTH}")
 i3lock_radius_px=$(_scale "${BASE_I3LOCK_RADIUS}")
 date_offset=$(_scale "${BASE_DATE_OFFSET}")
 
-# Ensure dunst always unpauses, even if i3lock crashes or the script is killed
-trap 'dunstctl set-paused false 2>/dev/null || true' EXIT INT TERM HUP
+_cleanup() {
+    dunstctl set-paused false 2>/dev/null || true
+    picom -b 2>/dev/null || true
+}
+trap '_cleanup' EXIT INT TERM HUP
 
 # Pause notifications to avoid X grab race on unlock
 if command -v dunstctl &>/dev/null; then
     dunstctl set-paused true
 fi
+
+# Stop picom before locking — it conflicts with i3lock on DPMS wakeup (picom#315, #1212)
+pkill -x picom 2>/dev/null || true
 
 sleep 0.5
 
@@ -45,7 +51,6 @@ LC_ALL="en_US.UTF-8" i3lock \
   --date-color=$blue \
   --time-color=$blue \
   --screen 1 \
-  --composite \
   --clock \
   --indicator \
   --time-str="%H:%M:%S" \
