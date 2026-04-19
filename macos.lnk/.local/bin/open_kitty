@@ -9,4 +9,4 @@
 # end tell'
 
 #kitty --single-instance
-kitty @ new-window --new-tab=no --window-type=os
+kitty @ --to=unix:/tmp/mykitty new-window --new-tab=no --window-type=os
