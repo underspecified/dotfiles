@@ -1,12 +1,14 @@
 #!/bin/bash
 
 options=(
+    active_color=0xff4695f7
+    ax_focus=true
+    blacklist="SoundSource"
+    hidpi=on
+    inactive_color=0xff72898f
+    #order=above
 	style=round
 	width=10.0
-	hidpi=on
-	active_color=0xff4695f7
-	inactive_color=0xff72898f
-	blacklist="SoundSource"
 )
 
-/opt/homebrew/bin/borders "${options[@]}"
+/opt/homebrew/bin/borders "${options[@]}" &
