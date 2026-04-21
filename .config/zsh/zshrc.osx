@@ -6,6 +6,7 @@
 export PATH=/opt/homebrew/bin:$PATH
 export PATH=/opt/homebrew/sbin:$PATH
 export MANPATH=/opt/homebrew/share/man:$MANPATH
+export HOMEBREW_BUNDLE_FILE="$HOME/.config/homebrew/Brewfile"
 
 # MacTex
 export TEXDIR=/Library/TeX
