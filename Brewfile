@@ -123,6 +123,8 @@ brew "virtuslab/scala-cli/scala-cli"
 brew "scipy"
 # Static analysis and lint tool for shell scripts
 brew "shellcheck"
+# Autoformat shell script source code
+brew "shfmt"
 # Tool to create Python bindings for C and C++ libraries
 brew "sip"
 # Implementation of the Language Server Protocol for LaTeX

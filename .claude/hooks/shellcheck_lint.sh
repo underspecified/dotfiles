@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Run shellcheck after Write/Edit on .sh files and inject findings into Claude context.
+# Run shfmt (format) then shellcheck (lint) after Write/Edit on .sh files.
 set -uo pipefail
 
 [[ "${CLAUDE_FILE_PATH:-}" == *.sh ]] || exit 0
 [[ -f "${CLAUDE_FILE_PATH}" ]] || exit 0
+
+shfmt -w "${CLAUDE_FILE_PATH}"
 
 if ! output=$(shellcheck "${CLAUDE_FILE_PATH}" 2>&1); then
   jq -n \
