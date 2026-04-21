@@ -20,7 +20,7 @@ A hook-based git safety gate is enforced via `hooks/git_gate.sh` (registered as 
 
 ## Tool Preferences
 
-- Read over cat/head/tail/sed
+- Read over cat/head/tail/sed — but for large files, use Grep for targeted content or Read with offset/limit
 - Glob over find/ls
 - Grep over grep/rg
 - Edit over sed/awk

@@ -45,12 +45,18 @@ brew "unbound"
 brew "gnutls"
 # Monitor a directory for changes and run a shell command
 brew "fswatch"
+# Google Drive CLI client
+brew "gdrive"
 # GitHub command-line tool
 brew "gh"
 # Interpreter for PostScript and PDF
 brew "ghostscript"
 # Highest-quality GIF encoder based on pngquant
 brew "gifski"
+# Rewrite git repository history
+brew "git-filter-repo"
+# Protect and discover secrets using Gitleaks
+brew "gitleaks"
 # Open source programming language to build simple/reliable/efficient software
 brew "go"
 # Library to render SVG files using Cairo
@@ -115,6 +121,8 @@ brew "scala"
 brew "virtuslab/scala-cli/scala-cli"
 # Software for mathematics, science, and engineering
 brew "scipy"
+# Static analysis and lint tool for shell scripts
+brew "shellcheck"
 # Tool to create Python bindings for C and C++ libraries
 brew "sip"
 # Implementation of the Language Server Protocol for LaTeX
@@ -129,6 +137,8 @@ brew "transmission-cli"
 brew "uv"
 # Internet file retriever
 brew "wget"
+# Whisper speech recognition (C++ port)
+brew "whisper-cpp"
 # Feature-rich command-line audio/video downloader
 brew "yt-dlp"
 # UNIX shell (command interpreter)
@@ -196,6 +206,7 @@ cask "font-ark-pixel-12px-proportional"
 cask "font-ark-pixel-16px-monospaced"
 cask "font-ark-pixel-16px-proportional"
 cask "font-atkinson-hyperlegible-next"
+cask "font-awesome-terminal-fonts"
 cask "font-cardo"
 cask "font-cascadia-code-nf"
 cask "font-charter"
@@ -207,14 +218,23 @@ cask "font-eb-garamond"
 cask "font-et-book"
 cask "font-fira-code"
 cask "font-fira-code-nerd-font"
+cask "font-fontawesome"
 cask "font-ia-writer-duo"
 cask "font-ia-writer-mono"
 cask "font-ia-writer-quattro"
+cask "font-ibm-plex"
+cask "font-ibm-plex-math"
+cask "font-ibm-plex-mono"
 cask "font-ibm-plex-sans"
 cask "font-ibm-plex-sans-condensed"
 cask "font-ibm-plex-sans-jp"
+cask "font-ibm-plex-serif"
 cask "font-inter"
 cask "font-jetbrains-mono"
+cask "font-meslo-for-powerlevel10k"
+cask "font-meslo-for-powerline"
+cask "font-meslo-lg"
+cask "font-meslo-lg-dz"
 cask "font-meslo-lg-nerd-font"
 cask "font-michroma"
 cask "font-new-computer-modern"
@@ -244,7 +264,7 @@ cask "keyboardcleantool"
 # Open-source keystroke visualiser
 cask "keycastr"
 # GPU-based terminal emulator
-cask "kitty"
+cask "kitty@nightly"
 # Free cross-platform office suite, fresh version
 cask "libreoffice"
 # Host-based application firewall

@@ -23,7 +23,8 @@ ctrl + alt - s : yabai_save
 ctrl + alt + cmd - s : yabai_restore
 
 # reconfigure column layout and rebalance
-ctrl + alt - a : yabai_config_layout_cols
+#ctrl + alt - a : yabai_config_layout_cols
+ctrl + alt - a : yabai -m space --balance
 
 # focus on window in specified direction
 ctrl + alt - left : yabai -m window --focus west
