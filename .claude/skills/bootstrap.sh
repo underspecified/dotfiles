@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: bash ~/.claude/skills/bootstrap.sh
-# Clones all skill repos and creates sub-skill symlinks.
+# Clones all skill repos and creates sub-skill symlinks for composite skills.
 set -euo pipefail
 
 SKILLS_DIR="$HOME/.claude/skills"
@@ -8,8 +8,8 @@ GITHUB_ORG="underspecified"
 
 mkdir -p "${SKILLS_DIR}"
 
-# Standalone skills
-STANDALONE=(computation-graph dispatch figure gantt-chart hansei meeting presentation sync-latex travel)
+# Standalone skills (one repo = one skill)
+STANDALONE=(computation-graph dispatch figure gantt-chart meeting presentation sync-latex travel)
 for skill in "${STANDALONE[@]}"; do
     if [[ ! -d "${SKILLS_DIR}/${skill}" ]]; then
         echo "Cloning skill: ${skill}"
@@ -17,26 +17,25 @@ for skill in "${STANDALONE[@]}"; do
     fi
 done
 
-# Research (composite: clone + symlink sub-skills)
-if [[ ! -d "${SKILLS_DIR}/research" ]]; then
-    echo "Cloning skill: research"
-    gh repo clone "${GITHUB_ORG}/research" "${SKILLS_DIR}/research"
-fi
-for sub in "${SKILLS_DIR}/research/skills"/*/; do
-    name=$(basename "${sub}")
-    [[ -f "${sub}/SKILL.md" ]] || continue
-    ln -sfn "research/skills/${name}" "${SKILLS_DIR}/${name}"
-done
+# Composite skills (one repo, multiple sub-skills at <repo>/skills/<name>/)
+# Each sub-skill gets a top-level symlink ~/.claude/skills/<name> so /<name>
+# works without harness changes.
+install_composite() {
+    local name="$1"
+    if [[ ! -d "${SKILLS_DIR}/${name}" ]]; then
+        echo "Cloning composite skill: ${name}"
+        gh repo clone "${GITHUB_ORG}/${name}" "${SKILLS_DIR}/${name}"
+    fi
+    for sub in "${SKILLS_DIR}/${name}/skills"/*/; do
+        [[ -f "${sub}SKILL.md" ]] || continue
+        local sub_name
+        sub_name=$(basename "${sub}")
+        ln -sfn "${name}/skills/${sub_name}" "${SKILLS_DIR}/${sub_name}"
+    done
+}
 
-# Planning (composite: clone + symlink sub-skills)
-if [[ ! -d "${SKILLS_DIR}/planning" ]]; then
-    echo "Cloning skill: planning"
-    gh repo clone "${GITHUB_ORG}/planning" "${SKILLS_DIR}/planning"
-fi
-for sub in "${SKILLS_DIR}/planning/skills"/*/; do
-    name=$(basename "${sub}")
-    [[ -f "${sub}/SKILL.md" ]] || continue
-    ln -sfn "planning/skills/${name}" "${SKILLS_DIR}/${name}"
-done
+install_composite research
+install_composite planning
+install_composite kaiseki   # /hansei, /nikki under here
 
 echo "=== Skills bootstrap complete ==="
