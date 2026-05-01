@@ -25,6 +25,7 @@
 .local/bin/open_finder
 .local/bin/open_kitty
 .local/bin/open_safari
+.local/bin/screensaver
 .local/bin/toggle_alfred
 .local/bin/toggle_borders
 .local/bin/toggle_kitty
