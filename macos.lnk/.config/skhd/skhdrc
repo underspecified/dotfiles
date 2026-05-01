@@ -13,6 +13,8 @@ ctrl + alt - return : open_kitty
 shift + ctrl + alt - return : open_safari
 # finder
 shift + ctrl + alt - f : open_finder
+# screensaver
+shift + ctrl + alt - l : screensaver
 
 ### Configuration
 ctrl + alt - c : skhd --reload
