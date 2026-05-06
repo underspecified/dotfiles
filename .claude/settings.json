@@ -202,7 +202,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "showThinkingSummaries": true,
   "skipAutoPermissionPrompt": true,
   "theme": "dark-ansi",
