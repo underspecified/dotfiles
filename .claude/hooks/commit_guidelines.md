@@ -2,9 +2,8 @@
 
 ## IMPORTANT: Commit Workflow
 
-- **ALL commits MUST be initiated through `git commit`** (which triggers this hook)
-- Only call `~/.claude/hooks/ask_git_commit.sh` when this hook instructs you to
-- Never bypass this hook by calling `ask_git_commit.sh` directly
+- `git commit` is allowed but the PreToolUse hook emits a non-blocking nag listing project docs — review them first and stage any updates alongside the commit
+- No wrapper or user-approval step is required
 
 ## When to Update Docs
 
@@ -35,4 +34,4 @@ Update CLAUDE.md, README.md, or other project docs when there are:
    - What you updated (if any)
    - Why no updates were needed (if none)
 5. **Stage**: Include doc changes in your staged files
-6. **Request**: Run `~/.claude/hooks/ask_git_commit.sh -m "message"` for user approval
+6. **Commit**: Run `git commit -m "message"` directly

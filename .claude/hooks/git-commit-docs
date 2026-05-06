@@ -1,5 +1,0 @@
-#!/bin/bash
-# Wrapper for git commit after docs have been verified
-# Usage: git-commit-docs -m "message" [other git commit args]
-
-exec git commit "$@"
