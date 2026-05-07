@@ -7,10 +7,31 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "ui_font_family": ".ZedSans",
-
-  "buffer_font_family": "iA Writer Mono V",
+  "project_panel": {
+    "dock": "left",
+  },
+  "outline_panel": {
+    "dock": "left",
+  },
+  "collaboration_panel": {
+    "dock": "left",
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "git_panel": {
+    "dock": "left",
+  },
+  "ui_font_family": "iMWritingQuat Nerd Font Propo",
+  "buffer_font_family": "iMWritingMono Nerd Font Propo",
   "buffer_font_weight": 400.0,
+  "ui_font_size": 12,
+  "buffer_font_size": 12,
+
+  // "buffer_font_family": "MesloLGSDZ Nerd Font",
+  // "buffer_font_weight": 400.0,
 
   // "buffer_font_family": "0xProto Nerd Font",
   // "buffer_font_weight": 300.0,
@@ -69,56 +90,34 @@
   //   "zero": true
   // },
 
-  "edit_predictions": {
-    //"mode": "dark",
-    "copilot": {
-      "proxy": null,
-      "proxy_no_verify": null
-    }
-  },
-
-  "agent": {
-    "always_allow_tool_actions": true,
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-thinking-latest"
-    }
-  },
-
-  "jupyter": {
-    "kernel_selections": {
-      "python": "conda-env",
-      "typescript": "deno",
-      "javascript": "deno",
-      "r": "ark"
-    }
-  },
-
-  "lsp": {
-    "texlab": {
-      "binary": {
-        "env": {
-          "TEXINPUTS": ".:./local:",
-          "BIBINPUTS": ".:./local:",
-          "BSTINPUTS": ".:./local:"
-        }
-      }
-    }
-  },
+  "autosave": "on_focus_change",
 
   "terminal": {
-    "dock": "right"
+    "dock": "right",
   },
 
   "theme": {
     "mode": "system",
     "light": "Base16 selenized-light",
-    "dark": "Base16 selenized-dark"
+    "dark": "Base16 selenized-dark",
   },
 
-  "ui_font_size": 11,
-  "buffer_font_size": 11.0,
-  "autosave": "on_focus_change",
+  "unstable.ui_density": "compact",
   "preferred_line_length": 80,
-  "soft_wrap": "preferred_line_length"
+  "soft_wrap": "preferred_line_length",
+  "scrollbar": {
+    "show": "never",
+  },
+
+  "title_bar": {
+    "show_branch_icon": false,
+    "show_branch_name": false,
+    "show_project_items": false,
+    "show_onboarding_banner": false,
+    //"show_user_picture": false,
+    //"show_user_menu": false,
+    //"show_sign_in": false,
+    "show_menus": false,
+    //"button_layout": "platform_default",
+  },
 }

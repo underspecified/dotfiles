@@ -18,7 +18,6 @@
 .local/bin/dark-mode-notify
 .local/bin/dark-mode-notify-helper
 .local/bin/echo_and_eval
-.local/bin/echo_and_eval
 .local/bin/get_macos_mode
 .local/bin/open_alfred
 .local/bin/open_drafts
