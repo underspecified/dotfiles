@@ -28,8 +28,21 @@ if command -v dunstctl &>/dev/null; then
 fi
 trap _unpause_dunst EXIT INT TERM HUP
 
-# slock forks immediately. The parent returns 0 after a successful fork.
-slock
+# slock has no internal retry on grab failure -- if XGrabPointer or
+# XGrabKeyboard fails (modifier still held, popup menu open, picom race,
+# etc.) it logs the failure and exits silently. Wrap a small retry loop:
+# slock returns 0 even on grab failure since it forks before grabbing,
+# so we detect failure by checking whether a slock process is still alive
+# a moment after invocation.
+for attempt in 1 2 3 4 5; do
+    slock
+    sleep 0.3
+    if pgrep -u "$USER" -x slock >/dev/null 2>&1; then
+        break
+    fi
+    [[ $attempt -eq 5 ]] && { echo "lock_screen_slock: slock failed to grab after 5 attempts" >&2; exit 1; }
+    sleep 0.2
+done
 
 # Block until no slock process remains for this user. When the forked
 # child exits (user types correct password), the EXIT trap unpauses dunst.
