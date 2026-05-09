@@ -23,8 +23,19 @@ install_i3() {
 }
 
 install_slock() {
-  sudo apt install -y slock
+  # slock ships in suckless-tools on Ubuntu (no standalone slock pkg).
+  sudo apt install -y suckless-tools
+}
+
+release_gnome_keygrabs() {
+  # gnome-settings-daemon's media-keys plugin registers exclusive X11 key
+  # grabs for its default bindings. The screensaver default is <Super>l,
+  # which steals i3's $mod+l before i3 sees the keypress. Releasing the
+  # grab lets i3's bindsym fire as intended. Persists in dconf; gsd
+  # picks it up live (no logout needed).
+  gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver "['']"
 }
 
 install_i3
 install_slock
+release_gnome_keygrabs
