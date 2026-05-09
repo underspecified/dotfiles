@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
 # Usage: setup_display.sh [profile_name]
-# Selects a display profile (one of the *.env files in ~/.config/display/) and
-# regenerates i3/dunst/Xresources/kitty configs via i3_update_config.
-# With no argument, lists profiles and prompts interactively.
+# Selects a display profile by symlinking ~/.config/display/env to one of the
+# *.env files in that directory, then regenerates i3/dunst/Xresources/kitty
+# configs via i3_update_config. With no argument, lists profiles and prompts.
 set -euo pipefail
 shopt -s nullglob
 
 display_dir="$HOME/.config/display"
-state_file="$HOME/.local/state/display_profile"
+env_link="$display_dir/env"
 
 if [[ ! -d "$display_dir" ]]; then
   echo "error: $display_dir not found (lnk not initialized?)" >&2
   exit 1
 fi
 
-# Collect available profile names (strip dir + .env extension)
+# Collect available profile names (strip dir + .env extension; skip the env link itself)
 profiles=()
 for f in "$display_dir"/*.env; do
   name="${f##*/}"
+  [[ "$name" == "env" ]] && continue
   profiles+=("${name%.env}")
 done
 
@@ -41,16 +42,16 @@ if [[ -z "$choice" ]]; then
   choice="${profiles[$((idx-1))]}"
 fi
 
-# Validate that the chosen profile actually exists
-if [[ ! -f "$display_dir/${choice}.env" ]]; then
-  echo "error: profile '$choice' not found ($display_dir/${choice}.env missing)" >&2
+target="${choice}.env"
+if [[ ! -f "$display_dir/$target" ]]; then
+  echo "error: profile '$choice' not found ($display_dir/$target missing)" >&2
   echo "available: ${profiles[*]}" >&2
   exit 1
 fi
 
-mkdir -p "$(dirname "$state_file")"
-echo "$choice" > "$state_file"
-echo "set display profile -> $choice ($state_file)"
+# Symlink target is relative so the link works regardless of how display/ is mounted
+ln -sfn "$target" "$env_link"
+echo "set display profile -> $choice ($env_link -> $target)"
 
 if command -v i3_update_config &>/dev/null; then
   i3_update_config
