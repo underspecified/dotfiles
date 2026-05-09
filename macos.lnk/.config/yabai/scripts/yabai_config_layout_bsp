@@ -1,75 +1,50 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-PATH="/opt/homebrew/bin:$PATH"
-PATH="$HOME/git/dotfiles/config/yabai/scripts:$PATH"
+PATH="/opt/homebrew/bin:${PATH}"
+PATH="${HOME}/git/dotfiles/config/yabai/scripts:${PATH}"
 
-echo_and_eval () {
-  echo "$@"
-  eval "$@"
-}
-
-yabai_config_layout_bsp () {
+yabai_config_layout_bsp() {
   yabai -m config layout bsp
 }
 
-yabai_get_spaces () {
-  yabai -m query --spaces |
-  jq -e '.[].index'
+yabai_get_spaces() {
+  yabai -m query --spaces | jq -e '.[].index'
 }
 
-yabai_get_window_ids () {
-  yabai -m query --spaces |
-  jq -e ".[] |
-         select(.index==$1) |
-         .windows |
-         .[]"
+yabai_get_window_ids() {
+  yabai -m query --spaces \
+    | jq -e --argjson idx "$1" '.[] | select(.index == $idx) | .windows | .[]'
 }
 
-yabai_get_first_window_id () {
-  yabai -m query --spaces |
-  jq -e '.[] |
-         select(.index=='$1') |
-         ."first-window"'
+yabai_get_first_window_id() {
+  yabai -m query --spaces \
+    | jq -e --argjson idx "$1" '.[] | select(.index == $idx) | ."first-window"'
 }
 
-yabai_warp_window () {
-  yabai -m window $1 --warp $2
+yabai_warp_window() {
+  yabai -m window "$1" --warp "$2"
 }
 
-yabai_warp_space_windows () {
-  space=$1
-  first=$(yabai_get_first_window_id $space)
-  yabai_get_window_ids $space |
-  xargs -I{} yabai -m window {} --warp $first
+yabai_warp_space_windows() {
+  local space="$1" first
+  first="$(yabai_get_first_window_id "${space}")"
+  yabai_get_window_ids "${space}" \
+    | xargs -I{} yabai -m window {} --warp "${first}"
 }
 
-yabai_unstack_windows () {
-  while read id; do
-    yabai -m window $id --focus && yabai3 move west
+yabai_get_sorted_window_ids() {
+  yabai -m query --windows \
+    | jq -e 'sort_by(."stack-index") | sort_by(.space) | .[] | .id'
+}
+
+yabai_unstack_windows() {
+  while read -r id; do
+    yabai -m window "${id}" --focus \
+      && yabai3 move west
   done
 }
 
-yabai_warp_all_space_windows () {
-  for space in $(yabai_get_spaces); do
-    yabai_get_window_ids | yabai_unstack_windows
-  done
-}
-
-yabai_get_sorted_window_ids () {
-  yabai -m query --windows |
-  jq -e 'sort_by(."stack-index") |
-         sort_by(.space) |
-         .[] |
-         .id'
-}
-
-yabai_unstack_windows () {
-  while read id; do
-    yabai -m window $id --focus && \
-    yabai3 move west
-  done
-}
-
-yabai_config_layout_bsp #&& \
+yabai_config_layout_bsp
 # (yabai_get_sorted_window_ids |
 #  yabai_unstack_windows)

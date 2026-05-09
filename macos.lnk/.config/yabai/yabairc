@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
-
-#sleep 3
+#!/usr/bin/env bash
 
 ### set paths
-PATH="/opt/homebrew/bin:$PATH"
-YABAI_DIR=$(dirname "${BASH_SOURCE:-$0}")
+PATH="/opt/homebrew/bin:${PATH}"
+# YABAI_DIR is referenced by the commented-out source/signal lines below.
+# shellcheck disable=SC2034
+YABAI_DIR="$(dirname "${BASH_SOURCE[0]:-$0}")"
 
 ### start script add-on
 yabai -m signal --add label="dock_did_restart__load_sa" event=dock_did_restart action="sudo yabai --load-sa"

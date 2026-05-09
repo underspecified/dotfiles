@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-toggle_kitty () {
-    [[ "$1" == "dark" ]] && theme="Selenized Dark" || theme="Selenized Light"
-    cmd="/opt/homebrew/bin/kitten themes \
-        --config-file-name=themes.conf \
-        --reload-in=all"
-    echo_and_eval "$cmd $theme" || \
-    echo_and_eval "$cmd --cache-age=-1 $theme"
-    #echo_and_eval "/opt/homebrew/bin/kitten @ load-config --to unix:/tmp/mykitty"
+toggle_kitty() {
+    if [[ "$1" == "dark" ]]; then
+        theme="Selenized Dark"
+    else
+        theme="Selenized Light"
+    fi
+    cmd=(/opt/homebrew/bin/kitten themes
+        --config-file-name=themes.conf
+        --reload-in=all)
+    "${cmd[@]}" "${theme}" \
+        || "${cmd[@]}" --cache-age=-1 "${theme}"
 }
 
-if [[ $1 == "dark" ]]; then
+if [[ "${1:-}" == "dark" ]]; then
     mode="dark"
-elif [[ $1 == "light" ]]; then
+elif [[ "${1:-}" == "light" ]]; then
     mode="light"
+elif [[ "$(get_macos_mode)" == "light" ]]; then
+    mode="dark"
 else
-    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+    mode="light"
 fi
 
-echo "toggle_kitty => $mode"
-toggle_kitty $mode
+echo "toggle_kitty => ${mode}"
+toggle_kitty "${mode}"

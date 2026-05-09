@@ -1,21 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-PATH="/opt/homebrew/bin:$PATH"
-PATH="$HOME/git/dotfiles/config/yabai/scripts:$PATH"
+PATH="/opt/homebrew/bin:${PATH}"
+PATH="${HOME}/git/dotfiles/config/yabai/scripts:${PATH}"
 
-yabai_config_layout_stack () {
+yabai_config_layout_stack() {
   yabai -m config layout stack
 }
 
-yabai_get_sorted_window_ids () {
-  yabai -m query --windows |
-  jq -e 'sort_by(."stack-index") | sort_by(.space) | .[] | .id'
+yabai_get_sorted_window_ids() {
+  yabai -m query --windows \
+    | jq -e 'sort_by(."stack-index") | sort_by(.space) | .[] | .id'
 }
 
-yabai_restack_windows () {
-  while read id; do
-    yabai -m window $id --focus &&
-    yabai3 stack-enter west
+yabai_restack_windows() {
+  while read -r id; do
+    yabai -m window "${id}" --focus \
+      && yabai3 stack-enter west
   done
 }
 

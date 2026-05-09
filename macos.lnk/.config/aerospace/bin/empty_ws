@@ -1,8 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-empty_ws () {
-    empty=$(aerospace list-workspaces --monitor mouse --empty | head -1)
-    aerospace workspace $empty
+empty_ws() {
+    local empty
+    empty="$(aerospace list-workspaces --monitor mouse --empty | head -1)"
+    aerospace workspace "${empty}"
 }
 
 empty_ws

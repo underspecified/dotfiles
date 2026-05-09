@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
+# Print the command being run, then run it. For commands that need shell
+# metacharacters (pipes, redirects), invoke via: bash -c '<your command>'
+set -euo pipefail
 
-echo_and_eval () {
-    echo "$@"
-    eval "$@"
-}
-
-echo_and_eval "$@"
+echo "$@"
+"$@"

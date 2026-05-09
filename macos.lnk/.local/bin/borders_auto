@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-mode=$(get_macos_mode)
-#killall -9 borders
-borders_$mode &
+mode="$(get_macos_mode)"
+"borders_${mode}" &

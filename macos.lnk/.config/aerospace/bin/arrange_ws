@@ -1,39 +1,50 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Usage: arrange_ws [workspace ...]
+# For each workspace given (or all if none), arrange the first two windows
+# in horizontal tiles and stack the rest in an accordion on each side.
+set -euo pipefail
 
-PATH=$HOME/.config/aerospace/bin:/opt/homebrew/bin:$PATH
+PATH="${HOME}/.config/aerospace/bin:/opt/homebrew/bin:${PATH}"
 
-echo_and_eval () {
-    echo $@ 1>&2
-    eval $@
+log() { echo "$*" 1>&2; }
+
+get_all_window_ids() {
+    local ws="$1"
+    aerospace list-windows --workspace "${ws}" --json \
+      | jq '.[]."window-id"'
 }
 
-get_all_window_ids () {
-    echo_and_eval "aerospace list-windows --workspace $1 --json | jq '.[].\"window-id\"'"
-}
+arrange_ws() {
+    local ws="$1"
+    local windows i dir
+    aerospace flatten-workspace-tree --workspace "${ws}"
 
-get_app_window_ids () {
-    echo_and_eval "aerospace list-windows --workspace $1 --json | jq '.[] | select(.\"app-name\" == \"$2\") | .\"window-id\"'"
-}
+    mapfile -t windows < <(get_all_window_ids "${ws}")
+    log "windows: ${windows[*]}"
 
-arrange_ws () {
-    aerospace flatten-workspace-tree --workspace $1
-    windows=( $(get_all_window_ids $1) )
-    echo "windows: ${windows[@]}"
-    for i in ${!windows[@]}; do
-        echo "i: $i"
-        [[ $(($i % 2)) == 0 ]] && dir="left" || dir="right"
-        if [[ $i < 2 ]]; then
-            echo_and_eval aerospace layout h_tiles --window-id ${windows[$i]}
-            echo_and_eval aerospace move $dir --window-id ${windows[$i]}
+    for i in "${!windows[@]}"; do
+        log "i: ${i}"
+        if (( i % 2 == 0 )); then
+            dir="left"
         else
-            echo_and_eval aerospace join-with $dir --window-id ${windows[$i]}
-            echo_and_eval aerospace layout accordion --window-id ${windows[$i]}
+            dir="right"
+        fi
+        if (( i < 2 )); then
+            aerospace layout h_tiles --window-id "${windows[$i]}"
+            aerospace move "${dir}" --window-id "${windows[$i]}"
+        else
+            aerospace join-with "${dir}" --window-id "${windows[$i]}"
+            aerospace layout accordion --window-id "${windows[$i]}"
         fi
     done
 }
 
-[[ $# -eq 0 ]] && workspaces=$(ls_ws) || worskpaces="$@"
-echo "workspaces: $# $@"
-for ws in $@; do
-    arrange_ws $ws
+if [[ $# -eq 0 ]]; then
+    mapfile -t workspaces < <(aerospace list-workspaces --monitor mouse)
+else
+    workspaces=("$@")
+fi
+log "workspaces: ${#workspaces[@]} ${workspaces[*]}"
+for ws in "${workspaces[@]}"; do
+    arrange_ws "${ws}"
 done

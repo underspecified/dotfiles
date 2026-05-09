@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-toggle_pdf_expert () {
+toggle_pdf_expert() {
     echo "toggle_pdf_expert() ..."
-    osascript -l JavaScript "-" $1 <<- EOF 2>&1
+    osascript -l JavaScript "-" "$1" <<- EOF 2>&1
 
 function run(args) {
     console.log("run() ...")
@@ -23,13 +24,15 @@ function run(args) {
 EOF
 }
 
-if [[ $1 == "dark" ]]; then
+if [[ "${1:-}" == "dark" ]]; then
     mode="dark"
-elif [[ $1 == "light" ]]; then
+elif [[ "${1:-}" == "light" ]]; then
     mode="light"
+elif [[ "$(get_macos_mode)" == "light" ]]; then
+    mode="dark"
 else
-    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+    mode="light"
 fi
 
-echo "toggle_pdf_expert => $mode"
-toggle_pdf_expert $mode
+echo "toggle_pdf_expert => ${mode}"
+toggle_pdf_expert "${mode}"

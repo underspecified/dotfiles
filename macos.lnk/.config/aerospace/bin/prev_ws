@@ -1,12 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-PATH=$HOME/.config/aerospace/bin:/opt/homebrew/bin:$PATH
+PATH="${HOME}/.config/aerospace/bin:/opt/homebrew/bin:${PATH}"
 
-prev_ws () {
+prev_ws() {
+    local curr_ws
     curr_ws="$(aerospace list-workspaces --monitor mouse --visible)"
-    aerospace workspace $curr_ws && \
-    (aerospace list-workspaces --monitor mouse --empty no | \
-     aerospace workspace prev --wrap-around)
+    aerospace workspace "${curr_ws}" \
+      && (aerospace list-workspaces --monitor mouse --empty no \
+          | aerospace workspace prev --wrap-around)
 }
 
 prev_ws

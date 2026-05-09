@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-toggle_macos_mode () {
-    osascript -l JavaScript "-" $1 <<- EOF
+toggle_macos_mode() {
+    osascript -l JavaScript "-" "$1" <<- EOF
 
 function run(args) {
 	const systemEvents = Application("System Events")
@@ -12,14 +13,16 @@ function run(args) {
 EOF
 }
 
-curr=$(get_macos_mode)
-if [[ $1 == "dark" ]]; then
+curr="$(get_macos_mode)"
+if [[ "${1:-}" == "dark" ]]; then
     mode="dark"
-elif [[ $1 == "light" ]]; then
+elif [[ "${1:-}" == "light" ]]; then
     mode="light"
+elif [[ "${curr}" == "light" ]]; then
+    mode="dark"
 else
-    [[ $curr == "light" ]] && mode="dark" || mode="light"
+    mode="light"
 fi
 
-echo "toggle_macos_mode => $mode"
-toggle_macos_mode $mode
+echo "toggle_macos_mode => ${mode}"
+toggle_macos_mode "${mode}"

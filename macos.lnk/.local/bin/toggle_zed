@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-toggle_zed () {
-    echo_and_eval sed -i.bak -r 's/"mode": ".+"/"mode": "'$1'"/' \
-        "$CONFIG_DIR/zed/settings.json"
+toggle_zed() {
+    sed -i.bak -r "s/\"mode\": \".+\"/\"mode\": \"$1\"/" \
+        "${HOME}/.config/zed/settings.json"
 }
 
-if [[ $1 == "dark" ]]; then
+if [[ "${1:-}" == "dark" ]]; then
     mode="dark"
-elif [[ $1 == "light" ]]; then
+elif [[ "${1:-}" == "light" ]]; then
     mode="light"
+elif [[ "$(get_macos_mode)" == "light" ]]; then
+    mode="dark"
 else
-    [[ $(get_macos_mode) == "light" ]] && mode="dark" || mode="light"
+    mode="light"
 fi
 
-echo "toggle_zed => $mode"
-toggle_zed $mode
+echo "toggle_zed => ${mode}"
+toggle_zed "${mode}"

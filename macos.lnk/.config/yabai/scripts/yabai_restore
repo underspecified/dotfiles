@@ -151,8 +151,9 @@ for sp in $(printf '%s\n' "$spaces_touched" | tr ' ' '\n' | sort -un); do
         done
 
         if [[ -n "$swap_id" && "$swap_id" != "$target_id" ]]; then
-            yabai -m window "$target_id" --swap "$swap_id" 2>/dev/null && \
-                echo "swapped window order on space $sp" >&2 || true
+            if yabai -m window "$target_id" --swap "$swap_id" 2>/dev/null; then
+                echo "swapped window order on space $sp" >&2
+            fi
         fi
     done
 

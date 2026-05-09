@@ -1,16 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-LOG_DIR="$HOME/tmp"
-export PATH="$HOME/.local/bin:$PATH"
+LOG_DIR="${HOME}/tmp"
+export PATH="${HOME}/.local/bin:${PATH}"
 
-echo "DARKMODE: $DARKMODE" |
-tee -a "$LOG_DIR/darkmode.log" 2>&1
+echo "DARKMODE: ${DARKMODE:-}" | tee -a "${LOG_DIR}/darkmode.log" 2>&1
 
-if [[ -n ${DARKMODE+x} ]]; then
-    [[ $DARKMODE == "1" ]] && mode="dark" || mode="light"
+if [[ -n "${DARKMODE+x}" ]]; then
+    if [[ "${DARKMODE}" == "1" ]]; then
+        mode="dark"
+    else
+        mode="light"
+    fi
     (
-        toggle_borders $mode
-        toggle_pdf_expert $mode
-    ) |
-    tee -a "$LOG_DIR/darkmode.log" 2>&1
+        toggle_borders "${mode}"
+        toggle_pdf_expert "${mode}"
+    ) | tee -a "${LOG_DIR}/darkmode.log" 2>&1
 fi
