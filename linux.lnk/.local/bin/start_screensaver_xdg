@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# wallpaper var comes from sourced .env at runtime.
+# shellcheck disable=SC2154
+set -euo pipefail
 
 LOCK_MIN=5
-LOCK_SEC=$(($LOCK_MIN * 60))
 IDLE_MIN=10
-IDLE_SEC=$(($IDLE_MIN * 60))
+IDLE_SEC=$(( IDLE_MIN * 60 ))
 
-mode=$(darkman get)
+mode="$(darkman get)"
+# shellcheck source=/dev/null
 source "$HOME/.local/share/colors/selenized_${mode}.env"
 
-gsettings set org.gnome.desktop.background picture-uri "file://$wallpaper"
-#gsettings set org.gnome.desktop.session idle-delay $IDLE_SEC
-#gsettings set org.gnome.desktop.screensaver lock-delay $LOCK_SEC
+gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper}"
 
-xset dpms $IDLE_SEC
+xset dpms "${IDLE_SEC}"
 GDK_BACKEND=x11 gnome-screensaver &
-xautolock -time $LOCK_MIN -locker "$HOME/.local/bin/lock_screen_xdg"
-#sleep $LOCK_SEC
-$HOME/.local/bin/lock_screen_xdg
+xautolock -time "${LOCK_MIN}" -locker "${HOME}/.local/bin/lock_screen_xdg"
+"${HOME}/.local/bin/lock_screen_xdg"

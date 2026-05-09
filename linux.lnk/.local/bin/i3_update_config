@@ -1,9 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# All env vars consumed below (SCALE, FONT_*, BASE_*, XFT_DPI, wallpaper)
+# come from the dynamically-sourced .env files at runtime; shellcheck
+# can't see them, so silence the SC2153/SC2154 false positives.
+# shellcheck disable=SC2153,SC2154
 
 set -euo pipefail
 shopt -s nullglob
 
 export mode="${1:-$(darkman get)}"
+# shellcheck source=/dev/null
 source "$HOME/.local/share/colors/selenized_${mode}.env"
 
 # Per-host display profile is selected by ~/.config/display/env, a symlink
@@ -14,6 +19,7 @@ if [[ ! -e "$env_link" ]]; then
     echo "error: $env_link missing -- run setup_display.sh to pick a profile" >&2
     exit 1
 fi
+# shellcheck source=/dev/null
 source "$env_link"
 
 # Scale a pixel base value: round(base * SCALE)
@@ -27,16 +33,17 @@ export font_sz_dmenu="${FONT_DMENU}"
 
 # Pixel geometry scales with SCALE; XFT_DPI is set independently
 export xft_dpi="${XFT_DPI}"
-export cursor_size=$(_scale "${BASE_CURSOR}")
-export border_px=$(_scale "${BASE_BORDER}")
-export gap_inner_px=$(_scale "${BASE_BORDER}")
-export ring_radius=$(_scale "${BASE_RING_RADIUS}")
-export ring_thick=$(_scale "${BASE_RING_THICK}")
+cursor_size="$(_scale "${BASE_CURSOR}")"; export cursor_size
+border_px="$(_scale "${BASE_BORDER}")"; export border_px
+gap_inner_px="$(_scale "${BASE_BORDER}")"; export gap_inner_px
+ring_radius="$(_scale "${BASE_RING_RADIUS}")"; export ring_radius
+ring_thick="$(_scale "${BASE_RING_THICK}")"; export ring_thick
 
-export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill $wallpaper"
+export WALLPAPER_CMD="exec_always --no-startup-id feh --bg-fill ${wallpaper}"
 
 # XSettings DPI: multiply by 1024 (XSettings integer format)
-export xft_dpi_xsettings=$(awk "BEGIN{printf \"%d\", ${XFT_DPI} * 1024}")
+xft_dpi_xsettings="$(awk "BEGIN{printf \"%d\", ${XFT_DPI} * 1024}")"
+export xft_dpi_xsettings
 
 # GTK/icon theme follows dark/light mode
 if [[ "${mode}" == "dark" ]]; then

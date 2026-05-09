@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 ### 0. Purge docker packages
 sudo apt remove docker.io docker-ce docker-ce-cli containerd.io
@@ -26,7 +27,7 @@ systemctl --user enable docker
 systemctl --user start docker
 
 # Enable lingering (allows services to start at boot without login)
-sudo loginctl enable-linger $(whoami)
+sudo loginctl enable-linger "$(whoami)"
 
 # 5. Verify Installation
 docker version

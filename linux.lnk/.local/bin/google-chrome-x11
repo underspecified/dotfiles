@@ -1,4 +1,5 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+# shellcheck source=/dev/null
 source "$HOME/.config/display/env"
-exec /usr/bin/google-chrome --force-device-scale-factor="${SCALE}" --disable-gpu --disable-software-rasterizer "$@"
+exec /usr/bin/google-chrome --force-device-scale-factor="${SCALE}" \
+  --disable-gpu --disable-software-rasterizer "$@"

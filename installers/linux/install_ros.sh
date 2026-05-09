@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # install dependencies for ROS 2
 brew install asio assimp bison bullet cmake console_bridge cppcheck \
@@ -10,12 +11,12 @@ brew install asio assimp bison bullet cmake console_bridge cppcheck \
 mkdir -p ~/ros_kilted
 
 # Add the openssl dir for DDS-Security
-export OPENSSL_ROOT_DIR=$(brew --prefix openssl)
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:$(brew --prefix qt@5)
-export PATH=$PATH:$(brew --prefix qt@5)/bin
+OPENSSL_ROOT_DIR="$(brew --prefix openssl)"; export OPENSSL_ROOT_DIR
+CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH:-}:$(brew --prefix qt@5)"; export CMAKE_PREFIX_PATH
+PATH="${PATH}:$(brew --prefix qt@5)/bin"; export PATH
 
 # setup python environment
-cd ~/ros_kilted
+cd ~/ros_kilted || exit 1
 uv init --python 3.11
 # install pygraphviz and pydot
 uv pip install pygraphviz pydot
@@ -33,14 +34,15 @@ uv pip install -U \
 
 # Create a workspace and clone all repos
 mkdir -p ~/ros2_kilted/src
-cd ~/ros2_kilted
+cd ~/ros2_kilted || exit 1
 vcs import --input https://raw.githubusercontent.com/ros2/ros2/kilted/ros2.repos src
 
 # build the worksoace
-cd ~/ros2_kilted/
+cd ~/ros2_kilted/ || exit 1
 colcon build --symlink-install --packages-skip-by-dep python_qt_binding
 
 # Source the ROS 2 setup file:
+# shellcheck source=/dev/null
 . ~/ros2_kilted/install/setup.zsh
 
 # try some examples

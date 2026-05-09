@@ -1,6 +1,5 @@
-#!/bin/bash
-
-CUR_DIR=$(dirname "$0")
+#!/usr/bin/env bash
+# Sourced library; no top-level state.
 
 get_freedesktop_color_scheme () {
     gsettings get org.freedesktop.appearance color-scheme
@@ -54,6 +53,7 @@ toggle_gnome_light () {
 }
 
 toggle_gnome () {
+    # shellcheck source=/dev/null
     source "$HOME/.config/display/env"
     local cursor_sz
     cursor_sz=$(awk "BEGIN{printf \"%d\", int(${BASE_CURSOR} * ${SCALE} + 0.5)}")

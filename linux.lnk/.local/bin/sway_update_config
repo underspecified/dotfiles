@@ -1,11 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# wallpaper var comes from sourced .env at runtime.
+# shellcheck disable=SC2154
 
 set -euo pipefail
 shopt -s nullglob
 
 export mode="${1:-$(darkman get)}"
+# shellcheck source=/dev/null
 source "$HOME/.local/share/colors/selenized_${mode}.env"
-export WALLPAPER_CMD="output * bg $wallpaper fill"
+export WALLPAPER_CMD="output * bg ${wallpaper} fill"
 
 for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/sway"/conf/*.conf.in \

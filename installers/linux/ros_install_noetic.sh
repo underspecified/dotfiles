@@ -110,7 +110,7 @@ echo ""
 echo "     [3. ROS-Base: (Bare Bones) ROS packaging, build, and communication libraries. No GUI tools.]"
 echo ""
 #Assigning default value as 1: Desktop full install
-read -p "Enter your install (Default is 1):" answer 
+read -r -p "Enter your install (Default is 1):" answer
 
 case "$answer" in
   1)
@@ -137,8 +137,9 @@ echo "##########################################################################
 echo ">>> {Step 6: Setting ROS Environment, This will add ROS environment to .bashrc.}" 
 echo ">>> { After adding this, you can able to access ROS commands in terminal}"
 echo ""
-echo "source /opt/ros/noetic/setup.bash" >> /home/$user_name/.bashrc
-source /home/$user_name/.bashrc
+echo "source /opt/ros/noetic/setup.bash" >> "/home/${user_name}/.bashrc"
+# shellcheck source=/dev/null
+source "/home/${user_name}/.bashrc"
 sudo apt install -y python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
 sudo rosdep init
 rosdep update

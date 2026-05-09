@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-CUR_DIR=$(dirname "$0")
-. "$CUR_DIR/util.sh"
+CUR_DIR="$(dirname "$0")"
+# shellcheck source=/dev/null
+. "${CUR_DIR}/util.sh"
 
 
 toggle_mode () {

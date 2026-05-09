@@ -1,22 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Color/font vars (font, bg_0, fg_0, blue, FONT_DMENU) come from sourced
+# .env files at runtime; shellcheck can't see them.
+# shellcheck disable=SC2154
 
 set -euo pipefail
 
-mode=$(darkman get)
+mode="$(darkman get)"
+# shellcheck source=/dev/null
 source "$HOME/.local/share/colors/selenized_${mode}.env"
+# shellcheck source=/dev/null
 source "$HOME/.config/display/env"
 
-fmt () {
-    echo "#$(echo "$1" | tr 'a-z' 'A-Z')"
+fmt() {
+    echo "#$(echo "$1" | tr '[:lower:]' '[:upper:]')"
 }
 
-[[ -f "${1:-}" ]] && source "$1"
-font_pt="$font:size=${FONT_DMENU}"
+if [[ -f "${1:-}" ]]; then
+    # shellcheck source=/dev/null
+    source "$1"
+fi
+font_pt="${font}:size=${FONT_DMENU}"
 
 j4-dmenu-desktop --term=kitty --dmenu="\
     dmenu_run \
-        -fn \"$font_pt\" \
-        -nb \"$(fmt "$bg_0")\" \
-        -nf \"$(fmt "$fg_0")\" \
-        -sb \"$(fmt "$blue")\" \
-        -sf \"$(fmt "$bg_0")\""
+        -fn \"${font_pt}\" \
+        -nb \"$(fmt "${bg_0}")\" \
+        -nf \"$(fmt "${fg_0}")\" \
+        -sb \"$(fmt "${blue}")\" \
+        -sf \"$(fmt "${bg_0}")\""
