@@ -25,7 +25,6 @@
 .local/bin/launch_dmenu
 .local/bin/launch_rofi
 .local/bin/launch_rofi_finder
-.local/bin/lock_screen_i3lock
 .local/bin/lock_screen_slock
 .local/bin/lock_screen_xdg
 .local/bin/slack_hidpi
