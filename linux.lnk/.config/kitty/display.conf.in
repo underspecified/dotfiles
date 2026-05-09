@@ -1,0 +1,2 @@
+font_size $FONT_TERM
+window_border_width ${border_px}px
