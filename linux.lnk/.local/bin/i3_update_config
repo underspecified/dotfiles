@@ -47,6 +47,7 @@ for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/i3status/config.in" \
             "$HOME/.config/dunst/dunstrc.in" \
             "$HOME/.config/xsettingsd/xsettingsd.conf.in" \
+            "$HOME/.config/kitty/display.conf.in" \
             "$HOME/.Xresources.in"; do
     [[ -f "$conf" ]] || continue
     envsubst < "$conf" > "${conf%.in}"
@@ -55,12 +56,8 @@ done
 xrdb -merge "$HOME/.Xresources"
 xsetroot -cursor_name left_ptr
 pkill -HUP xsettingsd 2>/dev/null || true
-systemctl --user set-environment CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
-
-# Kitty: write host-specific display.conf (included by kitty.conf), then reload
-printf 'font_size %s\nwindow_border_width %spx\n' \
-    "${FONT_TERM}" "${border_px}" > "$HOME/.config/kitty/display.conf"
 pkill -USR1 -x kitty 2>/dev/null || true
+systemctl --user set-environment CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
 
 # Zed: patch font sizes in-place, preserving comments and all other settings
 # sed -i uses an atomic rename which triggers Zed's inotify watcher
