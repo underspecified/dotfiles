@@ -91,3 +91,6 @@ bash "$CUR_DIR/install_nvidia_drivers.sh"
 
 # install profilers
 bash "$CUR_DIR/install_profilers.sh"
+
+# select display profile and generate i3/dunst/Xresources/kitty configs
+bash "$CUR_DIR/setup_display.sh"

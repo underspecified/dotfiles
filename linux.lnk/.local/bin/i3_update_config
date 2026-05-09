@@ -5,7 +5,17 @@ shopt -s nullglob
 
 export mode="${1:-$(darkman get)}"
 source "$HOME/.local/share/colors/selenized_${mode}.env"
-source "$HOME/.config/display/env"
+
+# Display profile selection: ~/.local/state/display_profile names the active
+# .env file in ~/.config/display/ (e.g. "5k2k_34in"). Set via setup_display.sh.
+profile_file="$HOME/.local/state/display_profile"
+if [[ -f "$profile_file" ]]; then
+    profile="$(< "$profile_file")"
+else
+    echo "warning: $profile_file missing; falling back to example profile" >&2
+    profile=example
+fi
+source "$HOME/.config/display/${profile}.env"
 
 # Scale a pixel base value: round(base * SCALE)
 _scale() { awk "BEGIN{printf \"%d\", int($1 * ${SCALE} + 0.5)}"; }
@@ -13,7 +23,6 @@ _scale() { awk "BEGIN{printf \"%d\", int($1 * ${SCALE} + 0.5)}"; }
 # Font sizes pass through directly — SCALE doesn't affect them
 export font_sz_ui="${FONT_UI}"
 export font_sz_dunst="${FONT_DUNST}"
-export font_sz_lock="${FONT_LOCK}"
 export font_sz_dmenu="${FONT_DMENU}"
 # FONT_TERM, FONT_ZED_EDITOR, FONT_ZED_UI pass through directly to kitty/zed
 
@@ -22,9 +31,6 @@ export xft_dpi="${XFT_DPI}"
 export cursor_size=$(_scale "${BASE_CURSOR}")
 export border_px=$(_scale "${BASE_BORDER}")
 export gap_inner_px=$(_scale "${BASE_BORDER}")
-export ring_width=$(_scale "${BASE_RING_WIDTH}")
-export i3lock_radius=$(_scale "${BASE_I3LOCK_RADIUS}")
-export date_offset_px=$(_scale "${BASE_DATE_OFFSET}")
 export ring_radius=$(_scale "${BASE_RING_RADIUS}")
 export ring_thick=$(_scale "${BASE_RING_THICK}")
 
