@@ -1,37 +1,59 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+# Usage: install_nvidia_drivers.sh
+# Installs the NVIDIA open driver from the official CUDA apt repo. CUDA
+# toolkit install is opt-in via INSTALL_CUDA=1 (multi-GB pull).
+#
+# Env overrides:
+#   NVIDIA_VERSION  driver version pin (e.g. "560") -- default unpinned
+#   CUDA_VERSION    cuda meta pkg version pin       -- default unpinned
+#   INSTALL_CUDA    "1" to also install CUDA toolkit -- default unset
+set -euo pipefail
 
-CUR_DIR=$(realpath $(dirname "$0"))
+RELEASE="$(lsb_release -rs | tr -d .)"
 
-CODENAME=$(lsb_release -cs)
-RELEASE=$(lsb_release -rs | tr -d .)
-[[ -n $NVIDIA_VERSION ]] && NVIDIA_PACKAGE="nvidia-open-$NVIDIA_VERSION" || NVIDIA_PACKAGE="nvidia-open"
-[[ -n $CUDA_VERSION ]] && CUDA_PACKAGE="cuda-$NVIDIA_VERSION" || CUDA_PACKAGE="cuda"
+if [[ -n "${NVIDIA_VERSION:-}" ]]; then
+  NVIDIA_PACKAGE="nvidia-open-${NVIDIA_VERSION}"
+else
+  NVIDIA_PACKAGE="nvidia-open"
+fi
 
-install_nvidia_repo () {
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${RELEASE}/x86_64/cuda-keyring_1.1-1_all.deb
-    sudo dpkg -i cuda-keyring_1.1-1_all.deb
-    rm cuda-keyring_1.1-1_all.deb
-    sudo apt update
+if [[ -n "${CUDA_VERSION:-}" ]]; then
+  CUDA_PACKAGE="cuda-${CUDA_VERSION}"
+else
+  CUDA_PACKAGE="cuda"
+fi
 
-    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${RELEASE}/x86_64/cuda-archive-keyring.gpg
-    sudo mv cuda-archive-keyring.gpg /usr/share/keyrings/cuda-archive-keyring.gpg
+install_nvidia_repo() {
+  local keyring_deb="cuda-keyring_1.1-1_all.deb"
+  local repo_url="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu${RELEASE}/x86_64"
 
-echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/repos/ubuntu${RELEASE}/ /" \
-        | tee /etc/apt/sources.list.d/cuda-repos-ubuntu${RELEASE}.list
+  if dpkg -l cuda-keyring &>/dev/null; then
+    echo "cuda-keyring already installed; skipping repo setup"
+    return 0
+  fi
+
+  local workdir
+  workdir="$(mktemp -d)"
+  trap 'rm -rf "${workdir}"' RETURN
+
+  wget -O "${workdir}/${keyring_deb}" "${repo_url}/${keyring_deb}"
+  sudo dpkg -i "${workdir}/${keyring_deb}"
+  sudo apt update
 }
 
-### install nvidia drivers and cuda
-install_nvidia_drivers () {
-    sudo apt update && \
-    sudo apt install -y $NVIDIA_PACKAGE
+install_nvidia_drivers() {
+  sudo apt install -y "${NVIDIA_PACKAGE}"
 }
 
-install_cuda () {
-    sudo apt update && \
-    sudo apt install -y $CUDA_PACKAGE nvidia-cuda-toolkit nvidia-cuda-dev
+install_cuda() {
+  sudo apt install -y "${CUDA_PACKAGE}" nvidia-cuda-toolkit nvidia-cuda-dev
 }
 
-bash "$CUR_DIR/remove_nvidia_drivers.sh"
 install_nvidia_repo
 install_nvidia_drivers
-install_cuda
+
+if [[ "${INSTALL_CUDA:-}" == "1" ]]; then
+  install_cuda
+else
+  echo "skipping CUDA toolkit install (set INSTALL_CUDA=1 to install)"
+fi
