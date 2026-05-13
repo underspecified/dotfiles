@@ -34,9 +34,32 @@ find_docs() {
   echo "${docs}"
 }
 
-# --- 1. `git commit` → allow with a doc-review nag ---
-# Match plain commits, commits after cd-and-&&, commits with -C, etc.
+# --- 1. `git commit` → block if any staged file is over GitHub's 100MB limit ---
+# GitHub hard-rejects pushes containing files >100MB (no LFS configured).
+# Pushing then having to amend / rewrite history is painful, so catch at
+# commit time. Tolerant of edge cases (non-repo dir, missing files).
 if [[ "${CMD_LINE}" =~ (^|[[:space:]]|&|\;)git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+commit ]]; then
+  LARGE_FILES=$(git diff --cached --name-only --diff-filter=AM 2>/dev/null | \
+    while IFS= read -r f; do
+      [ -z "${f}" ] && continue
+      [ -f "${f}" ] || continue
+      sz=$(stat -c%s "${f}" 2>/dev/null || stat -f%z "${f}" 2>/dev/null || echo 0)
+      if [ "${sz}" -gt 104857600 ]; then  # 100 * 1024 * 1024
+        printf '  %s (%s bytes)\n' "${f}" "${sz}"
+      fi
+    done)
+  if [ -n "${LARGE_FILES}" ]; then
+    MSG="🛑 Commit blocked: staged file(s) exceed GitHub's 100MB limit.\n${LARGE_FILES}\nUnstage them (git restore --staged <path>), move to a gitignored location, or set up git-lfs before re-attempting."
+    jq -n --arg msg "${MSG}" '{
+      hookSpecificOutput: {
+        hookEventName: "PreToolUse",
+        permissionDecision: "deny",
+        permissionDecisionReason: $msg
+      }
+    }'
+    exit 0
+  fi
+
   DOCS=$(find_docs)
   if [[ -n "${DOCS}" ]]; then
     MSG="📝 Before committing: review${DOCS} and update if changes affect structure, scripts, deps, or interfaces. Stage any doc changes alongside the commit."
