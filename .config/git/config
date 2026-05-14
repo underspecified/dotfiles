@@ -56,14 +56,15 @@
 	default = current
 
 [gpg]
-	format = "ssh"
+  format = ssh
 
 [gpg "ssh"]
 	program = op-ssh-sign
 	allowedSignersFile = ~/.config/git/allowed_signers
+	program = op-ssh-sign
 
 [commit]
-	gpgsign = true
+  gpgsign = true
 
 [pull]
 	autostash = true
