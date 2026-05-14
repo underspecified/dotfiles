@@ -8,8 +8,8 @@
 # Requires: 1Password CLI (`op`) signed in and the item accessible.
 #
 # Examples:
-#   op-config-pull.sh ssh-config-honda ~/.ssh/config.d/work-honda
-#   op-config-pull.sh gitconfig-work   ~/.gitconfig
+#   op-config-pull.sh ssh-config-hri-jp  ~/.ssh/1Password/hri_jp
+#   op-config-pull.sh git-identity-work  ~/.config/git/identity.conf
 set -euo pipefail
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
@@ -28,7 +28,15 @@ mkdir -p "$(dirname "${local_file}")"
 
 # `op read` uses the secret reference format; notesPlain is a first-class
 # field on Secure Notes and returns the raw note text.
-op read "op://${vault}/${item_title}/notesPlain" > "${local_file}"
-chmod 600 "${local_file}"
+#
+# Write to a temp file first and rename on success, so a failed `op read`
+# (e.g. auth prompt dismissed) doesn't clobber an existing file with an
+# empty one -- shell `>` redirect truncates before the command runs.
+tmp_file="$(mktemp "${local_file}.XXXXXX")"
+trap 'rm -f "${tmp_file}"' EXIT
+op read "op://${vault}/${item_title}/notesPlain" > "${tmp_file}"
+chmod 600 "${tmp_file}"
+mv "${tmp_file}" "${local_file}"
+trap - EXIT
 
 log "op://${vault}/${item_title} → ${local_file}"

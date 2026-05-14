@@ -8,9 +8,9 @@
 # Requires: 1Password CLI (`op`) signed in, vault writable.
 #
 # Examples:
-#   op-config-push.sh ~/.ssh/config.d/work-honda ssh-config-honda
-#   op-config-push.sh ~/.gitconfig.work          gitconfig-work
-#   op-config-push.sh ~/.gitconfig.personal      gitconfig-personal  Private
+#   op-config-push.sh ~/.ssh/1Password/hri_jp     ssh-config-hri-jp
+#   op-config-push.sh ~/.config/git/identity.conf git-identity-work
+#   op-config-push.sh ~/.gitconfig.personal       git-identity-personal  Private
 set -euo pipefail
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }

@@ -88,16 +88,15 @@ pull_private_configs_from_1password() {
     warn "op CLI not signed in — skipping 1P config pull"
     warn "  sign in with:  eval \"\$(op signin)\""
     warn "  then re-run this function by calling:"
-    warn "    bash ${ALL_DIR}/op-config-pull.sh ssh-config-honda ~/.ssh/config.d/work-honda"
-    warn "    bash ${ALL_DIR}/op-config-pull.sh git-identity-work ~/.config/git/identity.conf"
+    warn "    bash ${ALL_DIR}/ssh-config-hri-jp.sh"
+    warn "    bash ${ALL_DIR}/git-identity-hri-jp.sh"
     return
   fi
-  # SSH host overlay for HRI-JP work machines
-  bash "${ALL_DIR}/op-config-pull.sh" ssh-config-honda ~/.ssh/config.d/work-honda \
-    || warn "failed to pull ssh-config-honda"
-  # Git identity — defaults to work profile; for a personal-only machine
-  # substitute git-identity-personal and rerun.
-  bash "${ALL_DIR}/op-config-pull.sh" git-identity-work ~/.config/git/identity.conf \
+  # Defaults to the work (hri_jp) profile. For a personal-only machine,
+  # swap to ssh-config-underspecified.sh + git-identity-underspecified.sh.
+  bash "${ALL_DIR}/ssh-config-hri-jp.sh" \
+    || warn "failed to pull ssh-config-hri-jp"
+  bash "${ALL_DIR}/git-identity-hri-jp.sh" \
     || warn "failed to pull git-identity-work"
 }
 

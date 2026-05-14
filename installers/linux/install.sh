@@ -14,7 +14,7 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 #     supersedes keychain; no GNOME-Chrome shell extension flow here)
 install_apt() {
   sudo apt update
-  sudo apt install -y curl git jq nodejs npm openssh-server shellcheck zsh
+  sudo apt install -y curl git jq nodejs npm openssh-server shellcheck trash-cli xsel zsh
 }
 
 install_google_chrome() {
