@@ -21,11 +21,12 @@ fi
 ##### ZSH CONFIGURATIONS #####
 
 setopt AUTO_CD
+setopt EXTENDED_GLOB
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
-setopt SHARE_HISTORY
-setopt EXTENDED_GLOB
 setopt HIST_REDUCE_BLANKS
+setopt INTERACTIVE_COMMENTS
+setopt SHARE_HISTORY
 
 SCREEN_NAME=$(echo $STY | awk -F. '{ print $NF }')
 PROMPT="%B%n%b@%B%m%b:%~ [%B${SCREEN_NAME}%b] [%*] [%!]

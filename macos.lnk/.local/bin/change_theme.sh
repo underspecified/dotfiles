@@ -2,7 +2,7 @@
 set -euo pipefail
 
 CUR_DIR="$(dirname "$0")"
-LOG_DIR="$(realpath "${CUR_DIR}/../../log")"
+LOG_DIR="$(realpath "${HOME}/log")"
 
 curr="$(get_macos_mode)"
 if [[ "${1:-}" == "dark" ]]; then
