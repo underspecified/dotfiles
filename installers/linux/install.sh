@@ -121,6 +121,10 @@ update_less() {
     log "less 668 already installed; skipping rebuild"
     return 0
   fi
+  # less' configure needs terminal-lib dev headers (tgetent/tgoto live in
+  # libtinfo, which libncurses-dev pulls in transitively). Without these,
+  # configure aborts with "Cannot find terminal libraries".
+  sudo apt install -y libncurses-dev
   local workdir
   workdir="$(mktemp -d)"
   trap 'rm -rf "${workdir}"' RETURN
