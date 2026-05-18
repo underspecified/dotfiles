@@ -29,6 +29,15 @@ fi
 
 choice="${1:-}"
 
+# Re-run guard: if invoked from the unattended bootstrap path (no arg) and
+# a profile is already selected, log + exit instead of prompting -- otherwise
+# `bash bootstrap.sh` would hang on stdin during updates.
+if [[ -z "$choice" && -L "$env_link" ]]; then
+  current="$(readlink "$env_link")"
+  echo "display profile already set: ${current%.env} ($env_link -> $current)"
+  exit 0
+fi
+
 if [[ -z "$choice" ]]; then
   echo "Available display profiles:"
   for i in "${!profiles[@]}"; do

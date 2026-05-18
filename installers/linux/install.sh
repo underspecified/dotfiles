@@ -1,10 +1,24 @@
 #!/usr/bin/env bash
 # Usage: install.sh
-# Bootstraps a fresh Ubuntu desktop into the i3 stack used by this repo.
+# Bootstraps a fresh Ubuntu desktop into the i3 stack used by this repo,
+# and also serves as the update mechanism on re-run: each function is
+# idempotent and re-running brings packages, source builds, and cloned
+# repos to the latest state.
+#
 # Auto-invoked by ../bootstrap.sh after `lnk init -r` lays down symlinks.
 set -euo pipefail
 
+# shellcheck source=SCRIPTDIR/../lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
+
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ALL_DIR="${CUR_DIR}/../all"
+
+check_preconditions() {
+  [[ "$(uname -s)" == "Linux" ]] || die "install.sh is Linux-only"
+  command -v apt >/dev/null 2>&1 || die "apt not found — non-Debian/Ubuntu host?"
+  command -v lnk >/dev/null 2>&1 || warn "lnk not on PATH — fine for initial bootstrap, but lnk pull / status will be unavailable"
+}
 
 ### baseline apt deps
 # Trimmed:
@@ -12,16 +26,19 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 #   psensor -> installed by install_profilers.sh
 #   emacs, keychain, chrome-gnome-shell -> unused (1Password SSH agent
 #     supersedes keychain; no GNOME-Chrome shell extension flow here)
-install_apt() {
+install_apt_baseline() {
   sudo apt update
-  sudo apt install -y curl git jq nodejs npm openssh-server shellcheck trash-cli xsel zsh
+  sudo apt install -y curl git jq nodejs npm openssh-server shellcheck trash-cli wget xsel zsh
 }
 
 install_google_chrome() {
-  sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-  sudo wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+  apt_ensure_repo \
+    /etc/apt/sources.list.d/google-chrome.list \
+    "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
+    https://dl.google.com/linux/linux_signing_key.pub \
+    /etc/apt/keyrings/google-chrome.gpg
   sudo apt update
-  sudo apt-get install -y google-chrome-stable
+  sudo apt install -y google-chrome-stable
 }
 
 install_gh() {
@@ -41,12 +58,23 @@ install_zed() {
 }
 
 update_git() {
-  sudo add-apt-repository -y ppa:git-core/ppa
-  sudo apt update
+  # git-core/ppa add itself is idempotent for the source line but still
+  # triggers a full `apt update` every run. Guard so the refresh only
+  # happens the first time the PPA is needed.
+  if apt-cache policy git 2>/dev/null | grep -q git-core/ppa; then
+    log "git-core PPA already configured; skipping repo refresh"
+  else
+    sudo add-apt-repository -y ppa:git-core/ppa
+    sudo apt update
+  fi
   sudo apt install -y git
 }
 
 update_less() {
+  if command -v less >/dev/null 2>&1 && less --version 2>/dev/null | head -1 | grep -q ' 668'; then
+    log "less 668 already installed; skipping rebuild"
+    return 0
+  fi
   local workdir
   workdir="$(mktemp -d)"
   trap 'rm -rf "${workdir}"' RETURN
@@ -55,23 +83,70 @@ update_less() {
   (cd "${workdir}/less-668" && ./configure --prefix="${HOME}/.local" && make install)
 }
 
-install_apt
-install_gh
-install_google_chrome
-install_zed
-update_git
-update_less
+run_platform_installers() {
+  log "Running Linux-specific installers"
+  local script
+  for script in \
+    "${CUR_DIR}/install_uv.sh" \
+    "${CUR_DIR}/install_fonts.sh" \
+    "${CUR_DIR}/install_1password.sh" \
+    "${CUR_DIR}/install_darkman.sh" \
+    "${CUR_DIR}/install_i3.sh" \
+    "${CUR_DIR}/install_kitty.sh" \
+    "${CUR_DIR}/install_nvidia_drivers.sh" \
+    "${CUR_DIR}/install_profilers.sh" \
+    "${CUR_DIR}/install_usb_autosuspend.sh"; do
+    if [[ -f "${script}" ]]; then
+      log "  $(basename "${script}")"
+      bash "${script}" || warn "failed: $(basename "${script}")"
+    else
+      warn "skipping: ${script} (missing)"
+    fi
+  done
+}
 
-bash "${CUR_DIR}/install_uv.sh"
-bash "${CUR_DIR}/install_fonts.sh"
-bash "${CUR_DIR}/install_1password.sh"
-bash "${CUR_DIR}/install_darkman.sh"
-bash "${CUR_DIR}/install_i3.sh"
-bash "${CUR_DIR}/install_kitty.sh"
-bash "${CUR_DIR}/install_nvidia_drivers.sh"
-bash "${CUR_DIR}/install_profilers.sh"
-bash "${CUR_DIR}/install_usb_autosuspend.sh"
+run_all_installers() {
+  log "Running cross-platform installers from ${ALL_DIR}"
+  local script
+  for script in \
+    "${ALL_DIR}/install_claude_code.sh" \
+    "${ALL_DIR}/install_btop.sh"; do
+    if [[ -f "${script}" ]]; then
+      log "  $(basename "${script}")"
+      bash "${script}" || warn "failed: $(basename "${script}")"
+    else
+      warn "skipping: ${script} (missing)"
+    fi
+  done
+}
 
-# Final step: select display profile and generate i3/dunst/Xresources/kitty
-# configs. Interactive prompt unless a profile name was passed via env.
-bash "${CUR_DIR}/setup_display.sh" "${DISPLAY_PROFILE:-}"
+run_claude_bootstrap() {
+  # ~/.claude/bootstrap.sh chains the per-area scripts (statusline, skills,
+  # MCP, patches). Safe to re-run -- each child handles missing-vs-existing
+  # state on its own (clone-or-pull, register-if-not-registered, etc.).
+  local script="${HOME}/.claude/bootstrap.sh"
+  if [[ ! -e "${script}" ]]; then
+    warn "skipping Claude bootstrap: ${script} not found (lnk symlinks restored?)"
+    return
+  fi
+  log "Running Claude bootstrap (statusline, skills, MCP, patches)"
+  bash "${script}" || warn "Claude bootstrap had failures (continuing)"
+}
+
+main() {
+  check_preconditions
+  install_apt_baseline
+  install_gh
+  install_google_chrome
+  install_zed
+  update_git
+  update_less
+  run_platform_installers
+  run_all_installers
+  run_claude_bootstrap
+  # Final step: select display profile and generate i3/dunst/Xresources/kitty
+  # configs. Non-interactive on re-run (skip if already linked).
+  bash "${CUR_DIR}/setup_display.sh" "${DISPLAY_PROFILE:-}"
+}
+
+main "$@"

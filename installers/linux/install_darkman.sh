@@ -1,26 +1,30 @@
 #!/usr/bin/env bash
 # Usage: install_darkman.sh
 # Builds darkman from source, installs to /usr, and patches i3 .desktop
-# files for correct XDG_CURRENT_DESKTOP. Idempotent: re-running pulls
-# upstream and rebuilds without conflict.
+# files for correct XDG_CURRENT_DESKTOP. Re-run = update: pulls upstream
+# and rebuilds only when HEAD moves; .desktop patch is content-guarded.
 set -euo pipefail
+
+# shellcheck source=SCRIPTDIR/../lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 
 GIT_DIR="${HOME}/git"
 DARKMAN_DIR="${GIT_DIR}/darkman"
 
 install_darkman() {
-  echo "Installing darkman..."
+  log "Installing darkman..."
 
   sudo apt install -y golang
 
-  mkdir -p "${GIT_DIR}"
-  if [[ -d "${DARKMAN_DIR}/.git" ]]; then
-    git -C "${DARKMAN_DIR}" pull --ff-only
-  else
-    git clone https://gitlab.com/WhyNotHugo/darkman.git "${DARKMAN_DIR}"
-  fi
+  local state
+  state="$(clone_or_pull https://gitlab.com/WhyNotHugo/darkman.git "${DARKMAN_DIR}")"
+  log "darkman: ${state}"
 
-  (cd "${DARKMAN_DIR}" && make && sudo make install PREFIX=/usr)
+  if [[ -x /usr/bin/darkman && "${state}" == "unchanged" ]]; then
+    log "darkman /usr/bin/darkman already current, skipping build"
+  else
+    (cd "${DARKMAN_DIR}" && make && sudo make install PREFIX=/usr)
+  fi
 
   systemctl --user daemon-reload
   systemctl --user enable darkman.service
@@ -34,7 +38,7 @@ patch_i3_desktop_files() {
   local desktop_file="/usr/share/xsessions/i3-with-shmlog.desktop"
   if [[ -f "${desktop_file}" ]]; then
     if ! grep -q '^DesktopNames=' "${desktop_file}"; then
-      echo "Patching ${desktop_file} with DesktopNames=i3..."
+      log "Patching ${desktop_file} with DesktopNames=i3..."
       echo 'DesktopNames=i3' | sudo tee -a "${desktop_file}" > /dev/null
     fi
   fi

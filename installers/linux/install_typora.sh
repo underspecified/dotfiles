@@ -1,13 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Re-run = no-op once typora is installed. The trusted-key file is
+# overwritten idempotently via `tee >`; the repo line is added only when
+# the .list file doesn't already mention typora.io.
+set -euo pipefail
+
+# shellcheck source=SCRIPTDIR/../lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
+
+if dpkg -s typora >/dev/null 2>&1; then
+  log "typora already installed; skipping repo + key setup"
+  exit 0
+fi
 
 ### Install Typora
-# or use
-# wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
-wget -qO - https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc
+# Trust file written with `tee >` (truncating) -- idempotent.
+wget -qO- https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc > /dev/null
 
-# add Typora's repository
-sudo add-apt-repository 'deb https://typora.io/linux ./'
+# Add Typora's repository only if not already present.
+if ! grep -qF "typora.io/linux" /etc/apt/sources.list.d/*.list /etc/apt/sources.list 2>/dev/null; then
+  sudo add-apt-repository -y 'deb https://typora.io/linux ./'
+fi
+
 sudo apt-get update
-
-# install typora
-sudo apt-get install typora
+sudo apt-get install -y typora

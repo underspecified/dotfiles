@@ -1,7 +1,17 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+# Re-run = no-op once 1password is installed. The original first-run path
+# (key import, repo add, debsig policy) is preserved verbatim and only
+# fires when dpkg reports 1password absent.
+set -euo pipefail
 
-### install 1password
-install_1password () {
+# shellcheck source=SCRIPTDIR/../lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
+
+install_1password() {
+    if dpkg -s 1password >/dev/null 2>&1; then
+        log "1password already installed; skipping repo + key setup"
+        return 0
+    fi
     # Add the key for the 1Password apt repository:
     curl -sS https://downloads.1password.com/linux/keys/1password.asc | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
     # Add the 1Password apt repository:

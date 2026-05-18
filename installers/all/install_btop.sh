@@ -4,18 +4,24 @@
 # Clone, build, and install btop to ~/.local/. Cross-platform
 # (macOS/Linux). Prefers g++-14, falls back to clang++.
 #
+# Re-run = update: uses a persistent checkout at ~/git/btop and only
+# rebuilds when upstream HEAD moved or the target binary is missing.
+#
 # Env overrides:
 #   BTOP_REPO  -- git remote (default: upstream)
-#   BTOP_REF   -- branch/tag (default: main)
+#   BTOP_REF   -- branch/tag (default: main; ignored when repo already
+#                 exists -- pulls whatever branch is checked out)
 #   PREFIX     -- install prefix (default: $HOME/.local)
+#   BTOP_DIR   -- persistent checkout dir (default: $HOME/git/btop)
 set -euo pipefail
+
+# shellcheck source=SCRIPTDIR/../lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 
 BTOP_REPO="${BTOP_REPO:-https://github.com/aristocratos/btop.git}"
 BTOP_REF="${BTOP_REF:-main}"
 PREFIX="${PREFIX:-$HOME/.local}"
-
-log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
-die() { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+BTOP_DIR="${BTOP_DIR:-$HOME/git/btop}"
 
 pick_compiler() {
   # btop needs C++20 -- prefer g++-14 (Homebrew gcc on mac, gcc-14 pkg
@@ -43,26 +49,24 @@ main() {
   command -v git >/dev/null 2>&1 || die "git is required"
   command -v make >/dev/null 2>&1 || die "make is required"
 
+  local state
+  state="$(clone_or_pull "${BTOP_REPO}" "${BTOP_DIR}")"
+  log "btop: ${state}"
+
+  # Skip rebuild only when nothing changed AND the binary is already in place.
+  if [[ -x "${PREFIX}/bin/btop" && "${state}" == "unchanged" ]]; then
+    log "btop ${PREFIX}/bin/btop already current, skipping build"
+    return 0
+  fi
+
+  local cxx jobs
   cxx="$(pick_compiler)"
-  log "Compiler: ${cxx}"
-  log "Prefix:   ${PREFIX}"
-
-  workdir="$(mktemp -d -t btop-build.XXXXXX)"
-  trap 'rm -rf "${workdir}"' EXIT
-
-  log "Cloning ${BTOP_REPO}@${BTOP_REF}"
-  git clone --depth 1 --branch "${BTOP_REF}" "${BTOP_REPO}" "${workdir}/btop"
-
-  local jobs
   jobs="$(job_count)"
-  log "Building with ${jobs} jobs"
-  make -C "${workdir}/btop" \
-    CXX="${cxx}" \
-    -j"${jobs}"
+  log "Building btop with ${cxx} (${jobs} jobs) → ${PREFIX}"
 
-  log "Installing to ${PREFIX}"
+  make -C "${BTOP_DIR}" CXX="${cxx}" -j"${jobs}"
   mkdir -p "${PREFIX}"
-  make -C "${workdir}/btop" install PREFIX="${PREFIX}"
+  make -C "${BTOP_DIR}" install PREFIX="${PREFIX}"
 
   log "btop installed: ${PREFIX}/bin/btop"
 }

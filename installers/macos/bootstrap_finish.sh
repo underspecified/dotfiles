@@ -9,13 +9,12 @@
 # Auto-invoked by repo-root bootstrap.sh when run on macOS.
 set -euo pipefail
 
-REPO_DIR="${REPO_DIR:-$HOME/.config/lnk}"
-BREWFILE="${REPO_DIR}/Brewfile"
-ALL_DIR="${REPO_DIR}/installers/all"
+# shellcheck source=SCRIPTDIR/../lib.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 
-log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
-warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
-die() { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+REPO_DIR="${REPO_DIR:-$HOME/.config/lnk}"
+BREWFILE="${BREWFILE:-$HOME/.homebrew/Brewfile}"
+ALL_DIR="${REPO_DIR}/installers/all"
 
 check_preconditions() {
   [[ "$(uname -s)" == "Darwin" ]] || die "phase 2 is macOS-only"
@@ -57,11 +56,7 @@ link_1password_agent_dir() {
   # during phase 1), so the container dir exists and we can detect it
   # dynamically rather than hardcoding the Apple Team ID.
   local link="${HOME}/.1password"
-  if [[ -L "${link}" ]]; then
-    log "1Password agent symlink already present: ${link}"
-    return
-  fi
-  if [[ -e "${link}" ]]; then
+  if [[ -e "${link}" && ! -L "${link}" ]]; then
     warn "${link} exists but is not a symlink — leaving alone"
     return
   fi
@@ -71,11 +66,11 @@ link_1password_agent_dir() {
   if [[ -z "${container}" || ! -d "${container}/t" ]]; then
     warn "1Password container dir not found under ${base}"
     warn "Launch 1Password once, then create the symlink manually:"
-    warn "  ln -s \"\$(ls -d ~/Library/Group\\ Containers/*.1password)/t\" ~/.1password"
+    warn "  ln -sfn \"\$(ls -d ~/Library/Group\\ Containers/*.1password)/t\" ~/.1password"
     return
   fi
   log "Linking ${link} → ${container}/t"
-  ln -s "${container}/t" "${link}"
+  symlink_force "${container}/t" "${link}"
 }
 
 pull_private_configs_from_1password() {
@@ -98,6 +93,19 @@ pull_private_configs_from_1password() {
     || warn "failed to pull ssh-config-hri-jp"
   bash "${ALL_DIR}/git-identity-hri-jp.sh" \
     || warn "failed to pull git-identity-work"
+}
+
+run_claude_bootstrap() {
+  # ~/.claude/bootstrap.sh chains the per-area scripts (statusline, skills,
+  # MCP, patches). Safe to re-run -- each child handles missing-vs-existing
+  # state on its own (clone-or-pull, register-if-not-registered, etc.).
+  local script="${HOME}/.claude/bootstrap.sh"
+  if [[ ! -e "${script}" ]]; then
+    warn "skipping Claude bootstrap: ${script} not found (lnk symlinks restored?)"
+    return
+  fi
+  log "Running Claude bootstrap (statusline, skills, MCP, patches)"
+  bash "${script}" || warn "Claude bootstrap had failures (continuing)"
 }
 
 start_services() {
@@ -156,6 +164,7 @@ main() {
   run_all_installers
   link_1password_agent_dir
   pull_private_configs_from_1password
+  run_claude_bootstrap
   start_services
   print_manual_checklist
 }
