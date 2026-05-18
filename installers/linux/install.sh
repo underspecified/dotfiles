@@ -116,23 +116,6 @@ update_git() {
   sudo apt install -y git
 }
 
-update_less() {
-  if command -v less >/dev/null 2>&1 && less --version 2>/dev/null | head -1 | grep -q ' 668'; then
-    log "less 668 already installed; skipping rebuild"
-    return 0
-  fi
-  # less' configure needs terminal-lib dev headers (tgetent/tgoto live in
-  # libtinfo, which libncurses-dev pulls in transitively). Without these,
-  # configure aborts with "Cannot find terminal libraries".
-  sudo apt install -y libncurses-dev
-  local workdir
-  workdir="$(mktemp -d)"
-  trap 'rm -rf "${workdir}"' RETURN
-  curl -fL https://www.greenwoodsoftware.com/less/less-668.tar.gz \
-    | tar -xzf - -C "${workdir}"
-  (cd "${workdir}/less-668" && ./configure --prefix="${HOME}/.local" && make install)
-}
-
 run_platform_installers() {
   log "Running Linux-specific installers"
   local script
@@ -191,7 +174,6 @@ main() {
   install_google_chrome
   install_zed
   update_git
-  update_less
   run_platform_installers
   run_all_installers
   run_claude_bootstrap
