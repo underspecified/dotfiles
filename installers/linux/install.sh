@@ -32,6 +32,17 @@ install_apt_baseline() {
 }
 
 install_google_chrome() {
+  # Legacy layout used /etc/apt/sources.list.d/google.list (no signed-by) +
+  # `apt-key add`. If left in place alongside the new google-chrome.list,
+  # apt errors with: "Conflicting values set for option Signed-By regarding
+  # source http://dl.google.com/linux/chrome/deb/ stable". Remove the
+  # legacy list file; the leftover apt-key entry in /etc/apt/trusted.gpg.d/
+  # is unused but harmless and we leave it alone.
+  if [[ -f /etc/apt/sources.list.d/google.list ]]; then
+    log "removing legacy /etc/apt/sources.list.d/google.list (replaced by google-chrome.list)"
+    sudo rm /etc/apt/sources.list.d/google.list
+  fi
+
   apt_ensure_repo \
     /etc/apt/sources.list.d/google-chrome.list \
     "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
