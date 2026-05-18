@@ -20,6 +20,44 @@ check_preconditions() {
   command -v lnk >/dev/null 2>&1 || warn "lnk not on PATH — fine for initial bootstrap, but lnk pull / status will be unavailable"
 }
 
+migrate_legacy_apt_state() {
+  # Earlier iterations of this script managed the google-chrome apt source
+  # two different (broken) ways:
+  #   1. /etc/apt/sources.list.d/google.list, no signed-by (used apt-key add)
+  #   2. /etc/apt/sources.list.d/google-chrome.list, signed-by=keyrings/...
+  # Neither plays well with google-chrome-stable's own postinst + daily cron
+  # (/etc/cron.daily/google-chrome → /opt/google/chrome/cron/google-chrome),
+  # which writes /etc/apt/sources.list.d/google-chrome.list WITHOUT signed-by
+  # and overwrites manual edits. The two formats together trigger:
+  #   E: Conflicting values set for option Signed-By regarding source
+  #      http://dl.google.com/linux/chrome/deb/ stable
+  #
+  # Fix: stop managing the chrome apt source ourselves. install_google_chrome
+  # below installs from the .deb directly and lets chrome's postinst own the
+  # source line. This function purges our leftover artifacts BEFORE any
+  # `apt update` runs (including the one inside install_apt_baseline), so the
+  # bootstrap can succeed on hosts that hit the broken interim state.
+  local stale
+  for stale in \
+      /etc/apt/sources.list.d/google.list \
+      /etc/apt/keyrings/google-chrome.gpg; do
+    if [[ -e "${stale}" ]]; then
+      log "removing pre-refactor apt artifact: ${stale}"
+      sudo rm -f "${stale}"
+    fi
+  done
+
+  # google-chrome.list may legitimately exist (chrome's postinst wrote it) or
+  # may be the half-refactored signed-by version that conflicts. Remove only
+  # if it contains our signed-by line; chrome's cron will recreate it
+  # in the correct format if google-chrome-stable is installed.
+  local list=/etc/apt/sources.list.d/google-chrome.list
+  if [[ -f "${list}" ]] && grep -qF "signed-by=/etc/apt/keyrings/google-chrome.gpg" "${list}"; then
+    log "removing half-refactored ${list} (chrome cron will recreate)"
+    sudo rm -f "${list}"
+  fi
+}
+
 ### baseline apt deps
 # Trimmed:
 #   golang  -> installed by install_darkman.sh from source build
@@ -32,24 +70,21 @@ install_apt_baseline() {
 }
 
 install_google_chrome() {
-  # Legacy layout used /etc/apt/sources.list.d/google.list (no signed-by) +
-  # `apt-key add`. If left in place alongside the new google-chrome.list,
-  # apt errors with: "Conflicting values set for option Signed-By regarding
-  # source http://dl.google.com/linux/chrome/deb/ stable". Remove the
-  # legacy list file; the leftover apt-key entry in /etc/apt/trusted.gpg.d/
-  # is unused but harmless and we leave it alone.
-  if [[ -f /etc/apt/sources.list.d/google.list ]]; then
-    log "removing legacy /etc/apt/sources.list.d/google.list (replaced by google-chrome.list)"
-    sudo rm /etc/apt/sources.list.d/google.list
+  # Install from the upstream .deb and let chrome's postinst configure the
+  # apt source itself (it owns /etc/apt/sources.list.d/google-chrome.list and
+  # refreshes it via /etc/cron.daily/google-chrome). Fighting that with our
+  # own keyring-managed source caused apt "Conflicting values set for option
+  # Signed-By" errors; see migrate_legacy_apt_state above.
+  if dpkg -s google-chrome-stable >/dev/null 2>&1; then
+    log "google-chrome-stable already installed"
+    return 0
   fi
-
-  apt_ensure_repo \
-    /etc/apt/sources.list.d/google-chrome.list \
-    "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
-    https://dl.google.com/linux/linux_signing_key.pub \
-    /etc/apt/keyrings/google-chrome.gpg
-  sudo apt update
-  sudo apt install -y google-chrome-stable
+  local deb
+  deb="$(mktemp --suffix=.deb)"
+  trap 'rm -f "${deb}"' RETURN
+  log "downloading google-chrome-stable .deb"
+  wget -qO "${deb}" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  sudo apt install -y "${deb}"
 }
 
 install_gh() {
@@ -146,6 +181,7 @@ run_claude_bootstrap() {
 
 main() {
   check_preconditions
+  migrate_legacy_apt_state
   install_apt_baseline
   install_gh
   install_google_chrome
