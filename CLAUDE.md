@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## PL Status
+
+**Slug:** `settings`
+**Type:** Project Leader (PL) — system settings + Claude skills + hooks + dotfiles
+**Registry mini-charter:** `~/projects/pls/settings.md`
+**Formalized:** 2026-05-21
+
+This directory is the home of the `settings` PL (despite the on-disk name being `lnk`, an artifact of the dotfiles manager). It's reachable as `~/projects/settings` for dispatch. Lowest-velocity, highest-blast-radius PL — a broken hook can affect every session. See the mini-charter for full scope, contracts with other PLs, cadence, and current state. When in doubt about where something belongs, check the PL registry at `~/projects/pls/`.
+
 ## What This Is
 
 A dotfiles repository managed by [`lnk`](https://github.com/...), a Git-native dotfiles manager. Files live here in `~/.config/lnk/` and are symlinked back to `$HOME`. The `lnk` CLI handles add/remove/sync operations.
