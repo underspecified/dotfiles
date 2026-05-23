@@ -15,14 +15,21 @@ Bash is for **simple glue and wrappers** (≤100 lines). If a script exceeds 100
 
 ## Header Template
 
-Always start with strict mode:
-
 ```bash
 #!/usr/bin/env bash
 # Usage: script_name.sh <required_arg> [optional_arg]
 # Output: JSON object/array description
-set -euo pipefail
+set -uo pipefail
 ```
+
+## Strict Mode
+
+- **`set -u`** — default on. Catches variable-name typos. Use `"${VAR:-}"` for optional reads.
+- **`set -o pipefail`** — default on. Without it, `false | true` succeeds. Append `|| true` to the pipeline when the upstream stage fails benignly (`tmux list-sessions` on cold server, `grep` finding nothing):
+  ```bash
+  out="$(cmd 2>/dev/null || true)"
+  ```
+- **`set -e`** — **default off.** Disabled inside `if`/`while`/`&&`/`||` and any function called from them. Fires on benign exits. Forces `|| true` opt-outs that obscure intent. Use explicit `cmd || die "msg"` or `if ! cmd; then ...; fi` instead. Opt in only when a script is short, linear, and every failure should abort silently — add a comment naming why.
 
 ## Script Structure
 
@@ -116,9 +123,9 @@ command1 \
 ## Error Handling
 
 - All diagnostic output to STDERR: `echo "error: ..." >&2`
-- Check return values: use `if` statements or `$?`
+- Prefer **explicit** checks: `cmd || die "msg"` or `if ! cmd; then ...; fi` over implicit `set -e` aborts (see **Strict Mode** above)
 - Use `trap cleanup EXIT` for temp file cleanup
-- `set -o pipefail` catches hidden pipe errors
+- `set -uo pipefail` is the default; `set -e` is opt-in with a comment naming the reason
 
 ## JSON I/O Patterns
 
