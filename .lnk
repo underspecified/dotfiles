@@ -28,6 +28,7 @@
 .claude/patches/hookify-global-rules.patch
 .claude/rules/authoring.md
 .claude/rules/bash.md
+.claude/rules/email.md
 .claude/rules/markdown.md
 .claude/rules/python.md
 .claude/rules/safety.md
