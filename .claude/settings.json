@@ -206,9 +206,9 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "showThinkingSummaries": true,
-  "skipAutoPermissionPrompt": true,
   "theme": "dark-ansi",
   "verbose": true,
   "preferredNotifChannel": "kitty",
-  "teammateMode": "auto"
+  "teammateMode": "auto",
+  "skipAutoPermissionPrompt": true
 }

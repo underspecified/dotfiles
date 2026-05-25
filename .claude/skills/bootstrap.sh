@@ -28,7 +28,7 @@ update_skill() {
 }
 
 # Standalone skills (one repo = one skill)
-STANDALONE=(computation-graph dispatch figure gantt-chart meeting presentation sync-latex travel)
+STANDALONE=(computation-graph dispatch email-inbox figure gantt-chart meeting presentation sync-latex travel)
 for skill in "${STANDALONE[@]}"; do
     if [[ ! -d "${SKILLS_DIR}/${skill}" ]]; then
         echo "Cloning skill: ${skill}"
