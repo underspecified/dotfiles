@@ -38,7 +38,10 @@
 
 [merge]
 	stat = true
-	conflictstyle = zdiff3
+	# zdiff3 needs git >=2.35; diff3 works on every released git (1.7+)
+	# and renders identical conflict markers (the "zealous" addition was
+	# just collapsing of common lines inside conflict hunks).
+	conflictstyle = diff3
 	autostash = true
 	tool = Kaleidoscope
 
@@ -59,9 +62,8 @@
   format = ssh
 
 [gpg "ssh"]
-	program = op-ssh-sign
+	program = ssh-keygen
 	allowedSignersFile = ~/.config/git/allowed_signers
-	program = op-ssh-sign
 
 [commit]
   gpgsign = true
@@ -72,3 +74,9 @@
 
 [rebase]
 	autostash = true
+[credential "https://github.com"]
+	helper = 
+	helper = !/home/e.nichols/.local/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/home/e.nichols/.local/bin/gh auth git-credential
