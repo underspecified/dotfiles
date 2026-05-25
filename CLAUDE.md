@@ -69,7 +69,7 @@ Changes here affect every Claude Code session. Default discipline:
 - Global CLAUDE.md: `~/.claude/CLAUDE.md`
 - Convention rules: `~/.claude/rules/` (NOT symlinked from `~/.config/lnk/.claude/rules/` — discovered 2026-05-24; they're independent directories)
 - Inbox (when polling lands): `~/.claude/inbox/settings.md`
-- Registry entry: `~/projects/pls/README.md` (settings row)
+- Registry: `~/projects/CLAUDE.md` (PL table) + `rules/autonomy.md` (workflow + routing)
 
 ---
 
