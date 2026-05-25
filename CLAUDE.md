@@ -1,15 +1,77 @@
-# CLAUDE.md
+# Settings — System Configuration + Claude Skills
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This directory is the home of the `settings` PL. On disk it's `~/.config/lnk/` (an artifact of the dotfiles manager `lnk`), reachable as `~/projects/settings` for dispatch.
+
+## Project Description
+
+System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **Lowest velocity, highest blast radius** — a broken hook can affect every session, so changes are tested cautiously and rolled out deliberately. This is a meta-PL: every other PL depends on the skills + dispatch infrastructure managed here.
+
+## Scope (Eric's slice)
+
+### In scope
+- Claude skill definitions (`~/.claude/skills/`)
+- Hook + hookify rules (`~/.claude/hookify.*.local.md`, `~/.claude/hooks/`)
+- MCP server configs
+- Shell / tmux / kitty / zsh dotfiles
+- Global Claude `CLAUDE.md` (`~/.claude/CLAUDE.md`)
+- Development conventions (`rules/`: python, bash, skill, authoring, safety, email, markdown)
+- Setup scripts for new machines
+
+### Out of scope
+- Per-project CLAUDE.md (owned by the project PL)
+- Per-PL memory dirs (per-session)
+- Application-level settings unrelated to dev workflow
+
+## Owns vs Tracks
+
+- **Owns:** `~/.config/lnk/` (linked dotfiles), `~/.claude/skills/` (custom skill definitions), `~/.claude/CLAUDE.md` (global user CLAUDE.md), `~/.claude/rules/` (convention docs), `~/.claude/hooks/` + hookify rules
+- **Tracks (not owned):** upstream skill repos (`underspecified/figure`, `underspecified/presentation`, `underspecified/research`, `underspecified/dispatch`, `underspecified/kaiseki`, `underspecified/lab`) — feature requests + bug reports filed there, code lives there
+
+## Goals
+
+- Stable dev environment across machines (Macbook, lab machines)
+- Working dispatch, `/good-morning`, `/good-night`, `/kaiseki`, `/hansei`, `/nikki` skills
+- Safe defaults (block-rm, block-force-push, warn-destructive-git, AppleScript-send block)
+- Memory-system templates and conventions
+
+## Responsibilities
+
+| Person | Role | Settings-specific responsibility |
+|--------|------|-----------------------------------|
+| Eric Nichols | Sole owner | All of the above. This is a one-person PL by design — settings touches everything Claude does, so single-owner discipline keeps the blast radius manageable. |
 
 ## PL Status
 
 **Slug:** `settings`
-**Type:** Project Leader (PL) — system settings + Claude skills + hooks + dotfiles
-**Registry mini-charter:** `~/projects/pls/settings.md`
+**Type:** Claude-side coordination seat. Eric is the sole owner; lowest-velocity, highest-blast-radius PL.
 **Formalized:** 2026-05-21
 
-This directory is the home of the `settings` PL (despite the on-disk name being `lnk`, an artifact of the dotfiles manager). It's reachable as `~/projects/settings` for dispatch. Lowest-velocity, highest-blast-radius PL — a broken hook can affect every session. See the mini-charter for full scope, contracts with other PLs, cadence, and current state. When in doubt about where something belongs, check the PL registry at `~/projects/pls/`.
+## Contracts with other PLs
+
+- → All PLs: provides the skills and dispatch infrastructure everyone uses
+- ← All PLs: receive feature requests for new/modified skills (e.g. `lab` files an issue against the dispatch repo)
+
+## Blast-radius caution
+
+Changes here affect every Claude Code session. Default discipline:
+
+- Test new hooks on a single project before global rollout
+- Never disable safety rules (`block-rm`, `block-force-push`, AppleScript-send block) without explicit user OK
+- When a canonical MCP is missing, ask for `/mcp` reconnect — don't roll AppleScript fallbacks proactively (memory: `feedback_mcp_unavailable_default`)
+
+## Cadence
+
+**Biweekly** digest (admin-tempo). Pulled into `/hansei` retrospectives where relevant.
+
+## Pointers
+
+- Settings repo: `~/.config/lnk/` (managed via `lnk`)
+- Global CLAUDE.md: `~/.claude/CLAUDE.md`
+- Convention rules: `~/.claude/rules/` (NOT symlinked from `~/.config/lnk/.claude/rules/` — discovered 2026-05-24; they're independent directories)
+- Inbox (when polling lands): `~/.claude/inbox/settings.md`
+- Registry entry: `~/projects/pls/README.md` (settings row)
+
+---
 
 ## What This Is
 
