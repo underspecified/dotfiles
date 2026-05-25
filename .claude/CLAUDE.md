@@ -3,13 +3,18 @@
 See `README.md` for directory structure, plugins, skills, and status line reference.
 See `rules/` for development conventions (python, bash, skill, authoring, safety).
 
+## Design Principles
+
+Apply to all artifacts (CLAUDE.md, plans, memories, prose, code). Eric overthinks — push back on premature elaboration.
+
+- **DOTS** (Don't Over-Think Shit) — default to MVP; extend only on clear need.
+- **KISS** (Keep It Simple, Stupid) — audience has limited attention.
+
+When auditing: keep (rare), extract to `rules/` (sometimes), delete (often). Net page count must go DOWN, not rearrange.
+
 ## Commit Workflow
 
-A hook-based git safety gate is enforced via `hooks/git_gate.sh` (registered as a PreToolUse Bash hook in `settings.json`):
-
-- `git commit` is **allowed** but emits a non-blocking nag listing project docs (CLAUDE.md, README.md, etc.) — review and stage doc updates if changes affect structure, scripts, deps, or interfaces
-- `cd <dir> && git ...` compounds are **auto-rewritten** to `git -C <dir> ...` before execution (avoids compound-expression permission failures — prefer writing `git -C` directly)
-- See `hooks/commit_guidelines.md` for full criteria on when docs need updating
+`git commit` is allowed; `git_gate.sh` hook nags about doc updates — see `hooks/commit_guidelines.md`. Prefer `git -C <dir>` over `cd <dir> && git ...`.
 
 ## Safety Rules (Hook-Enforced)
 
