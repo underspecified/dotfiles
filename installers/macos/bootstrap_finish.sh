@@ -84,6 +84,7 @@ pull_private_configs_from_1password() {
     warn "  sign in with:  eval \"\$(op signin)\""
     warn "  then re-run this function by calling:"
     warn "    bash ${ALL_DIR}/ssh-config-hri-jp.sh"
+    warn "    bash ${ALL_DIR}/ssh-config-honda.sh"
     warn "    bash ${ALL_DIR}/git-identity-hri-jp.sh"
     return
   fi
@@ -91,6 +92,8 @@ pull_private_configs_from_1password() {
   # swap to ssh-config-underspecified.sh + git-identity-underspecified.sh.
   bash "${ALL_DIR}/ssh-config-hri-jp.sh" \
     || warn "failed to pull ssh-config-hri-jp"
+  bash "${ALL_DIR}/ssh-config-honda.sh" \
+    || warn "failed to pull ssh-config-honda"
   bash "${ALL_DIR}/git-identity-hri-jp.sh" \
     || warn "failed to pull git-identity-work"
 }

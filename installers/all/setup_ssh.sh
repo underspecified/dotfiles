@@ -8,6 +8,7 @@
 # With no argument, prompts interactively. Available identities:
 #   hri-jp          HRI-JP work hosts           (op://Personal/ssh-config-hri-jp)
 #   underspecified  Personal hosts              (op://Personal/ssh-config-personal)
+#   honda           Honda internal hosts pinned by IP (1P doc: ssh-config-honda)
 set -euo pipefail
 
 ALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,7 +16,7 @@ ALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
 
-available_identities=(hri-jp underspecified)
+available_identities=(hri-jp underspecified honda)
 
 usage() {
   cat <<EOF
@@ -24,6 +25,7 @@ Usage: $(basename "$0") [identity]
 Available identities:
   hri-jp           HRI-JP work hosts
   underspecified   Personal hosts
+  honda            Honda internal hosts pinned by IP (for DNS-isolated boxes)
 
 Run with no argument to pick interactively.
 EOF
@@ -56,6 +58,10 @@ dispatch() {
     underspecified)
       log "setting up underspecified (personal) SSH overlay"
       bash "${ALL_DIR}/ssh-config-underspecified.sh"
+      ;;
+    honda)
+      log "setting up honda (Honda internal, IP-pinned) SSH overlay"
+      bash "${ALL_DIR}/ssh-config-honda.sh"
       ;;
     *) die "unknown identity: ${identity} (valid: ${available_identities[*]})" ;;
   esac
