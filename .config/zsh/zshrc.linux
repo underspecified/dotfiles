@@ -33,3 +33,6 @@ alias open='gio open'
 if command -v keychain >/dev/null 2>&1; then
   eval "$(keychain --eval --quiet --agents ssh)"
 fi
+
+# dispatch → dgx02 sender env (machine-local; token in the sourced chmod-600 file)
+[ -f ~/.config/dispatch/dgx02.env ] && source ~/.config/dispatch/dgx02.env
