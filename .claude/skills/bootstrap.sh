@@ -55,6 +55,16 @@ install_composite() {
         [[ -f "${sub}SKILL.md" ]] || continue
         local sub_name
         sub_name=$(basename "${sub}")
+        # Skip the eponymous sub-skill: when sub_name == name, the link
+        # target ${SKILLS_DIR}/${sub_name} IS the repo directory, and
+        # `ln -sfn` with a real-dir destination NESTS the link inside it
+        # (creates ${SKILLS_DIR}/<name>/<name> as a broken symlink to
+        # <name>/skills/<name>) instead of replacing. The eponymous skill
+        # remains discoverable via ${name}/skills/${name}/SKILL.md, so we
+        # don't need the top-level symlink for it.
+        if [[ "${sub_name}" == "${name}" ]]; then
+            continue
+        fi
         ln -sfn "${name}/skills/${sub_name}" "${SKILLS_DIR}/${sub_name}"
     done
 }
