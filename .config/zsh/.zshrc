@@ -76,3 +76,11 @@ test -e "$HOME/.cargo/env" && source "$HOME/.cargo/env"
 
 # LM Studio CLI
 export PATH="$PATH:$HOME/.cache/lm-studio/bin"
+
+##### LOCAL OVERRIDES #####
+
+# Host-scoped overrides via lnk (e.g. `nosudo` host's AGENT_MAIL_URL).
+# Sourced last so local settings win over anything in zshrc.{osx,linux,*}.
+if [ -f "$ZDOTDIR/zshrc.local" ]; then
+    . "$ZDOTDIR/zshrc.local"
+fi
