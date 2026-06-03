@@ -114,7 +114,7 @@ lnk doctor          # Diagnose broken symlinks or issues
 
 - Commits follow `lnk: description` or `component: description` format (e.g., `kitty: change font`, `macos: darkmode fixes`)
 - Git commits are GPG-signed via 1Password SSH agent (`op-ssh-sign`)
-- Git auth standardizes on SSH (no HTTPS credential helper) — the 1Password SSH agent handles all git auth
+- Git auth standardizes on SSH (no HTTPS credential helper). macOS uses the 1Password SSH agent; Linux uses ssh-agent persisted by keychain (see `installers/linux/ssh_keys.sh`).
 - The legacy `setup.sh` is an older symlink installer; prefer `lnk` commands instead
 
 ## Platform-Specific Notes

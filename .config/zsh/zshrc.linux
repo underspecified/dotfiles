@@ -25,3 +25,11 @@ alias pbclear='xsel --clipboard --clear'
 
 # open
 alias open='gio open'
+
+# ssh-agent via keychain (persistent across shells). On Linux we no longer
+# use the 1Password GUI agent; agent.conf is a no-op and SSH_AUTH_SOCK is
+# set here. First-time setup: `keychain ~/.ssh/id_<host>` to register the key
+# (handled by installers/linux/ssh_keys.sh).
+if command -v keychain >/dev/null 2>&1; then
+  eval "$(keychain --eval --quiet --agents ssh)"
+fi

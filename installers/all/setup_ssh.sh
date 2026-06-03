@@ -2,8 +2,8 @@
 # Usage: setup_ssh.sh [identity]
 #
 # Pull the chosen SSH host snippet from 1Password into
-# ~/.ssh/1Password/<identity>, where it is picked up by the
-# `Include ~/.ssh/1Password/*` directive in the main ssh config.
+# ~/.ssh/config.d/<identity>, where it is picked up by the
+# `Include ~/.ssh/config.d/*` directive in the main ssh config.
 #
 # With no argument, prompts interactively. Available identities:
 #   hri-jp          HRI-JP work hosts           (op://Personal/ssh-config-hri-jp)

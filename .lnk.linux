@@ -37,5 +37,5 @@
 .local/share/dark-mode.d
 .local/share/light-mode.d
 .local/share/wallpaper
-.ssh/1Password/socket
+.ssh/config.d/agent.conf
 .xinputrc

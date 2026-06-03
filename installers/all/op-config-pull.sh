@@ -8,7 +8,7 @@
 # Requires: 1Password CLI (`op`) signed in and the item accessible.
 #
 # Examples:
-#   op-config-pull.sh ssh-config-hri-jp  ~/.ssh/1Password/hri_jp
+#   op-config-pull.sh ssh-config-hri-jp  ~/.ssh/config.d/hri_jp
 #   op-config-pull.sh git-identity-work  ~/.config/git/identity.conf
 set -euo pipefail
 

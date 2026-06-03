@@ -62,11 +62,12 @@ migrate_legacy_apt_state() {
 # Trimmed:
 #   golang  -> installed by install_darkman.sh from source build
 #   psensor -> installed by install_profilers.sh
-#   emacs, keychain, chrome-gnome-shell -> unused (1Password SSH agent
-#     supersedes keychain; no GNOME-Chrome shell extension flow here)
+#   emacs, chrome-gnome-shell -> unused (no GNOME-Chrome shell extension flow here)
+# keychain wraps ssh-agent so SSH_AUTH_SOCK survives across logins; it is the
+# Linux agent persistence layer (1Password SSH agent remains macOS-only).
 install_apt_baseline() {
   sudo apt update
-  sudo apt install -y curl git jq nodejs npm openssh-server shellcheck trash-cli wget xsel zsh
+  sudo apt install -y curl git jq keychain nodejs npm openssh-server shellcheck trash-cli wget xsel zsh
 }
 
 install_google_chrome() {

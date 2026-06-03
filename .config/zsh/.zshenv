@@ -24,14 +24,14 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/sbin:$PATH"
 export MANPATH="$HOME/.local/man:$HOME/.local/share/man:$MANPATH"
 
-### 1Password
-# Single source of truth: ~/.ssh/1Password/socket (managed per-OS by lnk)
-# declares the agent path via `IdentityAgent "<path>"`. Mirror it into
-# SSH_AUTH_SOCK so ssh-add, ssh -A forwarding, and agent-aware tools all
-# see the same agent that ssh's IdentityAgent uses for signing.
-_op_path="$(sed -n 's/^[[:space:]]*IdentityAgent[[:space:]]*"\([^"]*\)".*/\1/p' ~/.ssh/1Password/socket 2>/dev/null | head -1)"
-if [ -n "$_op_path" ]; then
-    _op_path="${_op_path/#\~/$HOME}"
-    [ -S "$_op_path" ] && export SSH_AUTH_SOCK="$_op_path"
+### SSH agent socket
+# macOS: ~/.ssh/config.d/agent.conf declares `IdentityAgent "<GC path>"`;
+# mirror it into SSH_AUTH_SOCK so ssh-add / ssh -A see the same 1Password
+# agent. Linux: agent.conf has no IdentityAgent, so this block is a no-op
+# and zshrc.linux sets SSH_AUTH_SOCK via keychain instead.
+_agent_path="$(sed -n 's/^[[:space:]]*IdentityAgent[[:space:]]*"\([^"]*\)".*/\1/p' ~/.ssh/config.d/agent.conf 2>/dev/null | head -1)"
+if [ -n "$_agent_path" ]; then
+    _agent_path="${_agent_path/#\~/$HOME}"
+    [ -S "$_agent_path" ] && export SSH_AUTH_SOCK="$_agent_path"
 fi
-unset _op_path
+unset _agent_path
