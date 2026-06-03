@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+# Host-local zsh overrides — managed by `lnk add --host nosudo`.
+
+# Dispatch / Agent Mail bus: the userspace bus on this box binds to 18765
+# because port 8765 is held by a vLLM tokenizer server. Without this the
+# dispatch CLI defaults to 8765 and 404s on every fetch_inbox.
+export AGENT_MAIL_URL='http://127.0.0.1:18765/mcp/'
