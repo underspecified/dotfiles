@@ -1,0 +1,39 @@
+# dgx02 → fleet dispatch relay: keep per-host LocalForwards alive through llm-jp.
+#
+# Each -L maps a dgx02-local port to a fleet host's Agent Mail bus, with the
+# forward TARGET (tank:8765 etc.) resolved by MagicDNS ON llm-jp — so the tunnel
+# survives the fleet roaming (only llm-jp's static work-LAN address, supplied by
+# the ssh config, is referenced from dgx02). dgx02's dispatch env then points
+# AGENT_MAIL_URL_<HOST> at the matching 127.0.0.1:<port>. See
+# docs/dispatch-dgx02-relay.md.
+#
+# Enable (user-space, no sudo):
+#   loginctl enable-linger "$USER"          # survive logout
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now dispatch-tunnel.service
+#
+# Ports: 9101 tank · 9102 germputer · 9103 llm-jp-2. (llm-jp's own bus is reached
+# directly over the work LAN, no forward.)
+
+[Unit]
+Description=dispatch relay: autossh LocalForwards to fleet buses via llm-jp
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# AUTOSSH_GATETIME=0 → don't treat a fast first-connection failure as fatal;
+# let autossh/systemd retry while llm-jp or the network settles.
+Environment=AUTOSSH_GATETIME=0
+ExecStart=%h/.local/bin/autossh -M0 -N \
+    -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
+    -o ExitOnForwardFailure=yes \
+    -L 127.0.0.1:9101:tank:8765 \
+    -L 127.0.0.1:9102:germputer:8765 \
+    -L 127.0.0.1:9103:llm-jp-2:8765 \
+    llm-jp
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
