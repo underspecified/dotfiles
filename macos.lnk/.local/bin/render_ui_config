@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Render macOS GUI font config from the tracked .in templates — the macOS
+# counterpart to Linux's i3_update_config (which does the same via envsubst as
+# part of the WM refresh). Fonts only: kitty display.conf + zed settings.json.
+# sed, not envsubst (macOS ships no gettext; sed matches the toggle_zed/
+# toggle_kitty idiom). The rendered files are gitignored — edit sizes in the
+# profile, not the generated config.
+#
+# Run at bootstrap (installers/macos/bootstrap_finish.sh) and by hand whenever
+# ~/.config/display/<host>.env changes.
+#
+# FONT_*/border_px come from the dynamically-sourced profile; shellcheck can't
+# see them.
+# shellcheck disable=SC2154
+set -euo pipefail
+
+# Profile: explicit ~/.config/display/env symlink if set, else host-named.
+env_link="$HOME/.config/display/env"
+if [[ -e "$env_link" ]]; then
+    profile="$env_link"
+else
+    profile="$HOME/.config/display/$(hostname -s).env"
+fi
+if [[ ! -e "$profile" ]]; then
+    echo "error: no display profile ($env_link or $profile)" >&2
+    exit 1
+fi
+# shellcheck source=/dev/null
+source "$profile"
+
+kitty_in="$HOME/.config/kitty/display.conf.in"
+zed_in="$HOME/.config/zed/settings.json.in"
+
+if [[ -f "$kitty_in" ]]; then
+    sed -e "s|\${FONT_TERM}|${FONT_TERM}|g" \
+        -e "s|\${border_px}|${border_px}|g" \
+        "$kitty_in" > "${kitty_in%.in}"
+fi
+
+if [[ -f "$zed_in" ]]; then
+    sed -e "s|\${FONT_ZED_UI}|${FONT_ZED_UI}|g" \
+        -e "s|\${FONT_ZED_EDITOR}|${FONT_ZED_EDITOR}|g" \
+        "$zed_in" > "${zed_in%.in}"
+fi
+
+# Live-reload kitty (zed picks up settings.json via its own file watcher).
+pkill -USR1 -x kitty 2>/dev/null || true
+
+echo "render_ui_config: rendered kitty + zed from ${profile##*/}"

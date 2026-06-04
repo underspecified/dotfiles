@@ -6,6 +6,12 @@
 // To see all of Zed's default settings without changing your
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
+//
+// TEMPLATE: rendered to settings.json by the display render step
+// (Linux: i3_update_config envsubst loop; macOS: render_ui_config). The two
+// font sizes below are placeholders filled from the active display profile's
+// FONT_ZED_UI / FONT_ZED_EDITOR. The rendered settings.json is gitignored —
+// edit sizes in the profile, not here. Everything else is shared, edit freely.
 {
   "project_panel": {
     "dock": "left",
@@ -28,8 +34,8 @@
   "ui_font_family": "iMWritingQuat Nerd Font Propo",
   "buffer_font_family": "iMWritingMono Nerd Font Propo",
   "buffer_font_weight": 400.0,
-  "ui_font_size": 15,
-  "buffer_font_size": 15,
+  "ui_font_size": ${FONT_ZED_UI},
+  "buffer_font_size": ${FONT_ZED_EDITOR},
 
   // "buffer_font_family": "MesloLGSDZ Nerd Font",
   // "buffer_font_weight": 400.0,

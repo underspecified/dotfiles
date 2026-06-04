@@ -11,16 +11,22 @@ export mode="${1:-$(darkman get)}"
 # shellcheck source=/dev/null
 source "$HOME/.local/share/colors/selenized_${mode}.env"
 
-# Per-host display profile is selected by ~/.config/display/env, a symlink
-# managed by setup_display.sh (untracked; gitignored). All other scripts
-# source this same path -- one symlink, one source of truth.
+# Per-host display profile. Prefer the ~/.config/display/env symlink (set by
+# setup_display.sh, untracked/gitignored) for an explicit monitor-profile choice;
+# otherwise fall back to the host-named profile ~/.config/display/<hostname>.env.
+# One source of truth, with a sane default per box.
 env_link="$HOME/.config/display/env"
-if [[ ! -e "$env_link" ]]; then
-    echo "error: $env_link missing -- run setup_display.sh to pick a profile" >&2
+if [[ -e "$env_link" ]]; then
+    profile="$env_link"
+else
+    profile="$HOME/.config/display/$(hostname -s).env"
+fi
+if [[ ! -e "$profile" ]]; then
+    echo "error: no display profile ($env_link or $profile) -- run setup_display.sh" >&2
     exit 1
 fi
 # shellcheck source=/dev/null
-source "$env_link"
+source "$profile"
 
 # Scale a pixel base value: round(base * SCALE)
 _scale() { awk "BEGIN{printf \"%d\", int($1 * ${SCALE} + 0.5)}"; }
@@ -60,6 +66,7 @@ for conf in "$HOME/.config/wm"/conf/*.conf.in \
             "$HOME/.config/dunst/dunstrc.in" \
             "$HOME/.config/xsettingsd/xsettingsd.conf.in" \
             "$HOME/.config/kitty/display.conf.in" \
+            "$HOME/.config/zed/settings.json.in" \
             "$HOME/.Xresources.in"; do
     [[ -f "$conf" ]] || continue
     envsubst < "$conf" > "${conf%.in}"
@@ -71,9 +78,5 @@ pkill -HUP xsettingsd 2>/dev/null || true
 pkill -USR1 -x kitty 2>/dev/null || true
 systemctl --user set-environment CHROMIUM_FLAGS="--force-device-scale-factor=${SCALE}"
 
-# Zed: patch font sizes in-place, preserving comments and all other settings
-# sed -i uses an atomic rename which triggers Zed's inotify watcher
-sed -i "s/\"ui_font_size\": [0-9.]*/\"ui_font_size\": ${FONT_ZED_UI}/" \
-    "$HOME/.config/zed/settings.json"
-sed -i "s/\"buffer_font_size\": [0-9.]*/\"buffer_font_size\": ${FONT_ZED_EDITOR}/" \
-    "$HOME/.config/zed/settings.json"
+# Zed is now rendered from settings.json.in by the envsubst loop above (was an
+# in-place sed on the tracked file, which churned it into git — #zed-kitty-churn).

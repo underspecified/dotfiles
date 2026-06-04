@@ -6,6 +6,7 @@
 .config/i3
 .config/i3status
 .config/keymaps
+.docker/config.json
 .config/kitty/display.conf.in
 .config/rofi
 .config/sway

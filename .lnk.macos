@@ -4,13 +4,15 @@
 .config/aerospace
 .config/borders
 .config/btt
+.config/display
 .config/karabiner
-.config/kitty/display.conf
+.config/kitty/display.conf.in
 .config/kitty/macos-launch-services-cmdline
 .config/op
 .config/popclip
 .config/skhd
 .config/yabai
+.docker/config.json
 .local/bin/borders_auto
 .local/bin/borders_dark
 .local/bin/borders_light
@@ -24,6 +26,7 @@
 .local/bin/open_finder
 .local/bin/open_kitty
 .local/bin/open_safari
+.local/bin/render_ui_config
 .local/bin/screensaver
 .local/bin/toggle_alfred
 .local/bin/toggle_borders

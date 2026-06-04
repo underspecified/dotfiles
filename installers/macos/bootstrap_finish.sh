@@ -161,9 +161,22 @@ print_manual_checklist() {
 EOF
 }
 
+render_ui() {
+  # Materialize kitty/zed font config from the host display profile (the .in
+  # templates → gitignored real files). Symlinks are restored before phase 2,
+  # so render_ui_config + the templates + tank.env are already in place.
+  local r="${HOME}/.local/bin/render_ui_config"
+  if [[ -x "$r" ]]; then
+    "$r" || warn "render_ui_config failed (kitty/zed fonts not materialized)"
+  else
+    warn "render_ui_config not found — run it manually after lnk pull"
+  fi
+}
+
 main() {
   check_preconditions
   install_brewfile
+  render_ui
   run_all_installers
   link_1password_agent_dir
   pull_private_configs_from_1password
