@@ -1,22 +1,22 @@
-# dgx02 → fleet dispatch relay: keep per-host LocalForwards alive through llm-jp.
+# dgx02 → fleet dispatch relay: keep the per-host bus tunnels alive.
 #
-# Each -L maps a dgx02-local port to a fleet host's Agent Mail bus, with the
-# forward TARGET (tank:8765 etc.) resolved by MagicDNS ON llm-jp — so the tunnel
-# survives the fleet roaming (only llm-jp's static work-LAN address, supplied by
-# the ssh config, is referenced from dgx02). dgx02's dispatch env then points
-# AGENT_MAIL_URL_<HOST> at the matching 127.0.0.1:<port>. See
-# docs/dispatch-dgx02-relay.md.
+# Runs ~/.local/bin/dispatch-tunnels, which launches one autossh per fleet bus,
+# each forwarding a dgx02-local port to that host's LOOPBACK Agent Mail bus
+# (127.0.0.1:8765 behind Tailscale Serve) via ssh — tank/germputer/llm-jp-2 over
+# ProxyJump llm-jp, llm-jp direct. Forward targets are resolved by MagicDNS on
+# the receiver/jump side, so the tunnels survive the fleet roaming. Loopback
+# targets => tokenless. dgx02's dispatch env points AGENT_MAIL_URL_<HOST> at the
+# matching 127.0.0.1:<port>. See docs/dispatch-dgx02-relay.md.
 #
 # Enable (user-space, no sudo):
 #   loginctl enable-linger "$USER"          # survive logout
 #   systemctl --user daemon-reload
 #   systemctl --user enable --now dispatch-tunnel.service
 #
-# Ports: 9101 tank · 9102 germputer · 9103 llm-jp-2. (llm-jp's own bus is reached
-# directly over the work LAN, no forward.)
+# Ports: 9101 tank · 9102 germputer · 9103 llm-jp-2 · 9104 llm-jp.
 
 [Unit]
-Description=dispatch relay: autossh LocalForwards to fleet buses via llm-jp
+Description=dispatch relay: autossh bus tunnels to the fleet (via llm-jp)
 After=network-online.target
 Wants=network-online.target
 
@@ -25,13 +25,7 @@ Type=simple
 # AUTOSSH_GATETIME=0 → don't treat a fast first-connection failure as fatal;
 # let autossh/systemd retry while llm-jp or the network settles.
 Environment=AUTOSSH_GATETIME=0
-ExecStart=%h/.local/bin/autossh -M0 -N \
-    -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
-    -o ExitOnForwardFailure=yes \
-    -L 127.0.0.1:9101:tank:8765 \
-    -L 127.0.0.1:9102:germputer:8765 \
-    -L 127.0.0.1:9103:llm-jp-2:8765 \
-    llm-jp
+ExecStart=%h/.local/bin/dispatch-tunnels
 Restart=always
 RestartSec=10
 

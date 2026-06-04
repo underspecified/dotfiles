@@ -1,3 +1,4 @@
 .config/zsh/zshrc.local
 .ssh/config.d/relay.conf
 .config/systemd/user/dispatch-tunnel.service
+.local/bin/dispatch-tunnels

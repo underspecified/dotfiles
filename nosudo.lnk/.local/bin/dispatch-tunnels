@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# dgx02 → fleet dispatch relay tunnels.
+#
+# One autossh per fleet Agent Mail bus, each forwarding a dgx02-local port to
+# that host's LOOPBACK bus (127.0.0.1:8765). The tailnet :8765 endpoint is
+# Tailscale Serve (HTTPS) in front of the raw HTTP bus on localhost, so we must
+# forward to localhost:8765 ON the receiver — not to <host>:8765 (that hits
+# Serve's TLS and returns 400). Forwarding to the receiver's loopback also makes
+# every call auto-promoted/tokenless (HTTP_ALLOW_LOCALHOST_UNAUTHENTICATED), so
+# there is no per-host token to manage.
+#
+# ssh reaches tank/germputer/llm-jp-2 via `ProxyJump llm-jp` (relay.conf) and
+# llm-jp directly; llm-jp resolves the bare names by MagicDNS at connect time,
+# which is what makes the whole thing roam-proof. dgx02's dispatch env points
+# AGENT_MAIL_URL_<HOST> at the matching 127.0.0.1:<port>.
+#
+# Run under the dispatch-tunnel.service user unit (Restart=always): if ANY
+# tunnel drops, this exits non-zero so systemd relaunches the full set.
+set -uo pipefail
+
+# host → local forward port. Names only (no IPs); the secret llm-jp HostName
+# lives in the dgx02-local ~/.ssh/config.d/relay-local.conf.
+declare -A PORTS=(
+  [tank]=9101
+  [germputer]=9102
+  [llm-jp-2]=9103
+  [llm-jp]=9104
+)
+
+pids=()
+for host in "${!PORTS[@]}"; do
+  autossh -M0 -N \
+    -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
+    -o ExitOnForwardFailure=yes -o BatchMode=yes -o ConnectTimeout=15 \
+    -L "127.0.0.1:${PORTS[$host]}:localhost:8765" "$host" &
+  pids+=("$!")
+done
+
+# Wait for the first tunnel to die, then tear the rest down and exit non-zero
+# → systemd Restart=always brings the whole set back.
+wait -n "${pids[@]}"
+kill "${pids[@]}" 2>/dev/null || true
+exit 1

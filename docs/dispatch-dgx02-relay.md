@@ -26,54 +26,67 @@ the fleet roaming (TANK's laptop IP changes; `tank`/its `100.x` do not).
 
 ```
                          ┌───────────────── llm-jp (Tailscale) ─────────────────┐
-   dgx02 (work-LAN only) │  resolves tank/germputer/llm-jp-2 by MagicDNS, then  │
-                         │  forwards/connects over the tailnet (roam-proof)     │
-   autossh -L 9101 ──────┼──► tank:8765        (MagicDNS-resolved on llm-jp)    │
-   autossh -L 9102 ──────┼──► germputer:8765                                    │
-   autossh -L 9103 ──────┼──► llm-jp-2:8765                                     │
-   ssh ProxyJump llm-jp ─┼──► ssh <host>  (dispatch __resolve-identity + scp)   │
+   dgx02 (work-LAN only) │  resolves tank/germputer/llm-jp-2 by MagicDNS        │
+                         │  (roam-proof); is itself reached directly on the LAN  │
+   autossh ssh tank ─────┼─► tank      : -L 9101 → its localhost:8765 (raw bus) │
+   autossh ssh germputer ┼─► germputer : -L 9102 → its localhost:8765           │
+   autossh ssh llm-jp-2 ─┼─► llm-jp-2  : -L 9103 → its localhost:8765           │
+   autossh ssh llm-jp ───┼─► llm-jp    : -L 9104 → its localhost:8765 (direct)  │
+   ssh ProxyJump llm-jp ─┼─► ssh <host>  (dispatch __resolve-identity + scp)    │
                          └──────────────────────────────────────────────────────┘
 ```
 
-- **Leg A — HTTP buses: per-host LocalForwards.** One persistent `autossh -M0 -N
-  -L …×3 llm-jp` (the `dispatch-tunnel.service` user unit). dgx02 hits
-  `127.0.0.1:<port>`; llm-jp resolves the forward target by name and connects.
-  NOT a SOCKS proxy with `ALL_PROXY` — dgx02's dispatch env is glob-sourced into
-  the login shell, so an exported proxy would route *all* of dgx02's HTTP (HF model
-  pulls, pip) through llm-jp. LocalForwards touch only the three ports.
+**Why forward to the receiver's `localhost:8765`, not `<host>:8765`:** the tailnet
+`<host>:8765` is **Tailscale Serve (HTTPS)** in front of the raw HTTP bus, which
+binds `127.0.0.1:8765`. A raw TCP forward + `http://` to `<host>:8765` hits Serve's
+TLS and returns `400`. Forwarding to the receiver's loopback bus (over an
+`ssh <host>` whose TCP exit *is* that host) reaches the raw bus directly — and,
+being loopback on the receiver, every call is auto-promoted/tokenless
+(`HTTP_ALLOW_LOCALHOST_UNAUTHENTICATED`). **No per-host tokens to manage.**
+
+- **Leg A — HTTP buses: per-host LocalForwards** (`~/.local/bin/dispatch-tunnels`,
+  one `autossh` per host, under `dispatch-tunnel.service`). NOT a SOCKS proxy with
+  `ALL_PROXY` — dgx02's dispatch env is glob-sourced into the login shell, so an
+  exported proxy would route *all* of dgx02's HTTP (HF pulls, pip) through llm-jp.
 - **Leg B — SSH: ProxyJump.** `relay.conf` sends `tank germputer llm-jp-2` through
   `ProxyJump llm-jp`, satisfying dispatch's `ssh <host>` identity hop (and giving
-  general ssh/scp for free).
+  general ssh/scp for free). It also carries each Leg-A tunnel.
 
 ## Port map
 
-| Local (dgx02) | → fleet bus | dispatch env |
-|---|---|---|
-| `127.0.0.1:9101` | `tank:8765` | `AGENT_MAIL_URL_TANK=http://127.0.0.1:9101/mcp/` |
-| `127.0.0.1:9102` | `germputer:8765` | `AGENT_MAIL_URL_GERMPUTER=http://127.0.0.1:9102/mcp/` |
-| `127.0.0.1:9103` | `llm-jp-2:8765` | `AGENT_MAIL_URL_LLM_JP_2=http://127.0.0.1:9103/mcp/` |
-| (direct, no forward) | `llm-jp:8765` | `AGENT_MAIL_URL_LLM_JP=http://<llm-jp-lan-ip>:8765/mcp/` |
-| (local bus) | `dgx02:18765` | `AGENT_MAIL_URL=http://127.0.0.1:18765/mcp/` |
+All forwards target the receiver's loopback bus (`localhost:8765`); all are
+tokenless. dgx02's own bus is unchanged.
 
-Tokens (`AGENT_MAIL_TOKEN_<HOST>`) live beside these in untracked, chmod-600
-`~/.config/dispatch/dgx02.env`, fetched per host over the ProxyJump ssh hop.
+| Local (dgx02) | ssh to | → its bus | dispatch env |
+|---|---|---|---|
+| `127.0.0.1:9101` | tank (ProxyJump) | `localhost:8765` | `AGENT_MAIL_URL_TANK=http://127.0.0.1:9101/mcp/` |
+| `127.0.0.1:9102` | germputer (ProxyJump) | `localhost:8765` | `AGENT_MAIL_URL_GERMPUTER=http://127.0.0.1:9102/mcp/` |
+| `127.0.0.1:9103` | llm-jp-2 (ProxyJump) | `localhost:8765` | `AGENT_MAIL_URL_LLM_JP_2=http://127.0.0.1:9103/mcp/` |
+| `127.0.0.1:9104` | llm-jp (direct) | `localhost:8765` | `AGENT_MAIL_URL_LLM_JP=http://127.0.0.1:9104/mcp/` |
+| (local bus) | — | `dgx02:18765` | `AGENT_MAIL_URL=http://127.0.0.1:18765/mcp/` |
+
+These four `AGENT_MAIL_URL_<HOST>` lines live in untracked, chmod-600
+`~/.config/dispatch/dgx02.env` (names + localhost ports — no secrets, no tokens).
 
 ## Tracked vs. secret
 
 | Where | What |
 |---|---|
-| Public mirror (`nosudo.lnk/`, `--host nosudo`) | `relay.conf` (names + auth params, **no IPs**), `dispatch-tunnel.service`, `installers/nosudo/install_autossh.sh` |
-| 1Password (`ssh-config-honda` doc → `~/.ssh/config.d/honda`) | `Host llm-jp` with the secret **work-LAN HostName** |
-| Untracked, chmod 600 (`~/.config/dispatch/dgx02.env`) | per-host bus URLs + **tokens** |
+| Public mirror (`nosudo.lnk/`, `--host nosudo`) | `relay.conf` (names + auth params, **no IPs**), `dispatch-tunnels` wrapper, `dispatch-tunnel.service`, `installers/nosudo/install_autossh.sh` |
+| dgx02-local, untracked (`~/.ssh/config.d/relay-local.conf`) | `Host llm-jp` with its **work-LAN HostName** — kept off the public mirror AND off the shared honda doc (a HostName override there would force the work-LAN IP on roaming machines like tank) |
+| Untracked, chmod 600 (`~/.config/dispatch/dgx02.env`) | the four loopback bus URLs (names + ports, **no tokens** — loopback forwards are auto-promoted) |
 
 ## Setup (dgx02)
 
-1. `lnk pull --host nosudo` — lays down `relay.conf` + the tunnel unit.
+1. `lnk pull --host nosudo` — lays down `relay.conf`, the `dispatch-tunnels`
+   wrapper, and the tunnel unit.
 2. `bash ~/.config/lnk/installers/nosudo/install_autossh.sh` (or a full nosudo
    re-run) — builds `~/.local/bin/autossh`.
-3. Ensure the 1Password `ssh-config-honda` doc has `Host llm-jp` (HostName =
-   llm-jp's work-LAN IP); re-pull: `bash ~/.config/lnk/installers/all/ssh-config-honda.sh`.
-4. Write `~/.config/dispatch/dgx02.env` (URLs from the port map + a token per host).
+3. Create the dgx02-local `~/.ssh/config.d/relay-local.conf` with
+   `Host llm-jp` / `HostName <llm-jp work-LAN IP>` (chmod 600). This supplies the
+   one IP the relay needs; `relay.conf` supplies User/IdentityFile.
+4. Write `~/.config/dispatch/dgx02.env` with the four `AGENT_MAIL_URL_<HOST>`
+   loopback URLs from the port map (no tokens).
 5. Start the tunnel:
    ```
    loginctl enable-linger "$USER"
@@ -87,9 +100,9 @@ Tokens (`AGENT_MAIL_TOKEN_<HOST>`) live beside these in untracked, chmod-600
 
 - `ssh -G germputer` on dgx02 → shows `proxyjump llm-jp`.
 - `ssh germputer hostname` → `germputer` (ProxyJump auth chain; needs hri_jp).
-- `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:9102/mcp/` → a bus
-  response (e.g. 400/406), proving the forward reaches germputer's bus.
-- `dispatch -C germputer:<dir> new` from dgx02 round-trips.
+- with the tunnels up, `dispatch -C germputer:<dir> new` from dgx02 round-trips
+  (returns the inbox, e.g. `(empty)` for a fresh dir) — proves the loopback
+  forward + ProxyJump `__resolve-identity` + tokenless bus read all work.
 - `systemctl --user status dispatch-tunnel` → active; kill the autossh process and
   confirm `Restart=always` brings it back.
 
