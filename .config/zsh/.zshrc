@@ -87,8 +87,10 @@ export PATH="$PATH:$HOME/.cache/lm-studio/bin"
 for _f in ~/.config/dispatch/*.env(N); do source "$_f"; done
 unset _f
 
-# Host-scoped overrides via lnk (e.g. `nosudo` host's AGENT_MAIL_URL).
-# Sourced last so local settings win over anything in zshrc.{osx,linux,*}.
+# Host-local zsh overrides (untracked $ZDOTDIR/zshrc.local). General escape
+# hatch, sourced last so it wins over zshrc.{osx,linux,*}. Currently unused —
+# dgx02's AGENT_MAIL_URL moved to ~/.config/dispatch/local.env (glob-sourced
+# above); kept for any future genuine per-host shell override.
 if [ -f "$ZDOTDIR/zshrc.local" ]; then
     . "$ZDOTDIR/zshrc.local"
 fi
