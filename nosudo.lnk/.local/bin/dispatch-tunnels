@@ -33,15 +33,22 @@ declare -A PORTS=(
 
 pids=()
 for host in "${!PORTS[@]}"; do
+  # ControlMaster=no / ControlPath=none are LOAD-BEARING: relay.conf sets
+  # `ControlMaster auto` for dispatch's many short ssh calls, but a multiplexed
+  # `ssh -N -L` client attaches to the shared master and exits 0 immediately —
+  # taking the forward with it — so autossh sees a clean exit and quits. A
+  # dedicated (un-multiplexed) connection keeps the -N forward alive.
   autossh -M0 -N \
+    -o ControlMaster=no -o ControlPath=none \
     -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
     -o ExitOnForwardFailure=yes -o BatchMode=yes -o ConnectTimeout=15 \
     -L "127.0.0.1:${PORTS[$host]}:localhost:8765" "$host" &
   pids+=("$!")
 done
 
-# Block on all tunnels. With AUTOSSH_GATETIME=0 (set in the unit) each autossh
-# retries its own ssh indefinitely — a host that's down/asleep (tank) keeps
-# retrying without taking the others with it. Deliberately NOT `wait -n`+kill:
-# that would let one unreachable host tear the whole set down on a restart loop.
-wait
+# Restart the whole set if ANY tunnel dies. Safe with AUTOSSH_GATETIME=0: a
+# down/asleep host's autossh keeps RETRYING (never exits), so this only fires on
+# a genuine death → systemd Restart=always relaunches all four.
+wait -n "${pids[@]}"
+kill "${pids[@]}" 2>/dev/null || true
+exit 1
