@@ -19,7 +19,8 @@ env_link="$HOME/.config/display/env"
 if [[ -e "$env_link" ]]; then
     profile="$env_link"
 else
-    profile="$HOME/.config/display/$(hostname -s).env"
+    # lowercase the hostname so a lowercase profile matches any-case host.
+    profile="$HOME/.config/display/$(hostname -s | tr '[:upper:]' '[:lower:]').env"
 fi
 if [[ ! -e "$profile" ]]; then
     echo "error: no display profile ($env_link or $profile) -- run setup_display.sh" >&2
