@@ -18,6 +18,10 @@
 # tunnel drops, this exits non-zero so systemd relaunches the full set.
 set -uo pipefail
 
+# autossh lives in ~/.local/bin, which the systemd --user unit's minimal PATH
+# omits; ssh is on the system PATH. Prepend so both resolve.
+export PATH="$HOME/.local/bin:$PATH"
+
 # host → local forward port. Names only (no IPs); the secret llm-jp HostName
 # lives in the dgx02-local ~/.ssh/config.d/relay-local.conf.
 declare -A PORTS=(
@@ -36,8 +40,8 @@ for host in "${!PORTS[@]}"; do
   pids+=("$!")
 done
 
-# Wait for the first tunnel to die, then tear the rest down and exit non-zero
-# → systemd Restart=always brings the whole set back.
-wait -n "${pids[@]}"
-kill "${pids[@]}" 2>/dev/null || true
-exit 1
+# Block on all tunnels. With AUTOSSH_GATETIME=0 (set in the unit) each autossh
+# retries its own ssh indefinitely — a host that's down/asleep (tank) keeps
+# retrying without taking the others with it. Deliberately NOT `wait -n`+kill:
+# that would let one unreachable host tear the whole set down on a restart loop.
+wait
