@@ -79,6 +79,14 @@ export PATH="$PATH:$HOME/.cache/lm-studio/bin"
 
 ##### LOCAL OVERRIDES #####
 
+# dispatch env (machine-local, untracked, chmod-600 for token-bearing files).
+# Glob-source ALL of ~/.config/dispatch/*.env so one line covers every host +
+# both sender files (dgx02.env: AGENT_MAIL_URL_<HOST>+token) and a box's own
+# local.env (AGENT_MAIL_URL for its non-default bus port). Cross-platform —
+# replaces the old linux-only, dgx02.env-specific line in zshrc.linux.
+for _f in ~/.config/dispatch/*.env(N); do source "$_f"; done
+unset _f
+
 # Host-scoped overrides via lnk (e.g. `nosudo` host's AGENT_MAIL_URL).
 # Sourced last so local settings win over anything in zshrc.{osx,linux,*}.
 if [ -f "$ZDOTDIR/zshrc.local" ]; then
