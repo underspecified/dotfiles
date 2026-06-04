@@ -168,7 +168,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "node ~/.claude/statusline/claude-limitline/dist/index.js"
+    "command": "env GIT_OPTIONAL_LOCKS=0 node ~/.claude/statusline/claude-limitline/dist/index.js"
   },
   "enabledPlugins": {
     "pyright-lsp@claude-plugins-official": true,
@@ -206,6 +206,7 @@
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "showThinkingSummaries": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "dark-ansi",
   "verbose": true,
   "preferredNotifChannel": "kitty",
