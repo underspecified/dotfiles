@@ -104,6 +104,52 @@ run_user_installers() {
   run_step "${CUR_DIR}/install_autossh.sh"     "autossh (dispatch relay tunnel -- from-source)"
 }
 
+ensure_bashrc_path() {
+  # dgx02-class boxes commonly have bash as the login shell, so `ssh host cmd`
+  # runs NON-interactive NON-login bash -- which sources neither ~/.zshenv
+  # (zsh-only) nor ~/.profile (login-only) nor, normally, ~/.bashrc. The one
+  # exception: bash invoked by sshd with stdin on a socket DOES source
+  # ~/.bashrc (network-stdin detection), but only code ABOVE the Debian
+  # interactive guard (`case $- in *i*) ;; *) return ;; esac`) ever runs. So we
+  # prepend a small guarded PATH block to the TOP of ~/.bashrc, so bare-name
+  # tools in ~/.local/bin (claude/codex/gemini/node/uv) resolve for remote
+  # command execution -- the zsh-side .zshenv fix never fires for bash ssh.
+  local rc="${HOME}/.bashrc"
+  local marker="# >>> lnk nosudo: ~/.local/bin on PATH for non-interactive ssh >>>"
+  if [[ -f "${rc}" ]] && grep -qF "${marker}" "${rc}"; then
+    log "  ~/.bashrc PATH block already present"
+    return 0
+  fi
+  # Write the block straight to a temp file via a single-quoted heredoc, then
+  # append any existing ~/.bashrc after it. We do NOT capture the heredoc into a
+  # variable through $( ) -- bash 3.2's parser corrupts a $()-captured heredoc
+  # that contains a `case`/`*)`. Direct redirect is robust on every bash.
+  # ${PATH}/${HOME} are written literally (single-quoted delimiter) and expand
+  # when ~/.bashrc runs, not now.
+  local tmp
+  tmp="$(mktemp)"
+  cat > "${tmp}" <<'EOF'
+# >>> lnk nosudo: ~/.local/bin on PATH for non-interactive ssh >>>
+# Bash run by sshd for `ssh host cmd` is non-interactive + non-login but still
+# sources ~/.bashrc (network-stdin detection). This block sits ABOVE the
+# interactive guard below so bare-name ~/.local/bin tools resolve over ssh.
+case ":${PATH}:" in
+  *":${HOME}/.local/bin:"*) ;;
+  *) export PATH="${HOME}/.local/bin:${PATH}" ;;
+esac
+# <<< lnk nosudo: ~/.local/bin on PATH for non-interactive ssh <<<
+EOF
+  if [[ -f "${rc}" ]]; then
+    printf '\n' >> "${tmp}"
+    cat "${rc}" >> "${tmp}"
+    mv "${tmp}" "${rc}"
+    log "  prepended ~/.local/bin PATH block to existing ~/.bashrc"
+  else
+    mv "${tmp}" "${rc}"
+    log "  created ~/.bashrc with ~/.local/bin PATH block"
+  fi
+}
+
 run_claude_bootstrap() {
   # ~/.claude/bootstrap.sh chains the per-area scripts (statusline, skills,
   # MCP, patches). Safe to re-run -- each child handles missing-vs-existing
@@ -141,6 +187,7 @@ EOF
 main() {
   check_preconditions
   run_user_installers
+  ensure_bashrc_path
   run_claude_bootstrap
   print_summary
 }
