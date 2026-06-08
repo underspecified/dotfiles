@@ -13,6 +13,30 @@
 // FONT_ZED_UI / FONT_ZED_EDITOR. The rendered settings.json is gitignored —
 // edit sizes in the profile, not here. Everything else is shared, edit freely.
 {
+  "ui_font_family": "iMWritingQuat Nerd Font Propo",
+  "buffer_font_family": "iMWritingMono Nerd Font Propo",
+  "buffer_font_weight": 400.0,
+  "ui_font_size": ${FONT_ZED_UI},
+  "buffer_font_size": ${FONT_ZED_EDITOR},
+
+  "autosave": "on_focus_change",
+
+  "theme": {
+    "mode": "system",
+    "light": "Base16 selenized-light",
+    "dark": "Base16 selenized-dark",
+  },
+
+  "show_wrap_guides": true,
+  "wrap_guides": [80, 120],
+  "soft_wrap": "editor_width",
+  "preferred_line_length": 80,
+
+  "unstable.ui_density": "compact",
+  "scrollbar": {
+    "show": "auto",
+  },
+
   "project_panel": {
     "dock": "left",
   },
@@ -30,90 +54,8 @@
   "git_panel": {
     "dock": "left",
   },
-
-  "ui_font_family": "iMWritingQuat Nerd Font Propo",
-  "buffer_font_family": "iMWritingMono Nerd Font Propo",
-  "buffer_font_weight": 400.0,
-  "ui_font_size": ${FONT_ZED_UI},
-  "buffer_font_size": ${FONT_ZED_EDITOR},
-
-  // "buffer_font_family": "MesloLGSDZ Nerd Font",
-  // "buffer_font_weight": 400.0,
-
-  // "buffer_font_family": "0xProto Nerd Font",
-  // "buffer_font_weight": 300.0,
-  // "buffer_font_features": {
-  //   "calt": true,
-  //   "liga": true,
-  //   "ss01": false
-  // },
-
-  // "buffer_font_family": "Monaspace Argon",
-  // "buffer_font_weight": 300.0,
-  // "buffer_font_features": {
-  //   "calt": true,
-  //   "liga": true,
-  //   "ss01": true,
-  //   "ss02": true,
-  //   "ss03": true,
-  //   "ss04": true,
-  //   "ss05": true,
-  //   "ss06": true,
-  //   "ss07": true,
-  //   "ss08": true,
-  //   "ss09": true,
-  //   "ss10": true,
-  //   "zero": true
-  // },
-
-  // "buffer_font_family": "Victor Mono",
-  // "buffer_font_weight": 300.0,
-  // // "buffer_font_features": {
-  // //   "calt": true,
-  // //   "ss01": true
-  // // },
-
-  // "buffer_font_family": "Fira Code",
-  // "buffer_font_weight": 300.0,
-  // "buffer_font_features": {
-  //   "cv06": 1,
-  //   //"cv14": 1,
-  //   "cv19": 1,
-  //   "cv20": 1,
-  //   "cv21": 1,
-  //   "cv22": 1,
-  //   "cv23": 1,
-  //   "cv24": 1,
-  //   "cv25": 1,
-  //   "cv26": 1,
-  //   "cv27": 1,
-  //   "cv28": 1,
-  //   //"onum": true,
-  //   "ss02": true,
-  //   "ss06": true,
-  //   "ss07": true,
-  //   "ss09": true,
-  //   //"ss10": true,
-  //   "zero": true
-  // },
-
-  "autosave": "on_focus_change",
-
   "terminal": {
     "dock": "right",
-  },
-
-  "theme": {
-    "mode": "system",
-    "light": "Base16 selenized-light",
-    "dark": "Base16 selenized-dark",
-  },
-
-  "unstable.ui_density": "compact",
-  "preferred_line_length": 80,
-  "soft_wrap": "prefer_line",
-  "scrollbar": {
-    "show": "never",
   },
 
   "title_bar": {
