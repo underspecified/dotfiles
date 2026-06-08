@@ -74,9 +74,13 @@
 
 [rebase]
 	autostash = true
+# Resolve gh via PATH, not an absolute path: `gh auth setup-git` hardcodes
+# the machine where it ran (e.g. /home/e.nichols/.local/bin/gh on dgx02),
+# which breaks this synced config on every other host. `!gh` runs under
+# /bin/sh and picks up gh from PATH (homebrew on Mac, ~/.local/bin on dgx02).
 [credential "https://github.com"]
-	helper = 
-	helper = !/home/e.nichols/.local/bin/gh auth git-credential
+	helper =
+	helper = !gh auth git-credential
 [credential "https://gist.github.com"]
 	helper =
-	helper = !/home/e.nichols/.local/bin/gh auth git-credential
+	helper = !gh auth git-credential
