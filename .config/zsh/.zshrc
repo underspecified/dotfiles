@@ -41,19 +41,15 @@ export EDITOR="emacs -nw"
 export VISUAL="emacs -nw"
 
 ### terminal settings
+# Interactive-/kitty-gated alias stays here (kitten is not present on headless
+# boxes and `ssh` inside scripts must remain the real binary). Portable aliases
+# live in $ZDOTDIR/aliases.zsh, sourced from .zshenv (non-interactive too).
 if [[ -v KITTY_PID && ! -v ZED_TERM ]]; then
     export TERM="xterm-kitty"
     alias ssh="kitten ssh"
 else
     export TERM="xterm-color"
 fi
-
-# color programs
-alias grep="grep --color=auto"
-alias diff="diff --color=auto"
-
-# nvtop
-alias nvtop="TERM=xterm-color nvtop"
 
 ##### COMPLETIONS #####
 

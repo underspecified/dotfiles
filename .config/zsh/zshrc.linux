@@ -9,22 +9,8 @@ export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock
 export OP_DIR="/opt/1Password"
 export PATH="$OP_DIR:$PATH"
 
-# ls colors
+# ls colors (aliases moved to $ZDOTDIR/aliases.zsh, sourced from .zshenv)
 export LS_COLORS="$LS_COLORS:ow=1;7;34:st=30;44:su=30;41"
-alias ls="ls --color=auto"
-
-### aliases
-
-# Emacs
-alias emacs="TERM=xterm-color emacs -nw"
-
-# pbcopy
-alias pbcopy='xsel --clipboard --input'
-alias pbpaste='xsel --clipboard --output'
-alias pbclear='xsel --clipboard --clear'
-
-# open
-alias open='gio open'
 
 # ssh-agent via keychain (persistent across shells). On Linux we no longer
 # use the 1Password GUI agent; agent.conf is a no-op and SSH_AUTH_SOCK is

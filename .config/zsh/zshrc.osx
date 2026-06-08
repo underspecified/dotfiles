@@ -19,25 +19,13 @@ export TEXMFCONFIG="$HOME/.texlive2024/texmf-config"
 export OP_DIR="/Applications/1Password.app/Contents/MacOS/"
 export PATH="$OP_DIR:$PATH"
 
-# ls colors
+# ls colors (aliases moved to $ZDOTDIR/aliases.zsh, sourced from .zshenv)
 export LSCOLORS="exfxcxdxbxegedabagacad"
-alias ls="ls -G"
 
 ### aliases
 
-# Emacs
-alias emacs="TERM=xterm-color /opt/homebrew/bin/emacs -nw"
-
-# fix POSIX mode zcat appending .Z to all file names
-alias zcat="gzcat"
-
 # default browser
 export BROWSER="open"
-alias safari="open -a /Applications/Safari.app"
-
-# Quick way to rebuild the Launch Services database and get rid
-# of duplicates in the Open With submenu.
-alias fixopenwith='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
 
 # YourKit Java profiler
 ykprof() {

@@ -9,6 +9,11 @@ export LANGUAGE="en_US.UTF-8"
 
 ##### PATH #####
 
+# Keep PATH/MANPATH/fpath free of duplicates no matter how many times this file
+# is sourced (nested zsh, re-exec, etc.). typeset -U makes the array maintain
+# uniqueness, deduping existing entries and any added below.
+typeset -U path PATH manpath MANPATH fpath
+
 # local bin and manpath
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/sbin:$PATH
@@ -35,3 +40,9 @@ if [ -n "$_agent_path" ]; then
     [ -S "$_agent_path" ] && export SSH_AUTH_SOCK="$_agent_path"
 fi
 unset _agent_path
+
+##### ALIASES #####
+
+# Sourced here (not .zshrc) so aliases are available non-interactively too —
+# e.g. `ssh host '<alias>'`. See aliases.zsh for the rationale.
+[ -f "$ZDOTDIR/aliases.zsh" ] && . "$ZDOTDIR/aliases.zsh"
