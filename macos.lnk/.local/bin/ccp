@@ -1,0 +1,288 @@
+#!/usr/bin/env bash
+# Usage: ccp <command> [args]   (Claude Code Profile — switch/launch by identity)
+#
+# Commands:
+#   ccp run [-p <name>] [claude args...]  Launch claude with a profile's OAuth token
+#   ccp use <name>                        Set the default active profile
+#   ccp list                              List profiles (active marked with *)
+#   ccp status                            Show active profile + token health
+#   ccp add <name> <op-reference>         Map a profile to a 1Password secret ref
+#   ccp rm  <name>                        Remove a profile mapping
+#   ccp ref [name]                        Print the op:// ref for active/named profile
+#   ccp fleet list                        List dispatch tmux sessions (the fleet)
+#   ccp fleet switch <name> --match RE|--all [--apply] [--include-self]
+#                                         Relaunch matching dispatch sessions under <name>
+#                                         (destroy + wake --headless; --continue resumes
+#                                          the transcript under the new identity). Dry-run
+#                                          unless --apply. Excludes the current session.
+#
+# Tokens are long-lived OAuth tokens from `claude setup-token`, stored in 1Password
+# and resolved at launch via `op read`. They never touch disk. CLAUDE_CODE_OAUTH_TOKEN
+# is auth-precedence #5, so this also unsets ANTHROPIC_API_KEY/ANTHROPIC_AUTH_TOKEN
+# (#3) which would otherwise win.
+#
+# Config (machine-local, not in git):
+#   ${XDG_CONFIG_HOME:-~/.config}/ccp/profiles   lines: <name><TAB>op://vault/item/field
+#   ${XDG_CONFIG_HOME:-~/.config}/ccp/active      single line: active profile name
+set -uo pipefail
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/ccp"
+PROFILES_FILE="${CONFIG_DIR}/profiles"
+ACTIVE_FILE="${CONFIG_DIR}/active"
+
+die() {
+  echo "ccp: $*" >&2
+  exit 1
+}
+
+ensure_config() {
+  mkdir -p "${CONFIG_DIR}"
+  [[ -f "${PROFILES_FILE}" ]] || : >"${PROFILES_FILE}"
+}
+
+# Print the op:// reference for a profile name. Returns non-zero if not found.
+ref_for() {
+  local name="$1"
+  awk -F'\t' -v n="${name}" '$1 == n { print $2; found = 1 } END { exit !found }' \
+    "${PROFILES_FILE}"
+}
+
+active_name() {
+  [[ -f "${ACTIVE_FILE}" ]] && head -n1 "${ACTIVE_FILE}"
+}
+
+cmd_add() {
+  local name="${1:-}" ref="${2:-}"
+  [[ -n "${name}" && -n "${ref}" ]] || die "usage: ccp add <name> <op-reference>"
+  [[ "${ref}" == op://* ]] || die "reference must be an op:// path (e.g. op://Private/claude-work/credential)"
+  # Drop any existing line for this name, then append the new mapping.
+  local tmp="${PROFILES_FILE}.tmp"
+  awk -F'\t' -v n="${name}" '$1 != n' "${PROFILES_FILE}" >"${tmp}"
+  printf '%s\t%s\n' "${name}" "${ref}" >>"${tmp}"
+  mv "${tmp}" "${PROFILES_FILE}"
+  echo "ccp: mapped '${name}' -> ${ref}"
+}
+
+cmd_rm() {
+  local name="${1:-}"
+  [[ -n "${name}" ]] || die "usage: ccp rm <name>"
+  ref_for "${name}" >/dev/null || die "no such profile: ${name}"
+  local tmp="${PROFILES_FILE}.tmp"
+  awk -F'\t' -v n="${name}" '$1 != n' "${PROFILES_FILE}" >"${tmp}"
+  mv "${tmp}" "${PROFILES_FILE}"
+  [[ "$(active_name)" == "${name}" ]] && rm -f "${ACTIVE_FILE}"
+  echo "ccp: removed '${name}'"
+}
+
+cmd_use() {
+  local name="${1:-}"
+  [[ -n "${name}" ]] || die "usage: ccp use <name>"
+  ref_for "${name}" >/dev/null || die "no such profile: ${name} (add it with: ccp add ${name} <op-ref>)"
+  echo "${name}" >"${ACTIVE_FILE}"
+  echo "ccp: active profile -> ${name}"
+}
+
+cmd_list() {
+  local active
+  active="$(active_name || true)"
+  if [[ ! -s "${PROFILES_FILE}" ]]; then
+    echo "ccp: no profiles yet. Add one: ccp add work op://Private/claude-work/credential"
+    return 0
+  fi
+  local name ref mark
+  while IFS=$'\t' read -r name ref; do
+    [[ -n "${name}" ]] || continue
+    mark="  "
+    [[ "${name}" == "${active}" ]] && mark="* "
+    printf '%s%-12s %s\n' "${mark}" "${name}" "${ref}"
+  done <"${PROFILES_FILE}"
+}
+
+cmd_ref() {
+  local name="${1:-$(active_name || true)}"
+  [[ -n "${name}" ]] || die "no active profile set (ccp use <name>)"
+  ref_for "${name}" || die "no such profile: ${name}"
+}
+
+cmd_status() {
+  local name ref
+  name="$(active_name || true)"
+  [[ -n "${name}" ]] || die "no active profile set (ccp use <name>)"
+  ref="$(ref_for "${name}")" || die "active profile '${name}' has no mapping"
+  printf 'active profile : %s\n' "${name}"
+  printf 'secret ref     : %s\n' "${ref}"
+  local token
+  if token="$(op read "${ref}" 2>/dev/null)" && [[ -n "${token}" ]]; then
+    printf 'token          : resolved OK (%d chars)\n' "${#token}"
+  else
+    printf 'token          : FAILED to resolve via op read (is 1Password signed in?)\n'
+    return 1
+  fi
+}
+
+cmd_run() {
+  local name=""
+  # Parse leading -p/--profile; everything after is passed to claude.
+  if [[ "${1:-}" == "-p" || "${1:-}" == "--profile" ]]; then
+    name="${2:-}"
+    [[ -n "${name}" ]] || die "usage: ccp run -p <name> [claude args...]"
+    shift 2
+  else
+    name="$(active_name || true)"
+    [[ -n "${name}" ]] || die "no active profile (ccp use <name>) and no -p given"
+  fi
+  local ref token
+  ref="$(ref_for "${name}")" || die "no such profile: ${name}"
+  token="$(op read "${ref}" 2>/dev/null)" || die "failed to read token via op (sign in: op signin)"
+  [[ -n "${token}" ]] || die "empty token for profile '${name}'"
+  # OAuth token is precedence #5; clear higher-precedence env so the profile wins.
+  unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN
+  export CLAUDE_CODE_OAUTH_TOKEN="${token}"
+  command -v claude >/dev/null || die "claude not found on PATH"
+  exec claude "$@"
+}
+
+usage() {
+  cat <<'EOF'
+Usage: ccp <command> [args]   (Claude Code Profile — switch/launch by identity)
+
+  ccp run [-p <name>] [claude args...]  Launch claude with a profile's OAuth token
+  ccp use <name>                        Set the default active profile
+  ccp list                              List profiles (active marked with *)
+  ccp status                            Show active profile + token health
+  ccp add <name> <op-reference>         Map a profile to a 1Password secret ref
+  ccp rm  <name>                        Remove a profile mapping
+  ccp ref [name]                        Print the op:// ref for active/named profile
+  ccp fleet list                        List dispatch tmux sessions (the fleet)
+  ccp fleet switch <name> --match RE|--all [--apply] [--include-self]
+                                        Relaunch matching dispatch sessions under <name>.
+                                        destroy + wake --headless; --continue resumes the
+                                        transcript under the new identity. Dry-run unless
+                                        --apply. The current session is always excluded
+                                        unless --include-self (which would kill ccp).
+EOF
+}
+
+# ---- fleet: relaunch dispatch-managed sessions under a profile ------------
+
+DISPATCH_SOCKET="dispatch"
+
+# Emit "name<TAB>path" for every live dispatch session, or nothing if none.
+fleet_sessions() {
+  tmux -L "${DISPATCH_SOCKET}" list-sessions \
+    -F '#{session_name}	#{session_path}' 2>/dev/null
+}
+
+# Name of the session ccp is running inside (empty if not in a dispatch pane).
+fleet_self() {
+  [[ -n "${TMUX:-}" ]] || return 0
+  tmux display-message -p '#{session_name}' 2>/dev/null || true
+}
+
+cmd_fleet_list() {
+  local self name path mark
+  self="$(fleet_self)"
+  local any=0
+  while IFS=$'\t' read -r name path; do
+    [[ -n "${name}" ]] || continue
+    any=1
+    mark="  "
+    [[ "${name}" == "${self}" ]] && mark="• " # current session
+    printf '%s%s\n' "${mark}" "${path}"
+  done < <(fleet_sessions)
+  [[ "${any}" -eq 1 ]] || echo "ccp: no dispatch sessions found on socket -L ${DISPATCH_SOCKET}"
+}
+
+cmd_fleet_switch() {
+  local profile="${1:-}"
+  [[ -n "${profile}" ]] || die "usage: ccp fleet switch <name> --match RE|--all [--apply]"
+  shift
+  local match="" want_all=0 apply=0 include_self=0
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --match) match="${2:-}"; [[ -n "${match}" ]] || die "--match needs a regex"; shift 2 ;;
+      --all) want_all=1; shift ;;
+      --apply) apply=1; shift ;;
+      --include-self) include_self=1; shift ;;
+      *) die "unknown flag: $1" ;;
+    esac
+  done
+  [[ -n "${match}" || "${want_all}" -eq 1 ]] || \
+    die "refusing to act on the whole fleet implicitly: pass --match <regex> or --all"
+
+  local ref
+  ref="$(ref_for "${profile}")" || die "no such profile: ${profile}"
+  # Resolve the token up front so we fail before touching any session.
+  local token
+  token="$(op read "${ref}" 2>/dev/null)" || die "failed to read token for '${profile}' via op"
+  [[ -n "${token}" ]] || die "empty token for profile '${profile}'"
+
+  local self name path
+  self="$(fleet_self)"
+  local -a targets=()
+  while IFS=$'\t' read -r name path; do
+    [[ -n "${name}" ]] || continue
+    if [[ "${include_self}" -eq 0 && "${name}" == "${self}" ]]; then continue; fi
+    if [[ -n "${match}" && ! "${path}" =~ ${match} ]]; then continue; fi
+    targets+=("${path}")
+  done < <(fleet_sessions)
+
+  [[ "${#targets[@]}" -gt 0 ]] || die "no matching sessions (after excluding current)"
+
+  if [[ "${apply}" -eq 0 ]]; then
+    echo "DRY RUN — would relaunch under '${profile}' (destroy + wake --headless):"
+    printf '  %s\n' "${targets[@]}"
+    echo "Re-run with --apply to execute."
+    return 0
+  fi
+
+  # Apply: stage the token on the dispatch server's global env so each freshly
+  # waked session inherits it, then strip it back off no matter how we exit.
+  command -v dispatch >/dev/null || die "dispatch not found on PATH"
+  cleanup_env() {
+    tmux -L "${DISPATCH_SOCKET}" setenv -gu CLAUDE_CODE_OAUTH_TOKEN 2>/dev/null || true
+  }
+  trap cleanup_env EXIT
+  tmux -L "${DISPATCH_SOCKET}" setenv -g CLAUDE_CODE_OAUTH_TOKEN "${token}"
+  tmux -L "${DISPATCH_SOCKET}" setenv -gu ANTHROPIC_API_KEY 2>/dev/null || true
+
+  local p
+  for p in "${targets[@]}"; do
+    echo "==> ${p}"
+    dispatch -C "${p}" destroy || echo "ccp: warn: destroy failed for ${p}" >&2
+    dispatch -C "${p}" wake --headless || echo "ccp: warn: wake failed for ${p}" >&2
+  done
+  cleanup_env
+  trap - EXIT
+  echo "ccp: relaunched ${#targets[@]} session(s) under '${profile}'."
+}
+
+cmd_fleet() {
+  local sub="${1:-list}"
+  [[ $# -gt 0 ]] && shift
+  case "${sub}" in
+    list | ls) cmd_fleet_list "$@" ;;
+    switch) cmd_fleet_switch "$@" ;;
+    *) die "usage: ccp fleet <list|switch> ..." ;;
+  esac
+}
+
+main() {
+  ensure_config
+  local cmd="${1:-}"
+  [[ $# -gt 0 ]] && shift
+  case "${cmd}" in
+    run) cmd_run "$@" ;;
+    use) cmd_use "$@" ;;
+    list | ls) cmd_list "$@" ;;
+    status) cmd_status "$@" ;;
+    add) cmd_add "$@" ;;
+    rm) cmd_rm "$@" ;;
+    ref) cmd_ref "$@" ;;
+    fleet) cmd_fleet "$@" ;;
+    "" | -h | --help | help) usage ;;
+    *) die "unknown command: ${cmd} (try: ccp help)" ;;
+  esac
+}
+
+main "$@"

@@ -16,6 +16,7 @@
 .local/bin/borders_auto
 .local/bin/borders_dark
 .local/bin/borders_light
+.local/bin/ccp
 .local/bin/change_theme.sh
 .local/bin/dark-mode-notify
 .local/bin/dark-mode-notify-helper
