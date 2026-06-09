@@ -1,0 +1,23 @@
+# Panache global config — formatter + linter for Quarto / Pandoc / R Markdown.
+# Used when no panache.toml is found in a file's parent directories; a per-repo
+# panache.toml overrides everything here. Docs: https://panache.bz/guide/configuration.html
+#
+# No global `flavor`: the file extension infers it (.qmd → quarto). Setting a
+# flavor here would force every file to one dialect regardless of extension.
+#
+# Quarto defaults already enable the markup used across these docs — ==mark==,
+# [@citations], $math$, ~subscript~ / ^superscript^ — so they are not repeated below.
+
+[format]
+# One sentence per line → minimal git diffs when editing prose (a sentence edit
+# touches one line, not a whole reflowed paragraph). Change to "reflow" (fill to
+# line-width) or "preserve" (leave existing line breaks) if undesired.
+wrap = "sentence"
+
+[extensions]
+# Don't insert a space where a line breaks between two CJK characters (Japanese text).
+east-asian-line-breaks = true
+
+[formatters]
+# Format embedded ```python code chunks with ruff, matching the ruff-everywhere rule.
+python = "ruff"

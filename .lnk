@@ -45,6 +45,7 @@
 .config/kitty/light-theme.auto.conf
 .config/kitty/no-preference-theme.auto.conf
 .config/obsidian
+.config/panache/config.toml
 .config/rumdl
 .config/tmux
 .config/zed
