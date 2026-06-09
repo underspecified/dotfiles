@@ -150,7 +150,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.md || \"$CLAUDE_FILE_PATH\" == *.qmd ]]; then rumdl check --fix --config ~/.rumdl.toml \"$CLAUDE_FILE_PATH\" 2>/dev/null || true; fi"
+            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.md ]]; then rumdl check --fix --config ~/.rumdl.toml \"$CLAUDE_FILE_PATH\" 2>/dev/null || true; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/panache_format.sh",
+            "statusMessage": "Running panache..."
           }
         ]
       },

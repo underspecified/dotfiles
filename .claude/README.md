@@ -96,7 +96,9 @@ After `lnk pull` on a new machine, run `bash ~/.claude/bootstrap.sh` to:
 ## PostToolUse Hooks
 
 - **Python files**: Auto-formatted with `ruff format` after Write/Edit
-- **Markdown/QMD files**: Auto-linted with `rumdl` after Write/Edit
+- **Markdown files** (`.md`): Auto-linted with `rumdl` after Write/Edit
+- **Quarto files** (`.qmd`): Auto-formatted + linted with [`panache`](https://panache.bz) after Write/Edit (`hooks/panache_format.sh`) — Quarto-aware (fenced divs, grid tables, citations); lint warnings surfaced to the session
+- **Shell files** (`.sh`): Auto-formatted with `shfmt` + linted with `shellcheck` after Write/Edit (`hooks/shellcheck_lint.sh`)
 
 ## Environment
 
