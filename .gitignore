@@ -19,3 +19,6 @@ macos.lnk/.config/kitty/display.conf
 # Per-host display profile (selector lives at ~/.local/state/display_profile;
 # the env symlink is no longer used but may linger as a stale local artifact)
 linux.lnk/.config/display/env
+
+# Homebrew-managed per-machine state (Brewfile + brew.env are tracked; this isn't)
+macos.lnk/.homebrew/trust.json
