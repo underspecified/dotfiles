@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Usage: vnc_llm_jp [up|down|open]   (start x11vnc on llm-jp + open the local VNC tunnel)
+# Output: human-readable status; on `up`/`open` connects to vnc://localhost:5901
+#
+# `up`    ensure the server is running on llm-jp, then forward tank's
+#         localhost:5901 -> llm-jp 127.0.0.1:5900 over SSH (default).
+# `open`  same as up, then launch the macOS Screen Sharing client.
+# `down`  tear the tunnel down.
+#
+# The remote x11vnc has no VNC password (see `vnc_server` on llm-jp); the SSH
+# tunnel + localhost binding are the security boundary.
+set -uo pipefail
+
+REMOTE="llm-jp"
+LOCAL_PORT=5901
+REMOTE_PORT=5900
+FWD="${LOCAL_PORT}:127.0.0.1:${REMOTE_PORT}"
+
+die() { echo "vnc_llm_jp: $*" >&2; exit 1; }
+
+down() {
+  pkill -f "${FWD}" && echo "vnc_llm_jp: tunnel closed" || echo "vnc_llm_jp: no tunnel running"
+}
+
+up() {
+  # 1. Ensure the server is up on the remote (idempotent; explicit path so it
+  #    works under non-interactive ssh that skips shell rc files).
+  echo "vnc_llm_jp: starting server on ${REMOTE}..."
+  ssh -o ConnectTimeout=10 "${REMOTE}" "\$HOME/.local/bin/vnc_server restart" \
+    || die "could not start server on ${REMOTE}"
+
+  # 2. (Re)open the tunnel. ExitOnForwardFailure so a busy local port fails loud.
+  pkill -f "${FWD}" 2>/dev/null && sleep 1
+  ssh -fN -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes \
+    -L "${FWD}" "${REMOTE}" || die "could not open tunnel (is local port ${LOCAL_PORT} free?)"
+
+  # 3. Verify the VNC server actually answers through the tunnel. Retry: x11vnc
+  #    -bg may still be binding its port for a moment after the restart above.
+  for _ in 1 2 3 4 5; do
+    if printf '' | nc -w4 127.0.0.1 "${LOCAL_PORT}" | grep -q "^RFB"; then
+      echo "vnc_llm_jp: tunnel up — VNC reachable at vnc://localhost:${LOCAL_PORT}"
+      return 0
+    fi
+    sleep 1
+  done
+  die "tunnel opened but VNC did not respond on localhost:${LOCAL_PORT}"
+}
+
+case "${1:-up}" in
+  up | "") up ;;
+  open) up && open "vnc://localhost:${LOCAL_PORT}" ;;
+  down) down ;;
+  *) die "usage: vnc_llm_jp [up|down|open]" ;;
+esac

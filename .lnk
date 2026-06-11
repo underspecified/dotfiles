@@ -54,6 +54,7 @@
 .docker/mcp/catalog.json
 .docker/mcp/config.yaml
 .docker/mcp/registry.yaml
+.local/bin/vnc_llm_jp
 .screenrc
 .ssh/config
 .zshenv
