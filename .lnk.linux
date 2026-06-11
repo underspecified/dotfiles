@@ -33,6 +33,7 @@
 .local/bin/start_screensaver_xdg
 .local/bin/sway_update_config
 .local/bin/util.sh
+.local/bin/vnc_server
 .local/bin/xrandr_max_res.sh
 .local/share/colors
 .local/share/dark-mode.d

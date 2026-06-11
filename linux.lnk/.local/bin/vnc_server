@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Usage: vnc_server [restart|status|stop]   (manage x11vnc bridging GNOME display :1)
+# Output: human-readable status lines
+#
+# Bridges the existing logged-in desktop on :1 over VNC, bound to localhost only
+# (reach it via an SSH tunnel — see `vnc_llm_jp` on tank). No VNC password: the
+# SSH tunnel + localhost binding are the security boundary. NOTE: with -nopw, any
+# user with a local account on this host can connect to 127.0.0.1:5900 and drive
+# the desktop — acceptable for a single-user box, reconsider on a shared one.
+set -uo pipefail
+
+DISPLAY_NUM=":1"
+RFBPORT=5900
+XAUTH="/run/user/$(id -u)/gdm/Xauthority"
+LOG="${HOME}/.x11vnc.log"
+
+die() { echo "vnc_server: $*" >&2; exit 1; }
+
+start() {
+  command -v x11vnc >/dev/null || die "x11vnc not installed"
+  [[ -e "${XAUTH}" ]] || die "Xauthority missing at ${XAUTH} (is the desktop on ${DISPLAY_NUM} active?)"
+  pkill -x x11vnc 2>/dev/null && sleep 1
+  x11vnc -display "${DISPLAY_NUM}" -auth "${XAUTH}" -nopw \
+    -localhost -rfbport "${RFBPORT}" -forever -shared -noxdamage -bg \
+    -o "${LOG}" || die "x11vnc failed to launch (see ${LOG})"
+  sleep 1
+  status
+}
+
+stop() {
+  pkill -x x11vnc && echo "vnc_server: stopped" || echo "vnc_server: not running"
+}
+
+status() {
+  if pgrep -x x11vnc >/dev/null; then
+    echo "vnc_server: running on ${DISPLAY_NUM} (localhost:${RFBPORT}, no VNC password)"
+    pgrep -a -x x11vnc
+  else
+    echo "vnc_server: not running"
+    return 1
+  fi
+}
+
+case "${1:-restart}" in
+  restart | start) start ;;
+  stop) stop ;;
+  status) status ;;
+  *) die "usage: vnc_server [restart|status|stop]" ;;
+esac
