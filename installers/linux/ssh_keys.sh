@@ -4,12 +4,20 @@
 #   ssh_keys.sh --from-file PATH      # install from a local key file
 #   ssh_keys.sh --from-file -         # install from stdin
 #   ssh_keys.sh --vault NAME          # override 1Password vault (default: Personal)
-#   ssh_keys.sh --item ITEM           # override 1Password item (default: ssh-<host>)
+#   ssh_keys.sh --item ITEM           # override 1Password item (default: see below)
+#   ssh_keys.sh --name NAME           # key basename → ~/.ssh/NAME (default id_<host>);
+#                                     #   also the default 1P item when --item omitted
 #
-# Installs a per-host SSH private key at ~/.ssh/id_<host> (mode 600),
-# derives the matching .pub via `ssh-keygen -y` (mode 644), and registers
-# the key with `keychain` so subsequent shells pick it up via the `eval`
-# block in zshrc.linux.
+# Two schemes share this script:
+#   per-host (legacy)  ssh_keys.sh                  → ~/.ssh/id_<host> from op ssh-<host>
+#   shared fleet key   ssh_keys.sh --name hri_jp    → ~/.ssh/hri_jp from op://Personal/hri_jp
+# The fleet now uses the shared hri_jp scheme (paired with the ssh-config-hri-jp
+# overlay; see installers/all/setup_ssh.sh). The per-host scheme is kept for any
+# host that genuinely needs its own key.
+#
+# Installs the SSH private key at ~/.ssh/<name> (mode 600), derives the matching
+# .pub via `ssh-keygen -y` (mode 644), and registers the key with `keychain` so
+# subsequent shells pick it up via the `eval` block in zshrc.linux.
 #
 # Two modes — same downstream wiring:
 #
@@ -34,6 +42,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 
 VAULT="Personal"
 ITEM=""
+NAME=""
 FROM_FILE=""
 
 usage() {
@@ -57,6 +66,11 @@ parse_args() {
       --item)
         [[ $# -ge 2 ]] || die "--item requires a name"
         ITEM="$2"
+        shift 2
+        ;;
+      --name)
+        [[ $# -ge 2 ]] || die "--name requires a key basename"
+        NAME="$2"
         shift 2
         ;;
       -h|--help)
@@ -119,8 +133,9 @@ main() {
   local host key
   host="$(hostname -s)"
   [[ -n "${host}" ]] || die "hostname -s returned empty"
-  key="${HOME}/.ssh/id_${host}"
-  : "${ITEM:=ssh-${host}}"
+  key="${HOME}/.ssh/${NAME:-id_${host}}"
+  # Default 1P item: the key name if given (shared-key scheme), else ssh-<host>.
+  : "${ITEM:=${NAME:-ssh-${host}}}"
 
   mkdir -p "${HOME}/.ssh"
   chmod 700 "${HOME}/.ssh"

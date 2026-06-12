@@ -154,6 +154,41 @@ run_all_installers() {
   done
 }
 
+pull_private_identities() {
+  # Pull the machine-local SSH key + identity overlays from 1Password (all
+  # untracked: ~/.ssh/<key>, ~/.ssh/config.d/hri_jp, ~/.config/git/identity.conf).
+  # SSH auth uses the shared hri_jp key on every fleet host; git SIGNING uses
+  # hri_jp on the lab boxes but `underspecified` (personal) on germputer.
+  # `op` must be signed in — non-interactive sessions have no op session, so we
+  # skip with guidance rather than failing the bootstrap. (nosudo/dgx02 has no
+  # op and gets its hri_jp identity from the lnk-tracked relay.conf instead.)
+  local git_identity="hri-jp"
+  [[ "$(hostname -s)" == "germputer" ]] && git_identity="underspecified"
+  log "Pulling private identities from 1Password (ssh=hri_jp, git=${git_identity})"
+  if ! command -v op >/dev/null 2>&1; then
+    warn "op CLI missing — skipping 1P identity pull"
+    return
+  fi
+  if ! op whoami >/dev/null 2>&1; then
+    warn "op not signed in — skipping 1P identity pull. After  eval \"\$(op signin)\"  run:"
+    warn "    bash ${CUR_DIR}/ssh_keys.sh --name hri_jp"
+    [[ "${git_identity}" == "underspecified" ]] \
+      && warn "    bash ${CUR_DIR}/ssh_keys.sh --name underspecified"
+    warn "    bash ${ALL_DIR}/setup_ssh.sh hri-jp"
+    warn "    bash ${ALL_DIR}/setup_git.sh ${git_identity}"
+    return
+  fi
+  # 1. Private key(s) on disk (mode 600, .pub derived, registered with keychain).
+  bash "${CUR_DIR}/ssh_keys.sh" --name hri_jp || warn "failed: ssh_keys.sh --name hri_jp"
+  if [[ "${git_identity}" == "underspecified" ]]; then
+    bash "${CUR_DIR}/ssh_keys.sh" --name underspecified \
+      || warn "failed: ssh_keys.sh --name underspecified"
+  fi
+  # 2. SSH host overlay + git identity (signingkey/email) from 1P Secure Notes.
+  bash "${ALL_DIR}/setup_ssh.sh" hri-jp || warn "failed: setup_ssh.sh hri-jp"
+  bash "${ALL_DIR}/setup_git.sh" "${git_identity}" || warn "failed: setup_git.sh ${git_identity}"
+}
+
 run_claude_bootstrap() {
   # ~/.claude/bootstrap.sh chains the per-area scripts (statusline, skills,
   # MCP, patches). Safe to re-run -- each child handles missing-vs-existing
@@ -177,6 +212,7 @@ main() {
   update_git
   run_platform_installers
   run_all_installers
+  pull_private_identities
   run_claude_bootstrap
   # Final step: select display profile and generate i3/dunst/Xresources/kitty
   # configs. Non-interactive on re-run (skip if already linked).
