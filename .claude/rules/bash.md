@@ -48,6 +48,16 @@ bash ~/path/script.sh args
 
 Never use relative paths.
 
+## Path Resolution
+
+Self-locate; never assume cwd. Resolve assets from the script dir, not `$PWD`:
+
+```bash
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+```
+
+Cross-repo paths can't come from `script_dir` — read them from a declared source (env var / paths config), never hardcoded.
+
 ## Quoting and Variables
 
 - **Always quote variables:** `"${var}"` not `$var` — prevents word splitting and globbing

@@ -23,6 +23,16 @@ uv run ~/path/script.py args
 
 Never use relative paths. Never invoke with an explicit interpreter (`python3 script.py`).
 
+## Path Resolution
+
+Self-locate; never depend on cwd. Resolve assets from `SCRIPT_DIR`, not `Path.cwd()`:
+
+```python
+SCRIPT_DIR = Path(__file__).resolve().parent
+```
+
+Cross-repo paths can't come from `__file__` — read them from a declared source (env var / paths config), never hardcoded.
+
 ## Projects with Modules
 
 For projects with multiple modules, shared code, or complex structure, use `pyproject.toml` instead of inlined metadata. Let `uv` manage the virtualenv and dependencies via the project manifest.
