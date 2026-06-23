@@ -22,3 +22,35 @@ linux.lnk/.config/display/env
 
 # Homebrew-managed per-machine state (Brewfile + brew.env are tracked; this isn't)
 macos.lnk/.homebrew/trust.json
+macos.lnk/.homebrew/trust.json.lock
+
+# ── SECRETS — THIS REPO IS PUBLIC. Never commit private key / credential material. ──
+# Patterns are unanchored (**/) so they catch the real-path .ssh/.gnupg dirs AND the
+# OS-prefixed copies (macos.lnk/.ssh/, linux.lnk/.ssh/, nosudo.lnk/.ssh/, …).
+# Deliberately NOT ignored: .ssh/config, .ssh/config.d/*, .gnupg/gpg-agent.conf — tracked on purpose.
+
+# Claude / API credentials
+**/.credentials.json
+.claude.json
+
+# GPG private material (keyrings, secret keys, seeds)
+**/private-keys-v1.d/
+**/secring.gpg
+**/*.gpg
+**/*.gpg~
+**/*.key
+**/.gpg-v21-migrated
+**/random_seed
+**/tofu.db
+
+# SSH private keys
+**/.ssh/id_*
+**/.ssh/*_rsa
+**/.ssh/*_ed25519
+**/.ssh/*_ecdsa
+**/.ssh/*.pem
+
+# Shell history (privacy)
+**/.zsh_history
+**/.zsh_sessions/
+**/.bash_history
