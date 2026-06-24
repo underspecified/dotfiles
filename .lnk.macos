@@ -37,3 +37,4 @@
 .local/bin/toggle_zed
 .local/bin/vnc_llm_jp
 .ssh/config.d/agent.conf
+Library/LaunchAgents/com.eric.good-night-nightly.plist
