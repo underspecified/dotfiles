@@ -1,57 +1,92 @@
 #!/usr/bin/env bash
-# Usage: bash setup_good_night_automation.sh
+# Usage: bash setup_good_night_automation.sh schedule [today] HH:MM
 #
-# Sets up the automated nightly /good-night on macOS:
-#   1. Loads the launchd agent (com.eric.good-night-nightly) that fires the
-#      gate-free good-night at 21:30 via dispatch wake-then-run. The plist is
-#      deployed by lnk (.lnk.macos -> ~/Library/LaunchAgents/); this just loads it.
-#   2. Schedules a daily power wake one minute earlier (pmset) so the Mac is
-#      awake when launchd fires — otherwise a sleeping Mac defers the run until
-#      its next wake (which would land in the morning, after good-morning).
+# Arms a ONE-SHOT automated /good-night on macOS for the given time today:
+#   schedule today HH:MM   arm for today at HH:MM (24h)
+#   schedule HH:MM         same (today implied)
 #
-# Idempotent. The pmset step needs sudo (will prompt). Scheduled wake is only
-# honored on AC power — keep the Mac plugged in overnight for reliable runs.
+# Sets the launchd agent's fire time (com.eric.good-night-nightly), (re)loads it
+# so it fires once at HH:MM, and schedules a one-time pmset power-wake
+# WAKE_OFFSET_MIN minutes earlier so a sleeping Mac is awake to fire. The agent
+# unloads ITSELF after firing (see run-nightly.sh) — so this must be re-run to
+# arm the next run, manually or from /good-morning. That makes good-night
+# work-day-only: it runs only on days good-morning (or you) armed it.
+#
+# Edits the lnk-tracked plist in place (commit + push to persist across Macs).
+# pmset needs sudo (prompts). Scheduled wake is honored only on AC power.
 set -euo pipefail
 
 # shellcheck source=SCRIPTDIR/../lib.sh
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 
 label="com.eric.good-night-nightly"
-plist="${HOME}/Library/LaunchAgents/${label}.plist"
-# WAKE_TIME must stay one minute before the plist's StartCalendarInterval (21:30).
-wake_time="21:29:00"
-wake_days="MTWRFSU"  # every day; good-night runs nightly (it self-skips weekends only for scheduling good-morning)
+plist_link="${HOME}/Library/LaunchAgents/${label}.plist"
+wake_offset_min=5
+plistbuddy="/usr/libexec/PlistBuddy"
+
+# Self-locate the lnk-tracked plist from the script's own path so PlistBuddy
+# edits the repo file directly (editing through the symlink risks replacing it
+# with a regular file). installers/macos -> repo root -> macos.lnk/...
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "${script_dir}/../.." && pwd)"
+plist_real="${repo_root}/macos.lnk/Library/LaunchAgents/${label}.plist"
+
+usage() { die "usage: $(basename "$0") schedule [today] HH:MM"; }
 
 check_preconditions() {
   [[ "$(uname -s)" == "Darwin" ]] || die "good-night automation is macOS-only"
-  [[ -e "${plist}" ]] || die "plist not found at ${plist} — run 'lnk pull' first to restore the symlink"
+  [[ -x "${plistbuddy}" ]] || die "PlistBuddy not found at ${plistbuddy}"
+  [[ -f "${plist_real}" ]] || die "plist not found at ${plist_real} — run 'lnk pull' first"
+  [[ -e "${plist_link}" ]] || die "launchd symlink missing at ${plist_link} — run 'lnk pull' first"
 }
 
-# Load (or reload) the launchd agent in the current user's GUI domain.
-load_launchd_agent() {
+# Arm a one-shot run. Args: [today] HH:MM
+cmd_schedule() {
+  [[ "${1:-}" == "today" ]] && shift
+  local arg_time="${1:-}"
+  [[ -n "${arg_time}" ]] || usage
+  [[ "${arg_time}" =~ ^([0-9]{1,2}):([0-9]{2})$ ]] || die "invalid time '${arg_time}' — expected HH:MM (24h)"
+  local h=$((10#${BASH_REMATCH[1]})) m=$((10#${BASH_REMATCH[2]}))
+  (( h <= 23 )) || die "hour out of range in '${arg_time}'"
+  (( m <= 59 )) || die "minute out of range in '${arg_time}'"
+
+  # Set the plist fire time.
+  "${plistbuddy}" -c "Set :StartCalendarInterval:Hour ${h}" "${plist_real}"
+  "${plistbuddy}" -c "Set :StartCalendarInterval:Minute ${m}" "${plist_real}"
+
+  # (Re)load the agent so it fires at the next HH:MM (today if not yet passed).
   local domain
   domain="gui/$(id -u)"
-  if launchctl print "${domain}/${label}" >/dev/null 2>&1; then
-    log "launchd agent already loaded — reloading"
-    launchctl bootout "${domain}/${label}" 2>/dev/null || true
-  fi
-  launchctl bootstrap "${domain}" "${plist}"
-  log "loaded ${label} (fires 21:30 daily)"
-}
+  launchctl bootout "${domain}/${label}" 2>/dev/null || true
+  launchctl bootstrap "${domain}" "${plist_link}"
 
-# Schedule a daily power wake just before the launchd fire time.
-schedule_wake() {
-  log "scheduling daily power wake at ${wake_time} (needs sudo)"
-  sudo pmset repeat wakeorpoweron "${wake_days}" "${wake_time}"
-  log "wake scheduled — verify with: pmset -g sched"
-  warn "scheduled wake is honored only on AC power; keep the Mac plugged in overnight"
+  # Warn if HH:MM already passed today (launchd would fire tomorrow, not tonight).
+  local hh mm now_min target_min
+  hh="$(date +%H)"; mm="$(date +%M)"
+  now_min=$(( 10#${hh} * 60 + 10#${mm} ))
+  target_min=$(( h * 60 + m ))
+  if (( target_min <= now_min )); then
+    warn "$(printf '%02d:%02d' "${h}" "${m}") already passed today — launchd will fire tomorrow, not tonight"
+  fi
+
+  # One-time power wake at (target - offset) today.
+  local wake_min wh wm wake_dt
+  wake_min=$(( (target_min - wake_offset_min + 1440) % 1440 ))
+  wh=$(( wake_min / 60 )); wm=$(( wake_min % 60 ))
+  wake_dt="$(date '+%m/%d/%Y') $(printf '%02d:%02d:00' "${wh}" "${wm}")"
+  log "scheduling one-time power wake at ${wake_dt} (needs sudo)"
+  sudo pmset schedule wake "${wake_dt}"
+  warn "scheduled wake is honored only on AC power; keep the Mac plugged in"
+
+  log "good-night armed (one-shot) for today $(printf '%02d:%02d' "${h}" "${m}")"
 }
 
 main() {
   check_preconditions
-  load_launchd_agent
-  schedule_wake
-  log "good-night automation set up"
+  case "${1:-}" in
+    schedule) shift; cmd_schedule "$@" ;;
+    *) usage ;;
+  esac
 }
 
 main "$@"
