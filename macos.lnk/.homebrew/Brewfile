@@ -93,6 +93,8 @@ brew "metals"
 brew "mupdf-tools"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
+# TouchID for sudo in tmux/non-TTY (good-morning's good-night arm step)
+brew "pam-reattach"
 # Swiss-army knife of markup format conversion
 brew "pandoc"
 # Shell command parallelization utility

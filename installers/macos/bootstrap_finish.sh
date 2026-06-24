@@ -15,6 +15,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 REPO_DIR="${REPO_DIR:-$HOME/.config/lnk}"
 BREWFILE="${BREWFILE:-$HOME/.homebrew/Brewfile}"
 ALL_DIR="${REPO_DIR}/installers/all"
+MACOS_DIR="${REPO_DIR}/installers/macos"
 
 check_preconditions() {
   [[ "$(uname -s)" == "Darwin" ]] || die "phase 2 is macOS-only"
@@ -31,6 +32,13 @@ check_preconditions() {
 install_brewfile() {
   log "Installing packages from Brewfile (this takes a while)"
   brew bundle --file="${BREWFILE}"
+}
+
+setup_touchid_sudo() {
+  # TouchID for sudo (incl. tmux/non-TTY) — needed for /good-morning's good-night
+  # arm step. Runs after the Brewfile so pam-reattach is already installed.
+  log "Enabling TouchID for sudo (tmux-aware)"
+  bash "${MACOS_DIR}/setup_touchid_sudo.sh" || warn "TouchID-for-sudo setup failed (continuing)"
 }
 
 run_all_installers() {
@@ -176,6 +184,7 @@ render_ui() {
 main() {
   check_preconditions
   install_brewfile
+  setup_touchid_sudo
   render_ui
   run_all_installers
   link_1password_agent_dir
