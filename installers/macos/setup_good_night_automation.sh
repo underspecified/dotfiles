@@ -13,9 +13,9 @@
 # work-day-only: it runs only on days good-morning (or you) armed it.
 #
 # Edits the lnk-tracked plist in place (commit + push to persist across Macs).
-# The power-wake is set via a GUI admin-auth prompt (osascript), not sudo, so it
-# works from non-TTY contexts (Claude Bash tool, /good-morning) where sudo can't
-# read a password. Wake is honored only on AC power.
+# The power-wake uses `sudo pmset`, authenticated by TouchID (pam_tid +
+# pam_reattach in /etc/pam.d/sudo_local) so the prompt works from tmux / non-TTY
+# contexts like /good-morning. Wake is honored only on AC power.
 set -euo pipefail
 
 # shellcheck source=SCRIPTDIR/../lib.sh
@@ -76,10 +76,10 @@ cmd_schedule() {
   wake_min=$(( (target_min - wake_offset_min + 1440) % 1440 ))
   wh=$(( wake_min / 60 )); wm=$(( wake_min % 60 ))
   wake_dt="$(date '+%m/%d/%Y') $(printf '%02d:%02d:00' "${wh}" "${wm}")"
-  # GUI admin-auth prompt (works without a TTY, unlike sudo). Pops the native
-  # macOS auth window; pmset runs as root once authorized.
-  log "scheduling one-time power wake at ${wake_dt} (approve the auth prompt)"
-  osascript -e "do shell script \"/usr/bin/pmset schedule wake \\\"${wake_dt}\\\"\" with administrator privileges" \
+  # sudo runs pmset as root; TouchID is wired via pam_tid (+ pam_reattach for
+  # tmux/non-TTY) in /etc/pam.d/sudo_local, so the auth is a TouchID tap.
+  log "scheduling one-time power wake at ${wake_dt} (approve with TouchID)"
+  sudo pmset schedule wake "${wake_dt}" \
     || die "power-wake auth cancelled/failed — agent is loaded but no wake scheduled"
   warn "scheduled wake is honored only on AC power; keep the Mac plugged in"
 
