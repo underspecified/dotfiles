@@ -13,7 +13,9 @@
 # work-day-only: it runs only on days good-morning (or you) armed it.
 #
 # Edits the lnk-tracked plist in place (commit + push to persist across Macs).
-# pmset needs sudo (prompts). Scheduled wake is honored only on AC power.
+# The power-wake is set via a GUI admin-auth prompt (osascript), not sudo, so it
+# works from non-TTY contexts (Claude Bash tool, /good-morning) where sudo can't
+# read a password. Wake is honored only on AC power.
 set -euo pipefail
 
 # shellcheck source=SCRIPTDIR/../lib.sh
@@ -74,8 +76,11 @@ cmd_schedule() {
   wake_min=$(( (target_min - wake_offset_min + 1440) % 1440 ))
   wh=$(( wake_min / 60 )); wm=$(( wake_min % 60 ))
   wake_dt="$(date '+%m/%d/%Y') $(printf '%02d:%02d:00' "${wh}" "${wm}")"
-  log "scheduling one-time power wake at ${wake_dt} (needs sudo)"
-  sudo pmset schedule wake "${wake_dt}"
+  # GUI admin-auth prompt (works without a TTY, unlike sudo). Pops the native
+  # macOS auth window; pmset runs as root once authorized.
+  log "scheduling one-time power wake at ${wake_dt} (approve the auth prompt)"
+  osascript -e "do shell script \"/usr/bin/pmset schedule wake \\\"${wake_dt}\\\"\" with administrator privileges" \
+    || die "power-wake auth cancelled/failed — agent is loaded but no wake scheduled"
   warn "scheduled wake is honored only on AC power; keep the Mac plugged in"
 
   log "good-night armed (one-shot) for today $(printf '%02d:%02d' "${h}" "${m}")"
