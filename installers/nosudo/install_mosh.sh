@@ -40,7 +40,9 @@ PROTOBUF_SHA256="${PROTOBUF_SHA256:-}"
 DEST="${PREFIX}/bin/mosh-server"
 PROTOC="${PREFIX}/bin/protoc"
 URL_MOSH="https://github.com/mobile-shell/mosh/releases/download/mosh-${MOSH_VERSION}/mosh-${MOSH_VERSION}.tar.gz"
-URL_PROTOBUF="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz"
+# protobuf 21.x dropped the "3." from its release TAG (v21.12) but kept it in
+# the C++ asset filename (protobuf-cpp-3.21.12.tar.gz). Derive the tag.
+URL_PROTOBUF="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION#3.}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz"
 
 NPROC="$( (nproc 2>/dev/null) || echo 2)"
 
