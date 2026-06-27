@@ -1,0 +1,27 @@
+#!/bin/bash
+
+launch_ws () {
+    h=$1
+    shift 1
+
+    kitten @ launch --type=tab --title=$h
+    [[ "$BTOP" ]] && kitten @ launch --match=title:$h ssh -tt $h 'tmux a -t btop'
+    [[ "$NVTOP" ]] && kitten @ launch --match=title:$h ssh -tt $h 'tmux a -t nvtop'
+
+    for d in "$@"; do
+	kitten @ launch --match=title:$h dispatch -C $h:$d wake
+	sleep 5
+    done
+
+    kitten @ goto-layout --match=title:$h horizontal
+    sleep 5
+    kitten @ close-window --match=num:0
+    sleep 5
+}
+
+BTOP=0 NVTOP=0 launch_ws localhost '~/projects' '~/lab' '~/projects/llm' '~/git/llm_eval'
+BTOP=1 NVTOP=1 launch_ws dgx02 '~/git/llm_eval'
+BTOP=1 NVTOP=1 launch_ws llm-jp '~/git/llm_eval'
+BTOP=1 NVTOP=1 launch_ws llm-jp-2 '~/git/llm_eval'
+BTOP=1 NVTOP=1 launch_ws germputer '~/git/llm_eval'
+
