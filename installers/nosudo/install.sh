@@ -102,6 +102,7 @@ run_user_installers() {
   run_step "${CUR_DIR}/install_nvtop.sh"       "nvtop (NVIDIA-only build -- self-skips when no GPU)"
   run_step "${CUR_DIR}/install_gpu_burn.sh"    "gpu-burn (self-skips when no nvcc)"
   run_step "${CUR_DIR}/install_autossh.sh"     "autossh (dispatch relay tunnel -- from-source)"
+  run_step "${CUR_DIR}/install_mosh.sh"        "mosh (drop-proof interactive sessions -- conda-forge prebuilt)"
 }
 
 ensure_bashrc_path() {
