@@ -41,6 +41,14 @@ if [ -n "$_agent_path" ]; then
 fi
 unset _agent_path
 
+##### DISPATCH #####
+
+# Default the interactive remote `wake` spawn to mosh — drop-proof over laptop
+# sleep / Wi-Fi roam / TCP reset (UDP transport with client-side state). Auto
+# falls back to `ssh -t` when mosh (local) or mosh-server (remote) is absent, so
+# a non-mosh box is never broken. Force-off a host with DISPATCH_REMOTE_MOSH_<HOST>=0.
+export DISPATCH_REMOTE_MOSH=1
+
 ##### ALIASES #####
 
 # Sourced here (not .zshrc) so aliases are available non-interactively too —
