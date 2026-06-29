@@ -90,3 +90,14 @@ unset _f
 if [ -f "$ZDOTDIR/zshrc.local" ]; then
     . "$ZDOTDIR/zshrc.local"
 fi
+
+# Mirror the fully-assembled PATH to a kitty include (single source of truth =
+# this shell's PATH). GUI-launched kitty inherits the minimal launchd PATH, so
+# `kitten @ launch <cmd>` — which bypasses the shell — can't find Homebrew tools
+# like mosh (dispatch's interactive spawn + the btop/nvtop launchers need it).
+# kitty.conf does `globinclude env.conf`; reload picks it up. Runs last, after
+# every PATH mutation above. PATH rarely changes, so the file stays current
+# between sessions even though this only fires on interactive shells.
+if [ -d "$HOME/.config/kitty" ]; then
+    print -r -- "env PATH=$PATH" >| "$HOME/.config/kitty/env.conf" 2>/dev/null
+fi
