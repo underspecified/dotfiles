@@ -1,16 +1,18 @@
 #!/bin/bash
 
-launch_ws () {
+launch_ws() {
     h=$1
     shift 1
 
     kitten @ launch --type=tab --title=$h
-    [[ "$BTOP" ]] && kitten @ launch --match=title:$h ssh -tt $h 'tmux a -t btop'
-    [[ "$NVTOP" ]] && kitten @ launch --match=title:$h ssh -tt $h 'tmux a -t nvtop'
+    [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
+        mosh $h -- sh -c 'tmux a -t btop || tmux new-session -t btop btop; exec $SHELL'
+    [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
+        mosh $h -- sh -c 'tmux a -t nvitop || tmux new-session -t nvitop nvitop; exec $SHELL'
 
     for d in "$@"; do
-	kitten @ launch --match=title:$h dispatch -C $h:$d wake
-	sleep 5
+        kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 dispatch -C $h:$d wake
+        sleep 5
     done
 
     kitten @ goto-layout --match=title:$h horizontal
@@ -19,9 +21,15 @@ launch_ws () {
     sleep 5
 }
 
-BTOP=0 NVTOP=0 launch_ws localhost '~/projects' '~/lab' '~/projects/llm' '~/git/llm_eval'
-BTOP=1 NVTOP=1 launch_ws dgx02 '~/git/llm_eval'
-BTOP=1 NVTOP=1 launch_ws llm-jp '~/git/llm_eval'
-BTOP=1 NVTOP=1 launch_ws llm-jp-2 '~/git/llm_eval'
-BTOP=1 NVTOP=1 launch_ws germputer '~/git/llm_eval'
+# Stage the active ccp profile token on the local dispatch bus so the sessions
+# waked below inherit it (else they fall back to the keychain login = wrong
+# account). Needed after a reboot, when the tmux server's staged env is fresh.
+# Best-effort: never block workspace launch. Remote hosts keep whatever
+# `ccp fleet switch --hosts` last staged (persists until their next reboot).
+ccp stage || echo "launch_ws: ccp stage failed — local sessions may use keychain login" >&2
 
+BTOP=0 NVITOP=0 launch_ws localhost '~/projects' '~/projects/llm' '~/projects/settings' '~/lab' '~/haru.md' '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws dgx02 '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws llm-jp '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws llm-jp-2 '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws germputer '~/git/llm_eval'
