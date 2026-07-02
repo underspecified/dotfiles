@@ -136,6 +136,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "opus",
   "enabledMcpjsonServers": [
     "slack"
   ],
@@ -242,5 +243,6 @@
   "verbose": true,
   "preferredNotifChannel": "kitty",
   "teammateMode": "auto",
+  "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }

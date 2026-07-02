@@ -14,18 +14,18 @@
 #                                         it). Re-run after a reboot. launch_ws calls this.
 #   ccp unstage                           Remove the staged token (wakes fall back to login)
 #   ccp fleet list [--hosts "h1 h2"]      List dispatch tmux sessions (local + hosts)
-#   ccp fleet switch <name> --match RE|--all [--apply] [--include-self]
-#                                         Relaunch matching LOCAL dispatch sessions under
-#                                         <name> (destroy + wake --headless; --continue
-#                                          resumes the transcript under the new identity).
-#                                          Dry-run unless --apply. Each relaunch is verified
-#                                          (with one retry) so a destroy/wake race can't
-#                                          silently drop a session. Current session excluded
-#                                          unless --include-self (relaunched last via a
-#                                          detached helper). NOTE: --hosts is DISABLED for
-#                                          switch — remote env staging doesn't propagate on
-#                                          Linux tmux (see the die() message); use `ccp fleet
-#                                          list --hosts` for remote visibility only.
+#   ccp fleet switch <name> --match RE|--all [--apply] [--include-self] [--hosts "h1 h2"]
+#                                         Relaunch matching dispatch sessions under <name>
+#                                         (destroy + wake --headless; --continue resumes the
+#                                          transcript under the new identity). Dry-run unless
+#                                          --apply. Each relaunch is verified (with one retry)
+#                                          so a destroy/wake race can't silently drop a
+#                                          session. Current session excluded unless
+#                                          --include-self (relaunched last via a detached
+#                                          helper). LOCAL switches via the staged tmux global
+#                                          env (persists); --hosts REMOTE switches via
+#                                          dispatch's cold-start token injection (#127,
+#                                          per-wake — not persistent across remote re-wakes).
 #
 # Tokens are long-lived OAuth tokens from `claude setup-token`, stored in 1Password
 # and resolved at launch via `op read`. They never touch disk. CLAUDE_CODE_OAUTH_TOKEN
@@ -171,20 +171,21 @@ Usage: ccp <command> [args]   (Claude Code Profile — switch/launch by identity
   ccp unstage                           Remove the staged token (new wakes fall back to the
                                         keychain login).
   ccp fleet list [--hosts "h1 h2"]      List dispatch tmux sessions (local + given hosts)
-  ccp fleet switch <name> --match RE|--all [--apply] [--include-self]
-                                        Relaunch matching LOCAL dispatch sessions under
-                                        <name>. destroy + wake --headless; --continue resumes
-                                        the transcript under the new identity. Dry-run unless
+  ccp fleet switch <name> --match RE|--all [--apply] [--include-self] [--hosts "h1 h2"]
+                                        Relaunch matching dispatch sessions under <name>.
+                                        destroy + wake --headless; --continue resumes the
+                                        transcript under the new identity. Dry-run unless
                                         --apply. Each relaunch is verified with one retry
                                         (no silent destroy/wake-race drops). Current session
                                         excluded unless --include-self (relaunched last via
                                         a detached helper; reattach with `dispatch wake
-                                        <path> --here`). The token is staged PERSISTENTLY on
-                                        the local bus (records the profile active) so re-wakes
-                                        stay switched; clear with `ccp unstage`.
-                                        --hosts is DISABLED for switch (remote env staging
-                                        doesn't propagate on Linux tmux; see the error text).
-                                        Remote visibility: `ccp fleet list --hosts`.
+                                        <path> --here`). LOCAL: token staged PERSISTENTLY on
+                                        the local bus (records profile active) so re-wakes
+                                        stay switched; clear with `ccp unstage`. --hosts:
+                                        REMOTE switches via dispatch cold-start token
+                                        injection (#127) — per-wake, NOT persistent across
+                                        remote re-wakes (a remote reboot/re-wake reverts to
+                                        the box credential; re-run switch to re-apply).
 EOF
 }
 
@@ -217,22 +218,18 @@ fleet_self() {
 # dispatch target string for a (host,path): "host:path" or bare "path".
 _dtarget() { [[ -n "${1}" ]] && printf '%s:%s' "${1}" "${2}" || printf '%s' "${2}"; }
 
-# Stage the OAuth token on a scope's dispatch tmux server so freshly-waked
-# sessions inherit it. Remote: token piped via stdin so it never lands on the
-# ssh argv or the remote process list (matters on shared boxes).
-stage_token() { # host token profile
-  local host="${1}" token="${2}" profile="${3:-}"
-  if [[ -z "${host}" ]]; then
-    tmux -L "${DISPATCH_SOCKET}" setenv -g CLAUDE_CODE_OAUTH_TOKEN "${token}"
-    tmux -L "${DISPATCH_SOCKET}" setenv -gu ANTHROPIC_API_KEY 2>/dev/null || true
-    # CCP_PROFILE labels the session's account so the statusline (limitline) can
-    # pick the right per-account usage credential. Cheap, non-secret.
-    [[ -n "${profile}" ]] && tmux -L "${DISPATCH_SOCKET}" setenv -g CCP_PROFILE "${profile}"
-  else
-    # shellcheck disable=SC2029  # DISPATCH_SOCKET/profile are fixed literals; token arrives via stdin ($(cat)), never on argv
-    printf '%s' "${token}" | ssh "${host}" \
-      "tmux -L ${DISPATCH_SOCKET} setenv -g CLAUDE_CODE_OAUTH_TOKEN \"\$(cat)\" && tmux -L ${DISPATCH_SOCKET} setenv -g CCP_PROFILE \"${profile}\" && tmux -L ${DISPATCH_SOCKET} setenv -gu ANTHROPIC_API_KEY 2>/dev/null; true"
-  fi
+# Stage the OAuth token on the LOCAL dispatch tmux server so freshly-waked local
+# sessions inherit it via the tmux global env (macOS propagates it to new panes).
+# LOCAL ONLY: on the Linux remotes, tmux does NOT propagate `setenv -g` to new
+# panes, so remote switching goes through dispatch's cold-start injection instead
+# (DISPATCH_WAKE_OAUTH_TOKEN in relaunch_one) — never staged on a remote bus.
+stage_token() { # token profile   (local only)
+  local token="${1}" profile="${2:-}"
+  tmux -L "${DISPATCH_SOCKET}" setenv -g CLAUDE_CODE_OAUTH_TOKEN "${token}"
+  tmux -L "${DISPATCH_SOCKET}" setenv -gu ANTHROPIC_API_KEY 2>/dev/null || true
+  # CCP_PROFILE labels the session's account so the statusline (limitline) can
+  # pick the right per-account usage credential. Cheap, non-secret.
+  [[ -n "${profile}" ]] && tmux -L "${DISPATCH_SOCKET}" setenv -g CCP_PROFILE "${profile}"
 }
 
 # Strip the staged token from a scope's dispatch server.
@@ -266,7 +263,7 @@ cmd_stage() {
   ref="$(ref_for "${name}")" || die "no such profile: ${name}"
   token="$(op read "${ref}" 2>/dev/null)" || die "failed to read token for '${name}' via op (sign in: op signin)"
   [[ -n "${token}" ]] || die "empty token for profile '${name}'"
-  stage_token "" "${token}" "${name}"
+  stage_token "${token}" "${name}"
   echo "ccp: staged '${name}' on local dispatch tmux server (persists until reboot or 'ccp unstage')"
 }
 
@@ -276,10 +273,19 @@ cmd_unstage() {
 }
 
 # destroy + wake --headless one target (host "" = local).
-relaunch_one() { # host path
-  local tgt; tgt="$(_dtarget "${1}" "${2}")"
+# LOCAL: the account comes from the staged tmux global env (stage_token).
+# REMOTE: tmux global env doesn't propagate on Linux, so inject the token via
+# dispatch's cold-start wrapper — DISPATCH_WAKE_OAUTH_TOKEN (delivered 0600 over
+# ssh stdin, #127) + DISPATCH_WAKE_CCP_PROFILE label — set for this wake only.
+relaunch_one() { # host path [token] [profile]
+  local host="${1}" tgt; tgt="$(_dtarget "${1}" "${2}")"
   dispatch -C "${tgt}" destroy >/dev/null 2>&1 || true
-  dispatch -C "${tgt}" wake --headless >/dev/null 2>&1 || true
+  if [[ -n "${host}" ]]; then
+    DISPATCH_WAKE_OAUTH_TOKEN="${3:-}" DISPATCH_WAKE_CCP_PROFILE="${4:-}" \
+      dispatch -C "${tgt}" wake --headless >/dev/null 2>&1 || true
+  else
+    dispatch -C "${tgt}" wake --headless >/dev/null 2>&1 || true
+  fi
 }
 
 # Print "<mark><target>" for every session in a scope (• marks self, local).
@@ -352,7 +358,7 @@ cmd_fleet_switch() {
       --all) want_all=1; shift ;;
       --apply) apply=1; shift ;;
       --include-self) include_self=1; shift ;;
-      --hosts) die "ccp fleet switch --hosts is DISABLED: remote account switching via env staging does not work — Linux tmux does not propagate a setenv -g token (or 'new -e') to new panes, so the staged token never reaches remote claude, and the relaunch (destroy + wake --headless, unsupported remotely) can leave remote sessions down. Remote boxes run on their own stored credential; switch them by changing that credential, or wait for the dispatch cold-start token-injection fix. (ccp fleet list --hosts still works.)" ;;
+      --hosts) IFS=', ' read -r -a hosts <<<"${2:-}"; [[ "${#hosts[@]}" -gt 0 ]] || die "--hosts needs a host list"; shift 2 ;;
       *) die "unknown flag: $1" ;;
     esac
   done
@@ -421,25 +427,27 @@ cmd_fleet_switch() {
     [[ "${hit}" -eq 1 ]] && stage_idx[${#stage_idx[@]}]="${si}"
   done
 
-  # Staging is PERSISTENT (no unstage on exit): the token stays on each scope's
-  # dispatch tmux global env so future wakes (suspend/resume, good-morning,
-  # crash-restart) keep inheriting it. Without this, a re-waked session silently
-  # reverts to the keychain login. Clear later with `ccp unstage` (local) or an
-  # overwriting switch. Survives suspend but not a server restart — re-stage
-  # after reboot (launch_ws runs `ccp stage`).
+  # LOCAL staging is PERSISTENT (no unstage on exit): the token stays on the local
+  # dispatch tmux global env so future LOCAL wakes (suspend/resume, good-morning,
+  # crash-restart) keep inheriting it. Clear with `ccp unstage` or an overwriting
+  # switch; survives suspend but not a server restart (launch_ws re-stages after
+  # reboot). REMOTE scopes are NOT staged here — Linux tmux doesn't propagate the
+  # global env, so remote gets the token per-wake via relaunch_one's
+  # DISPATCH_WAKE_* injection (not persistent across remote re-wakes; see #126).
   local k
   for ((k = 0; k < ${#stage_idx[@]}; k++)); do
-    stage_token "${scopes[${stage_idx[$k]}]}" "${token}" "${profile}"
+    [[ -z "${scopes[${stage_idx[$k]}]}" ]] && stage_token "${token}" "${profile}"
   done
 
   # Record the switched-to profile as active so `ccp stage` (e.g. from launch_ws
   # after a reboot) re-stages the same one.
   echo "${profile}" >"${ACTIVE_FILE}"
 
-  # Relaunch pass (non-self).
+  # Relaunch pass (non-self). token/profile used only for remote targets (local
+  # inherits the staged tmux global env); see relaunch_one.
   for ((i = 0; i < ${#t_path[@]}; i++)); do
     echo "==> $(_dtarget "${scopes[${t_sidx[$i]}]}" "${t_path[$i]}")"
-    relaunch_one "${scopes[${t_sidx[$i]}]}" "${t_path[$i]}"
+    relaunch_one "${scopes[${t_sidx[$i]}]}" "${t_path[$i]}" "${token}" "${profile}"
   done
 
   # Settle (remote cold-start is slower than local), then verify + one retry.
@@ -460,7 +468,7 @@ cmd_fleet_switch() {
     echo "ccp: ${#miss[@]} session(s) did not come up — retrying..." >&2
     for ((k = 0; k < ${#miss[@]}; k++)); do
       i="${miss[$k]}"
-      relaunch_one "${scopes[${t_sidx[$i]}]}" "${t_path[$i]}"
+      relaunch_one "${scopes[${t_sidx[$i]}]}" "${t_path[$i]}" "${token}" "${profile}"
     done
     sleep "${settle}"
     _refresh
