@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kitten @ last-used-layout --match all

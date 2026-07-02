@@ -1,1 +1,3 @@
-../../.config/lnk/.local/bin/kitty_layout_horizontal
+#!/bin/bash
+
+kitten @ goto-layout --match all horizontal

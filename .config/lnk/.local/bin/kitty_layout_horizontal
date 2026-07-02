@@ -1,3 +1,0 @@
-#!/bin/bash
-
-kitten @ goto-layout --match all horizontal

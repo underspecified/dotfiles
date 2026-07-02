@@ -1,1 +1,3 @@
-../../.config/lnk/.local/bin/kitty_layout_tall
+#!/bin/bash
+
+kitten @ goto-layout --match all tall
