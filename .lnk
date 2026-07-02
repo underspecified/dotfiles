@@ -44,6 +44,8 @@
 .config/kitty/kitty.conf
 .config/kitty/light-theme.auto.conf
 .config/kitty/no-preference-theme.auto.conf
+.config/lnk/.local/bin/kitty_layout_horizontal
+.config/lnk/.local/bin/kitty_layout_tall
 .config/obsidian
 .config/panache/config.toml
 .config/rumdl
