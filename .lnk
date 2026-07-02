@@ -56,6 +56,8 @@
 .docker/mcp/catalog.json
 .docker/mcp/config.yaml
 .docker/mcp/registry.yaml
+./local/bin/kitty_layout_horizontal
+./local/bin/kitty_layout_tall
 .screenrc
 .ssh/config
 .zshenv
