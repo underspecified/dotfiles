@@ -37,5 +37,17 @@
 .local/bin/toggle_pdf_expert
 .local/bin/toggle_zed
 .local/bin/vnc_llm_jp
+.local/bin/yabai3
+.local/bin/yabai_config_layout_bsp
+.local/bin/yabai_config_layout_cols
+.local/bin/yabai_config_layout_stack
+.local/bin/yabai_refresh_space
+.local/bin/yabai_restore
+.local/bin/yabai_save
+.local/bin/yabai_tab_fix
+.local/bin/yabai_update_sa
+.local/bin/yabai_window_grow
+.local/bin/yabai_window_insert_col
+.local/bin/yabai_window_shrink
 .ssh/config.d/agent.conf
 Library/LaunchAgents/com.eric.good-night-nightly.plist

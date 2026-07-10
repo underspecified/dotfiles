@@ -1,0 +1,33 @@
+#!/bin/bash
+# Send a remote-control command to the running kitty, resolving both the
+# kitten binary and the control socket in a way that works from WM hotkeys
+# (skhd / i3 / sway) where KITTY_LISTEN_ON is absent from the environment.
+#
+# Usage: kitty_remote <kitten-@-subcommand> [args...]
+#   e.g. kitty_remote goto-layout --match all tall
+#
+# kitten is not always on PATH: on macOS it lives inside the app bundle; on
+# Linux the installer symlinks it into ~/.local/bin. The socket matches
+# `listen_on` in kitty.conf (unix:/tmp/mykitty), shared across platforms.
+set -uo pipefail
+
+kitten="$(command -v kitten 2>/dev/null || true)"
+if [[ -z "${kitten}" ]]; then
+  for candidate in \
+    /Applications/kitty.app/Contents/MacOS/kitten \
+    "${HOME:-}/.local/kitty.app/bin/kitten" \
+    /usr/bin/kitten \
+    /usr/local/bin/kitten; do
+    if [[ -x "${candidate}" ]]; then
+      kitten="${candidate}"
+      break
+    fi
+  done
+fi
+
+if [[ -z "${kitten}" ]]; then
+  echo "kitty_remote: kitten binary not found on PATH or known locations" >&2
+  exit 127
+fi
+
+exec "${kitten}" @ --to "${KITTY_LISTEN_ON:-unix:/tmp/mykitty}" "$@"

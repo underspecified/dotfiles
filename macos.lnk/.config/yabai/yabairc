@@ -40,7 +40,7 @@ yabai -m config mouse_action2                resize
 yabai -m config mouse_drop_action            swap
 
 ### fix tab apps
-#source "$YABAI_DIR/scripts/tab_fix"
+#yabai_tab_fix   # now in ~/.local/bin (on PATH)
 
 ### settings for spaces
 #source "$YABAI_DIR/spacesrc"
@@ -69,14 +69,14 @@ yabai -m rule --add label="manage_off__tot" app="Tot" manage=off
 yabai -m rule --add label="manage_on__citrix" app="Citrix" manage=on
 
 # column layout (auto-detects display width → 2/3/4 columns)
-#bash "$YABAI_DIR/scripts/yabai_config_layout_cols"
+#yabai_config_layout_cols   # now in ~/.local/bin (on PATH)
 
 # reconfigure columns when display changes
 # for event in display_added display_removed display_moved; do
 #     yabai -m signal --add \
 #         label="${event}_reconfigure_cols" \
 #         event="$event" \
-#         action="bash $YABAI_DIR/scripts/yabai_config_layout_cols"
+#         action="yabai_config_layout_cols"
 # done
 
 echo "yabai configuration loaded."

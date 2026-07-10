@@ -24,6 +24,6 @@ for app in "${APPS[@]}"; do
             label="${event}_${app}" \
             app="^${app}$" \
             event="${event}" \
-            action="${SCRIPTS_DIR}/refresh_space"
+            action="${SCRIPTS_DIR}/yabai_refresh_space"
     done
 done

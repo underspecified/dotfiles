@@ -29,6 +29,7 @@ ctrl + alt + cmd - s : yabai_restore
 ctrl + alt - a : yabai -m space --balance
 ctrl + alt - t : kitty_layout_tall
 ctrl + alt - h : kitty_layout_horizontal
+ctrl + alt - l : kitty_layout_last_used
 
 # focus on window in specified direction
 ctrl + alt - left : yabai -m window --focus west
