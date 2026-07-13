@@ -136,7 +136,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "enabledMcpjsonServers": [
     "slack"
   ],
@@ -239,12 +239,11 @@
   "effortLevel": "xhigh",
   "showThinkingSummaries": true,
   "skipWorkflowUsageWarning": true,
-  "theme": "dark-ansi",
+  "theme": "auto",
   "verbose": true,
   "preferredNotifChannel": "kitty",
   "teammateMode": "auto",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
   "skipAutoPermissionPrompt": true,
   "tui": "fullscreen"
 }
