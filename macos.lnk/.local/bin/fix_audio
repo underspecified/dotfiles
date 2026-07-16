@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Usage: fix_audio [--apps]
+# Recover from a wedged coreaudiod. Symptom: audio apps (SoundSource, Audio
+# Hijack, or anything using CoreAudio) freeze at 0% CPU, blocked in a HAL call
+# waiting on the audio server. Restarting coreaudiod resets the CoreAudio stack;
+# launchd relaunches it immediately and blocked clients get their reply.
+#
+#   --apps   also force-quit and relaunch any running Rogue Amoeba audio apps
+#            that stayed hung after the restart (they usually recover on their
+#            own, so this is opt-in).
+#
+# Restarting coreaudiod briefly (~1-2s) interrupts ALL audio system-wide, so
+# finish any in-progress recording or call first.
+set -uo pipefail
+
+# Rogue Amoeba apps that hang on the same CoreAudio HAL path.
+ra_apps=("SoundSource" "Audio Hijack")
+
+log() { echo "fix_audio: $*" >&2; }
+
+restart_coreaudio() {
+  log "restarting coreaudiod (all audio glitches for ~1-2s)…"
+  if sudo killall coreaudiod; then
+    log "coreaudiod restarted; launchd will bring it back immediately."
+  else
+    log "killall returned non-zero — coreaudiod may not have been running."
+  fi
+}
+
+# Force-quit and reopen any running RA app. A hung app can't process a graceful
+# Quit apple event (its main thread is blocked), so terminate by signal first.
+bounce_apps() {
+  local app
+  for app in "${ra_apps[@]}"; do
+    if pgrep -x "${app}" >/dev/null 2>&1; then
+      log "bouncing ${app}…"
+      killall "${app}" 2>/dev/null || true
+      sleep 1
+      open -a "${app}" 2>/dev/null || log "could not reopen ${app}"
+    fi
+  done
+}
+
+main() {
+  local do_apps=0
+  case "${1:-}" in
+    --apps) do_apps=1 ;;
+    -h | --help)
+      # Print the leading header block: skip the shebang, print contiguous
+      # comment lines, stop at the first line of code.
+      awk 'NR==1{next} /^#/{sub(/^# ?/,""); print; next} {exit}' "${BASH_SOURCE[0]}"
+      exit 0
+      ;;
+    "") ;;
+    *)
+      log "unknown arg: $1 (usage: fix_audio [--apps])"
+      exit 2
+      ;;
+  esac
+
+  restart_coreaudio
+  (( do_apps )) && bounce_apps
+  exit 0
+}
+
+main "$@"

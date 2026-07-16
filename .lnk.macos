@@ -21,6 +21,7 @@
 .local/bin/dark-mode-notify
 .local/bin/dark-mode-notify-helper
 .local/bin/echo_and_eval
+.local/bin/fix_audio
 .local/bin/get_macos_mode
 .local/bin/launch_ws
 .local/bin/open_alfred
