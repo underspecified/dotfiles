@@ -68,6 +68,16 @@ yabai -m rule --add label="manage_off__system_settings" app="System Settings" ma
 yabai -m rule --add label="manage_off__tot" app="Tot" manage=off
 yabai -m rule --add label="manage_on__citrix" app="Citrix" manage=on
 
+# kitty layout follows the focused display: ultrawide → horizontal, built-in or
+# any narrower external → tall. Reflow on focus change between displays and on
+# unplug (display_removed fires after focus lands on a remaining display).
+for evt in display_changed display_removed; do
+    yabai -m signal --add \
+        label="${evt}__kitty_layout" \
+        event="${evt}" \
+        action="$HOME/.local/bin/yabai_kitty_layout"
+done
+
 # column layout (auto-detects display width → 2/3/4 columns)
 #yabai_config_layout_cols   # now in ~/.local/bin (on PATH)
 

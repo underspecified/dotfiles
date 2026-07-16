@@ -41,6 +41,7 @@
 .local/bin/yabai_config_layout_bsp
 .local/bin/yabai_config_layout_cols
 .local/bin/yabai_config_layout_stack
+.local/bin/yabai_kitty_layout
 .local/bin/yabai_refresh_space
 .local/bin/yabai_restore
 .local/bin/yabai_save

@@ -1,0 +1,25 @@
+#!/bin/bash
+# yabai signal handler: pick the kitty layout that suits the focused display.
+#
+# Ultrawide displays (aspect ratio >= ULTRAWIDE_RATIO) get the "horizontal"
+# kitty layout (side-by-side splits); the built-in panel and any narrower
+# external display get "tall" (stacked splits). Wire this to yabai's
+# display_changed signal so the terminal reflows whenever focus moves to a
+# different monitor. Also runnable by hand to sync the current display.
+set -uo pipefail
+PATH="/opt/homebrew/bin:${PATH}"
+
+# Aspect ratio at/above which a display counts as ultrawide.
+# Reference ratios: 16:10 = 1.60, 16:9 = 1.78, 21:9 = 2.33, 32:9 = 3.55.
+# 2.0 cleanly separates ultrawide panels from every standard widescreen.
+ULTRAWIDE_RATIO=${ULTRAWIDE_RATIO:-2.0}
+
+# display_changed fires after focus has moved, so the focused display (--display
+# with no selector) is the one just switched to.
+layout=$(
+  yabai -m query --displays --display \
+    | jq -r --argjson t "${ULTRAWIDE_RATIO}" \
+        'if (.frame.w / .frame.h) >= $t then "horizontal" else "tall" end'
+) || exit 0
+
+exec "${HOME}/.local/bin/kitty_layout_${layout}"
