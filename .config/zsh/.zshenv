@@ -7,6 +7,16 @@ export ZDOTDIR="$HOME/.config/zsh"
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US.UTF-8"
 
+### truecolor
+# Advertise 24-bit color so TUIs -- notably Claude Code themes + statusbars --
+# render their palette in truecolor instead of snapping to the nearest 256-color.
+# Set in .zshenv (not .zshrc) so it survives NON-login / non-interactive launches:
+# `ssh host tmux`, one-shot inline commands, and the dispatch headless wake path,
+# not just interactive login shells. ssh forwards TERM but not COLORTERM, and an
+# inline command skips the login rc -- so without this the remote falls back to
+# 256-color. `:-` keeps a value the terminal already set (e.g. kitty's own).
+export COLORTERM="${COLORTERM:-truecolor}"
+
 ##### PATH #####
 
 # Keep PATH/MANPATH/fpath free of duplicates no matter how many times this file
