@@ -55,6 +55,7 @@
       "Bash(deface *)",
       "Bash(defaults read:*)",
       "Bash(diff *)",
+      "Bash(docker *)",
       "Bash(du *)",
       "Bash(echo *)",
       "Bash(exiftool *)",
