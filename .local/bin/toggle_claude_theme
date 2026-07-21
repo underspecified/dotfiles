@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-# Usage: toggle_claude_theme [dark|light]
+# Usage: toggle_claude_theme [dark|light] [--push] [--hosts "h1 h2 ..."]
 # Point Claude Code's dynamic "Selenized" theme (~/.claude/themes/selenized.json)
 # at the light or dark palette by swapping a relative symlink. Claude watches
 # ~/.claude/themes/ and hot-reloads on the retarget, so running sessions follow
 # the OS appearance in lockstep with the terminal background. With no arg, derives
 # the target from the current OS appearance (get_macos_mode on macOS, darkman on Linux).
+#
+# --push also propagates the mode to remote fleet boxes (headless sessions viewed
+# through this terminal). The SSH fan-out omits --push, so a box reached remotely
+# stays a leaf and never re-fans-out. Fleet list resolved by fleet_hosts() below.
 set -euo pipefail
 
 THEMES="${HOME}/.claude/themes"
@@ -32,7 +36,45 @@ toggle_claude_theme() {
     printf 'selenized-%s\n' "${mode}" > "${tmp}" && mv -f "${tmp}" "${override}"
 }
 
-mode="${1:-}"
+# Fleet host list for --push. Priority: --hosts flag > $DISPATCH_HOSTS > the
+# untracked per-box file ~/.claude/theme-fleet (one host per line; # comments and
+# blank lines ignored). Empty => no push. Deliberately NOT in the tracked/public
+# dotfiles: it names internal infra and is origin-box-local state.
+fleet_hosts() {
+    if [[ -n "${hosts_override}" ]]; then
+        printf '%s' "${hosts_override}" | tr ' ' '\n'
+    elif [[ -n "${DISPATCH_HOSTS:-}" ]]; then
+        printf '%s' "${DISPATCH_HOSTS}" | tr ' ' '\n'
+    elif [[ -f "${HOME}/.claude/theme-fleet" ]]; then
+        grep -vE '^[[:space:]]*(#|$)' "${HOME}/.claude/theme-fleet" || true
+    fi
+}
+
+# Run the local swap on each fleet host over SSH -- explicit mode, and NO --push
+# so the remote stays a leaf (no recursion). Sequential + best-effort; the caller
+# backgrounds this whole function so the local flip never waits on it.
+fleet_push() {
+    local mode="$1" host
+    while IFS= read -r host; do
+        [[ -z "${host}" ]] && continue
+        ssh -o BatchMode=yes -o ConnectTimeout=3 "${host}" \
+            "bash ~/.local/bin/toggle_claude_theme ${mode}" || true
+    done < <(fleet_hosts)
+}
+
+mode=""
+push=0
+hosts_override=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        dark|light) mode="$1" ;;
+        --push)     push=1 ;;
+        --hosts)    shift; hosts_override="${1:-}" ;;
+        *) echo "toggle_claude_theme: ignoring unknown arg: $1" >&2 ;;
+    esac
+    shift
+done
+
 if [[ "${mode}" != "dark" && "${mode}" != "light" ]]; then
     # No explicit mode: detect the current OS appearance. macOS via get_macos_mode;
     # Linux via darkman. (Both hooks pass an explicit mode, so this only runs on
@@ -49,3 +91,11 @@ fi
 
 echo "toggle_claude_theme => ${mode}"
 toggle_claude_theme "${mode}"
+
+# --push: propagate this mode to the remote fleet. Detached + best-effort so the
+# local flip never blocks on a slow/down box; the fan-out omits --push, so a box
+# reached over SSH never re-fans-out (no recursion).
+if [[ "${push}" == 1 ]]; then
+    fleet_push "${mode}" >/dev/null 2>&1 &
+    disown 2>/dev/null || true
+fi
