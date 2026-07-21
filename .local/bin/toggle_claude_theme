@@ -24,16 +24,21 @@ toggle_claude_theme() {
         echo "toggle_claude_theme: missing ${THEMES}/${target}" >&2
         return 1
     fi
-    # Relative symlink (same dir) so it stays valid on any box; atomic swap.
-    ln -sf "${target}" "${THEMES}/selenized.json"
-
-    # Statusline (claude-limitline) follows the same flip via an untracked
-    # theme-override file honored by the fork's index.ts — keeps the lnk-tracked
-    # claude-limitline.json static. Atomic write: a mid-render read never sees a
-    # partial value.
+    # Write the statusline (claude-limitline) override FIRST. If swapping the
+    # theme symlink below causes Claude to re-run the statusLine command (a theme
+    # reload is a session state-change, like the events that do trigger it), the
+    # override is already current -- the statusline refreshes in the same frame
+    # with no stale flash. An untracked file honored by the fork's index.ts keeps
+    # the lnk-tracked claude-limitline.json static; atomic write so a mid-render
+    # read never sees a partial value.
     local override="${HOME}/.claude/.claude-limitline-theme"
     local tmp="${override}.tmp.$$"
     printf 'selenized-%s\n' "${mode}" > "${tmp}" && mv -f "${tmp}" "${override}"
+
+    # Then swap the theme symlink -- Claude watches ~/.claude/themes/ and
+    # hot-reloads the TUI on the retarget. Relative symlink (same dir) so it stays
+    # valid on any box; atomic swap.
+    ln -sf "${target}" "${THEMES}/selenized.json"
 }
 
 # Fleet hosts for --push, resolved DYNAMICALLY (no static list to maintain).
