@@ -36,30 +36,36 @@ toggle_claude_theme() {
     printf 'selenized-%s\n' "${mode}" > "${tmp}" && mv -f "${tmp}" "${override}"
 }
 
-# Fleet host list for --push. Priority: --hosts flag > $DISPATCH_HOSTS > the
-# untracked per-box file ~/.claude/theme-fleet (one host per line; # comments and
-# blank lines ignored). Empty => no push. Deliberately NOT in the tracked/public
-# dotfiles: it names internal infra and is origin-box-local state.
+# Fleet hosts for --push, resolved DYNAMICALLY (no static list to maintain).
+# Priority: --hosts flag > $DISPATCH_HOSTS > `dispatch list` (every remote box
+# with a live dispatch session). The dispatch query is handed the fixed kitty
+# control socket (matches kitty.conf `listen_on`) so host discovery works even
+# from the env-less macOS dark-mode daemon, which has no KITTY_LISTEN_ON.
 fleet_hosts() {
     if [[ -n "${hosts_override}" ]]; then
         printf '%s' "${hosts_override}" | tr ' ' '\n'
-    elif [[ -n "${DISPATCH_HOSTS:-}" ]]; then
-        printf '%s' "${DISPATCH_HOSTS}" | tr ' ' '\n'
-    elif [[ -f "${HOME}/.claude/theme-fleet" ]]; then
-        grep -vE '^[[:space:]]*(#|$)' "${HOME}/.claude/theme-fleet" || true
+        return
     fi
+    if [[ -n "${DISPATCH_HOSTS:-}" ]]; then
+        printf '%s' "${DISPATCH_HOSTS}" | tr ' ' '\n'
+        return
+    fi
+    KITTY_LISTEN_ON="${KITTY_LISTEN_ON:-unix:/tmp/mykitty}" dispatch list 2>/dev/null \
+        | awk 'NR>2 && ($1=="attached" || $1=="detached") && $4!="local" {print $4}' \
+        | sort -u
 }
 
 # Run the local swap on each fleet host over SSH -- explicit mode, and NO --push
-# so the remote stays a leaf (no recursion). Sequential + best-effort; the caller
+# so the remote stays a leaf (no recursion). Parallel + best-effort; the caller
 # backgrounds this whole function so the local flip never waits on it.
 fleet_push() {
     local mode="$1" host
     while IFS= read -r host; do
         [[ -z "${host}" ]] && continue
-        ssh -o BatchMode=yes -o ConnectTimeout=3 "${host}" \
-            "bash ~/.local/bin/toggle_claude_theme ${mode}" || true
+        ssh -n -o BatchMode=yes -o ConnectTimeout=3 "${host}" \
+            "bash ~/.local/bin/toggle_claude_theme ${mode}" >/dev/null 2>&1 &
     done < <(fleet_hosts)
+    wait
 }
 
 mode=""
