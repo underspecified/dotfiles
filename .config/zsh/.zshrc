@@ -47,6 +47,12 @@ export VISUAL="emacs -nw"
 if [[ -v KITTY_PID && ! -v ZED_TERM ]]; then
     export TERM="xterm-kitty"
     alias ssh="kitten ssh"
+elif [[ "$COLORTERM" == "truecolor" || -v TMUX ]]; then
+    # Truecolor-capable but not a local kitty (e.g. dispatch's claude inside
+    # tmux, where KITTY_PID isn't propagated). xterm-color caps terminfo at 8
+    # colors and degrades truecolor apps (Claude Code renders the wrong yellow);
+    # xterm-256color + COLORTERM=truecolor lets them render full color.
+    export TERM="xterm-256color"
 else
     export TERM="xterm-color"
 fi
