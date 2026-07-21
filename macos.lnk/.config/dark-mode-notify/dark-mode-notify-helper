@@ -15,5 +15,6 @@ if [[ -n "${DARKMODE+x}" ]]; then
     (
         toggle_borders "${mode}"
         toggle_pdf_expert "${mode}"
+        toggle_claude_theme "${mode}"
     ) | tee -a "${LOG_DIR}/darkmode.log" 2>&1
 fi

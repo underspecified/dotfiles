@@ -37,6 +37,8 @@
 .claude/settings.json
 .claude/skills/bootstrap.sh
 .claude/statusline/bootstrap.sh
+.claude/themes/selenized-dark.json
+.claude/themes/selenized-light.json
 .config/dark_reader
 .config/git
 .config/kitty/dark-theme.auto.conf
@@ -58,6 +60,7 @@
 .local/bin/kitty_layout_last_used
 .local/bin/kitty_layout_tall
 .local/bin/kitty_remote
+.local/bin/toggle_claude_theme
 .screenrc
 .ssh/config
 .zshenv

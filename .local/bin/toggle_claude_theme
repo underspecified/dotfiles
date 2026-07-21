@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Usage: toggle_claude_theme [dark|light]
+# Point Claude Code's dynamic "Selenized" theme (~/.claude/themes/selenized.json)
+# at the light or dark palette by swapping a relative symlink. Claude watches
+# ~/.claude/themes/ and hot-reloads on the retarget, so running sessions follow
+# the OS appearance in lockstep with the terminal background. With no arg, derives
+# the target from the current macOS appearance (mirrors toggle_kitty).
+set -euo pipefail
+
+THEMES="${HOME}/.claude/themes"
+
+toggle_claude_theme() {
+    local mode="$1" target
+    if [[ "${mode}" == "dark" ]]; then
+        target="selenized-dark.json"
+    else
+        target="selenized-light.json"
+    fi
+    if [[ ! -e "${THEMES}/${target}" ]]; then
+        echo "toggle_claude_theme: missing ${THEMES}/${target}" >&2
+        return 1
+    fi
+    # Relative symlink (same dir) so it stays valid on any box; atomic swap.
+    ln -sf "${target}" "${THEMES}/selenized.json"
+
+    # Statusline (claude-limitline) follows the same flip via an untracked
+    # theme-override file honored by the fork's index.ts — keeps the lnk-tracked
+    # claude-limitline.json static. Atomic write: a mid-render read never sees a
+    # partial value.
+    local override="${HOME}/.claude/.claude-limitline-theme"
+    local tmp="${override}.tmp.$$"
+    printf 'selenized-%s\n' "${mode}" > "${tmp}" && mv -f "${tmp}" "${override}"
+}
+
+mode="${1:-}"
+if [[ "${mode}" != "dark" && "${mode}" != "light" ]]; then
+    # No explicit mode: follow the current macOS appearance. (macOS only; the
+    # Linux darkman hook always passes an explicit mode, so get_macos_mode —
+    # an osascript call — is never reached there.)
+    mode="$(get_macos_mode)"
+fi
+
+echo "toggle_claude_theme => ${mode}"
+toggle_claude_theme "${mode}"
