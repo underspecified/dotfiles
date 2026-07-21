@@ -4,7 +4,7 @@
 # at the light or dark palette by swapping a relative symlink. Claude watches
 # ~/.claude/themes/ and hot-reloads on the retarget, so running sessions follow
 # the OS appearance in lockstep with the terminal background. With no arg, derives
-# the target from the current macOS appearance (mirrors toggle_kitty).
+# the target from the current OS appearance (get_macos_mode on macOS, darkman on Linux).
 set -euo pipefail
 
 THEMES="${HOME}/.claude/themes"
@@ -34,10 +34,17 @@ toggle_claude_theme() {
 
 mode="${1:-}"
 if [[ "${mode}" != "dark" && "${mode}" != "light" ]]; then
-    # No explicit mode: follow the current macOS appearance. (macOS only; the
-    # Linux darkman hook always passes an explicit mode, so get_macos_mode —
-    # an osascript call — is never reached there.)
-    mode="$(get_macos_mode)"
+    # No explicit mode: detect the current OS appearance. macOS via get_macos_mode;
+    # Linux via darkman. (Both hooks pass an explicit mode, so this only runs on
+    # manual invocation.)
+    if command -v get_macos_mode >/dev/null 2>&1; then
+        mode="$(get_macos_mode)"
+    elif command -v darkman >/dev/null 2>&1; then
+        mode="$(darkman get)"
+    else
+        echo "toggle_claude_theme: no mode given and no get_macos_mode/darkman found" >&2
+        exit 1
+    fi
 fi
 
 echo "toggle_claude_theme => ${mode}"
