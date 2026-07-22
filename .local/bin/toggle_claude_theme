@@ -55,7 +55,16 @@ fleet_hosts() {
         printf '%s' "${DISPATCH_HOSTS}" | tr ' ' '\n'
         return
     fi
-    KITTY_LISTEN_ON="${KITTY_LISTEN_ON:-unix:/tmp/mykitty}" dispatch list 2>/dev/null \
+    # `dispatch list` discovers hosts by querying kitty over its control socket,
+    # so BOTH `dispatch` (~/.local/bin) and `kitty` (Homebrew) must resolve here.
+    # A launchd/darkman daemon runs with a minimal PATH that omits Homebrew's dir
+    # (/opt/homebrew on Apple Silicon, /usr/local on Intel), so kitty isn't found
+    # and discovery silently returns zero hosts -- the whole --push reaches no one.
+    # Prepend the likely tool dirs (harmless when absent) so --push works from the
+    # env-less daemon that is its main caller.
+    local disc_path="${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}"
+    PATH="${disc_path}" KITTY_LISTEN_ON="${KITTY_LISTEN_ON:-unix:/tmp/mykitty}" \
+        dispatch list 2>/dev/null \
         | awk 'NR>2 && ($1=="attached" || $1=="detached") && $4!="local" {print $4}' \
         | sort -u
 }
