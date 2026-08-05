@@ -85,12 +85,11 @@
 	helper =
 	helper = !gh auth git-credential
 
-# Overleaf is the one remote with no SSH option -- its git-bridge is HTTPS-only,
-# so a credential helper is unavoidable here. `cache` keeps the token in memory
-# only (never on disk, unlike `store`), prompts once per day in the terminal,
-# and behaves identically on macOS and headless Linux -- so there is no per-OS
-# split to maintain. The empty `helper =` resets any inherited helper first;
-# without it git would append this to the global list and write the token out.
-[credential "https://git.overleaf.com"]
-	helper =
-	helper = cache --timeout=86400
+# Overleaf is the one remote with no SSH option -- its git-bridge is HTTPS-only.
+# Deliberately NO per-host block here: git's system gitconfig (shipped by Xcode
+# / the CLT) already sets credential.helper=osxkeychain, which is encrypted at
+# rest and is where the Overleaf token already lives. A per-host block with an
+# empty `helper =` reset would MASK that global and break Overleaf auth in
+# non-interactive sessions -- exactly what happened on 2026-08-05. On Linux no
+# osxkeychain exists, so git falls back to a terminal prompt, which is the
+# intended headless behaviour anyway.
