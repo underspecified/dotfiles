@@ -84,5 +84,13 @@
 [credential "https://gist.github.com"]
 	helper =
 	helper = !gh auth git-credential
-[credential]
-	helper = store
+
+# Overleaf is the one remote with no SSH option -- its git-bridge is HTTPS-only,
+# so a credential helper is unavoidable here. `cache` keeps the token in memory
+# only (never on disk, unlike `store`), prompts once per day in the terminal,
+# and behaves identically on macOS and headless Linux -- so there is no per-OS
+# split to maintain. The empty `helper =` resets any inherited helper first;
+# without it git would append this to the global list and write the token out.
+[credential "https://git.overleaf.com"]
+	helper =
+	helper = cache --timeout=86400

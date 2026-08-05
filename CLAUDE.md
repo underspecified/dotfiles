@@ -114,8 +114,8 @@ lnk doctor          # Diagnose broken symlinks or issues
 ## Key Conventions
 
 - Commits follow `lnk: description` or `component: description` format (e.g., `kitty: change font`, `macos: darkmode fixes`)
-- Git commits are GPG-signed via 1Password SSH agent (`op-ssh-sign`)
-- Git auth standardizes on SSH (no HTTPS credential helper). macOS uses the 1Password SSH agent; Linux uses ssh-agent persisted by keychain (see `installers/linux/ssh_keys.sh`).
+- Git commits are SSH-signed (`gpg.format = ssh`, `gpg.ssh.program = ssh-keygen`, verified against `~/.config/git/allowed_signers`)
+- Git auth prefers SSH; HTTPS is fallback only. **macOS:** 1Password agent (Touch ID) plus an additive passphrase-free `IdentityFile ~/.ssh/hri_jp` — a locked 1Password offers zero identities, so ssh falls through to the key and remote/non-interactive sessions keep working. **Linux/headless:** ssh-agent persisted by keychain (see `installers/linux/ssh_keys.sh`). **HTTPS fallback:** GitHub/gist via `gh auth git-credential`; Overleaf (HTTPS-only, no SSH option) via in-memory `cache`. Never the plaintext `store` helper.
 - The legacy `setup.sh` is an older symlink installer; prefer `lnk` commands instead
 
 ## Bootstrap Dispatch
