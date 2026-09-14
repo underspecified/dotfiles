@@ -236,6 +236,7 @@
     }
   },
   "feedbackDrafts": "off",
+  "outputStyle": "Concise",
   "syntaxHighlightingDisabled": false,
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
