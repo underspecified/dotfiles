@@ -28,7 +28,7 @@ update_skill() {
 }
 
 # Standalone skills (one repo = one skill)
-STANDALONE=(computation-graph dispatch email-inbox figure gantt-chart meeting presentation travel)
+STANDALONE=(computation-graph dispatch email-inbox figure gantt-chart meeting travel)
 for skill in "${STANDALONE[@]}"; do
     if [[ ! -d "${SKILLS_DIR}/${skill}" ]]; then
         echo "Cloning skill: ${skill}"
@@ -73,5 +73,6 @@ install_composite research
 install_composite paper     # manuscript authoring: /paper-write, /paper-prosify, /paper-sync, ...
 install_composite planning
 install_composite kaiseki   # /hansei, /nikki under here
+install_composite presentation  # /presentation + /presentation-plan (narrative interview)
 
 echo "=== Skills bootstrap complete ==="

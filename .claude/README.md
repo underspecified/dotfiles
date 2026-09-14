@@ -43,6 +43,7 @@ Skills are private git repos on `underspecified`, cloned directly into `~/.claud
 ├── planning/             github:underspecified/planning
 │   └── skills/           (good-morning, good-night)
 ├── presentation/         github:underspecified/presentation
+│   └── skills/           (presentation-plan)
 ├── research/             github:underspecified/research
 │   └── skills/           (research-download, research-summarize, etc.)
 ├── sync-latex/           github:underspecified/sync-latex
@@ -50,6 +51,7 @@ Skills are private git repos on `underspecified`, cloned directly into `~/.claud
 ├── email-inbox/          local only (no git repo)
 ├── good-morning ->       planning/skills/good-morning
 ├── good-night ->         planning/skills/good-night
+├── presentation-plan ->  presentation/skills/presentation-plan
 ├── research-audit ->     research/skills/research-audit
 ├── ...                   (other research sub-skill symlinks)
 └── bootstrap.sh          (lnk-tracked)
