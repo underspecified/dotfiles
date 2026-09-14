@@ -47,7 +47,6 @@
       "Bash(brew *)",
       "Bash(cat *)",
       "Bash(cd *)",
-      "Bash(chmod *)",
       "Bash(claude *)",
       "Bash(convert *)",
       "Bash(cp *)",
@@ -137,7 +136,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-opus-5[1m]",
+  "model": "opus[1m]",
   "enabledMcpjsonServers": [
     "slack"
   ],
@@ -236,6 +235,7 @@
       }
     }
   },
+  "feedbackDrafts": "off",
   "syntaxHighlightingDisabled": false,
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
