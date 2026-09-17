@@ -16,6 +16,23 @@ skill-name/
 
 Prefer flat directories.
 
+## Dev vs Deploy
+
+`~/.claude/skills/<name>` is a **deploy tree**, not a workspace. Every session
+reads `SKILL.md` from it and `~/.local/bin` entry points symlink into it, so
+whatever is checked out is what runs, everywhere, immediately.
+
+- **Deploy trees stay on `main`, clean, and in sync.** No feature branches, no
+  in-place edits, no detached HEAD.
+- **Develop in a separate checkout** (`~/git/claude/skills/<name>`), or a git
+  worktree off the same repo, and land changes through `main`.
+- **Never edit a script the box is currently executing.** Bash reads scripts
+  incrementally by byte offset, so an in-place write to a running script can
+  make it execute garbage. Write via temp-file + `mv` so the inode is replaced.
+- **Check with `bash ~/.claude/skills/bootstrap.sh --doctor`.** Read-only; exits
+  non-zero on drift. Drift here is silent by construction — a repo left on a
+  feature branch keeps working until the branch is deleted.
+
 ## Skill Types
 
 - **Leaf**: Execute work directly with Read/Write/Bash
