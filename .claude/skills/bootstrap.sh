@@ -4,7 +4,8 @@
 # creates sub-skill symlinks for composite skills. Safe to re-run.
 #
 # --doctor: check only. Asserts every deploy tree is on main, clean, and in
-#           sync with origin. Writes nothing; exits 1 if any repo fails.
+#           sync with origin, and that dispatch's deployed copy matches its
+#           tree. Writes nothing; exits 1 if any repo fails.
 set -euo pipefail
 
 SKILLS_DIR="$HOME/.claude/skills"
@@ -134,12 +135,69 @@ run_doctor() {
         doctor_repo "${SKILLS_DIR}/${skill}" || failed=1
     done
     echo
+
+    # dispatch is the one skill whose tree is no longer what runs: since #135
+    # install.sh deploys STAMPED COPIES to ~/.local/bin, so a clean tree can
+    # still be paired with a stale deploy. `dispatch version` exits 1 on that.
+    if command -v dispatch >/dev/null 2>&1; then
+        if [[ -L "${HOME}/.local/bin/dispatch" ]]; then
+            echo "  dispatch deploy   LINK MODE — not converted to stamped copies (#135)" >&2
+            failed=1
+        elif dispatch version >/dev/null 2>&1; then
+            echo "  dispatch deploy   in sync with its tree"
+        else
+            echo "  dispatch deploy   STALE — run dispatch/scripts/install.sh" >&2
+            dispatch version 2>&1 | sed 's/^/                    /' >&2
+            failed=1
+        fi
+    fi
+
+    echo
     if [[ "${failed}" -eq 0 ]]; then
         echo "=== All deploy trees on main, clean, in sync ==="
     else
         echo "=== Drift found. A deploy tree off main is live code nobody reviewed. ===" >&2
     fi
     return "${failed}"
+}
+
+# Pulling a skill repo is not deploying it. dispatch installs stamped COPIES
+# into ~/.local/bin (#134/#135), so after an update the tree moves and the
+# deployed copy does not. Re-run its installer when the stamp says stale, or
+# when dispatch is not installed at all (fresh box).
+#
+# Only dispatch is handled: it is the only skill whose installer is required
+# for correctness after a pull, and the only one that can report its own drift.
+# The other installers (computation-graph, travel, research, planning) stay
+# operator-run, exactly as before this change.
+# Three states need a deploy, and only the middle one is "drift":
+#   absent     — dispatch not installed (fresh box)
+#   drift      — deployed stamp != tree; `dispatch version` exits 1
+#   link mode  — ~/.local/bin still SYMLINKS into the tree (pre-#135). This one
+#                exits 0, because link mode is internally consistent: the tree
+#                IS what runs, so there is nothing to be stale against. Gating
+#                on exit status alone therefore never converts a symlinked box —
+#                caught by test-running this, which reported "already in sync"
+#                while ~/.local/bin was still entirely symlinks.
+deploy_dispatch() {
+    local installer="${SKILLS_DIR}/dispatch/scripts/install.sh"
+    [[ -f "${installer}" ]] || return 0
+
+    local reason=""
+    if ! command -v dispatch >/dev/null 2>&1; then
+        reason="not installed"
+    elif [[ -L "${HOME}/.local/bin/dispatch" ]]; then
+        reason="link mode — not yet converted to stamped copies (#135)"
+    elif ! dispatch version >/dev/null 2>&1; then
+        reason="deployed copy has drifted from the tree"
+    fi
+
+    if [[ -z "${reason}" ]]; then
+        echo "dispatch deploy: already in sync"
+        return 0
+    fi
+    echo "dispatch deploy: ${reason} — running install.sh"
+    bash "${installer}" || echo "  install.sh failed; run it by hand" >&2
 }
 
 # ── main ─────────────────────────────────────────────────────────────────────
@@ -164,6 +222,8 @@ done
 for skill in "${COMPOSITES[@]}"; do
     install_composite "${skill}"
 done
+
+deploy_dispatch
 
 echo "=== Skills bootstrap complete ==="
 echo
