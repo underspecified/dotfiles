@@ -167,7 +167,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.py ]]; then ruff format \"$CLAUDE_FILE_PATH\" 2>/dev/null || true; fi"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [[ \"$f\" == *.py ]]; then ruff format \"$f\" 2>/dev/null || true; fi"
           }
         ]
       },
@@ -176,7 +176,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.md ]]; then rumdl check --fix --config ~/.rumdl.toml \"$CLAUDE_FILE_PATH\" 2>/dev/null || true; fi"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [[ \"$f\" == *.md ]]; then rumdl check --fix --config ~/.rumdl.toml \"$f\" 2>/dev/null || true; fi"
           }
         ]
       },
@@ -252,5 +252,34 @@
   "preferredNotifChannel": "kitty",
   "teammateMode": "auto",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public — not queryable here (no remotes configured for this repo)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: unknown — origin/HEAD unset and no remotes configured for this repo",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: the local repository at /Users/eric/personal (no remotes configured; no additional orgs configured)",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (personal/hobby use — repo /Users/eric/personal has no tracked files and no remotes)",
+      "**Trusted repo**: the git repository at /Users/eric/personal (its working directory); it has no configured remotes",
+      "**Org-specific CLIs**: None configured",
+      "routine under /Users/eric/personal/ prefix: local file operations within this working directory"
+    ]
+  }
 }

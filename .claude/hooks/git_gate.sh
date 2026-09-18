@@ -4,8 +4,9 @@
 # Responsibilities:
 #   1. Rewrite `cd <dir> && git <args>` → `git -C <dir> <args>`
 #      (avoids compound-expression permission failures)
-#   2. Nag the model to review docs before `git commit` (non-blocking
-#      reminder via permissionDecisionReason; commit still proceeds)
+#   2. Block `git commit` when a staged file exceeds GitHub's 100MB limit
+#   3. Nag the model to review docs before `git commit` (non-blocking
+#      reminder via additionalContext; commit still proceeds)
 #
 # Non-git Bash commands fall through (exit 0, no JSON output).
 
@@ -24,13 +25,35 @@ fi
 # commit-intent detection (semantic check — must happen before rewrite).
 CMD_LINE=$(echo "${ORIGINAL}" | head -1 | sed 's/<<.*//')
 
-# --- Find doc files in the cwd (caller's repo root, typically) ---
+# --- Which repo is this commit actually touching? ---
+# Both checks below inspect a working tree. Using the hook's own cwd is wrong
+# whenever the command carries `git -C <dir>` — which CLAUDE.md actively
+# prefers — so the size guard silently examined an unrelated index and passed
+# vacuously. Honor `-C` first, then the payload's cwd, then $PWD.
+strip_quotes() {
+  local s="$1"
+  s="${s%\"}"
+  s="${s#\"}"
+  s="${s%\'}"
+  s="${s#\'}"
+  echo "${s}"
+}
+
+REPO_DIR="$(echo "${INPUT}" | jq -r '.cwd // empty')"
+if [[ "${CMD_LINE}" =~ git[[:space:]]+-C[[:space:]]+([^[:space:]]+) ]]; then
+  REPO_DIR="$(strip_quotes "${BASH_REMATCH[1]}")"
+fi
+REPO_DIR="${REPO_DIR:-${PWD}}"
+# Expand a leading ~ (the payload and command may both carry one).
+[[ "${REPO_DIR}" == "~"* ]] && REPO_DIR="${HOME}${REPO_DIR#\~}"
+
+# --- Find doc files in the target repo ---
 find_docs() {
   local docs=""
-  [[ -f "CLAUDE.md" ]]       && docs="${docs} CLAUDE.md"
-  [[ -f "README.md" ]]       && docs="${docs} README.md"
-  [[ -f "CONTRIBUTING.md" ]] && docs="${docs} CONTRIBUTING.md"
-  [[ -f "CHANGELOG.md" ]]    && docs="${docs} CHANGELOG.md"
+  [[ -f "${REPO_DIR}/CLAUDE.md" ]] && docs="${docs} CLAUDE.md"
+  [[ -f "${REPO_DIR}/README.md" ]] && docs="${docs} README.md"
+  [[ -f "${REPO_DIR}/CONTRIBUTING.md" ]] && docs="${docs} CONTRIBUTING.md"
+  [[ -f "${REPO_DIR}/CHANGELOG.md" ]] && docs="${docs} CHANGELOG.md"
   echo "${docs}"
 }
 
@@ -39,12 +62,12 @@ find_docs() {
 # Pushing then having to amend / rewrite history is painful, so catch at
 # commit time. Tolerant of edge cases (non-repo dir, missing files).
 if [[ "${CMD_LINE}" =~ (^|[[:space:]]|&|\;)git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+commit ]]; then
-  LARGE_FILES=$(git diff --cached --name-only --diff-filter=AM 2>/dev/null | \
+  LARGE_FILES=$(git -C "${REPO_DIR}" diff --cached --name-only --diff-filter=AM 2>/dev/null |
     while IFS= read -r f; do
       [ -z "${f}" ] && continue
-      [ -f "${f}" ] || continue
-      sz=$(stat -c%s "${f}" 2>/dev/null || stat -f%z "${f}" 2>/dev/null || echo 0)
-      if [ "${sz}" -gt 104857600 ]; then  # 100 * 1024 * 1024
+      [ -f "${REPO_DIR}/${f}" ] || continue
+      sz=$(stat -c%s "${REPO_DIR}/${f}" 2>/dev/null || stat -f%z "${REPO_DIR}/${f}" 2>/dev/null || echo 0)
+      if [ "${sz}" -gt 104857600 ]; then # 100 * 1024 * 1024
         printf '  %s (%s bytes)\n' "${f}" "${sz}"
       fi
     done)
@@ -62,12 +85,16 @@ if [[ "${CMD_LINE}" =~ (^|[[:space:]]|&|\;)git([[:space:]]+-C[[:space:]]+[^[:spa
 
   DOCS=$(find_docs)
   if [[ -n "${DOCS}" ]]; then
-    MSG="📝 Before committing: review${DOCS} and update if changes affect structure, scripts, deps, or interfaces. Stage any doc changes alongside the commit."
-    jq -n --arg msg "${MSG}" '{
+    MSG="📝 Before committing: review${DOCS} in ${REPO_DIR} and update if changes affect structure, scripts, deps, or interfaces. Stage any doc changes alongside the commit."
+    # additionalContext, NOT permissionDecisionReason. A reason is rendered only
+    # when the decision is "deny"/"block" — on "allow" it is never displayed, so
+    # under skipAutoPermissionPrompt + auto mode this nag reached nobody at all.
+    # Dropping the "allow" also restores normal permission checking: carrying the
+    # message that way was auto-approving every git commit as a side effect.
+    jq -n --arg ctx "${MSG}" '{
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
-        permissionDecision: "allow",
-        permissionDecisionReason: $msg
+        additionalContext: $ctx
       }
     }'
     exit 0
@@ -78,10 +105,8 @@ fi
 # Only rewrites the exact single-cd-then-single-git shape. Anything more
 # complex (multiple &&, pipes, subshells) falls through untouched.
 if [[ "${ORIGINAL}" =~ ^[[:space:]]*cd[[:space:]]+([^[:space:]&\;|]+)[[:space:]]*\&\&[[:space:]]*git[[:space:]]+(.*)$ ]]; then
-  DIR="${BASH_REMATCH[1]}"
+  DIR="$(strip_quotes "${BASH_REMATCH[1]}")"
   REST="${BASH_REMATCH[2]}"
-  DIR="${DIR%\"}"; DIR="${DIR#\"}"
-  DIR="${DIR%\'}"; DIR="${DIR#\'}"
   REWRITTEN="git -C ${DIR} ${REST}"
   jq -n --arg cmd "${REWRITTEN}" '{
     hookSpecificOutput: {

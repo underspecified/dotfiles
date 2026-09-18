@@ -3,14 +3,19 @@
 # Panache is Quarto-aware (fenced divs, grid tables, citations) where generic markdown linters mangle.
 set -uo pipefail
 
-[[ "${CLAUDE_FILE_PATH:-}" == *.qmd ]] || exit 0
-[[ -f "${CLAUDE_FILE_PATH}" ]] || exit 0
+# The edited path arrives in the hook's stdin JSON, NOT an environment variable.
+# There is no CLAUDE_FILE_PATH — see shellcheck_lint.sh for the full note. This
+# hook gated on that unset name and silently did nothing for months.
+file="$(jq -r '.tool_input.file_path // empty' 2>/dev/null)"
 
-panache format "${CLAUDE_FILE_PATH}" >/dev/null 2>&1 || true
+[[ "${file}" == *.qmd ]] || exit 0
+[[ -f "${file}" ]] || exit 0
 
-if ! output=$(panache lint --check --message-format short "${CLAUDE_FILE_PATH}" 2>&1); then
+panache format "${file}" >/dev/null 2>&1 || true
+
+if ! output=$(panache lint --check --message-format short "${file}" 2>&1); then
   jq -n \
-    --arg ctx "Panache lint issues in ${CLAUDE_FILE_PATH}:"$'\n'"${output}" \
-    --arg msg "Panache found issues in ${CLAUDE_FILE_PATH##*/}" \
+    --arg ctx "Panache lint issues in ${file}:"$'\n'"${output}" \
+    --arg msg "Panache found issues in ${file##*/}" \
     '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":$ctx},"systemMessage":$msg}'
 fi
