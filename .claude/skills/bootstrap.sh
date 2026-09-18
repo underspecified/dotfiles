@@ -12,7 +12,7 @@ SKILLS_DIR="$HOME/.claude/skills"
 GITHUB_ORG="underspecified"
 
 # Standalone skills (one repo = one skill)
-STANDALONE=(computation-graph dispatch email-inbox figure gantt-chart meeting travel)
+STANDALONE=(computation-graph dispatch email-inbox figure gantt-chart meeting pdf-immersive-html travel)
 
 # Composite skills (one repo, multiple sub-skills at <repo>/skills/<name>/)
 COMPOSITES=(
