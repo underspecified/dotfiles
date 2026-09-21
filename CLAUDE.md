@@ -110,7 +110,7 @@ lnk doctor          # Diagnose broken symlinks or issues
 | `macos.lnk/` | macOS-only configs and scripts (`.config/`, `.local/bin/`, `.Rprofile`) |
 | `linux.lnk/` | Linux-only configs and scripts (`.config/`, `.local/`, X11 dotfiles) |
 | `.docker/mcp/` | Docker MCP server configuration (markdownify, markitdown) |
-| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/` (desktop with sudo+apt), `nosudo/` (headless / no-sudo: user-space tools only), and `macos/`. Linux desktop entry point is `linux/install.sh`; the nosudo path is `nosudo/install.sh`. Mac bootstrap is `macos/bootstrap_start.sh` for bare-machine bring-up + `macos/bootstrap_finish.sh` auto-run via repo-root `bootstrap.sh` dispatcher after `lnk init -r`. The Claude Code hook toolchain (ruff, rumdl, panache, shfmt, shellcheck) installs via `all/install_hook_tools.sh` — run it on any host where the PostToolUse formatters should actually fire; without it they no-op silently |
+| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/` (desktop with sudo+apt), `nosudo/` (headless / no-sudo: user-space tools only), and `macos/`. Linux desktop entry point is `linux/install.sh`; the nosudo path is `nosudo/install.sh`. Mac bootstrap is `macos/bootstrap_start.sh` for bare-machine bring-up + `macos/bootstrap_finish.sh` auto-run via repo-root `bootstrap.sh` dispatcher after `lnk init -r`. Both Linux paths run `~/.claude/bootstrap.sh`, which now installs the hook toolchain (ruff, rumdl, panache, shfmt, shellcheck, jq) via `.claude/hooks/bootstrap.sh` — without those the PostToolUse formatters no-op silently |
 | `.gnupg/`, `.ssh/` | Key material (sensitive — managed but gitignored selectively) |
 
 ## Key Conventions

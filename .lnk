@@ -19,6 +19,7 @@
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
 .claude/hooks/audit_python.sh
+.claude/hooks/bootstrap.sh
 .claude/hooks/commit_guidelines.md
 .claude/hooks/git_gate.sh
 .claude/hooks/panache_format.sh

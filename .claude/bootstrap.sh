@@ -7,6 +7,14 @@ CLAUDE_DIR="$HOME/.claude"
 
 echo "=== Claude Code bootstrap ==="
 
+# Hook toolchain (ruff/rumdl/panache/shfmt/shellcheck/jq).
+# First: the hooks run on every tool call, and a missing formatter is a
+# silently dead hook rather than an error. Non-fatal -- a host without one
+# of these should still finish the rest of the bootstrap.
+echo ""
+echo "--- Bootstrapping hook toolchain ---"
+bash "${CLAUDE_DIR}/hooks/bootstrap.sh" || echo "!! hook toolchain incomplete (continuing)"
+
 # Status line
 echo ""
 echo "--- Bootstrapping status line ---"
