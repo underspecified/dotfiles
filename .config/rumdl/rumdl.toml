@@ -1,8 +1,15 @@
 [global]
-disable = ["MD013", "MD033"]
+disable = ["MD013", "MD033", "MD018", "MD019"]
 # MD013 (line length): Academic prose uses long single-line paragraphs — auto-fix
 #   would reflow text destructively
 # MD033 (no inline HTML): LaTeX commands (\vspace, \pagebreak) trigger false positives
+# MD018/MD019 (space after # in heading): DESTRUCTIVE on issue references. A line
+#   that merely *begins* with `#123` is read as a malformed heading and rewritten
+#   into one — `#146 for details.` became `## 146 for details`, silently dropping
+#   the period and splitting the paragraph. Verified 2026-09-21; it corrupted a
+#   CLAUDE.md paragraph in dispatch PR #147. Issue refs at line start are
+#   unavoidable in these repos, and a genuinely malformed `#Heading` is far rarer
+#   than the false positives, so both rules are off rather than fix-only.
 
 [per-file-flavor]
 "*.qmd" = "quarto"
