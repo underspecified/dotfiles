@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# Usage: invoked by git as <hook-name>; every hook file here symlinks to this.
+# Output: runs the repo's OWN hook of the same name, then any lnk-side guard.
+#
+# Why this exists: `core.hooksPath` REPLACES the hooks directory wholesale — it
+# does not merge. Pointing it at a shared dir silently stops every per-repo
+# `.git/hooks/*` on the machine (husky, pre-commit framework, whatever a cloned
+# repo shipped), with no warning and no error. That failure is invisible until
+# something that should have been blocked gets committed. So every hook here is
+# a chain: repo's own hook first, lnk guard second.
+#
+# Load-bearing: `git rev-parse --git-path hooks/<name>` CANNOT be used to find
+# the repo's own hook — it FOLLOWS core.hooksPath and returns this very script,
+# which would exec itself forever. Verified 2026-09-21. Use --git-dir, which
+# resolves to the repo's real .git regardless of hooksPath.
+set -uo pipefail
+
+# Recursion guard: if a repo's own hook is itself this script (symlinked, or a
+# repo that set hooksPath back here), stop rather than loop.
+[ -n "${LNK_HOOK_CHAINED:-}" ] && exit 0
+
+hook="$(basename "$0")"
+gitdir="$(git rev-parse --git-dir 2>/dev/null)" || exit 0
+own="${gitdir}/hooks/${hook}"
+
+# Don't chain to ourselves: compare resolved directories, not paths as written.
+own_is_self=0
+if [ -x "${own}" ]; then
+  own_dir="$(cd "$(dirname "${own}")" 2>/dev/null && pwd -P)" || own_dir=""
+  self_dir="$(cd "$(dirname "$0")" 2>/dev/null && pwd -P)" || self_dir=""
+  [ -n "${own_dir}" ] && [ "${own_dir}" = "${self_dir}" ] && own_is_self=1
+fi
+
+# Hooks with no lnk-side guard: hand off entirely. `exec` keeps stdin intact,
+# which pre-push and post-rewrite depend on.
+if [ "${hook}" != "pre-commit" ]; then
+  if [ -x "${own}" ] && [ "${own_is_self}" -eq 0 ]; then
+    export LNK_HOOK_CHAINED=1
+    exec "${own}" "$@"
+  fi
+  exit 0
+fi
+
+# --- pre-commit: repo's own hook first, then the autoMode guard --------------
+# pre-commit receives no stdin, so running the two in sequence is safe.
+if [ -x "${own}" ] && [ "${own_is_self}" -eq 0 ]; then
+  LNK_HOOK_CHAINED=1 "${own}" "$@" || exit $?
+fi
+
+# --- autoMode guard ----------------------------------------------------------
+# Claude Code's /auto-mode-setup regenerates an `autoMode` block into
+# .claude/settings.json. That block has carried employer name, internal paths,
+# internal service names, sensitive-data locations and secrets-management
+# details. ~/.config/lnk is a PUBLIC repo; stripping the block after a push does
+# not unpublish it. autoMode belongs in the untracked ~/.claude/settings.local.json.
+# Recurred 2026-09-11 (c0911b7) and again 2026-09-21.
+blocked=0
+while IFS= read -r file; do
+  [ -n "${file}" ] || continue
+
+  # Read the STAGED content, not the worktree copy — they can differ.
+  staged="$(git show ":${file}" 2>/dev/null)" || continue
+
+  if command -v jq >/dev/null 2>&1; then
+    has_key="$(printf '%s' "${staged}" | jq -e 'has("autoMode")' 2>/dev/null)" || has_key="false"
+  else
+    # Fallback: an autoMode key at the top level of the object.
+    if printf '%s' "${staged}" | grep -qE '^[[:space:]]*"autoMode"[[:space:]]*:'; then
+      has_key="true"
+    else
+      has_key="false"
+    fi
+  fi
+
+  if [ "${has_key}" = "true" ]; then
+    echo "pre-commit: BLOCKED — '${file}' contains an \"autoMode\" key." >&2
+    blocked=1
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)\.claude/settings\.json$' || true)
+
+if [ "${blocked}" -ne 0 ]; then
+  cat >&2 <<'MSG'
+
+  autoMode blocks carry internal paths and service names. If this repo is
+  public, committing and pushing publishes them; stripping it later does not
+  unpublish it. autoMode belongs in ~/.claude/settings.local.json (gitignored).
+
+  To fix:
+    jq 'del(.autoMode)' .claude/settings.json > /tmp/s.json && mv /tmp/s.json .claude/settings.json
+    git add .claude/settings.json
+
+  To override deliberately (you have read the block and judged it safe):
+    git commit --no-verify
+
+MSG
+  exit 1
+fi
+
+exit 0

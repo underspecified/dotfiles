@@ -54,6 +54,7 @@
       "Bash(deface *)",
       "Bash(defaults read:*)",
       "Bash(diff *)",
+      "Bash(dispatch:*)",
       "Bash(docker *)",
       "Bash(du *)",
       "Bash(echo *)",

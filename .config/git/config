@@ -18,6 +18,7 @@
 	quotepath = false
 	excludesfile = ~/.config/git/ignore
 	whitespace = trailing-space,space-before-tab
+	hooksPath = ~/.config/lnk/hooks
 
 [init]
 	defaultBranch = main
