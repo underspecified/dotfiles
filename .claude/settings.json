@@ -177,7 +177,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [[ \"$f\" == *.md ]]; then rumdl check --fix \"$f\" 2>/dev/null || true; fi"
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [[ \"$f\" == *.md ]] && ! grep -qE '^(<<<<<<<|=======|>>>>>>>|\\|\\|\\|\\|\\|\\|\\|)' \"$f\" 2>/dev/null; then rumdl check --fix \"$f\" 2>/dev/null || true; fi"
           }
         ]
       },
