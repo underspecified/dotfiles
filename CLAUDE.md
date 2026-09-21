@@ -9,6 +9,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 ## Scope (Eric's slice)
 
 ### In scope
+
 - Claude skill definitions (`~/.claude/skills/`)
 - Hook + hookify rules (`~/.claude/hookify.*.local.md`, `~/.claude/hooks/`)
 - MCP server configs
@@ -18,6 +19,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - Setup scripts for new machines
 
 ### Out of scope
+
 - Per-project CLAUDE.md (owned by the project PL)
 - Per-PL memory dirs (per-session)
 - Application-level settings unrelated to dev workflow
@@ -82,7 +84,7 @@ A dotfiles repository managed by [`lnk`](https://github.com/...), a Git-native d
 - **`.lnk`** — cross-platform configs (zsh, kitty, git, ssh, docker, obsidian, etc.)
 - **`.lnk.macos`** — macOS-only (yabai, skhd, aerospace, karabiner, borders, darkman, helper scripts in `.local/bin/`)
 - **`.lnk.linux`** — Linux desktop (i3, sway, rofi, tofi, X11/Wayland configs, systemd user units, wallpapers). Pulled on **any** Linux host — the GUI helpers are dead symlinks but harmless on headless boxes.
-- **`.lnk.nosudo`** *(host)* — additional files for headless / no-sudo dev boxes. Layered **on top of** `.lnk` + `.lnk.linux`; lnk has no exclusion mechanism. Pull with `lnk pull --host nosudo`.
+- **`.lnk.nosudo`** _(host)_ — additional files for headless / no-sudo dev boxes. Layered **on top of** `.lnk` + `.lnk.linux`; lnk has no exclusion mechanism. Pull with `lnk pull --host nosudo`.
 
 Each file lists paths relative to `$HOME`, one per line. `lnk` reads these to know what to symlink. OS files (`.lnk.macos`, `.lnk.linux`) are selected automatically by `uname -s`; host files (`.lnk.<host>`) require the `--host <host>` flag on `lnk pull` / `lnk add` / `lnk list`.
 
@@ -108,7 +110,7 @@ lnk doctor          # Diagnose broken symlinks or issues
 | `macos.lnk/` | macOS-only configs and scripts (`.config/`, `.local/bin/`, `.Rprofile`) |
 | `linux.lnk/` | Linux-only configs and scripts (`.config/`, `.local/`, X11 dotfiles) |
 | `.docker/mcp/` | Docker MCP server configuration (markdownify, markitdown) |
-| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/` (desktop with sudo+apt), `nosudo/` (headless / no-sudo: user-space tools only), and `macos/`. Linux desktop entry point is `linux/install.sh`; the nosudo path is `nosudo/install.sh`. Mac bootstrap is `macos/bootstrap_start.sh` for bare-machine bring-up + `macos/bootstrap_finish.sh` auto-run via repo-root `bootstrap.sh` dispatcher after `lnk init -r` |
+| `installers/` | Setup scripts organized as `all/` (cross-platform), `linux/` (desktop with sudo+apt), `nosudo/` (headless / no-sudo: user-space tools only), and `macos/`. Linux desktop entry point is `linux/install.sh`; the nosudo path is `nosudo/install.sh`. Mac bootstrap is `macos/bootstrap_start.sh` for bare-machine bring-up + `macos/bootstrap_finish.sh` auto-run via repo-root `bootstrap.sh` dispatcher after `lnk init -r`. The Claude Code hook toolchain (ruff, rumdl, panache, shfmt, shellcheck) installs via `all/install_hook_tools.sh` — run it on any host where the PostToolUse formatters should actually fire; without it they no-op silently |
 | `.gnupg/`, `.ssh/` | Key material (sensitive — managed but gitignored selectively) |
 
 ## Key Conventions
