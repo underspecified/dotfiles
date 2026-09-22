@@ -17,14 +17,15 @@ disable = ["MD013", "MD033", "MD018", "MD019"]
 # .md files use default/auto-detection (GFM-compatible)
 
 [MD049]
-# *asterisks* for italics. This was "underscore" until 2026-09-22 and it was
-# simply WRONG — it contradicted rules/markdown.md, which has always documented
-# `*italic*`. Nothing had noticed because the markdown hook was dead until
-# 2026-09-21 (see dab26af); the moment it started running, the mismatch surfaced
-# as 46 violations across three repos that were all correctly following the
-# documented convention. Measured before changing: underscore 41/3/2 vs
-# asterisk 2/1/0 on dispatch / lnk / kaiseki. Fix the config, not the corpus.
-style = "asterisk"
+# _underscores_ for italics (with **asterisks** for bold, MD050 below).
+# Eric confirmed the house style 2026-09-22. Do not "fix" this to asterisk:
+# rules/markdown.md line 14 claimed `*italic*` for months and was simply wrong —
+# line 16 of the same file uses `_"quoted text"_`, which should have been the
+# tell. I changed this rule to asterisk on the strength of that one bad line
+# plus a violation count, and had it backwards; the count was measuring how far
+# the corpus had drifted, not what the convention is. A lint rule that disagrees
+# with the corpus is not evidence the rule is wrong.
+style = "underscore"
 
 [MD050]
 style = "asterisk"    # **asterisks** for bold

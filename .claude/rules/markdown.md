@@ -11,7 +11,7 @@
 ## Inline Formatting
 
 - `==text==` highlighting (requires `from: markdown+mark`, `mark.lua` + `highlight-text` filter)
-- `**bold**`, `*italic*`, `~subscript~` (e.g., `M~t~`)
+- `**bold**`, `_italic_`, `~subscript~` (e.g., `M~t~`)
 - `$math$` for inline LaTeX (e.g., `$t(22)=1.29$`, `$p=.212$`, `$N=23$`)
 - `_"quoted text"_ (P03)` for participant quotes in papers
 
