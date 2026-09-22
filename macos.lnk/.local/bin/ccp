@@ -323,7 +323,7 @@ cmd_fleet_list() {
 # a helper that reparents to init (subshell exits → nohup'd child survives the
 # self-destroy), then recreates self --headless under the already-staged token
 # (which persists — see the staging note above). Reattach the window after with
-# `dispatch wake <path> --here`.
+# `dispatch -C <path> wake --here` (dispatch#164: wake takes no positional dir).
 _launch_self_helper() { # self_path
   local sp="${1}" helper
   helper="$(mktemp "${TMPDIR:-/tmp}/ccp-self-relaunch.XXXXXX.sh")"
@@ -488,7 +488,7 @@ cmd_fleet_switch() {
   if [[ "${do_self}" -eq 1 ]]; then
     _launch_self_helper "${self_path}"
     echo "ccp: self relaunch scheduled — this window's session restarts under '${profile}'"
-    echo "ccp: reattach with: dispatch wake ${self_path} --here"
+    echo "ccp: reattach with: dispatch -C ${self_path} wake --here"
   fi
 
   if [[ "${fail}" -gt 0 ]]; then
