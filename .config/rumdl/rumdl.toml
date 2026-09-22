@@ -17,7 +17,14 @@ disable = ["MD013", "MD033", "MD018", "MD019"]
 # .md files use default/auto-detection (GFM-compatible)
 
 [MD049]
-style = "underscore"  # _underscores_ for italics
+# *asterisks* for italics. This was "underscore" until 2026-09-22 and it was
+# simply WRONG — it contradicted rules/markdown.md, which has always documented
+# `*italic*`. Nothing had noticed because the markdown hook was dead until
+# 2026-09-21 (see dab26af); the moment it started running, the mismatch surfaced
+# as 46 violations across three repos that were all correctly following the
+# documented convention. Measured before changing: underscore 41/3/2 vs
+# asterisk 2/1/0 on dispatch / lnk / kaiseki. Fix the config, not the corpus.
+style = "asterisk"
 
 [MD050]
 style = "asterisk"    # **asterisks** for bold
