@@ -11,6 +11,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
+- **Owes:** good-night roll-up of every PL's `**Owes:**` lines into the morning drafts (planning #2) -> coordinator (due 2026-09-30)
+- **planning #2** — the Owes roll-up above. The engineer seat was cold-started 2026-09-23. **Waiting on Eric** to accept its first-launch trust prompt (`dispatch -C ~/.claude/skills/planning wake`); then it posts an implementation plan.
 - **Workflow pilot feedback (for Eric)** — the first live Gate 2 run (kaiseki #9) turned up 8 friction points:
   1. Gate 1 is undefined for bugs.
   2. "PLs never run code" contradicts verification — and the prescribed `/code-review` runs code itself. Suggest "never _write_ product code".
