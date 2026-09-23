@@ -15,7 +15,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #18: skip `.*_cache` and `.venv` when counting changed files.
   - #15: hansei gets an upper bound, and its 9h UTC-vs-local skew is fixed.
   - #14: when two projects share a basename, the shallower path keeps `<slug>.md`, and the 2 lost days get re-linked.
-  - #14 needs a matching planning issue: good-night's normalize step falls back to the basename and would undo the fix. I assign it once the kaiseki seat files it.
+  - #18 is merged (#20, 6bac8f1); on lnk, 71 of 78 "changed" files were cache files.
+  - planning #4, the planning-side half of #14 (good-night normalize must not undo it), is assigned to the planning seat.
 - **travel #1** — remove the committed hansei report. Assigned; the travel seat was started headless and is waiting on the first-launch trust prompt, which is Eric's to accept.
 - **dispatch #169 + #171**
   - #171 is merged (#173, c5135b1): a failed bootstrap POST now warns instead of aborting `monitor`, on both the local and remote paths. The test stub's readiness is now a hard precondition.
