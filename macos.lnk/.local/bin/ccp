@@ -178,9 +178,9 @@ Usage: ccp <command> [args]   (Claude Code Profile — switch/launch by identity
                                         --apply. Each relaunch is verified with one retry
                                         (no silent destroy/wake-race drops). Current session
                                         excluded unless --include-self (relaunched last via
-                                        a detached helper; reattach with `dispatch wake
-                                        <path> --here`). LOCAL: token staged PERSISTENTLY on
-                                        the local bus (records profile active) so re-wakes
+                                        a detached helper; reattach with `dispatch -C
+                                        <path> wake --here`). LOCAL: token staged PERSISTENTLY
+                                        on the local bus (records profile active) so re-wakes
                                         stay switched; clear with `ccp unstage`. --hosts:
                                         REMOTE switches via dispatch cold-start token
                                         injection (#127) — per-wake, NOT persistent across
