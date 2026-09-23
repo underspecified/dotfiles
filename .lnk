@@ -22,6 +22,7 @@
 .claude/hooks/bootstrap.sh
 .claude/hooks/commit_guidelines.md
 .claude/hooks/git_gate.sh
+.claude/hooks/md_format.sh
 .claude/hooks/panache_format.sh
 .claude/hooks/shellcheck_lint.sh
 .claude/mcp/bootstrap.sh
