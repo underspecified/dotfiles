@@ -11,16 +11,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **kaiseki #12** — follow-ups from the #11 review:
-  - multi-day `scan_activity`;
-  - unbounded mtime/transcript windows;
-  - the `set -e` crash on fresh or Linux boxes;
-  - hansei relative periods;
-  - date normalization inside the `git_*.sh` helpers.
-
-  Plan signed off 2026-09-23: two PRs (E+D, then A+B+C), after #13.
-- **kaiseki #13** — nikki and hansei write logs into skill deploy trees (breaks the clean-main rule). The fix writes them outside `~/.claude/skills/` and migrates the leftover `research/nikki/2026-08-14.md`. Merged 2026-09-23 as d76e3ae: skill-tree logs are now `planning/logs/<date>/<slug>.skill.md`. The seat is running the one-time migration (10 nikki logs, 24 hansei reports), then files a research issue to remove its 2 committed logs.
-- **dispatch #169 + #171** — version compares commits, not bytes; flaky V20d on Linux CI. Eric asked for fixes 2026-09-23; waiting for the seat's plans.
+- **kaiseki #12** — PR 1 (E+D, date normalization in the git helpers, hansei passes dates) merged as e79d790. PR 2 is next: A+B+C, i.e. `scan_activity` date range, bounded mtime/transcript windows, no `set -e`.
+- **Skill-tree log cleanup** (after kaiseki #13) — research #30 is assigned to the research seat: remove its 2 committed nikki logs. The kaiseki seat is filing a travel issue for 1 committed hansei report, and a kaiseki issue about `.rumdl_cache` inflating nikki's file counts.
+- **dispatch #169 + #171** — version compares commits, not bytes; flaky V20d on Linux CI (cause found: a product bug plus a test race). Plans signed off 2026-09-23; waiting for the PRs. Fleet deploy after merge.
 - **dispatch #172** — a restarted seat reads its queued mail but takes no turn, so it stalls silently until someone types (kaiseki lost about an hour on 2026-09-23). Filed and assigned 2026-09-23, queued after #169/#171. Until it lands, peek a seat's pane after restarting it.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
@@ -33,6 +26,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-23 — merged kaiseki #16 (d76e3ae, closes #13): nikki and hansei on a skill deploy tree now write outside it. The migration moved 31 stray files out of the skill trees and removed 10 planning symlinks into them; `--doctor` is all clean. Merged kaiseki #17 (e79d790, #12 PR 1).
 - 2026-09-23 — merged planning #3 (9df6713, closes #2), which delivered my Owes line to the coordinator a week early. good-night now writes `## Owed across PLs` into drafts.md every night, and good-morning shows it. Most live Owes lines use free-text dates and show as undated, so I asked the coordinator to enforce `(due YYYY-MM-DD)`.
 - 2026-09-23 — fleet deploy: all six Linux hosts are on lnk f44206d plus the private `underspecified/org` repo (a182833, cloned at `~/.claude/org`, never folded into the public lnk). All 10 old stashes were reviewed with Eric and dropped. The Linux docker config is no longer managed by lnk: a ghcr.io token had been written into the public-tracked file. Every host now has haru-4090's config as a per-host 0600 file.
 - 2026-09-23 — merged research #29 (closes #28, rebase-merged: ca99d82 format + 2a5dd00 behavior): `queue_manager add` now reports "already in library/queue" as `Skipped:` with exit 0.
