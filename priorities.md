@@ -12,7 +12,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Owes:** good-night roll-up of every PL's `**Owes:**` lines into the morning drafts (planning #2) -> coordinator (due 2026-09-30)
-- **planning #2** — the Owes roll-up above. Plan signed off 2026-09-23 (coordinator special-cased; remote `~` fix added). Waiting for the PR.
+- **planning #2** — the Owes roll-up above. PR #3 is up and verified on real data; changes requested (2 ruff errors). Merge once fixed.
 - **kaiseki #12** — follow-ups from the #11 review:
   - multi-day `scan_activity`;
   - unbounded mtime/transcript windows;
@@ -20,8 +20,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - hansei relative periods;
   - date normalization inside the `git_*.sh` helpers.
 
-  Assigned 2026-09-23. The seat was restarted first so superpowers loads. Waiting for its plan.
-- **kaiseki #13** — nikki and hansei write logs into skill deploy trees (breaks the clean-main rule). The fix writes them outside `~/.claude/skills/` and migrates the leftover `research/nikki/2026-08-14.md`. Assigned 2026-09-23 (queued with #12). The coordinator is skipping skill repos in backfills until it lands.
+  Plan signed off 2026-09-23: two PRs (E+D, then A+B+C), after #13.
+- **kaiseki #13** — nikki and hansei write logs into skill deploy trees (breaks the clean-main rule). The fix writes them outside `~/.claude/skills/` and migrates the leftover `research/nikki/2026-08-14.md`. Plan signed off 2026-09-23, with a required fix for slug collisions (skill `planning` vs `~/projects/planning`). Goes first. The coordinator is skipping skill repos in backfills until it lands.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
