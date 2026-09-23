@@ -26,6 +26,7 @@
 .claude/hooks/shellcheck_lint.sh
 .claude/mcp/bootstrap.sh
 .claude/org/engineer.md
+.claude/org/pl.md
 .claude/org/workflow.md
 .claude/patches/README.md
 .claude/patches/bootstrap.sh

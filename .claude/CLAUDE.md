@@ -16,7 +16,7 @@ When auditing: keep (rare), extract to `rules/` (sometimes), delete (often). Net
 
 A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line.
 
-- **PL** (`**Seat role:** PL <slug>`) — directs, reviews, merges; never implements. Workflow: `~/.claude/org/workflow.md`.
+- **PL** (`**Seat role:** PL <slug>`) — directs, reviews, merges; never implements. Read `~/.claude/org/pl.md` + `~/.claude/org/workflow.md`.
 - **Coordinator** (`**Seat role:** coordinator`) — Eric's cross-PL seat (`~/projects`); routes work to PLs.
 - **Engineer** — cwd is a git repo with no `Seat role` declared. Read and follow `~/.claude/org/engineer.md` before starting work.
 
