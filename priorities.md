@@ -11,13 +11,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **kaiseki #18, #15, #14** — plans signed off 2026-09-23.
-  - #18: skip `.*_cache` and `.venv` when counting changed files.
-  - #15: hansei gets an upper bound, and its 9h UTC-vs-local skew is fixed.
-  - #14: when two projects share a basename, the shallower path keeps `<slug>.md`, and the 2 lost days get re-linked.
-  - #18 is merged (#20, 6bac8f1); on lnk, 71 of 78 "changed" files were cache files.
-  - #15 is merged (#21, f3f88c3). On lnk for 09-22, the bounded window counts 9073 messages instead of 15908.
-  - #14 is merged (#22, 0d57e43) together with its planning-side half (planning #5, aeeee0f; the prose rename became a no-clobber script). Waiting on the seat's re-link of the 2 lost May days.
 - **travel #1** — remove the committed hansei report. Assigned; the travel seat was started headless and is waiting on the first-launch trust prompt, which is Eric's to accept.
 - **dispatch #169 + #171**
   - #171 is merged (#173, c5135b1): a failed bootstrap POST now warns instead of aborting `monitor`, on both the local and remote paths. The test stub's readiness is now a hard precondition.
@@ -36,6 +29,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-23 — kaiseki follow-ups closed:
+  - #18 (#20): tool caches no longer count as changed files; on lnk they were 71 of 78.
+  - #15 (#21): hansei's transcript window is bounded, and its 9h UTC skew is fixed.
+  - #14 (#22, plus planning #5): same-basename projects keep separate planning-log names. The lost May links are restored, and planning.md → the coordinator on 41/41 days.
+  - Known limit: two same-basename nikki runs finishing at the same instant could still race; recorded on #14.
 - 2026-09-23 — merged kaiseki #16 (d76e3ae, closes #13): nikki and hansei on a skill deploy tree now write outside it. The migration moved 31 stray files out of the skill trees and removed 10 planning symlinks into them; `--doctor` is all clean. Merged kaiseki #17 (e79d790) and #19 (5506b8a), which close #12: every kaiseki date window is now whole local days, `scan_activity` takes a range, and its sections are bounded, with transcripts matched by overlap. Low-priority follow-ups filed and unassigned: kaiseki #14 (`planning` name clash), #15 (no end date in `analyze_conversations.py`), plus a travel issue and a `.rumdl_cache` issue.
 - 2026-09-23 — merged planning #3 (9df6713, closes #2), which delivered my Owes line to the coordinator a week early. good-night now writes `## Owed across PLs` into drafts.md every night, and good-morning shows it. Most live Owes lines use free-text dates and show as undated, so I asked the coordinator to enforce `(due YYYY-MM-DD)`.
 - 2026-09-23 — fleet deploy: all six Linux hosts are on lnk f44206d plus the private `underspecified/org` repo (a182833, cloned at `~/.claude/org`, never folded into the public lnk). All 10 old stashes were reviewed with Eric and dropped. The Linux docker config is no longer managed by lnk: a ghcr.io token had been written into the public-tracked file. Every host now has haru-4090's config as a per-host 0600 file.
