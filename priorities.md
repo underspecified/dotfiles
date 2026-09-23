@@ -21,12 +21,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - date normalization inside the `git_*.sh` helpers.
 
   Assigned 2026-09-23. The seat was restarted first so superpowers loads. Waiting for its plan.
-- **research #28** — `queue_manager.py add` exits 1 for "already in library/queue" (11 of 32 calls on 2026-09-18). Assigned 2026-09-23. **Waiting on Eric** to accept the research seat's first-launch trust prompt (`dispatch -C ~/.claude/skills/research wake`).
+- **research #28** — `queue_manager.py add` exits 1 for "already in library/queue" (11 of 32 calls on 2026-09-18). Assigned 2026-09-23. Seat running (trust accepted); waiting for its plan.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
 
-- **Research seat trust prompt** (see research #28 above).
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
