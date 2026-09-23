@@ -28,10 +28,10 @@ launch_ws() {
 # `ccp fleet switch --hosts` last staged (persists until their next reboot).
 ccp stage || echo "launch_ws: ccp stage failed — local sessions may use keychain login" >&2
 
-BTOP=0 NVITOP=0 launch_ws localhost '~/projects' '~/projects/llm' '~/projects/settings' '~/lab' '~/haru.md' '~/git/llm_eval'
+BTOP=0 NVITOP=0 launch_ws localhost '~/projects' '~/projects/cambridge' '~/projects/llm'  '~/projects/settings' '~/haru.md'
 BTOP=1 NVITOP=1 launch_ws dgx02 '~/git/llm_eval'
-BTOP=1 NVITOP=1 launch_ws llm-jp '~/git/llm_eval'
-BTOP=1 NVITOP=1 launch_ws llm-jp-2 '~/git/llm_eval'
-BTOP=1 NVITOP=1 launch_ws germputer '~/git/llm_eval'
-BTOP=1 NVITOP=1 launch_ws haru-4090 '~/git/llm_eval'
-BTOP=1 NVITOP=1 launch_ws haru-5090 '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws llm-jp '~/git/apps' '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws llm-jp-2 '~/git/apps' '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws germputer '~/git/apps' '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws haru-4090 '~/git/apps' '~/git/llm_eval'
+BTOP=1 NVITOP=1 launch_ws haru-5090 '~/git/apps' '~/git/llm_eval'
