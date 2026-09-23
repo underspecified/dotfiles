@@ -12,7 +12,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **kaiseki #11** (fix for #9, git `--since` bare date) — the 7 blocking items are resolved (f20908e). One change remains: `git_file_churn.sh` `|| out=""` → `|| true`, since a busy window can SIGPIPE into a silent `[]`. The engineer is measuring it first. Engineer: kaiseki.
-- **paper #1** — `**Seat role:** paper` on line 3 of the paper-from-overleaf CLAUDE.md template. **Blocked on Eric:** the cold-started engineer seat is sitting at Claude Code's "trust this folder" prompt (`dispatch -C ~/.claude/skills/paper wake`, then accept).
+- **paper #1** — `**Seat role:** paper` on line 3 of the paper-from-overleaf CLAUDE.md template. Engineer seat running (trust accepted 2026-09-23); awaiting its implementation plan.
 - **Workflow pilot feedback (for Eric)** — the first live Gate 2 run (kaiseki #9) turned up 8 friction points:
   1. Gate 1 is undefined for bugs.
   2. "PLs never run code" contradicts verification — and the prescribed `/code-review` runs code itself. Suggest "never _write_ product code".
