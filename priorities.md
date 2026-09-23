@@ -21,6 +21,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   Plan signed off 2026-09-23: two PRs (E+D, then A+B+C), after #13.
 - **kaiseki #13** — nikki and hansei write logs into skill deploy trees (breaks the clean-main rule). The fix writes them outside `~/.claude/skills/` and migrates the leftover `research/nikki/2026-08-14.md`. Merged 2026-09-23 as d76e3ae: skill-tree logs are now `planning/logs/<date>/<slug>.skill.md`. The seat is running the one-time migration (10 nikki logs, 24 hansei reports), then files a research issue to remove its 2 committed logs.
 - **dispatch #169 + #171** — version compares commits, not bytes; flaky V20d on Linux CI. Eric asked for fixes 2026-09-23; waiting for the seat's plans.
+- **dispatch #172** — a restarted seat reads its queued mail but takes no turn, so it stalls silently until someone types (kaiseki lost about an hour on 2026-09-23). Filed and assigned 2026-09-23, queued after #169/#171. Until it lands, peek a seat's pane after restarting it.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
