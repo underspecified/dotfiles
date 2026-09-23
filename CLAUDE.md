@@ -24,6 +24,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - `~/.claude/CLAUDE.md` and `~/.claude/rules/*` are symlinks into this repo. The exception is `rules/signature.md`: untracked PII that must never be committed.
 - `~/.claude/settings.json` is `.claude/settings.json` here (tracked, public). Every hook script it calls must also be listed in `.lnk`, or `lnk pull` never links it and the hook fails on every other box (f803bb6).
 - The hook toolchain (ruff, rumdl, panache, shfmt, shellcheck, jq) comes from `.claude/hooks/bootstrap.sh`. Without it, the PostToolUse formatters silently do nothing.
+- Default effort is set by `env.CLAUDE_CODE_EFFORT_LEVEL` in `settings.json`, not by `effortLevel` alone. Claude Code pins a launch-default effort for each newly released model, and that pin outranks the saved `effortLevel` (measured: fresh sessions ran at medium). `max` cannot be a saved default.
 - `.claude/hooks/md_format.sh` skips the Obsidian vault and files with conflict markers. Its header explains why; read it before removing a guard.
 - Don't use the legacy `setup.sh`; use `lnk`. The shell is zsh with `ZDOTDIR=~/.config/zsh`.
 
