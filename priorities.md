@@ -12,12 +12,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **travel #1** — remove the committed hansei report. Assigned; the travel seat was started headless and is waiting on the first-launch trust prompt, which is Eric's to accept.
-- **dispatch #169 + #171**
-  - #171 is merged (#173, c5135b1): a failed bootstrap POST now warns instead of aborting `monitor`, on both the local and remote paths. The test stub's readiness is now a hard precondition.
-  - #169 is PR #174 (render-and-`cmp` version check). It's blocked: D11 is red on Linux CI.
-  - Both design departures from #134 are accepted: a dirty worktree is not drift, and a `-dirty` deploy with matching bytes is in sync.
-  - One fleet deploy after #174 merges, covering both.
-- **dispatch #172** — a restarted seat reads its queued mail but takes no turn, so it stalls silently until someone types (kaiseki lost about an hour on 2026-09-23). Filed and assigned 2026-09-23, queued after #169/#171. Until it lands, peek a seat's pane after restarting it.
+- **dispatch #172** — a restarted seat reads its queued mail but takes no turn, so it stalls silently until someone types (kaiseki lost about an hour on 2026-09-23). The seat is writing its plan now. Until the fix lands, peek a seat's pane after restarting it.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
@@ -29,6 +24,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-23 — merged dispatch #173 (c5135b1, closes #171) and #174 (954aeb5, closes #169), and deployed both to tank plus all 6 Linux hosts. Every host is in sync, and dgx02 adopted its bus. What changed:
+  - `monitor` warns instead of aborting when the bus is down;
+  - `dispatch version` compares deployed bytes, not commits, so a tests-only merge no longer reads as drift;
+  - both #134 reversals are accepted and recorded at D13.
 - 2026-09-23 — kaiseki follow-ups closed:
   - #18 (#20): tool caches no longer count as changed files; on lnk they were 71 of 78.
   - #15 (#21): hansei's transcript window is bounded, and its 9h UTC skew is fixed.
