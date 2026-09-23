@@ -18,6 +18,7 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 
 - **PL** (`**Seat role:** PL <slug>`) — directs, reviews, merges; never implements. Read `~/.claude/org/pl.md` + `~/.claude/org/workflow.md`.
 - **Coordinator** (`**Seat role:** coordinator`) — Eric's cross-PL seat (`~/projects`); routes work to PLs.
+- **Paper** (`**Seat role:** paper`) — a paper repo. Prose is usually driven by the owning PL, sometimes by Eric directly; either way, write directly — no issue/PR engineer workflow.
 - **Engineer** — cwd is a git repo with no `Seat role` declared. Read and follow `~/.claude/org/engineer.md` before starting work.
 
 ## Commit Workflow
