@@ -27,9 +27,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - **Research seat trust prompt** (see research #28 above).
-- **Superpowers scope** — per repo (a project `.claude/settings.json` pin, the kaiseki #10 pattern; recommended) or user-wide. The approval did not choose.
 - Low priority (Eric, 2026-09-23):
-  - `/mcp` reconnect for CheICalMCP 1.18.0;
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
   - the kanban's 16 angle-bracket URLs;
@@ -37,6 +35,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-23 — che-ical-mcp was stuck at 1.12.0 because upstream moved it out of `psychquant-claude-plugins` to its own marketplace on 2026-07-07. Reinstalled as `che-ical-mcp@che-ical-mcp` 1.18.0. Tank-only, so it is enabled in `~/.claude/settings.local.json`, not the shared settings (f205412). superpowers is global (Eric).
 - 2026-09-23 — committed the superpowers marketplace registration (4835cca). The good-night re-arm is handed to the coordinator (projects).
 - 2026-09-23 — merged paper #2 (6a0c402, closes #1): new paper repos get `**Seat role:** paper` on line 3.
 - 2026-09-23 — merged kaiseki #11 (e1ae5ba, closes #9): the git window starts at midnight. It also fixed `git_file_churn.sh` emitting `[]\n[]`, plus a silent `[]` on 5000+-file windows. This was the first full Gate 2 run.
