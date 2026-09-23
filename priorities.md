@@ -21,7 +21,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - date normalization inside the `git_*.sh` helpers.
 
   Assigned 2026-09-23. The seat was restarted first so superpowers loads. Waiting for its plan.
-- **research #28** — `queue_manager.py add` exits 1 for "already in library/queue" (11 of 32 calls on 2026-09-18). Assigned 2026-09-23. Seat running (trust accepted); waiting for its plan.
+- **research #28** — `queue_manager.py add` exits 1 for "already in library/queue" (11 of 32 calls on 2026-09-18). Plan signed off: exit 0 plus a `Skipped:` line; fuzzy matches stay at exit 1. Engineer implementing.
+- **kaiseki #13** — nikki and hansei write logs into skill deploy trees (breaks the clean-main rule). The fix writes them outside `~/.claude/skills/` and migrates the leftover `research/nikki/2026-08-14.md`. Assigned 2026-09-23 (queued with #12). The coordinator is skipping skill repos in backfills until it lands.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
@@ -34,6 +35,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-23 — default effort is now really xhigh, via `env.CLAUDE_CODE_EFFORT_LEVEL` (32e8915). The saved `effortLevel` was being overridden by the Opus 5.5 launch pin, so fresh sessions ran at medium. Also restored `settings.json` after a stale session wrote back an old snapshot, and dropped the obsolete 2026-04 stash.
 - 2026-09-23 — che-ical-mcp was stuck at 1.12.0 because upstream moved it out of `psychquant-claude-plugins` to its own marketplace on 2026-07-07. Reinstalled as `che-ical-mcp@che-ical-mcp` 1.18.0. Tank-only, so it is enabled in `~/.claude/settings.local.json`, not the shared settings (f205412). superpowers is global (Eric).
 - 2026-09-23 — committed the superpowers marketplace registration (4835cca). The good-night re-arm is handed to the coordinator (projects).
 - 2026-09-23 — merged paper #2 (6a0c402, closes #1): new paper repos get `**Seat role:** paper` on line 3.
