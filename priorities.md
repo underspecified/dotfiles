@@ -11,7 +11,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **travel #1** — remove the committed hansei report. Assigned; the travel seat was started headless and is waiting on the first-launch trust prompt, which is Eric's to accept.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
@@ -20,6 +19,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
   - the kanban's 16 angle-bracket URLs;
+  - travel #1 (remove the committed hansei report). The seat was never trusted; its assignment mail is queued on the bus and will be picked up when the seat is next started.
 
 ## Recent
 
