@@ -12,31 +12,32 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Owes:** good-night roll-up of every PL's `**Owes:**` lines into the morning drafts (planning #2) -> coordinator (due 2026-09-30)
-- **planning #2** — the Owes roll-up above. The engineer seat was cold-started 2026-09-23. **Waiting on Eric** to accept its first-launch trust prompt (`dispatch -C ~/.claude/skills/planning wake`); then it posts an implementation plan.
-- **Workflow pilot feedback (for Eric)** — the first live Gate 2 run (kaiseki #9) turned up 8 friction points:
-  1. Gate 1 is undefined for bugs.
-  2. "PLs never run code" contradicts verification — and the prescribed `/code-review` runs code itself. Suggest "never _write_ product code".
-  3. A 👍 reaction notifies nobody — sign-off needs 👍 **plus** a dispatch.
-  4. Seat setup (plugins) must precede assignment — superpowers reached kaiseki after #9 started.
-  5. No fast lane for one-line changes.
-  6. `engineer.md` requires superpowers, but it is enabled only in kaiseki.
-  7. `/code-review` output needs an explicit PL triage step (blocking vs follow-up issue).
-  8. A headless cold start into a never-trusted repo hangs silently at the trust prompt. `wake --headless` reports success, and the seat does nothing until someone peeks. Onboarding a new engineer seat needs a trust step (or `DISPATCH_AUTO_TRUST=1`, Eric's call).
+- **planning #2** — the Owes roll-up above. Seat running (trust accepted); waiting for its implementation plan.
+- **kaiseki #12** — follow-ups from the #11 review:
+  - multi-day `scan_activity`;
+  - unbounded mtime/transcript windows;
+  - the `set -e` crash on fresh or Linux boxes;
+  - hansei relative periods;
+  - date normalization inside the `git_*.sh` helpers.
 
-## Queued (filed, unassigned)
-
-- **kaiseki #12** — follow-ups from the #11 review: multi-day `scan_activity`, unbounded mtime/transcript windows, `set -e` crash on fresh/Linux boxes, hansei relative periods, date normalization inside the `git_*.sh` helpers.
-- **research #28** — `queue_manager.py add` exits 1 for "already in library/queue" (11 of 32 calls on 2026-09-18).
-- **dispatch #169** (version drift is commit-based; a re-stamp install recreates the docker bus) and **#171** (V20d flaky on Linux) — dispatch seat, low priority.
+  Assigned 2026-09-23. The seat was restarted first so superpowers loads. Waiting for its plan.
+- **research #28** — `queue_manager.py add` exits 1 for "already in library/queue" (11 of 32 calls on 2026-09-18). Assigned 2026-09-23. **Waiting on Eric** to accept the research seat's first-launch trust prompt (`dispatch -C ~/.claude/skills/research wake`).
+- **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
 
-- **good-night is unarmed** — `com.eric.good-night-nightly` is not loaded (one-shot agent consumed 2026-09-22); re-armed by `/good-morning` or `setup_good_night_automation.sh`.
-- **Uncommitted `.claude/settings.json`** — adds `extraKnownMarketplaces.superpowers-marketplace`; committing it propagates the marketplace fleet-wide.
-- `/mcp` reconnect for CheICalMCP 1.18.0; `sudo powermetrics` for the WindowServer load; dispatch #70 cadence; whether the kanban's 16 angle-bracket URLs are formatter residue.
+- **Research seat trust prompt** (see research #28 above).
+- **Superpowers scope** — per repo (a project `.claude/settings.json` pin, the kaiseki #10 pattern; recommended) or user-wide. The approval did not choose.
+- Low priority (Eric, 2026-09-23):
+  - `/mcp` reconnect for CheICalMCP 1.18.0;
+  - `sudo powermetrics` for the WindowServer load;
+  - dispatch #70 cadence;
+  - the kanban's 16 angle-bracket URLs;
+  - dispatch #169 and #171 (dispatch seat).
 
 ## Recent
 
+- 2026-09-23 — committed the superpowers marketplace registration (4835cca). The good-night re-arm is handed to the coordinator (projects).
 - 2026-09-23 — merged paper #2 (6a0c402, closes #1): new paper repos get `**Seat role:** paper` on line 3.
 - 2026-09-23 — merged kaiseki #11 (e1ae5ba, closes #9): the git window starts at midnight. It also fixed `git_file_churn.sh` emitting `[]\n[]`, plus a silent `[]` on 5000+-file windows. This was the first full Gate 2 run.
 - 2026-09-23 — merged dispatch #166/#167/#170 (positional-dir guard, #168 doctrine) and kaiseki #8 (no-sender mail) + #10 (superpowers pilot); fixed md_format hook distribution (f803bb6); triaged the April research plans.
