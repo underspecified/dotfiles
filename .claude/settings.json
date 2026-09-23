@@ -224,7 +224,8 @@
     "lua-lsp@claude-plugins-official": false,
     "che-ical-mcp@psychquant-claude-plugins": true,
     "slack@claude-plugins-official": true,
-    "document-skills@anthropic-agent-skills": true
+    "document-skills@anthropic-agent-skills": true,
+    "superpowers@superpowers-marketplace": true
   },
   "extraKnownMarketplaces": {
     "psychquant-claude-plugins": {
