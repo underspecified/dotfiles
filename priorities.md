@@ -16,7 +16,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #15: hansei gets an upper bound, and its 9h UTC-vs-local skew is fixed.
   - #14: when two projects share a basename, the shallower path keeps `<slug>.md`, and the 2 lost days get re-linked.
   - #18 is merged (#20, 6bac8f1); on lnk, 71 of 78 "changed" files were cache files.
-  - planning #4, the planning-side half of #14 (good-night normalize must not undo it), is assigned to the planning seat.
+  - #15 is merged (#21, f3f88c3). On lnk for 09-22, the bounded window counts 9073 messages instead of 15908.
+  - planning #4, the planning-side half of #14 (good-night normalize must not undo it), has its plan signed off: a script replaces the prose rename, using the roster.
 - **travel #1** — remove the committed hansei report. Assigned; the travel seat was started headless and is waiting on the first-launch trust prompt, which is Eric's to accept.
 - **dispatch #169 + #171**
   - #171 is merged (#173, c5135b1): a failed bootstrap POST now warns instead of aborting `monitor`, on both the local and remote paths. The test stub's readiness is now a hard precondition.
