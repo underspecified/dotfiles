@@ -12,7 +12,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **kaiseki #12** — PR 1 (E+D, date normalization in the git helpers, hansei passes dates) merged as e79d790. PR 2 is next: A+B+C, i.e. `scan_activity` date range, bounded mtime/transcript windows, no `set -e`.
-- **Skill-tree log cleanup** (after kaiseki #13) — research #30 is assigned to the research seat: remove its 2 committed nikki logs. The kaiseki seat is filing a travel issue for 1 committed hansei report, and a kaiseki issue about `.rumdl_cache` inflating nikki's file counts.
+- **Skill-tree log cleanup** (after kaiseki #13) — research #30 is done (PR #31, 37931b4). The kaiseki seat is filing a travel issue for 1 committed hansei report, and a kaiseki issue about `.rumdl_cache` inflating nikki's file counts.
 - **dispatch #169 + #171** — version compares commits, not bytes; flaky V20d on Linux CI (cause found: a product bug plus a test race). Plans signed off 2026-09-23; waiting for the PRs. Fleet deploy after merge.
 - **dispatch #172** — a restarted seat reads its queued mail but takes no turn, so it stalls silently until someone types (kaiseki lost about an hour on 2026-09-23). Filed and assigned 2026-09-23, queued after #169/#171. Until it lands, peek a seat's pane after restarting it.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
