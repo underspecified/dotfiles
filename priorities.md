@@ -11,9 +11,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **kaiseki #11** (fix for #9, git `--since` bare date) — changes requested: 7 blocking items (hermetic test env, check scan rc, pin the `~/projects` call site, discriminating asserts, single `[]` from `git_file_churn.sh`, hansei claim, CLAUDE.md layout). Engineer: kaiseki.
-- **paper #1** — `**Seat role:** paper` on line 3 of the paper-from-overleaf CLAUDE.md template. Engineer seat cold-started 2026-09-23; awaiting its implementation plan.
-- **Workflow pilot feedback (for Eric)** — the first live Gate 2 run (kaiseki #9) turned up 7 friction points:
+- **kaiseki #11** (fix for #9, git `--since` bare date) — the 7 blocking items are resolved (f20908e). One change remains: `git_file_churn.sh` `|| out=""` → `|| true`, since a busy window can SIGPIPE into a silent `[]`. The engineer is measuring it first. Engineer: kaiseki.
+- **paper #1** — `**Seat role:** paper` on line 3 of the paper-from-overleaf CLAUDE.md template. **Blocked on Eric:** the cold-started engineer seat is sitting at Claude Code's "trust this folder" prompt (`dispatch -C ~/.claude/skills/paper wake`, then accept).
+- **Workflow pilot feedback (for Eric)** — the first live Gate 2 run (kaiseki #9) turned up 8 friction points:
   1. Gate 1 is undefined for bugs.
   2. "PLs never run code" contradicts verification — and the prescribed `/code-review` runs code itself. Suggest "never _write_ product code".
   3. A 👍 reaction notifies nobody — sign-off needs 👍 **plus** a dispatch.
@@ -21,6 +21,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   5. No fast lane for one-line changes.
   6. `engineer.md` requires superpowers, but it is enabled only in kaiseki.
   7. `/code-review` output needs an explicit PL triage step (blocking vs follow-up issue).
+  8. A headless cold start into a never-trusted repo hangs silently at the trust prompt. `wake --headless` reports success, and the seat does nothing until someone peeks. Onboarding a new engineer seat needs a trust step (or `DISPATCH_AUTO_TRUST=1`, Eric's call).
 
 ## Queued (filed, unassigned)
 
