@@ -11,8 +11,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **kaiseki #11** (fix for #9, git `--since` bare date) — the 7 blocking items are resolved (f20908e). One change remains: `git_file_churn.sh` `|| out=""` → `|| true`, since a busy window can SIGPIPE into a silent `[]`. The engineer is measuring it first. Engineer: kaiseki.
-- **paper #1** — `**Seat role:** paper` on line 3 of the paper-from-overleaf CLAUDE.md template. Engineer seat running (trust accepted 2026-09-23); awaiting its implementation plan.
+- **paper #1** — `**Seat role:** paper` on line 3 of the paper-from-overleaf CLAUDE.md template. Plan signed off (no test file; inline check pasted into the PR); engineer implementing.
 - **Workflow pilot feedback (for Eric)** — the first live Gate 2 run (kaiseki #9) turned up 8 friction points:
   1. Gate 1 is undefined for bugs.
   2. "PLs never run code" contradicts verification — and the prescribed `/code-review` runs code itself. Suggest "never _write_ product code".
@@ -37,4 +36,5 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-23 — merged kaiseki #11 (e1ae5ba, closes #9): the git window starts at midnight. It also fixed `git_file_churn.sh` emitting `[]\n[]`, plus a silent `[]` on 5000+-file windows. This was the first full Gate 2 run.
 - 2026-09-23 — merged dispatch #166/#167/#170 (positional-dir guard, #168 doctrine) and kaiseki #8 (no-sender mail) + #10 (superpowers pilot); fixed md_format hook distribution (f803bb6); triaged the April research plans.
