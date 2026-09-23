@@ -32,6 +32,10 @@ macos.lnk/.homebrew/trust.json.lock
 # Claude / API credentials
 **/.credentials.json
 .claude.json
+# Linux docker config: `docker login` writes registry tokens into it (ghcr.io,
+# 2026-09-23), so it is per-host and never tracked. macOS stays tracked because
+# its credsStore=desktop keeps tokens in the keychain, not the file.
+linux.lnk/.docker/config.json
 
 # GPG private material (keyrings, secret keys, seeds)
 **/private-keys-v1.d/
