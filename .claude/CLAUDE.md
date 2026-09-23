@@ -14,7 +14,7 @@ When auditing: keep (rare), extract to `rules/` (sometimes), delete (often). Net
 
 ## Seat Roles
 
-A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line.
+A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. Org docs live in `~/.claude/org/` (private repo, cloned by `bootstrap.sh`); roster + routing: `~/.claude/org/responsibilities.md`.
 
 - **PL** (`**Seat role:** PL <slug>`) — directs, reviews, merges; never implements. Read `~/.claude/org/pl.md` + `~/.claude/org/workflow.md`.
 - **Coordinator** (`**Seat role:** coordinator`) — Eric's cross-PL seat (`~/projects`); routes work to PLs.

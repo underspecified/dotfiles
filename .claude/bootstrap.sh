@@ -20,6 +20,15 @@ echo ""
 echo "--- Bootstrapping status line ---"
 bash "${CLAUDE_DIR}/statusline/bootstrap.sh"
 
+# Org docs (private repo: seat roles, workflow, responsibilities)
+echo ""
+echo "--- Syncing org docs ---"
+if [[ -d "${CLAUDE_DIR}/org/.git" ]]; then
+  git -C "${CLAUDE_DIR}/org" pull --ff-only || echo "!! org pull failed (continuing)"
+else
+  git clone git@github.com:underspecified/org.git "${CLAUDE_DIR}/org" || echo "!! org clone failed (continuing)"
+fi
+
 # Skills
 echo ""
 echo "--- Bootstrapping skills ---"
