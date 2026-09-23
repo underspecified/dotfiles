@@ -12,7 +12,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Owes:** good-night roll-up of every PL's `**Owes:**` lines into the morning drafts (planning #2) -> coordinator (due 2026-09-30)
-- **planning #2** — the Owes roll-up above. Seat running (trust accepted); waiting for its implementation plan.
+- **planning #2** — the Owes roll-up above. Plan signed off 2026-09-23 (coordinator special-cased; remote `~` fix added). Waiting for the PR.
 - **kaiseki #12** — follow-ups from the #11 review:
   - multi-day `scan_activity`;
   - unbounded mtime/transcript windows;
