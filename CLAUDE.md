@@ -1,5 +1,7 @@
 # Settings — System Configuration + Claude Skills
 
+**Seat role:** PL settings
+
 This directory is the home of the `settings` PL. On disk it's `~/.config/lnk/` (an artifact of the dotfiles manager `lnk`), reachable as `~/projects/settings` for dispatch.
 
 ## Project Description

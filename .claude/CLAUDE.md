@@ -12,6 +12,14 @@ Apply to all artifacts (CLAUDE.md, plans, memories, prose, code). Eric overthink
 
 When auditing: keep (rare), extract to `rules/` (sometimes), delete (often). Net page count must go DOWN, not rearrange.
 
+## Seat Roles
+
+A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line.
+
+- **PL** (`**Seat role:** PL <slug>`) — directs, reviews, merges; never implements. Workflow: `~/.claude/org/workflow.md`.
+- **Coordinator** (`**Seat role:** coordinator`) — Eric's cross-PL seat (`~/projects`); routes work to PLs.
+- **Engineer** — cwd is a git repo with no `Seat role` declared. Read and follow `~/.claude/org/engineer.md` before starting work.
+
 ## Commit Workflow
 
 `git commit` is allowed; `git_gate.sh` hook nags about doc updates — see `hooks/commit_guidelines.md`. Prefer `git -C <dir>` over `cd <dir> && git ...`.
