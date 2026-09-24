@@ -50,6 +50,7 @@
       "Bash(deface *)",
       "Bash(defaults read:*)",
       "Bash(diff *)",
+      "Bash(dispatch-monitor *)",
       "Bash(dispatch:*)",
       "Bash(docker *)",
       "Bash(du *)",
