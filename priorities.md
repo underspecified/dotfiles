@@ -25,6 +25,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-24 — applied the approved settings audit (from the 09-23 drafts; Eric approved it at good-morning). Promoted 8 rules to global (d8be213): pdfinfo, pdftoppm, pdftotext, sort, ps, uvx, git add, git commit. Deleted 137 redundant or dead project-local allow entries across 9 files; deny rules are intact. The classifier refused nothing. The kaiseki checked-in `settings.json` removal is kaiseki #25, queued after #23.
 - 2026-09-24 — merged planning #7 (f460976, closes #6). good-morning now checks in with PLs before presenting drafts: it reports each PL's `priorities.md` commits and uncommitted edits since good-night's `Written:` line (mtime as the fallback), names unreadable PLs, and re-runs the Owes roll-up. First live run is tomorrow morning.
 - 2026-09-23 — merged dispatch #175 (bc6a542, closes #172) and deployed it to tank plus all 6 Linux hosts.
   - A seat started or restarted with unread mail or a monitor sentinel now gets a kickoff prompt and acts without anyone typing. The E2E proved it with zero keystrokes.
