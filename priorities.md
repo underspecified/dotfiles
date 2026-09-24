@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-09-23
+Last updated: 2026-09-24
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -11,6 +11,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
+- **planning #6** — good-morning checks in with PLs for updates before presenting last night's drafts (Eric's rule via the coordinator, 2026-09-24). Assigned; waiting for the plan.
+- **kaiseki #23** — `link_to_planning.sh` writes absolute symlink targets; today's relative ones climb 8 levels out of the OneDrive mount. Moved from Eric's TODO. Assigned; waiting for the plan.
+- **claude-limitline #1** — the statusline's own OAuth credential hasn't refreshed since 2026-06-14, most likely because Claude Code moved its endpoints to `platform.claude.com`, and the failure was silent. Issues are enabled on the fork. Eric picks how to route it: an engineer seat (needs a folder-trust click) or a one-off fix from this seat. Either way, Eric re-runs `limitline-auth.mjs` afterwards.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
@@ -19,7 +22,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
   - the kanban's 16 angle-bracket URLs;
-  - travel #1 (remove the committed hansei report). The seat was never trusted; its assignment mail is queued on the bus and will be picked up when the seat is next started.
+  - Overleaf token rotation (moved from Eric's TODO, 2026-09-24). `~/.git-credentials` is a stale plaintext file (0600) holding an Overleaf token; no `store` helper reads it anymore. Eric revokes the old token in Overleaf and confirms the new one is in 1Password, then I trash the file.
 
 ## Recent
 
