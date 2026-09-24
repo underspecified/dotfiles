@@ -13,11 +13,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 - **kaiseki #27** (hansei workflow-compliance audit) — Gate 1 approved (Eric's comment, 2026-09-24). Implementation plan signed off 2026-09-24 with 3 fold-ins; the engineer is implementing (branch `27-workflow-audit`). When it merges, tell `projects` so it can replace the spot-check line in `workflow.md`.
-- **planning #8** (weekly `/hansei --all` from good-night, recommendations surfaced in good-morning) — plan filed 2026-09-24; see Waiting on Eric.
+- **planning #8** (weekly `/hansei --all` from good-night, recommendations surfaced in good-morning) — Gate 1 approved (Eric's 👍, 2026-09-24). Assigned to the planning seat; waiting on its implementation plan.
 
 ## Waiting on Eric
 
-- 👍 on planning #8 (Gate 1).
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
