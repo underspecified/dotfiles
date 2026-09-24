@@ -11,7 +11,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **claude-limitline #1** — the statusline's own OAuth credential hasn't refreshed since 2026-06-14, most likely because Claude Code moved its endpoints to `platform.claude.com`, and the failure was silent. Issues are enabled on the fork. Eric picks how to route it: an engineer seat (needs a folder-trust click) or a one-off fix from this seat. Either way, Eric re-runs `limitline-auth.mjs` afterwards.
+- **claude-limitline OAuth** — the statusline's own OAuth credential hasn't refreshed since 2026-06-14, most likely because Claude Code moved its endpoints to `platform.claude.com`, and the failure was silent.
+  - Engineer seat started 2026-09-24. Eric's rule for this repo: no GitHub issues. The spec is a file, the plan comes by dispatch, and the rest is the normal PR flow.
+  - After merge: fast-forward the tree, `npm run build` (dist/ is untracked, and the tree is live), then Eric re-runs `limitline-auth.mjs`.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
@@ -21,7 +23,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - dispatch #70 cadence;
   - the kanban's 16 angle-bracket URLs;
   - Delete `planning/logs/.conflict-stubs-2026-09-24/` from Finder (110 OneDrive placeholder stubs from the #23 incident; Finder sends them to the OneDrive recycle bin). Trash and `rm` both fail on the OneDrive volume.
-  - The kaiseki seat's monitor re-arm was refused by the classifier, so mail to it needs a pane prompt. Should seats get an allow rule for `dispatch-monitor`?
   - Overleaf token rotation (moved from Eric's TODO, 2026-09-24). `~/.git-credentials` is a stale plaintext file (0600) holding an Overleaf token; no `store` helper reads it anymore. Eric revokes the old token in Overleaf and confirms the new one is in 1Password, then I trash the file.
 
 ## Recent
