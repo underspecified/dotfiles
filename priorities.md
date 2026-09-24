@@ -11,8 +11,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **planning #6** — good-morning checks in with PLs for updates before presenting last night's drafts (Eric's rule via the coordinator, 2026-09-24). Assigned; waiting for the plan.
-- **kaiseki #23** — `link_to_planning.sh` writes absolute symlink targets; today's relative ones climb 8 levels out of the OneDrive mount. Moved from Eric's TODO. Assigned; waiting for the plan.
+- **kaiseki #23** — `link_to_planning.sh` writes absolute symlink targets; today's relative ones climb 8 levels out of the OneDrive mount. Moved from Eric's TODO. Plan signed off: logical absolute targets, and the migration must not regress the in-tree links. Waiting for the PR.
 - **claude-limitline #1** — the statusline's own OAuth credential hasn't refreshed since 2026-06-14, most likely because Claude Code moved its endpoints to `platform.claude.com`, and the failure was silent. Issues are enabled on the fork. Eric picks how to route it: an engineer seat (needs a folder-trust click) or a one-off fix from this seat. Either way, Eric re-runs `limitline-auth.mjs` afterwards.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
@@ -26,6 +25,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-24 — merged planning #7 (f460976, closes #6). good-morning now checks in with PLs before presenting drafts: it reports each PL's `priorities.md` commits and uncommitted edits since good-night's `Written:` line (mtime as the fallback), names unreadable PLs, and re-runs the Owes roll-up. First live run is tomorrow morning.
 - 2026-09-23 — merged dispatch #175 (bc6a542, closes #172) and deployed it to tank plus all 6 Linux hosts.
   - A seat started or restarted with unread mail or a monitor sentinel now gets a kickoff prompt and acts without anyone typing. The E2E proved it with zero keystrokes.
   - Known limit: a never-trusted dir still stalls on first-launch modals (the trust prompt, then MCP-server approval) before the kickoff runs.
