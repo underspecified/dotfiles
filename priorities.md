@@ -11,7 +11,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **kaiseki #25** — remove kaiseki's checked-in `.claude/settings.json` (superpowers is now user-wide). Queued with the seat.
 - **claude-limitline #1** — the statusline's own OAuth credential hasn't refreshed since 2026-06-14, most likely because Claude Code moved its endpoints to `platform.claude.com`, and the failure was silent. Issues are enabled on the fork. Eric picks how to route it: an engineer seat (needs a folder-trust click) or a one-off fix from this seat. Either way, Eric re-runs `limitline-auth.mjs` afterwards.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
