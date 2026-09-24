@@ -73,6 +73,7 @@
       "Bash(head *)",
       "Bash(jq *)",
       "Bash(ksdiff *)",
+      "Bash(latexmk *)",
       "Bash(ln *)",
       "Bash(lnk *)",
       "Bash(ls)",
@@ -89,6 +90,9 @@
       "Bash(pbpaste)",
       "Bash(pbpaste *)",
       "Bash(pdfinfo *)",
+      "Bash(pdflatex *)",
+      "Bash(pdftk *)",
+      "Bash(pdftocairo *)",
       "Bash(pdftoppm *)",
       "Bash(pdftotext *)",
       "Bash(printf *)",
@@ -111,12 +115,14 @@
       "Bash(time *)",
       "Bash(touch *)",
       "Bash(trash *)",
+      "Bash(unzip *)",
       "Bash(uv *)",
       "Bash(uv run *)",
       "Bash(uvx *)",
       "Bash(wc *)",
       "Bash(which *)",
-      "Bash(whisply *)"
+      "Bash(whisply *)",
+      "Bash(zed *)"
     ],
     "deny": [
       "mcp__claude_ai_Mermaid_Chart__*",
