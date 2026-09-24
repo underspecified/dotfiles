@@ -15,7 +15,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Waiting on Eric
 
-- **Re-auth limitline now:** `node ~/.claude/statusline/claude-limitline/limitline-auth.mjs` (interactive browser OAuth). The fix is merged and deployed; the old credential is dead.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
