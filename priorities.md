@@ -11,13 +11,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **claude-limitline OAuth** — the statusline's own OAuth credential hasn't refreshed since 2026-06-14, most likely because Claude Code moved its endpoints to `platform.claude.com`, and the failure was silent.
-  - Engineer seat started 2026-09-24. Eric's rule for this repo: no GitHub issues. The spec is a file, the plan comes by dispatch, and the rest is the normal PR flow.
-  - After merge: fast-forward the tree, `npm run build` (dist/ is untracked, and the tree is live), then Eric re-runs `limitline-auth.mjs`.
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
 
 ## Waiting on Eric
 
+- **Re-auth limitline now:** `node ~/.claude/statusline/claude-limitline/limitline-auth.mjs` (interactive browser OAuth). The fix is merged and deployed; the old credential is dead.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
@@ -27,6 +25,12 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-24 — merged claude-limitline #2 (rebase, head eb963fc), rebuilt `dist/` in the live tree; the statusline runs. What changed:
+  - the OAuth endpoints moved to `platform.claude.com` / `claude.com/cai`;
+  - refreshes back off exponentially up to 24h;
+  - `auth!` appears after a day of failures;
+  - a lock now serializes refreshes across statusline processes. Refresh tokens are one-time use, so concurrent refreshes clobbered each other, which is the likely June killer.
+  Lnk pushed and pulled on all 6 Linux hosts (cae3034), including the `dispatch-monitor` allow rule.
 - 2026-09-24 — merged kaiseki #24 (08095f9, closes #23): planning-log links use absolute logical targets. The one-shot migration hit an incident. OneDrive treated the rename-over swap as a conflict, and 110 links became dataless stubs plus `<name> 2.md`; nothing was lost. Recovered by moving the stubs into `logs/.conflict-stubs-2026-09-24/` (a same-domain move, with no trash and no rm) and renaming to free names. End state: 377 links, 316 absolute, 0 conflict copies, all verified against the pre-migration manifest. Lesson saved as a memory.
 - 2026-09-24 — applied the approved settings audit (from the 09-23 drafts; Eric approved it at good-morning). Promoted 8 rules to global (d8be213): pdfinfo, pdftoppm, pdftotext, sort, ps, uvx, git add, git commit. Deleted 137 redundant or dead project-local allow entries across 9 files; deny rules are intact. The classifier refused nothing. The kaiseki checked-in `settings.json` removal is kaiseki #25, queued after #23.
 - 2026-09-24 — merged planning #7 (f460976, closes #6). good-morning now checks in with PLs before presenting drafts: it reports each PL's `priorities.md` commits and uncommitted edits since good-night's `Written:` line (mtime as the fallback), names unreadable PLs, and re-runs the Owes roll-up. First live run is tomorrow morning.
