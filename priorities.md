@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-09-25
+Last updated: 2026-09-26
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -11,21 +11,28 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
-- **kaiseki #27** (hansei workflow-compliance audit) — Gate 1 approved (Eric's comment, 2026-09-24). Implementation plan signed off 2026-09-24 with 3 fold-ins; PR #28 has changes requested (2026-09-25): 12 blocking findings. The free-text sign-off and review matching misfires, so it's moving to fixed first-line prefixes. I also proposed fixed wording for `workflow.md` to `projects`. When it merges, tell `projects` so it can replace the spot-check line in `workflow.md`.
-- **planning #8** (weekly `/hansei --all` from good-night, recommendations surfaced in good-morning) — Gate 1 approved (Eric's 👍, 2026-09-24). PR #9 has changes requested (2026-09-25): 13 blocking findings, mostly prose, and 2 won't-fix. The 9/24 E2E window was missed. The first good-night after merge and deploy is the E2E test; check the next `drafts.md` `## Hansei (proposed)`.
-- **Good-night tooling bugs** (from `projects`, 2026-09-25, all reproduced). Queued behind the current PRs:
-  - planning #10: git scan finds 0 repos, the nikki fan-out uses `cd`, launchd can't find tmux. Most urgent.
-  - planning #11: Owes parser; planning #12: sent-mail signal.
-  - kaiseki #2 (symlinks, reconfirmed) and kaiseki #29 (subdirectory pathspec).
-  - dispatch #176: monitor lapses every 30 minutes. PR #178 has changes requested (2026-09-25): `compact` is missing from the SessionStart matcher, so the reminder never fires; the reminder must be conditional; KISS on the docs. After merge, run `install.sh` on tank and all 6 hosts, plus `dispatch wake` so seats get the new matcher. Unassigned follow-ups:
-    - #177: poller heartbeat.
-    - #179: mail lost at the 30-minute kill, because mark-read happens before print. High priority.
-    - #180: remote bootstrap uses the sender's `${HOME}`.
+**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** kaiseki #28 before planning #9.
+
+- **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
+- **kaiseki #27** (hansei workflow-compliance audit) — PR #28 round 2: changes requested 2026-09-26. Three round-2 regressions to restore, plus tighter matching and acceptance of legacy `Sign-off (`/`Review (` headings. After merge, tell `projects` so it can replace the spot-check line.
+- **planning #8** (weekly hansei from good-night) — PR #9 round 2: changes requested 2026-09-26. Needs a marker written before the hansei run, no re-routing of an already-routed digest, `DATE` set from `WRITTEN`, and `dispatch_item.sh`. The first good-night after merge is the E2E test.
+- **planning #10** (nightly-run fixes) — PR #13 is **blocked**: the fixed `--since` exposes nested loops that would flag about 2,800 folders. The fix is to call kaiseki's `scan_activity.sh`. I was wrong that the `\|` alternation was broken (my test was unquoted), and corrected it on the issue.
+- **planning #11** (Owes parser, 45s timeout) and **#12** (sent mail via read-only AppleScript; TCC probe first): plans signed off 2026-09-26, queued behind #13 and #9.
+- **dispatch #176** — PR #178 round 2: 2 blocking items (post-drain exceptions lose mail; the `_boot` test fixture) plus small fixes. After merge, run `install.sh` on tank and all 6 hosts, plus `dispatch wake` for the `compact` matcher. Unassigned follow-ups:
+  - #177: heartbeat.
+  - #179: mark-read race. High priority.
+  - #180: remote `${HOME}`.
+- **kaiseki queue** after #28:
+  - #29: git helpers take a project path, plus pathspec; needed by planning #13.
+  - #30: hansei `--all` relies on `cd`; before planning #8 goes live.
+  - #2: symlinks.
+  - #31: worktree visibility. Low priority.
 
 ## Waiting on Eric
 
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
+- Tank ssh skips the 1Password agent for fleet hosts? Every fleet ssh, commit and merge on tank was blocked from about 21:00 on 9/25 until 1P was unlocked the next morning. The file-key fallback doesn't help when 1P offers the key and then refuses to sign it. The change would go in the `ssh-config-hri-jp` note, so it's Eric's call.
+- Were the remote claude sessions on llm-jp closed on purpose? On 9/25 only btop and nvitop were left.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
