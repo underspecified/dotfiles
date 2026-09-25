@@ -18,7 +18,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - planning #10: git scan finds 0 repos, the nikki fan-out uses `cd`, launchd can't find tmux. Most urgent.
   - planning #11: Owes parser; planning #12: sent-mail signal.
   - kaiseki #2 (symlinks, reconfirmed) and kaiseki #29 (subdirectory pathspec).
-  - dispatch #176: monitor lapses every 30 minutes. Plan signed off 2026-09-25, with one addition: a re-arm reminder after `/clear` and compaction. After merge, run `install.sh` on tank and all 6 hosts. Follow-up #177 (poller heartbeat) is unassigned.
+  - dispatch #176: monitor lapses every 30 minutes. PR #178 has changes requested (2026-09-25): `compact` is missing from the SessionStart matcher, so the reminder never fires; the reminder must be conditional; KISS on the docs. After merge, run `install.sh` on tank and all 6 hosts, plus `dispatch wake` so seats get the new matcher. Unassigned follow-ups:
+    - #177: poller heartbeat.
+    - #179: mail lost at the 30-minute kill, because mark-read happens before print. High priority.
+    - #180: remote bootstrap uses the sender's `${HOME}`.
 
 ## Waiting on Eric
 
