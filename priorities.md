@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-09-24
+Last updated: 2026-09-25
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -12,11 +12,18 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
-- **kaiseki #27** (hansei workflow-compliance audit) — Gate 1 approved (Eric's comment, 2026-09-24). Implementation plan signed off 2026-09-24 with 3 fold-ins; the engineer is implementing (branch `27-workflow-audit`). When it merges, tell `projects` so it can replace the spot-check line in `workflow.md`.
-- **planning #8** (weekly `/hansei --all` from good-night, recommendations surfaced in good-morning) — Gate 1 approved (Eric's 👍, 2026-09-24). Implementation plan signed off 2026-09-24 (branch `8-weekly-hansei`). Tonight's good-night is the E2E test if it's merged and deployed before the run; check tomorrow's `drafts.md` `## Hansei (proposed)`.
+- **kaiseki #27** (hansei workflow-compliance audit) — Gate 1 approved (Eric's comment, 2026-09-24). Implementation plan signed off 2026-09-24 with 3 fold-ins; PR #28 is up. The first `/code-review` died with ECONNRESET and was re-run 2026-09-25. When it merges, tell `projects` so it can replace the spot-check line in `workflow.md`.
+- **planning #8** (weekly `/hansei --all` from good-night, recommendations surfaced in good-morning) — Gate 1 approved (Eric's 👍, 2026-09-24). PR #9 has changes requested (2026-09-25): 13 blocking findings, mostly prose, and 2 won't-fix. The 9/24 E2E window was missed. The first good-night after merge and deploy is the E2E test; check the next `drafts.md` `## Hansei (proposed)`.
+- **Good-night tooling bugs** (from `projects`, 2026-09-25, all reproduced). Queued behind the current PRs:
+  - planning #10: git scan finds 0 repos, the nikki fan-out uses `cd`, launchd can't find tmux. Most urgent.
+  - planning #11: Owes parser; planning #12: sent-mail signal.
+  - kaiseki #2 (symlinks, reconfirmed) and kaiseki #29 (subdirectory pathspec).
+  - dispatch #176: monitor lapses every 30 minutes. Assigned 2026-09-25.
 
 ## Waiting on Eric
 
+- Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
+- Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - dispatch #70 cadence;
@@ -26,6 +33,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-25 — superpowers deployed fleet-wide. It was enabled in settings everywhere but installed only on tank and llm-jp. I added the `superpowers-marketplace` marketplace and installed the plugin on llm-jp-2 (pilot), germputer, haru-4090, haru-5090 and dgx02. All 6 Linux hosts are on lnk f0ad16f, which also carries 8cbae25 (frontend-design, duplicate superpowers dropped).
 - 2026-09-24 — merged claude-limitline #2 (rebase, head eb963fc), rebuilt `dist/` in the live tree; the statusline runs. What changed:
   - the OAuth endpoints moved to `platform.claude.com` / `claude.com/cai`;
   - refreshes back off exponentially up to 24h;
