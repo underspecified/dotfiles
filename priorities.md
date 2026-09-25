@@ -12,7 +12,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`.
-- **kaiseki #27** (hansei workflow-compliance audit) — Gate 1 approved (Eric's comment, 2026-09-24). Implementation plan signed off 2026-09-24 with 3 fold-ins; PR #28 is up. The first `/code-review` died with ECONNRESET and was re-run 2026-09-25. When it merges, tell `projects` so it can replace the spot-check line in `workflow.md`.
+- **kaiseki #27** (hansei workflow-compliance audit) — Gate 1 approved (Eric's comment, 2026-09-24). Implementation plan signed off 2026-09-24 with 3 fold-ins; PR #28 has changes requested (2026-09-25): 12 blocking findings. The free-text sign-off and review matching misfires, so it's moving to fixed first-line prefixes. I also proposed fixed wording for `workflow.md` to `projects`. When it merges, tell `projects` so it can replace the spot-check line in `workflow.md`.
 - **planning #8** (weekly `/hansei --all` from good-night, recommendations surfaced in good-morning) — Gate 1 approved (Eric's 👍, 2026-09-24). PR #9 has changes requested (2026-09-25): 13 blocking findings, mostly prose, and 2 won't-fix. The 9/24 E2E window was missed. The first good-night after merge and deploy is the E2E test; check the next `drafts.md` `## Hansei (proposed)`.
 - **Good-night tooling bugs** (from `projects`, 2026-09-25, all reproduced). Queued behind the current PRs:
   - planning #10: git scan finds 0 repos, the nikki fan-out uses `cd`, launchd can't find tmux. Most urgent.
