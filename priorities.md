@@ -17,7 +17,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **kaiseki #27** (hansei workflow-compliance audit) — PR #28 round 2: changes requested 2026-09-26. Three round-2 regressions to restore, plus tighter matching and acceptance of legacy `Sign-off (`/`Review (` headings. After merge, tell `projects` so it can replace the spot-check line.
 - **planning #8** (weekly hansei from good-night) — PR #9 round 2: changes requested 2026-09-26. Needs a marker written before the hansei run, no re-routing of an already-routed digest, `DATE` set from `WRITTEN`, and `dispatch_item.sh`. The first good-night after merge is the E2E test.
 - **planning #10** (nightly-run fixes) — PR #13 is **blocked**: the fixed `--since` exposes nested loops that would flag about 2,800 folders. The fix is to call kaiseki's `scan_activity.sh`. I was wrong that the `\|` alternation was broken (my test was unquoted), and corrected it on the issue.
-- **planning #11** (Owes parser, 45s timeout) and **#12** (sent mail via read-only AppleScript; TCC probe first): plans signed off 2026-09-26, queued behind #13 and #9.
+- **planning #11** (PR #14) and **#12** (PR #15) have changes requested (2026-09-26).
+  - PR #15 has **security** blockers: osascript argv injection, and starting Mail would send whatever is in the Outbox. The TCC probe passed headless.
+  - PR #14 drops the documented bare-line Owes form.
+- **Follow-ups filed 2026-09-26:** planning #16 (pin DATE across midnight); kaiseki #32 (full paths from `scan_activity`, worktree `.git` files).
 - **dispatch #176** — PR #178 round 2: 2 blocking items (post-drain exceptions lose mail; the `_boot` test fixture) plus small fixes. After merge, run `install.sh` on tank and all 6 hosts, plus `dispatch wake` for the `compact` matcher. Unassigned follow-ups:
   - #177: heartbeat.
   - #179: mark-read race. High priority.
