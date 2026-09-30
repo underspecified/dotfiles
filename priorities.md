@@ -16,19 +16,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
 - **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 22:00 good-night.
-- **dispatch #181** (wake hangs): PR #182, round 1 changes requested on 2026-09-30. The three blockers:
-  - the trust remedy re-runs into `already alive`;
-  - `window_id` makes an unbounded `kitty @ ls` call;
-  - a headless respawn skips the modal check.
-
-  Round 2 is final. After merge, run install.sh on tank and all 6 hosts. Unassigned:
-  - #177: heartbeat.
-  - #179: mark-read race. High priority.
-  - #180: remote `${HOME}`.
-  - #184: remote dead-claude check. After #179.
-- **kaiseki queue:**
-  - #2: symlinks. Signed off, on the condition that it avoids `grep -O` (GNU grep rejects it). Unblocked now that #39 is merged.
-  - #31, #33, #34, #36, #38 (merges dropped under the pathspec). Low priority.
+- **dispatch queue** (#181 is done): #179 next (mark-read race, high priority), then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
+- **kaiseki:**
+  - #2 (symlinks): PR #41 is in review. The first review attempt stalled and was restarted.
+  - #38 (merges under the pathspec): signed off.
+  - #31, #33, #34, #36: low priority.
 
 ## Waiting on Eric
 
@@ -47,6 +39,13 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-30 — merged dispatch #182 (b835620, closes #181) after round 2. `wake` now:
+  - respawns a dead claude in a live session (a shell in the pane **and** no child process);
+  - bounds the kitty probe, which the headless path never touches;
+  - never calls a modal-blocked pane alive, and gives correct local and remote remedies.
+
+  Checked live: idle panes have no children on tank, dgx02 and llm-jp. Deployed with install.sh to tank and all 6 hosts. Follow-ups: #183 and #184.
+- 2026-09-30 — merged planning #26 (8bfbac6, closes #25): good-morning arms good-night for 22:00, with a power-wake at 21:55. The lnk plist is at 22:00 (be4f396).
 - 2026-09-30 — merged kaiseki #39 (5411f72, closes #32) after round 2: `scan_activity` prints absolute paths, and a transcript cwd is printed only if it exists and isn't a duplicate, the coordinator or planning root, or an engineer worktree. A live audit of 09-24..09-30 gives 34 → 8 lines. The nightly `active_projects.py` output is byte-identical. Deployed.
 - 2026-09-30 — merged kaiseki #37 (187e963, closes #29) after round 2: every gather script takes `<project>` (a leading `~` is expanded), subdirectory projects are scoped with `-- .`, `/nikki <DATE>` works, `date -j` is fixed, exit codes follow the contract and paths are absolute. It passed a live check on `~/projects/animations`. Deployed. Follow-up #38 (merges dropped under the pathspec). Tonight's good-night is the first to use it.
 - 2026-09-30 — merged kaiseki #28 (cdad794, closes #27: hansei workflow-compliance audit; follow-ups #33/#34) and planning #9 (6554470, closes #8: weekly hansei from good-night; follow-up #17). Both deploy trees fast-forwarded, and `projects` was told the spot-check line can go. The first live weekly hansei is tonight's good-night; kaiseki #30 (`cd` in the `--all` fan-out) was moved to the front of the queue for it.
