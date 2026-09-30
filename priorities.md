@@ -45,6 +45,12 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-30 — merged kaiseki #28 (cdad794, closes #27: hansei workflow-compliance audit; follow-ups #33/#34) and planning #9 (6554470, closes #8: weekly hansei from good-night; follow-up #17). Both deploy trees fast-forwarded, and `projects` was told the spot-check line can go. The first live weekly hansei is tonight's good-night; kaiseki #30 (`cd` in the `--all` fan-out) was moved to the front of the queue for it.
+  - Filed dispatch #181 for the wake hangs. On dgx02, wake reattaches to a session whose claude has exited and times out on kitty. On llm-jp, llm_gen is sitting at the trust dialog. Eric has to clear both by hand for now.
+  - planning PRs:
+    - #13: round 3 moves to a roster allowlist.
+    - #15: final round; its security items pass.
+    - #14: two items left; the rest is follow-up #18.
 - 2026-09-30 — worked through the queue of mail from projects and lab.
   - **che-ical:** enabled at user scope (d26fc50). The keys were removed from `~/.claude/settings.local.json` and the stale psychquant entries uninstalled. The fleet-wide auto-approval of mail/Slack/calendar tools stays local; that's Eric's call.
   - **security-guidance:** now reviews on Opus 5.5 (5b73a9d). It passed live on a real commit and push review, and all 6 hosts are synced.
