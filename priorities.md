@@ -11,11 +11,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** planning #23 (after good-night), then planning #21.
+**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** planning #23 (after the 22:00 good-night), then planning #21. planning #25 (good-morning arms 22:00) is fast lane.
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
-- **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 19:00 good-night.
+- **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 22:00 good-night.
 - **dispatch #181** (wake hangs): PR #182, round 1 changes requested on 2026-09-30. The three blockers:
   - the trust remedy re-runs into `already alive`;
   - `window_id` makes an unbounded `kitty @ ls` call;
