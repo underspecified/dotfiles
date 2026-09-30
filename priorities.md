@@ -18,7 +18,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 22:00 good-night.
 - **dispatch queue** (#181 is done): #179 next (mark-read race, high priority), then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
 - **kaiseki:**
-  - #2 (symlinks): PR #41 is in review. The first review attempt stalled and was restarted.
+  - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 is next.
   - #38: merged (33e40ee, PR #42).
   - #31, #33, #34, #36: low priority.
 
