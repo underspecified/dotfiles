@@ -31,6 +31,7 @@
       "Write",
       "mcp__claude_ai_Gmail__*",
       "mcp__claude_ai_Google_Calendar__*",
+      "mcp__claude_ai_Google_Drive__get_file_permissions",
       "mcp__google-workspace__*",
       "mcp__markitdown-mcp__*",
       "mcp__plugin_context7_context7__*",
@@ -235,13 +236,20 @@
     "slack@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true,
     "superpowers@superpowers-marketplace": true,
-    "frontend-design@claude-plugins-official": true
+    "frontend-design@claude-plugins-official": true,
+    "che-ical-mcp@che-ical-mcp": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
       "source": {
         "source": "github",
         "repo": "anthropics/skills"
+      }
+    },
+    "che-ical-mcp": {
+      "source": {
+        "source": "github",
+        "repo": "PsychQuant/che-ical-mcp"
       }
     },
     "superpowers-marketplace": {
