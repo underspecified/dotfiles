@@ -11,17 +11,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** kaiseki #37, then planning #23 (after good-night), then planning #21.
+**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** planning #23 (after good-night), then planning #21.
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
-- **kaiseki #29** (every gather script takes the project path; `/nikki <DATE>`): PR #37, round 1 changes requested on 2026-09-30. The four blockers:
-  - `date -j` in UNTIL_TS;
-  - expand `~` in `<project>`;
-  - exit 0 on valid output;
-  - absolute checker paths.
-
-  Round 2 is final. It unblocks planning #21.
-- **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits on kaiseki #29, then a rebase onto #23.
+- **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
 - **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 19:00 good-night.
 - **dispatch #181** (wake hangs): the plan is signed off and the engineer is implementing. After merge, run install.sh on tank and all 6 hosts. Unassigned:
   - #177: heartbeat.
@@ -46,6 +39,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-30 — merged kaiseki #37 (187e963, closes #29) after round 2: every gather script takes `<project>` (a leading `~` is expanded), subdirectory projects are scoped with `-- .`, `/nikki <DATE>` works, `date -j` is fixed, exit codes follow the contract and paths are absolute. It passed a live check on `~/projects/animations`. Deployed. Follow-up #38 (merges dropped under the pathspec). Tonight's good-night is the first to use it.
 - 2026-09-30 — merged kaiseki #28 (cdad794, closes #27: hansei workflow-compliance audit; follow-ups #33/#34) and planning #9 (6554470, closes #8: weekly hansei from good-night; follow-up #17). Both deploy trees fast-forwarded, and `projects` was told the spot-check line can go. The first live weekly hansei is tonight's good-night; kaiseki #30 (`cd` in the `--all` fan-out) was moved to the front of the queue for it.
   - Filed dispatch #181 for the wake hangs. On dgx02, wake reattaches to a session whose claude has exited and times out on kitty. On llm-jp, llm_gen is sitting at the trust dialog. Eric has to clear both by hand for now.
   - planning PRs merged and deployed the same afternoon:
