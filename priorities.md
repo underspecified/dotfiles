@@ -21,7 +21,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - PR #15 has **security** blockers: osascript argv injection, and starting Mail would send whatever is in the Outbox. The TCC probe passed headless.
   - PR #14 drops the documented bare-line Owes form.
 - **Follow-ups filed 2026-09-26:** planning #16 (pin DATE across midnight); kaiseki #32 (full paths from `scan_activity`, worktree `.git` files).
-- **dispatch #176** — PR #178 round 2: 2 blocking items (post-drain exceptions lose mail; the `_boot` test fixture) plus small fixes. After merge, run `install.sh` on tank and all 6 hosts, plus `dispatch wake` for the `compact` matcher. Unassigned follow-ups:
+- **dispatch #176** — **merged** 2026-09-30 (PR #178, c0cc23f) and deployed with install.sh to tank plus all 6 Linux hosts. Running seats pick up the `compact` hook matcher at their next cold start. Next for dispatch: #181 (wake hangs). Unassigned follow-ups:
   - #177: heartbeat.
   - #179: mark-read race. High priority.
   - #180: remote `${HOME}`.
