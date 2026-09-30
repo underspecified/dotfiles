@@ -19,7 +19,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **dispatch queue** (#181 is done): #179 next (mark-read race, high priority), then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): PR #41 is in review. The first review attempt stalled and was restarted.
-  - #38 (merges under the pathspec): signed off.
+  - #38: merged (33e40ee, PR #42).
   - #31, #33, #34, #36: low priority.
 
 ## Waiting on Eric
