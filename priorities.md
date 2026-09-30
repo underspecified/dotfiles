@@ -16,10 +16,16 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
 - **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 19:00 good-night.
-- **dispatch #181** (wake hangs): PR #182 (1d20692) is in review. After merge, run install.sh on tank and all 6 hosts. Unassigned:
+- **dispatch #181** (wake hangs): PR #182, round 1 changes requested on 2026-09-30. The three blockers:
+  - the trust remedy re-runs into `already alive`;
+  - `window_id` makes an unbounded `kitty @ ls` call;
+  - a headless respawn skips the modal check.
+
+  Round 2 is final. After merge, run install.sh on tank and all 6 hosts. Unassigned:
   - #177: heartbeat.
   - #179: mark-read race. High priority.
   - #180: remote `${HOME}`.
+  - #184: remote dead-claude check. After #179.
 - **kaiseki queue:**
   - #32: PR #39 is in review.
   - #2: symlinks. Signed off, on the condition that it avoids `grep -O` (GNU grep rejects it). It starts after #39.
