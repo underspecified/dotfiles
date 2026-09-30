@@ -21,12 +21,13 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #179: mark-read race. High priority.
   - #180: remote `${HOME}`.
 - **kaiseki queue:**
-  - #2: symlinks.
-  - #32: full paths from `scan_activity`.
+  - #32: PR #39 is in review.
+  - #2: symlinks. Signed off, on the condition that it avoids `grep -O` (GNU grep rejects it). It starts after #39.
   - #31, #33, #34, #36, #38 (merges dropped under the pathspec). Low priority.
 
 ## Waiting on Eric
 
+- 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Tank ssh skips the 1Password agent for fleet hosts? Every fleet ssh, commit and merge on tank was blocked from about 21:00 on 9/25 until 1P was unlocked the next morning. The file-key fallback doesn't help when 1P offers the key and then refuses to sign it. The change would go in the `ssh-config-hri-jp` note, so it's Eric's call.
