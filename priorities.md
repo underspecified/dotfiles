@@ -16,7 +16,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
 - **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 19:00 good-night.
-- **dispatch #181** (wake hangs): the plan is signed off and the engineer is implementing. After merge, run install.sh on tank and all 6 hosts. Unassigned:
+- **dispatch #181** (wake hangs): PR #182 (1d20692) is in review. After merge, run install.sh on tank and all 6 hosts. Unassigned:
   - #177: heartbeat.
   - #179: mark-read race. High priority.
   - #180: remote `${HOME}`.
@@ -27,6 +27,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Waiting on Eric
 
+- 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Tank ssh skips the 1Password agent for fleet hosts? Every fleet ssh, commit and merge on tank was blocked from about 21:00 on 9/25 until 1P was unlocked the next morning. The file-key fallback doesn't help when 1P offers the key and then refuses to sign it. The change would go in the `ssh-config-hri-jp` note, so it's Eric's call.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
