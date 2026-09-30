@@ -11,25 +11,26 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** kaiseki #28 before planning #9.
+**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** kaiseki #37, then planning #23 (after good-night), then planning #21.
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
-- **kaiseki #27** (hansei workflow-compliance audit) — PR #28 round 2: changes requested 2026-09-26. Three round-2 regressions to restore, plus tighter matching and acceptance of legacy `Sign-off (`/`Review (` headings. After merge, tell `projects` so it can replace the spot-check line.
-- **planning #8** (weekly hansei from good-night) — PR #9 round 2: changes requested 2026-09-26. Needs a marker written before the hansei run, no re-routing of an already-routed digest, `DATE` set from `WRITTEN`, and `dispatch_item.sh`. The first good-night after merge is the E2E test.
-- **planning #10** (nightly-run fixes) — PR #13 is **blocked**: the fixed `--since` exposes nested loops that would flag about 2,800 folders. The fix is to call kaiseki's `scan_activity.sh`. I was wrong that the `\|` alternation was broken (my test was unquoted), and corrected it on the issue.
-- **planning #11** (PR #14) and **#12** (PR #15) have changes requested (2026-09-26).
-  - PR #15 has **security** blockers: osascript argv injection, and starting Mail would send whatever is in the Outbox. The TCC probe passed headless.
-  - PR #14 drops the documented bare-line Owes form.
-- **Follow-ups filed 2026-09-26:** planning #16 (pin DATE across midnight); kaiseki #32 (full paths from `scan_activity`, worktree `.git` files).
-- **dispatch #176** — **merged** 2026-09-30 (PR #178, c0cc23f) and deployed with install.sh to tank plus all 6 Linux hosts. Running seats pick up the `compact` hook matcher at their next cold start. Next for dispatch: #181 (wake hangs). Unassigned follow-ups:
+- **kaiseki #29** (every gather script takes the project path; `/nikki <DATE>`): PR #37, round 1 changes requested on 2026-09-30. The four blockers:
+  - `date -j` in UNTIL_TS;
+  - expand `~` in `<project>`;
+  - exit 0 on valid output;
+  - absolute checker paths.
+
+  Round 2 is final. It unblocks planning #21.
+- **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits on kaiseki #29, then a rebase onto #23.
+- **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 19:00 good-night.
+- **dispatch #181** (wake hangs): the plan is signed off and the engineer is implementing. After merge, run install.sh on tank and all 6 hosts. Unassigned:
   - #177: heartbeat.
   - #179: mark-read race. High priority.
   - #180: remote `${HOME}`.
-- **kaiseki queue** after #28:
-  - #29: git helpers take a project path, plus pathspec; needed by planning #13.
-  - #30: hansei `--all` relies on `cd`; before planning #8 goes live.
+- **kaiseki queue:**
   - #2: symlinks.
-  - #31: worktree visibility. Low priority.
+  - #32: full paths from `scan_activity`.
+  - #31, #33, #34, #36, #38 (merges dropped under the pathspec). Low priority.
 
 ## Waiting on Eric
 
