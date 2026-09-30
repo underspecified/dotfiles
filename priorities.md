@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-09-26
+Last updated: 2026-09-30
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -35,7 +35,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Tank ssh skips the 1Password agent for fleet hosts? Every fleet ssh, commit and merge on tank was blocked from about 21:00 on 9/25 until 1P was unlocked the next morning. The file-key fallback doesn't help when 1P offers the key and then refuses to sign it. The change would go in the `ssh-config-hri-jp` note, so it's Eric's call.
-- Were the remote claude sessions on llm-jp closed on purpose? On 9/25 only btop and nvitop were left.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
@@ -46,6 +45,14 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-30 — worked through the queue of mail from projects and lab.
+  - **che-ical:** enabled at user scope (d26fc50). The keys were removed from `~/.claude/settings.local.json` and the stale psychquant entries uninstalled. The fleet-wide auto-approval of mail/Slack/calendar tools stays local; that's Eric's call.
+  - **security-guidance:** now reviews on Opus 5.5 (5b73a9d). It passed live on a real commit and push review, and all 6 hosts are synced.
+  - **Fable:** pinned in 11 paper repos via their untracked `settings.local.json`.
+  - **Effort:** the change was cancelled by lab and left at xhigh.
+  - **Engineers:** planning, kaiseki and dispatch were restarted after the weekly-limit stall.
+  - **"dispatch wake hangs":** not reproduced. mosh works to llm-jp and dgx02, so I've asked projects for the exact command.
+  - **Correction:** the llm-jp claude sessions were never gone. I had checked the default tmux socket, not `-L dispatch`.
 - 2026-09-25 — superpowers deployed fleet-wide. It was enabled in settings everywhere but installed only on tank and llm-jp. I added the `superpowers-marketplace` marketplace and installed the plugin on llm-jp-2 (pilot), germputer, haru-4090, haru-5090 and dgx02. All 6 Linux hosts are on lnk f0ad16f, which also carries 8cbae25 (frontend-design, duplicate superpowers dropped).
 - 2026-09-24 — merged claude-limitline #2 (rebase, head eb963fc), rebuilt `dist/` in the live tree; the statusline runs. What changed:
   - the OAuth endpoints moved to `platform.claude.com` / `claude.com/cai`;
