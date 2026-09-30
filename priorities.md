@@ -27,7 +27,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #180: remote `${HOME}`.
   - #184: remote dead-claude check. After #179.
 - **kaiseki queue:**
-  - #32: PR #39 is in review.
+  - #32: PR #39, round 1 changes requested. The blockers: add `-maxdepth 1`, and the transcript section must not print new dirs (duplicates, worktrees, the coordinator root, deleted dirs). The nightly consumer is identical either way.
   - #2: symlinks. Signed off, on the condition that it avoids `grep -O` (GNU grep rejects it). It starts after #39.
   - #31, #33, #34, #36, #38 (merges dropped under the pathspec). Low priority.
 
