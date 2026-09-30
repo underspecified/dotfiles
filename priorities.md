@@ -16,7 +16,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
 - **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 22:00 good-night.
-- **dispatch queue** (#181 is done): #179 next (mark-read race, high priority), then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
+- **dispatch queue** (#181 is done): #179 is PR #185, in review. Then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
@@ -32,7 +32,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
-  - dispatch #70 cadence;
   - the kanban's 16 angle-bracket URLs;
   - Delete `planning/logs/.conflict-stubs-2026-09-24/` from Finder (110 OneDrive placeholder stubs from the #23 incident; Finder sends them to the OneDrive recycle bin). Trash and `rm` both fail on the OneDrive volume.
   - Overleaf token rotation (moved from Eric's TODO, 2026-09-24). `~/.git-credentials` is a stale plaintext file (0600) holding an Overleaf token; no `store` helper reads it anymore. Eric revokes the old token in Overleaf and confirms the new one is in 1Password, then I trash the file.
