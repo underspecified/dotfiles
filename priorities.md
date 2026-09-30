@@ -20,7 +20,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
-  - #33, #34: low priority.
+  - Queue empty: #33 merged (a28203c, PR #44), #34 closed as not occurring. The fast-lane and plan labels now exist on all 13 skill repos.
 
 ## Waiting on Eric
 
