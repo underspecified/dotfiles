@@ -25,6 +25,9 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 
 `git commit` is allowed; `git_gate.sh` hook nags about doc updates — see `hooks/commit_guidelines.md`. Prefer `git -C <dir>` over `cd <dir> && git ...`.
 
+- `git add` a new file before `git commit -- <path>`; an untracked path fails the pathspec.
+- Signing refused (1Password locked; it is on-demand by design) → leave the work staged, tell Eric once, don't retry.
+
 ## Safety Rules (Hook-Enforced)
 
 - `rm` is blocked outside temp directories (`/tmp/`, scratchpad, project temp) -- use `trash`
@@ -33,9 +36,7 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 
 ## Tool Preferences
 
-- Read over cat/head/tail/sed — but for large files, use Grep for targeted content or Read with offset/limit
-- Glob over find/ls
-- Grep over grep/rg
+- Read over cat/head/tail/sed — for large files, Read with offset/limit
 - Edit over sed/awk
 - Write over echo/cat heredoc
 - Never parallel Bash calls in one message (cascade failure) -- use TaskCreate
