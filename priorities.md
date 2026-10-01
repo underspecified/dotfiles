@@ -11,11 +11,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** planning #23 (after the 22:00 good-night), then planning #21. planning #25 merged (8bfbac6).
+**Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** planning #21 after its rebase onto #23 (merged 1958af9).
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
-- **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It waits for a rebase onto #23.
-- **planning #18:** PR #23 has its round addressed (e042605). Merge it after tonight's 22:00 good-night.
+- **planning #16** (pin DATE): PR #21 round 2 verified on 2026-09-30. It's being rebased onto #23 (merged). I'll check only the conflict resolution and the U+2028 escape, then merge.
 - **dispatch queue** (#181 is done): #179 is PR #185, in review. Then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
@@ -38,6 +37,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-09-30 — the 22:00 good-night ran cleanly: daily log at 22:07, drafts at 22:19.
+  - It produced the first weekly hansei digest. The five proposals, three of them owned by settings (the idle monitor cost, 1Password signing, the hansei analyzer), are in drafts.md for good-morning.
+  - `cambridge` was logged through its symlink (kaiseki #2), and the open PRs showed as "unmerged, on <branch>" (kaiseki #31).
+  - Then merged planning #23 (1958af9, closes #18) and deployed it. The 1Password agent was locked, so the planning pull went through `IdentityAgent=none`.
 - 2026-09-30 — merged dispatch #182 (b835620, closes #181) after round 2. `wake` now:
   - respawns a dead claude in a live session (a shell in the pane **and** no child process);
   - bounds the kitty probe, which the headless path never touches;
