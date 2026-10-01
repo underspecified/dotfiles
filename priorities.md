@@ -15,7 +15,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
-- **dispatch queue:** #179 merged (1be7c37, PR #185) and fleet-deployed; it reaches each seat at its next Monitor re-arm. #184 (remote dead-claude check): PR #186, round 1 changes requested. Four blockers: multi-pane, prefix-matched targets, post-respawn modal check, pgrep error. All four also fix #181's local path. Then #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
+- **dispatch queue:** #179 merged (1be7c37, PR #185) and fleet-deployed; it reaches each seat at its next Monitor re-arm. #184 (remote dead-claude check): PR #186, round 1 changes requested. Four blockers: multi-pane, prefix-matched targets, post-respawn modal check, pgrep error. All four also fix #181's local path. Then #188 (fast-lane, Eric-approved: start line to stderr, about 12%) and #189 (Eric 👍 2026-10-01: an `asyncRewake` waiter replaces the Monitor re-arm loop, saving about 4,400 idle calls a week; plan first, then a one-seat pilot plus cross-host rows). After that: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
@@ -23,7 +23,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Waiting on Eric
 
-- 👍 on dispatch #189? An `asyncRewake` waiter would replace the Monitor re-arm loop, saving about 4,400 idle calls a week (hansei recommendation 1, from the agent-mail research). Agent Mail itself can't push, and channels aren't usable yet. The fast-lane piece, #188 (start line to stderr, about 12%), is queued.
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
