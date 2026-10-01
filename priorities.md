@@ -15,7 +15,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
-- **dispatch queue:** #179 merged (1be7c37, PR #185) and fleet-deployed; it reaches each seat at its next Monitor re-arm. Next #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
+- **dispatch queue:** #179 merged (1be7c37, PR #185) and fleet-deployed; it reaches each seat at its next Monitor re-arm. #184 (remote dead-claude check): PR #186, round 1 changes requested. Four blockers: multi-pane, prefix-matched targets, post-respawn modal check, pgrep error. All four also fix #181's local path. Then #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
