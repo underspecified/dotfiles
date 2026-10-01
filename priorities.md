@@ -27,7 +27,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
-- Tank ssh skips the 1Password agent for fleet hosts? Every fleet ssh, commit and merge on tank was blocked from about 21:00 on 9/25 until 1P was unlocked the next morning. The file-key fallback doesn't help when 1P offers the key and then refuses to sign it. The change would go in the `ssh-config-hri-jp` note, so it's Eric's call.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
@@ -37,6 +36,12 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-10-01 — Eric approved the DOTS version of hansei recommendations 2 and 4, applied in `~/.claude/CLAUDE.md` (80696e2, all hosts):
+  - signing refused → leave the work staged, tell Eric once, don't retry. 1Password stays on-demand by design, which settles the old tank-ssh question.
+  - `git add` before `git commit -- <new file>`;
+  - the Grep/Glob preferences are dropped.
+
+  The hooks are untouched. Recommendation 3 (the hansei analyzer) is skipped. Recommendation 1 became dispatch #188/#189.
 - 2026-10-01 — 1Password was locked from about 20:30 on 9/30 until the morning. That held up every commit and push overnight; the hansei digest's item 2 proposes a fix. After the unlock:
   - merged planning #21 (9f6914f, closes #16), so DATE is pinned from tonight;
   - merged dispatch #185 (1be7c37, closes #179) and ran install.sh on tank and all 6 hosts. The mark-read race is gone: the drain prints before it acks and fails closed.
