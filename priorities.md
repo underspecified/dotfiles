@@ -15,7 +15,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
-- **dispatch queue** (#181 is done): #179 is PR #185, in review. Then #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
+- **dispatch queue:** #179 merged (1be7c37, PR #185) and fleet-deployed; it reaches each seat at its next Monitor re-arm. Next #184 (remote dead-claude check), #180 (remote `${HOME}`) and #177 (heartbeat). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
@@ -37,6 +37,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-10-01 — 1Password was locked from about 20:30 on 9/30 until the morning. That held up every commit and push overnight; the hansei digest's item 2 proposes a fix. After the unlock:
+  - merged planning #21 (9f6914f, closes #16), so DATE is pinned from tonight;
+  - merged dispatch #185 (1be7c37, closes #179) and ran install.sh on tank and all 6 hosts. The mark-read race is gone: the drain prints before it acks and fails closed.
 - 2026-09-30 — the 22:00 good-night ran cleanly: daily log at 22:07, drafts at 22:19.
   - It produced the first weekly hansei digest. The five proposals, three of them owned by settings (the idle monitor cost, 1Password signing, the hansei analyzer), are in drafts.md for good-morning.
   - `cambridge` was logged through its symlink (kaiseki #2), and the open PRs showed as "unmerged, on <branch>" (kaiseki #31).
