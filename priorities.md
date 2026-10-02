@@ -26,13 +26,14 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #38: merged (33e40ee, PR #42).
   - Queue empty: #33 merged (a28203c, PR #44), #34 closed as not occurring. The fast-lane and plan labels now exist on all 13 skill repos.
 - **admin** (new private repo underspecified/admin, 2026-10-02; engineer seat at `~/.claude/skills/admin`): 10/1 receipt-run lessons from `projects`.
-  - #1 rename the sub-skill dirs to `admin-*` (fast-lane, assigned). After merge, add `admin` to bootstrap `COMPOSITES` and repoint the symlinks.
-  - #2 add-receipt fixes and #3 new `/admin-expense-reimburse` wait on Eric's 👍.
+  - #1 merged (abcac18, PR #4); deploy links repointed. #5 `.gitignore` (fast-lane, assigned) gates adding `admin` to bootstrap `COMPOSITES`.
+  - #2 add-receipt fixes: Eric 👍, assigned, waiting for the engineer's plan. #3 `/admin-expense-reimburse`: Eric's comments folded into the body; still needs his 👍. #6 review follow-ups need Eric's input.
+  - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6).
   - The reimburse-trip domestic variant gets filed as #4 when the coordinator's addendum arrives.
 
 ## Waiting on Eric
 
-- 👍 on admin #2 and #3 (Gate 1). The content is from the 10/1 receipt run, and the planning log says you approved it, but that's relayed.
+- 👍 on admin #3 (Gate 1, body revised with your comments). admin #6 needs the real Travel Prep code scheme and the per-diem area table.
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
