@@ -15,11 +15,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
-- **dispatch queue:** #189 in PR #192 (Eric 👍 2026-10-01). An `asyncRewake` waiter replaces the Monitor re-arm loop, saving about 4,400 idle calls a week.
-  - Phase A is measured.
-  - PR #192 round 1 (2026-10-01) has six blockers. B1, the most serious: a merge would arm every seat. It needs a per-seat opt-in that defaults to off.
-  - After round 2: merge with no seat changed, then Phase B on the dispatch seat with the Monitor still armed.
-  - Fleet rollout waits on `unread-age` being wired into good-night (planning).
+- **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
+  - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed. The Phase C criteria are on #189 (≥24 h, heartbeat, a lapsed-Monitor wake, /clear and /compact, 22:00 good-night, no runaway, unread-age in good-night).
+  - **#195, the incident fix (assigned, top priority):** the bus build ignores `uv.lock`, so the post-merge rebuild broke `send_message` on tank and llm-jp (about 12:58–13:30 JST). Both were restored by hand with a locked build. **No `install.sh` anywhere until #195 merges** (tank's cached layer would bring the break back). After that: tank and llm-jp re-install, then the other 5 hosts (still `d478dfd`).
+  - #194 (W14b mid-flight row) comes after #195. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
   - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
