@@ -35,7 +35,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - lnk backlog: the **shfmt PostToolUse hook reformats the whole file** on any shell edit. On 10/2 it reflowed about 90 untouched lines of dispatch `install.sh` and broke deploy.bats D20 (`> "$tmp"` → `>"$tmp"`); it also reflowed `bootstrap.sh` (f1a06f9). Fix: only format a file that was already shfmt-clean before the edit, or format just the changed hunk.
   - #21 merged, 2 rounds each: Part A (0055b46, PR #22: category 128, route-search fares, 60-char comments, row-count guard) and Part B (e6aedb5, PR #23: preflight cross-check, Nissin itinerary, booking.com receipt rule). Open on #21: record the Kokura early-checkout ruling as a rule once admin rules (until then, "ask the user").
   - #19 merged (91b0bd0, PR #24, 2 rounds): `/admin-reimburse-trip-domestic` is linked under `~/.claude/skills/` and listed in the bootstrap `COMPOSITES` comment; doctor reports ok. The shared Denpyo mechanics now live in `rakuraku-widgets.md`, and expense-reimburse routes domestic trips to the new skill. Not run live yet: the field test is the next domestic trip, or #20's session.
-    - Nit for a follow-up: the shared ≤ 60-character JS check names `meisaiContents12`, but the domestic comment field is `meisaiFreeText1`.
+    - Follow-up #25 (unassigned): the shared ≤ 60-character JS check names `meisaiContents12`, but the domestic comment field is `meisaiFreeText1`.
   - #20 (receipt-picker live test): signed off; waits on Eric at Chrome (the engineer asked `projects` to schedule it).
 
 ## Waiting on Eric
