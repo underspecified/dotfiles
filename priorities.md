@@ -32,7 +32,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - Open: #10 item 3 is a live check on the next receipt run (the coordinator was asked to schedule it). #13 and #16 are review follow-ups, unassigned.
   - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6). Engineer seats run in the deploy trees (fleet-wide question, PR #7 review).
   - lnk backlog: the **shfmt PostToolUse hook reformats the whole file** on any shell edit. On 10/2 it reflowed about 90 untouched lines of dispatch `install.sh` and broke deploy.bats D20 (`> "$tmp"` → `>"$tmp"`); it also reflowed `bootstrap.sh` (f1a06f9). Fix: only format a file that was already shfmt-clean before the edit, or format just the changed hunk.
-  - #21 Part A: PR #22, round 2 (4 blockers: stale-document row count, popup-open check, decide on this search's results, route via 品川 to Haneda T1/T2). Eric 👍'd #19, #20 and #21 Part B (verified); queue after #22: #21 B → #19 → #20.
+  - #21 merged, 2 rounds each: Part A (0055b46, PR #22: category 128, route-search fares, 60-char comments, row-count guard) and Part B (e6aedb5, PR #23: preflight cross-check, Nissin itinerary, booking.com receipt rule). Open on #21: record the Kokura early-checkout ruling as a rule once admin rules (until then, "ask the user").
+  - #19 (domestic settlement, sibling skill `admin-reimburse-trip-domestic`): plan signed off, engineer started 10/2. After merge: link it under `~/.claude/skills/` and add it to the bootstrap `COMPOSITES` comment.
+  - #20 (receipt-picker live test): signed off; waits on Eric at Chrome (the engineer asked `projects` to schedule it).
 
 ## Waiting on Eric
 
