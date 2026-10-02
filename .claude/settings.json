@@ -239,7 +239,8 @@
     "document-skills@anthropic-agent-skills": true,
     "superpowers@superpowers-marketplace": true,
     "frontend-design@claude-plugins-official": true,
-    "che-ical-mcp@che-ical-mcp": true
+    "che-ical-mcp@che-ical-mcp": true,
+    "1password@1password": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
@@ -258,6 +259,12 @@
       "source": {
         "source": "github",
         "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "1password": {
+      "source": {
+        "source": "github",
+        "repo": "1Password/1password-claude-plugin"
       }
     }
   },
