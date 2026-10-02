@@ -27,13 +27,14 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - Queue empty: #33 merged (a28203c, PR #44), #34 closed as not occurring. The fast-lane and plan labels now exist on all 13 skill repos.
 - **admin** (new private repo underspecified/admin, 2026-10-02; engineer seat at `~/.claude/skills/admin`): 10/1 receipt-run lessons from `projects`.
   - #1 merged (abcac18, PR #4); deploy links repointed. #5 merged (2c9fa85, PR #7); `admin` is in bootstrap `COMPOSITES` (f1a06f9), and doctor reports ok.
-  - #2 merged (24c8239, PR #8, after 2 rounds). #6 assigned (fast-lane), then #9 (`.gitignore` PII guard + trim). #10 holds the robustness follow-ups. #3 `/admin-expense-reimburse`: Eric's comments are folded into the body; it still needs his 👍.
-  - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6).
-  - The reimburse-trip domestic variant gets filed as #4 when the coordinator's addendum arrives.
+  - Merged 10/2, 2 rounds each: #2 (PR #8), #6 (PR #11), #9 (PR #12), #3 `/admin-expense-reimburse` (PR #14, linked), #10 items 1/2/4 (PR #15, `rakuraku-widgets.md`).
+  - #17 (fast-lane, assigned): personal charges get classified, never receipt-gathered (Eric's design correction to PR #14).
+  - Open: #10 item 3 is a live check on the next receipt run (the coordinator was asked to schedule it). #13 and #16 are review follow-ups, unassigned.
+  - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6). Engineer seats run in the deploy trees (fleet-wide question, PR #7 review).
+  - The reimburse-trip domestic variant gets filed when the coordinator's addendum arrives.
 
 ## Waiting on Eric
 
-- 👍 on admin #3 (Gate 1, body revised with your comments).
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
