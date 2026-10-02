@@ -27,7 +27,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - Queue empty: #33 merged (a28203c, PR #44), #34 closed as not occurring. The fast-lane and plan labels now exist on all 13 skill repos.
 - **admin** (new private repo underspecified/admin, 2026-10-02; engineer seat at `~/.claude/skills/admin`): 10/1 receipt-run lessons from `projects`.
   - #1 merged (abcac18, PR #4); deploy links repointed. #5 merged (2c9fa85, PR #7); `admin` is in bootstrap `COMPOSITES` (f1a06f9), and doctor reports ok.
-  - #2 add-receipt fixes: plan signed off, implementing. #6 (Eric decided every item; fast-lane) is queued after #2 because both edit add-receipt. #3 `/admin-expense-reimburse`: Eric's comments are folded into the body; it still needs his 👍.
+  - #2 add-receipt fixes: PR #8 round 1 has 5 blockers, all silent-wrong-record risks; round 2 (final) is with the engineer. Then #6 (Eric decided every item; fast-lane), then #9 (`.gitignore` PII guard + trim). #10 holds the robustness follow-ups. #3 `/admin-expense-reimburse`: Eric's comments are folded into the body; it still needs his 👍.
   - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6).
   - The reimburse-trip domestic variant gets filed as #4 when the coordinator's addendum arrives.
 
