@@ -17,7 +17,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed. The Phase C criteria are on #189 (≥24 h, heartbeat, a lapsed-Monitor wake, /clear and /compact, 22:00 good-night, no runaway, unread-age in good-night).
-  - **#195, the incident fix (assigned, top priority):** the bus build ignores `uv.lock`, so the post-merge rebuild broke `send_message` on tank and llm-jp (about 12:58–13:30 JST). Both were restored by hand with a locked build. **No `install.sh` anywhere until #195 merges** (tank's cached layer would bring the break back). After that: tank and llm-jp re-install, then the other 5 hosts (still `d478dfd`).
+  - **#195, the incident fix: PR #196, round 2 with the engineer** (3 blockers: exec bit, silent cleanup failure, userspace `uv run --frozen`). Follow-ups are in #197; gate-before-swap is the important one. the bus build ignores `uv.lock`, so the post-merge rebuild broke `send_message` on tank and llm-jp (about 12:58–13:30 JST). Both were restored by hand with a locked build. **No `install.sh` anywhere until #195 merges** (tank's cached layer would bring the break back). After that: tank and llm-jp re-install, then the other 5 hosts (still `d478dfd`).
   - #194 (W14b mid-flight row) comes after #195. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
   - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
@@ -27,9 +27,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **admin** (new private repo underspecified/admin, 2026-10-02; engineer seat at `~/.claude/skills/admin`): 10/1 receipt-run lessons from `projects`.
   - #1 merged (abcac18, PR #4); deploy links repointed. #5 merged (2c9fa85, PR #7); `admin` is in bootstrap `COMPOSITES` (f1a06f9), and doctor reports ok.
   - Merged 10/2, 2 rounds each: #2 (PR #8), #6 (PR #11), #9 (PR #12), #3 `/admin-expense-reimburse` (PR #14, linked), #10 items 1/2/4 (PR #15, `rakuraku-widgets.md`).
-  - #17 (fast-lane, assigned): personal charges get classified, never receipt-gathered (Eric's design correction to PR #14).
+  - #17 merged (0a55059, PR #18): personal charges get classified, never receipt-gathered (Eric's design correction to PR #14).
   - Open: #10 item 3 is a live check on the next receipt run (the coordinator was asked to schedule it). #13 and #16 are review follow-ups, unassigned.
   - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6). Engineer seats run in the deploy trees (fleet-wide question, PR #7 review).
+  - lnk backlog: the **shfmt PostToolUse hook reformats the whole file** on any shell edit. On 10/2 it reflowed about 90 untouched lines of dispatch `install.sh` and broke deploy.bats D20 (`> "$tmp"` → `>"$tmp"`); it also reflowed `bootstrap.sh` (f1a06f9). Fix: only format a file that was already shfmt-clean before the edit, or format just the changed hunk.
   - The reimburse-trip domestic variant gets filed when the coordinator's addendum arrives.
 
 ## Waiting on Eric
