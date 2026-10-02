@@ -9,7 +9,7 @@ Home of the `settings` PL: `~/.config/lnk/`, the dotfiles repo managed by `lnk`.
 System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **Lowest velocity, highest blast radius:** a broken hook affects every session, and every other PL depends on the skills and dispatch infrastructure managed here. Digest cadence: biweekly.
 
 - **Owns:** `~/.config/lnk/`, `~/.claude/CLAUDE.md`, `~/.claude/rules/`, `~/.claude/hooks/` + hookify rules, MCP configs, new-machine setup scripts.
-- **Engineering PL for the skill repos** under `~/.claude/skills/`: computation-graph, dispatch, email-inbox, figure, gantt-chart, kaiseki, meeting, paper, pdf-immersive-html, planning, presentation, research, travel. Each has its own engineer seat. This seat signs off plans, reviews and merges, and never implements there. Other PLs request changes by filing an issue on the skill repo or by dispatching this seat.
+- **Engineering PL for the skill repos** under `~/.claude/skills/`: admin, computation-graph, dispatch, email-inbox, figure, gantt-chart, kaiseki, meeting, paper, pdf-immersive-html, planning, presentation, research, travel. Each has its own engineer seat. This seat signs off plans, reviews and merges, and never implements there. Other PLs request changes by filing an issue on the skill repo or by dispatching this seat.
 - **Out of scope:** per-project CLAUDE.md (owned by that PL), per-PL memory, app settings unrelated to the dev workflow.
 
 ## Blast-radius rules

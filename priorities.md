@@ -25,9 +25,14 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
   - Queue empty: #33 merged (a28203c, PR #44), #34 closed as not occurring. The fast-lane and plan labels now exist on all 13 skill repos.
+- **admin** (new private repo underspecified/admin, 2026-10-02; engineer seat at `~/.claude/skills/admin`): 10/1 receipt-run lessons from `projects`.
+  - #1 rename the sub-skill dirs to `admin-*` (fast-lane, assigned). After merge, add `admin` to bootstrap `COMPOSITES` and repoint the symlinks.
+  - #2 add-receipt fixes and #3 new `/admin-expense-reimburse` wait on Eric's 👍.
+  - The reimburse-trip domestic variant gets filed as #4 when the coordinator's addendum arrives.
 
 ## Waiting on Eric
 
+- 👍 on admin #2 and #3 (Gate 1). The content is from the 10/1 receipt run, and the planning log says you approved it, but that's relayed.
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
