@@ -17,6 +17,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed. The Phase C criteria are on #189 (≥24 h, heartbeat, a lapsed-Monitor wake, /clear and /compact, 22:00 good-night, no runaway, unread-age in good-night).
+  - **#197 gate-before-swap:** PR #198, round 2 (blockers: a rejected image stays :latest; candidate `down -v` could hit production's volume; candidate merges tank's override). Follow-ups are in #199.
   - **#195 fixed:** PR #196 merged (a4480e2). **The fleet is at 8db1d65 on all 7 hosts**, each gate-verified (send round-trip + cleanup ok). The install freeze is lifted. Follow-ups are in #197 (gate-before-swap is the important one). the bus build ignores `uv.lock`, so the post-merge rebuild broke `send_message` on tank and llm-jp (about 12:58–13:30 JST). Both were restored by hand with a locked build. **No `install.sh` anywhere until #195 merges** (tank's cached layer would bring the break back). After that: tank and llm-jp re-install, then the other 5 hosts (still `d478dfd`).
   - #194 (W14b mid-flight row) comes after #195. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
   - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
@@ -31,11 +32,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - Open: #10 item 3 is a live check on the next receipt run (the coordinator was asked to schedule it). #13 and #16 are review follow-ups, unassigned.
   - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6). Engineer seats run in the deploy trees (fleet-wide question, PR #7 review).
   - lnk backlog: the **shfmt PostToolUse hook reformats the whole file** on any shell edit. On 10/2 it reflowed about 90 untouched lines of dispatch `install.sh` and broke deploy.bats D20 (`> "$tmp"` → `>"$tmp"`); it also reflowed `bootstrap.sh` (f1a06f9). Fix: only format a file that was already shfmt-clean before the edit, or format just the changed hunk.
-  - #19 domestic settlement (the walkthrough copied in) and #20 driving the receipt-picker popup: both `plan`, waiting on Eric's 👍.
+  - #21 Part A: PR #22, round 2 (4 blockers: stale-document row count, popup-open check, decide on this search's results, route via 品川 to Haneda T1/T2). Eric 👍'd #19, #20 and #21 Part B (verified); queue after #22: #21 B → #19 → #20.
 
 ## Waiting on Eric
 
-- 👍 on admin #19 (domestic settlement), #20 (receipt-picker popup live test) and #21 Part B (preflight: app inconsistencies, Nissin itinerary, Print receipt, official fares; Part A is assigned).
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
