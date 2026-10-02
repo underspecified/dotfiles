@@ -17,9 +17,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed. The Phase C criteria are on #189 (≥24 h, heartbeat, a lapsed-Monitor wake, /clear and /compact, 22:00 good-night, no runaway, unread-age in good-night).
-  - **#197 gate-before-swap:** PR #198, round 2 (blockers: a rejected image stays :latest; candidate `down -v` could hit production's volume; candidate merges tank's override). Follow-ups are in #199.
-  - **#195 fixed:** PR #196 merged (a4480e2). **The fleet is at 8db1d65 on all 7 hosts**, each gate-verified (send round-trip + cleanup ok). The install freeze is lifted. Follow-ups are in #197 (gate-before-swap is the important one). the bus build ignores `uv.lock`, so the post-merge rebuild broke `send_message` on tank and llm-jp (about 12:58–13:30 JST). Both were restored by hand with a locked build. **No `install.sh` anywhere until #195 merges** (tank's cached layer would bring the break back). After that: tank and llm-jp re-install, then the other 5 hosts (still `d478dfd`).
-  - #194 (W14b mid-flight row) comes after #195. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
+  - **#197 gate-before-swap merged** (010fd35, PR #198, 2 rounds). **The fleet is at 010fd35 on all 7 hosts.** Each docker host built a `:candidate`, gated it, and promoted it. On each, the running image ID equals `dispatch-agent-mail:latest`, and `:prev` holds the old image. The orphaned `scripts-agent-mail:latest` tag is removed. dgx02 is userspace (the gate passed). tank's stale May override (`image: scripts-agent-mail:latest`) was trashed first: it would have kept production off the gated image. The other hosts had no override.
+  - Follow-ups are in #199: the per-command scan, skipping when the image is unchanged, a production override bypassing the gate, and the first-run failure message overclaiming.
+  - haru-5090: install can't re-publish Tailscale Serve (it needs `sudo tailscale set --operator=eric`, which needs a TTY). The existing Serve config still proxies :8765, so it's harmless.
+  - #194 (W14b mid-flight row, plus the backticks note in SKILL.md) is next. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
   - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
@@ -33,7 +34,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6). Engineer seats run in the deploy trees (fleet-wide question, PR #7 review).
   - lnk backlog: the **shfmt PostToolUse hook reformats the whole file** on any shell edit. On 10/2 it reflowed about 90 untouched lines of dispatch `install.sh` and broke deploy.bats D20 (`> "$tmp"` → `>"$tmp"`); it also reflowed `bootstrap.sh` (f1a06f9). Fix: only format a file that was already shfmt-clean before the edit, or format just the changed hunk.
   - #21 merged, 2 rounds each: Part A (0055b46, PR #22: category 128, route-search fares, 60-char comments, row-count guard) and Part B (e6aedb5, PR #23: preflight cross-check, Nissin itinerary, booking.com receipt rule). Open on #21: record the Kokura early-checkout ruling as a rule once admin rules (until then, "ask the user").
-  - #19 (domestic settlement, sibling skill `admin-reimburse-trip-domestic`): plan signed off, engineer started 10/2. After merge: link it under `~/.claude/skills/` and add it to the bootstrap `COMPOSITES` comment.
+  - #19 (domestic settlement, sibling skill `admin-reimburse-trip-domestic`): PR #24 is in round 2 (final).
+    - Blockers: the workflow row must match the confirmed application; per-day meal facts come from the user, with selects set by option label; and Preflight must say which steps apply.
+    - Fix-alongs include expense-reimburse routing domestic trips.
+    - After merge: link it under `~/.claude/skills/` and add it to the bootstrap `COMPOSITES` comment.
   - #20 (receipt-picker live test): signed off; waits on Eric at Chrome (the engineer asked `projects` to schedule it).
 
 ## Waiting on Eric
