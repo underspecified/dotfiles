@@ -29,7 +29,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - SKILL.md has the send-quoting note.
     - Fleet deploy trees are at 39f9bb2 on all 7 hosts; nothing to reinstall.
     - Follow-ups #199 and #201.
-  - **planning#27** (unread-age in good-night, report only): Eric 👍'd it, I signed off the plan, and the engineer is implementing. The target is tonight's good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
+  - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
+    - Zero seats, or a failure, reads as `check failed`, never "none". A recovery run writes "not checked".
+    - Acceptance (and the last #189 criterion but the heartbeat) is the next real good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
   - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
