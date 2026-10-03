@@ -23,9 +23,13 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - **#197 gate-before-swap merged** (010fd35, PR #198, 2 rounds). **The fleet is at 010fd35 on all 7 hosts.** Each docker host built a `:candidate`, gated it, and promoted it. On each, the running image ID equals `dispatch-agent-mail:latest`, and `:prev` holds the old image. The orphaned `scripts-agent-mail:latest` tag is removed. dgx02 is userspace (the gate passed). tank's stale May override (`image: scripts-agent-mail:latest`) was trashed first: it would have kept production off the gated image. The other hosts had no override.
   - Follow-ups are in #199: the per-command scan, skipping when the image is unchanged, a production override bypassing the gate, and the first-run failure message overclaiming.
   - haru-5090: install can't re-publish Tailscale Serve (it needs `sudo tailscale set --operator=eric`, which needs a TTY). The existing Serve config still proxies :8765, so it's harmless.
-  - #194: PR #200 is in round 2 (final). Tests and docs only; no code under hooks/ or scripts/ changes.
-    - Found: nothing caught `dispatch waiter off` failing to stop a live waiter.
-    - Blockers: the mutation harness must fail on a passenger row; the W14b rename is still a mislabel. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
+  - #194 merged (39f9bb2, PR #200, 2 rounds), tests and docs only.
+    - W14d now covers `waiter off` stopping a live waiter, and mail sent after `off` not waking the seat.
+    - The mutation harness now fails on passenger rows; the audit was otherwise clean.
+    - SKILL.md has the send-quoting note.
+    - Fleet deploy trees are at 39f9bb2 on all 7 hosts; nothing to reinstall.
+    - Follow-ups #199 and #201.
+  - **planning#27** (unread-age in good-night, report only): Eric 👍'd it, I signed off the plan, and the engineer is implementing. The target is tonight's good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
   - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
