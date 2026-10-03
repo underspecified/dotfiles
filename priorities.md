@@ -17,8 +17,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed.
-    - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, the 22:00 good-night, no runaway overnight.
-    - Still open: the ~23h30m heartbeat; /clear survival (Eric at the keyboard); unread-age in good-night (planning#27, report only, waits on Eric's 👍).
+    - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, /clear survival (the waiter woke the seat 31 s after the mail), the 22:00 good-night, and no runaway wakes overnight.
+    - Still open: the ~23h30m heartbeat; unread-age in good-night (planning#27, report only, waits on Eric's 👍).
+    - The coordinator says /clear killed its Monitor, contradicting SKILL.md #176 ("subscription still alive"). If so, a seat without the waiter is deaf after /clear until someone types. Unverified; to be measured before SKILL.md changes.
   - **#197 gate-before-swap merged** (010fd35, PR #198, 2 rounds). **The fleet is at 010fd35 on all 7 hosts.** Each docker host built a `:candidate`, gated it, and promoted it. On each, the running image ID equals `dispatch-agent-mail:latest`, and `:prev` holds the old image. The orphaned `scripts-agent-mail:latest` tag is removed. dgx02 is userspace (the gate passed). tank's stale May override (`image: scripts-agent-mail:latest`) was trashed first: it would have kept production off the gated image. The other hosts had no override.
   - Follow-ups are in #199: the per-command scan, skipping when the image is unchanged, a production override bypassing the gate, and the first-run failure message overclaiming.
   - haru-5090: install can't re-publish Tailscale Serve (it needs `sudo tailscale set --operator=eric`, which needs a TTY). The existing Serve config still proxies :8765, so it's harmless.
