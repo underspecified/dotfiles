@@ -29,6 +29,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - SKILL.md has the send-quoting note.
     - Fleet deploy trees are at 39f9bb2 on all 7 hosts; nothing to reinstall.
     - Follow-ups #199 and #201.
+  - **planning#24** (overnight `/meeting` on the day's recordings, routed to PLs): Eric 👍'd it on 10/3. Defaults: `SPEAKER_XX` overnight, a 4 h cap, PLs receive overviews as dispatch mail without being woken. Split three ways:
+    - `projects`: the rules-file columns, done (029af31).
+    - meeting#1 `--headless`: plan signed off. Q3 changed: no audio copy in the OneDrive dir.
+    - The planning step: plan signed off; implement after meeting#1.
+    - Constraint: OneDrive, so in-place writes only.
   - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
     - Zero seats, or a failure, reads as `check failed`, never "none". A recovery run writes "not checked".
     - Acceptance (and the last #189 criterion but the heartbeat) is the next real good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
