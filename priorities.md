@@ -60,6 +60,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #19 merged (91b0bd0, PR #24, 2 rounds): `/admin-reimburse-trip-domestic` is linked under `~/.claude/skills/` and listed in the bootstrap `COMPOSITES` comment; doctor reports ok. The shared Denpyo mechanics now live in `rakuraku-widgets.md`, and expense-reimburse routes domestic trips to the new skill. Not run live yet: the field test is the next domestic trip, or #20's session.
     - Follow-up #25 (unassigned): the shared ≤ 60-character JS check names `meisaiContents12`, but the domestic comment field is `meisaiFreeText1`.
   - #20 (receipt-picker live test): signed off; waits on Eric at Chrome (the engineer asked `projects` to schedule it).
+  - #26: encode admin's early-checkout ruling. Claim only the nights stayed; a required explanation document is attached by the human. Recorded on #21 item 11; Gate 1 is covered by #21 Part B. Assigned to the engineer for a plan.
 
 ## Waiting on Eric
 
