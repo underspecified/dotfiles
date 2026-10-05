@@ -31,9 +31,13 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Follow-ups #199 and #201.
   - **planning#24** (overnight `/meeting` on the day's recordings, routed to PLs): Eric 👍'd it on 10/3. Defaults: `SPEAKER_XX` overnight, a 4 h cap, PLs receive overviews as dispatch mail without being woken. Split three ways:
     - `projects`: the rules-file columns, done (029af31).
-    - meeting#1 `--headless`: PR #2 is in round 2 (final). It pins whisply 0.14.0 (0.15 needs a gated pyannote model).
-      - Measured throughput is 2.3–3× realtime with McAfee loaded.
-      - Blockers: two entry points (background prep, then per-dir phases 2–3); timeouts never retry, kill the process group and scale with duration; a refusal must not overwrite a finished `result.json`.
+    - meeting#1 merged (38aff46, PR #2, 2 rounds), with two entry points:
+      - `headless.py prep`: background-only, prints one JSON line.
+      - `/meeting --headless <dir>`: phases 2–3 + `finish`.
+      - Also: whisply pinned to 0.14.0; timeouts kill the process group and scale with duration.
+      - Throughput is about 0.2× realtime normally (the 2.3–3× was machine load on 10/4).
+      - Follow-ups: meeting#3.
+    - The runner must give `prep` stdin from `/dev/null`, and match the calendar event by **most overlap**. Both are relayed to planning.
     - **Eric (10/5): run transcription as a monitored background process, handling each transcript as it lands.** This replaces the 4 h cap. The planning engineer is revising its plan: a single-instance runner the seat Monitors.
     - Constraint: OneDrive, so in-place writes only.
   - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
