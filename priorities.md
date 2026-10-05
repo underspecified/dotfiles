@@ -38,8 +38,16 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
       - Throughput is about 0.2× realtime normally (the 2.3–3× was machine load on 10/4).
       - Follow-ups: meeting#3.
     - The runner must give `prep` stdin from `/dev/null`, and match the calendar event by **most overlap**. Both are relayed to planning.
-    - **Eric (10/5): run transcription as a monitored background process, handling each transcript as it lands.** This replaces the 4 h cap. The planning engineer is revising its plan: a single-instance runner the seat Monitors.
-    - Constraint: OneDrive, so in-place writes only.
+    - The planning step is PR #31, in round 2 (final). Blockers:
+      - unique dirs within a batch;
+      - no night routing to the coordinator seat itself, and a failed route is a ⚠️ line;
+      - one log per run;
+      - the same key for `mark` and `due`;
+      - `watch` armed as good-night's last step.
+
+  The fix-alongs include a 6 h left-running guard.
+  - **Eric (10/5): run transcription as a monitored background process, handling each transcript as it lands.** This replaces the 4 h cap. The planning engineer is revising its plan: a single-instance runner the seat Monitors.
+  - Constraint: OneDrive, so in-place writes only.
   - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
     - Zero seats, or a failure, reads as `check failed`, never "none". A recovery run writes "not checked".
     - Acceptance (and the last #189 criterion but the heartbeat) is the next real good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
@@ -55,6 +63,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #17 merged (0a55059, PR #18): personal charges get classified, never receipt-gathered (Eric's design correction to PR #14).
   - Open: #10 item 3 is a live check on the next receipt run (the coordinator was asked to schedule it). #13 and #16 are review follow-ups, unassigned.
   - lnk backlog: bootstrap never prunes sub-skill links whose target has vanished (PR #4 review item 6). Engineer seats run in the deploy trees (fleet-wide question, PR #7 review).
+  - lnk backlog (needs Eric's OK, global hook): **guard `~/.config/lnk` against checkout and switch.**
+    - On 10/5 a forked `/code-review` of planning PR #31 inherited the lnk cwd and ran `gh pr checkout` there. The dotfiles tree was swapped for about a minute: every linked file vanished, and Karabiner regenerated a blank config.
+    - Restored and verified clean.
+    - Proposed: a PreToolUse block on `gh pr checkout` / `git checkout|switch <branch>` when the git toplevel is `~/.config/lnk`. Until then, reviews from this seat are told to use a scratch clone (memory).
   - lnk backlog: the **shfmt PostToolUse hook reformats the whole file** on any shell edit. On 10/2 it reflowed about 90 untouched lines of dispatch `install.sh` and broke deploy.bats D20 (`> "$tmp"` → `>"$tmp"`); it also reflowed `bootstrap.sh` (f1a06f9). Fix: only format a file that was already shfmt-clean before the edit, or format just the changed hunk.
   - #21 merged, 2 rounds each: Part A (0055b46, PR #22: category 128, route-search fares, 60-char comments, row-count guard) and Part B (e6aedb5, PR #23: preflight cross-check, Nissin itinerary, booking.com receipt rule). Open on #21: record the Kokura early-checkout ruling as a rule once admin rules (until then, "ask the user").
   - #19 merged (91b0bd0, PR #24, 2 rounds): `/admin-reimburse-trip-domestic` is linked under `~/.claude/skills/` and listed in the bootstrap `COMPOSITES` comment; doctor reports ok. The shared Denpyo mechanics now live in `rakuraku-widgets.md`, and expense-reimburse routes domestic trips to the new skill. Not run live yet: the field test is the next domestic trip, or #20's session.
