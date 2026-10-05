@@ -47,7 +47,18 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
     - Zero seats, or a failure, reads as `check failed`, never "none". A recovery run writes "not checked".
     - Acceptance (and the last #189 criterion but the heartbeat) is the next real good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
-  - After #189: #180 (remote `${HOME}`), #177 (heartbeat) and #187 (dir_phys quoting, low priority). #183 waits on Eric.
+  - **Eric 👍'd 9 open issues (10/5, verified).** The queue, one at a time:
+    1. #187 dir_phys injection
+    2. #183 MCP pre-approve
+    3. #202 single-instance monitor
+    4. #180 remote HOME
+    5. #191 sentinel leak
+    6. #193 unread-age vs drain
+    7. #177 heartbeat
+    8. #199 Dockerfile scan
+    9. #201 stub port
+
+  Not approved: #165, #130, #118, #106.
 - **kaiseki:**
   - #2 (symlinks): merged (8983b6f, PR #41); cambridge is followed. #36 closed (already fixed by #37). #31 merged (54cb813, PR #43): live local branches show as labeled unmerged work, so merged branches must be deleted.
   - #38: merged (33e40ee, PR #42).
