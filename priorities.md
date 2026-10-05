@@ -45,6 +45,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - #38: merged (33e40ee, PR #42).
   - Queue empty: #33 merged (a28203c, PR #44), #34 closed as not occurring. The fast-lane and plan labels now exist on all 13 skill repos.
 - **admin** (new private repo underspecified/admin, 2026-10-02; engineer seat at `~/.claude/skills/admin`): 10/1 receipt-run lessons from `projects`.
+  - **New admin PL** (Eric, 10/5) at `~/projects/admin`, which owns non-HR paperwork. It's the repo's main user, filing issues; settings stays the repo's lead (agreed with the coordinator). `@admin` todo slug: fast-lane planning#29. Its first wake should be windowed, with Eric present (trust prompt + MCP modal).
   - #1 merged (abcac18, PR #4); deploy links repointed. #5 merged (2c9fa85, PR #7); `admin` is in bootstrap `COMPOSITES` (f1a06f9), and doctor reports ok.
   - Merged 10/2, 2 rounds each: #2 (PR #8), #6 (PR #11), #9 (PR #12), #3 `/admin-expense-reimburse` (PR #14, linked), #10 items 1/2/4 (PR #15, `rakuraku-widgets.md`).
   - #17 merged (0a55059, PR #18): personal charges get classified, never receipt-gathered (Eric's design correction to PR #14).
