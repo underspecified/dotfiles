@@ -18,7 +18,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed.
     - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, /clear survival (the waiter woke the seat 31 s after the mail), the 22:00 good-night, and no runaway wakes overnight.
-    - Still open: the ~23h30m heartbeat; unread-age in good-night (planning#27, report only, waits on Eric's 👍).
+    - Still open: the ~23h30m heartbeat. unread-age in good-night is merged (planning#27); its first real run is the next good-night.
     - Corrected: /clear did not kill the Monitor; SKILL.md #176 holds. What did happen: after /clear the agent couldn't see its running Monitor and armed a second one. That's low harm; it's filed as #202 (single-instance `dispatch-monitor`), unassigned.
   - **#197 gate-before-swap merged** (010fd35, PR #198, 2 rounds). **The fleet is at 010fd35 on all 7 hosts.** Each docker host built a `:candidate`, gated it, and promoted it. On each, the running image ID equals `dispatch-agent-mail:latest`, and `:prev` holds the old image. The orphaned `scripts-agent-mail:latest` tag is removed. dgx02 is userspace (the gate passed). tank's stale May override (`image: scripts-agent-mail:latest`) was trashed first: it would have kept production off the gated image. The other hosts had no override.
   - Follow-ups are in #199: the per-command scan, skipping when the image is unchanged, a production override bypassing the gate, and the first-run failure message overclaiming.
@@ -38,15 +38,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
       - Throughput is about 0.2× realtime normally (the 2.3–3× was machine load on 10/4).
       - Follow-ups: meeting#3.
     - The runner must give `prep` stdin from `/dev/null`, and match the calendar event by **most overlap**. Both are relayed to planning.
-    - The planning step is PR #31, in round 2 (final). Blockers:
-      - unique dirs within a batch;
-      - no night routing to the coordinator seat itself, and a failed route is a ⚠️ line;
-      - one log per run;
-      - the same key for `mark` and `due`;
-      - `watch` armed as good-night's last step.
-
-  The fix-alongs include a 6 h left-running guard.
-  - **Eric (10/5): run transcription as a monitored background process, handling each transcript as it lands.** This replaces the 4 h cap. The planning engineer is revising its plan: a single-instance runner the seat Monitors.
+    - **The planning step is merged** (08a489e, PR #31, 2 rounds), per Eric's 10/5 call: a monitored background runner, each transcript handled as it lands, no cap.
+      - It processes recordings from 10/5 on, with a 6 h left-running guard.
+      - `coordinator` and `unrouted` overviews are never dispatched at night.
+      - The coordinator seat is briefed.
+      - Acceptance: the next real good-night with a recording due.
   - Constraint: OneDrive, so in-place writes only.
   - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
     - Zero seats, or a failure, reads as `check failed`, never "none". A recovery run writes "not checked".
