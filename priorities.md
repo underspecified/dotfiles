@@ -36,6 +36,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Plan signed off 10/6 with 2 conditions: a cold seat skips the turn check, and the `**Seat role:**` parse is anchored at line start.
     - Acceptance includes the `/autocompact` picker reading 400k in a fresh engineer seat. I measured that a project-local top-level key beats a user per-model one.
     - After merge: the coordinator updates `workflow.md` step 9 from "wakes the seat" to `wake --fresh`. Until then, `destroy` + `wake` resumes, and only `/clear` gives a fresh context.
+    - **After deploy (Eric 10/6, "just those four"):** run `wake --fresh` on EWC, RwB, HR and animations. All four were switched to waiter-only on 10/6, but EWC is live without a waiter until its next turn.
     - Next: #191+#201.
   - **Compaction:**
     - The global `autoCompactWindow` is 600000 (13b1906) on all hosts.
