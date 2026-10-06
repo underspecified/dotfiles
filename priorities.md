@@ -27,10 +27,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - The fix-alongs merged as #206 (80db048), with follow-ups in #205. They're deployed on all 7 hosts, and a send probe per host woke its seat.
     - **New seats start with the waiter off** (`hardware` came up that way at 12:50; I switched it by hand and probed it). Filed as #208, a bug, fast lane, next after #207.
     - Next: the heartbeat, first observable around 10/7 10:40.
-  - **#187 → PR #207, round 1:** 2 blockers.
-    - a 7th site, `_cmd_peek_remote`;
-    - `_remote_dir_quoted` fails open.
-    - Its first test version leaked a real tmux session plus a live `claude` on tank. Killed it; the isolation is fixed in 6d33a25.
+  - **#187 merged** (4cae04d, PR #207, 2 rounds): seven sites, and the decode fails closed. Deployed on all 7 hosts. Send probes woke their seats, including uncached resolves on germputer and dgx02.
+    - Its first test version leaked a real tmux session plus a live `claude` on tank; I killed it and the isolation is fixed. The fix-alongs come as a follow-up PR.
     - Follow-ups filed: #209 (the ack `reply-to=` host isn't validated) and #210 (tmux `-t` without `=` matches by prefix).
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed.
     - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, /clear survival (the waiter woke the seat 31 s after the mail), the 22:00 good-night, and no runaway wakes overnight.
