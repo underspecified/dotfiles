@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-09-30
+Last updated: 2026-10-05
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -16,6 +16,15 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
+  - **#189 reopened 10/5; it's top priority (Eric, direct).** Eric's ruling: "Yes, roll out fleetwide now". The heartbeat criterion and the one-seat-at-a-time order are waived.
+    - Blocker: the waiter gates on marker **and** sentinel, so `waiter on` + `monitor off` leaves a seat dark.
+    - PL decision: Option 1, a decoupling PR. The waiter gates on the marker alone, and `waiter off` is its off switch. It goes ahead of #187.
+    - After the merge: install on all 7 hosts (gated, verify with a send), then on every live seat run `waiter on` + `monitor off`, in this order:
+      1. `projects` first;
+      2. the other local seats;
+      3. the 14 remote seats, via ssh on each host;
+      4. `cambridge` last.
+    - Verify each seat with a real send, then report to the coordinator and on #189.
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed.
     - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, /clear survival (the waiter woke the seat 31 s after the mail), the 22:00 good-night, and no runaway wakes overnight.
     - Still open: the ~23h30m heartbeat. unread-age in good-night is merged (planning#27); its first real run is the next good-night.
@@ -42,11 +51,12 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
       - It processes recordings from 10/5 on, with a 6 h left-running guard.
       - `coordinator` and `unrouted` overviews are never dispatched at night.
       - The coordinator seat is briefed.
-      - Acceptance: the next real good-night with a recording due.
+      - **Accepted 10/5 at good-night.** The runner started at 22:02 and ran 2 of 2, finishing at 22:16. One overview went to `coordinator` and one is `unrouted`; neither was dispatched. `due` now shows `already: 2`, so both are marked.
+        - The hospital sync was detected as `nn` because of leading noise, and the transcript has loops. Added to meeting#3 as item 4.
   - Constraint: OneDrive, so in-place writes only.
   - **planning#27 merged** (e1c8f14, PR #28, 2 rounds): good-night's daily log gets a stale-seat line, report only.
     - Zero seats, or a failure, reads as `check failed`, never "none". A recovery run writes "not checked".
-    - Acceptance (and the last #189 criterion but the heartbeat) is the next real good-night. Fleet rollout of the waiter waits on Phase C and on `unread-age` in good-night (planning).
+    - **Accepted 10/5:** the log reads "kaiseki 2.9h". kaiseki went dark from my monitor-off test, and it needs a turn to restart its waiter during the rollout.
   - **Eric 👍'd 9 open issues (10/5, verified).** The queue, one at a time:
     1. #187 dir_phys injection
     2. #183 MCP pre-approve
