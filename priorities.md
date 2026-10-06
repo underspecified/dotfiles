@@ -19,12 +19,12 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - **#189 reopened 10/5; it's top priority (Eric, direct).** Eric's ruling: "Yes, roll out fleetwide now". The heartbeat criterion and the one-seat-at-a-time order are waived.
     - Blocker: the waiter gates on marker **and** sentinel, so `waiter on` + `monitor off` leaves a seat dark.
     - PL decision: Option 1, a decoupling PR. The waiter gates on the marker alone, and `waiter off` is its off switch. It goes ahead of #187.
-    - After the merge: install on all 7 hosts (gated, verify with a send), then on every live seat run `waiter on` + `monitor off`, in this order:
-      1. `projects` first;
-      2. the other local seats;
-      3. the 14 remote seats, via ssh on each host;
-      4. `cambridge` last.
-    - Verify each seat with a real send, then report to the coordinator and on #189.
+    - **Rolled out 10/6.** PR #204 merged as a976fff after 2 rounds. All 7 hosts are deployed and gate-verified. 18 of 21 seats are waiter-only and woke on a probe in 10–71 s.
+      - `lnk` is the canary: waiter on, Monitor kept.
+      - llm-jp `lab` starts its waiter at its next turn.
+      - llm-jp-2 apps and llm_eval are **logged out**; they need Eric's `/login`.
+      - Reported on #189 and to the coordinator.
+    - Next: the heartbeat, first observable around 10/7 10:40, and the engineer's fix-along PR.
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed.
     - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, /clear survival (the waiter woke the seat 31 s after the mail), the 22:00 good-night, and no runaway wakes overnight.
     - Still open: the ~23h30m heartbeat. unread-age in good-night is merged (planning#27); its first real run is the next good-night.
