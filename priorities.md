@@ -29,7 +29,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Next: the heartbeat, first observable around 10/7 10:40.
   - **#187 merged** (4cae04d, PR #207, 2 rounds): seven sites, and the decode fails closed. Deployed on all 7 hosts. Send probes woke their seats, including uncached resolves on germputer and dgx02.
     - Its first test version leaked a real tmux session plus a live `claude` on tank; I killed it and the isolation is fixed. The fix-alongs merged as #212 (7f6bbe0) and are deployed and probed on all 7 hosts.
-  - **#208 plan signed off** (tombstone; flip-on-first-wake; no seats preserved off). The engineer is building it.
+  - **#208 merged** (a023752, PR #213, 1 round): every wake arms the waiter unless the seat has a `waiter off` tombstone, and `status` has 3 states. Deployed and probed on all 7 hosts. Next in the queue: #183.
   - **Tank bus incident, 10/6 14:13–14:44:** a Docker VM crash left the git archive with empty objects. Repaired and verified; follow-up #211. "Failed" sends in that window were delivered.
   - **Tank `ccp unstage`** (Eric): Claude in Chrome and computer use need the keychain login. `launch_ws` no longer stages the token (c7a6332).
     - Follow-ups filed: #209 (the ack `reply-to=` host isn't validated) and #210 (tmux `-t` without `=` matches by prefix).
