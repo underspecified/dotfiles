@@ -24,7 +24,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
       - llm-jp `lab` starts its waiter at its next turn.
       - llm-jp-2 apps and llm_eval are **logged out**; they need Eric's `/login`.
       - Reported on #189 and to the coordinator.
-    - Next: the heartbeat, first observable around 10/7 10:40, and the engineer's fix-along PR.
+    - The fix-alongs merged as #206 (80db048), with follow-ups in #205. They're deployed on all 7 hosts, and a send probe per host woke its seat.
+    - Next: the heartbeat, first observable around 10/7 10:40. The engineer is on #187.
   - **Phase B is live on the `projects` coordinator seat** (Eric's call): waiter on, Monitor still armed.
     - Phase C criteria met (evidence on #189, 10/3): the lapsed-Monitor wake (15 s), /compact survival, /clear survival (the waiter woke the seat 31 s after the mail), the 22:00 good-night, and no runaway wakes overnight.
     - Still open: the ~23h30m heartbeat. unread-age in good-night is merged (planning#27); its first real run is the next good-night.
