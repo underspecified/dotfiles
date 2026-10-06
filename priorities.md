@@ -41,7 +41,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - The global `autoCompactWindow` is 600000 (13b1906) on all hosts.
     - The dispatch typed `/compact` is off (`dispatch autocompact off`); #218 deprecates it.
     - Running sessions didn't pick up the new key; fresh ones do. Eric set it fleetwide by hand.
-    - `/autocompact` writes `modelSettings` into the tracked settings file. I reset the 5 remote hosts whose only difference was a moved key to HEAD (backups at `~/.cache/settings.json.bak-20261006`). dgx02 and tank keep Eric's uncommitted `"model": "opus"`.
+    - `/autocompact` writes `modelSettings` into the tracked settings file. I reset the 5 remote hosts whose only difference was a moved key to HEAD (backups at `~/.cache/settings.json.bak-20261006`). Eric then kept `"model": "opus[1m]"`, so tank and dgx02 are back at HEAD too, and the whole fleet is clean.
   - **Branch hygiene** (org 35349e4, coordinator, approved by Eric): one worktree per issue off a fresh `origin/main`; after merge the engineer cleans up and replies `clean`. The tank skill engineers admin, kaiseki and planning confirmed, and I verified them. The coordinator is to push it and brief the PLs; then I pull `~/.claude/org` on the 6 remotes.
   - **admin#28 (`/admin-ship`) merged and deployed.** The live dry run needs Eric at Chrome.
   - **Brew upgrade, 10/6 13:50–14:40 (manual):** it removed python@3.14.6 (Python MCPs broke until reconnected), reinstalled Docker (the tank bus incident below) and reinstalled 1Password (signing failed). Mail.app: AutoReplyFormat is off and SendFormat is Plain, so replies are plain text.
