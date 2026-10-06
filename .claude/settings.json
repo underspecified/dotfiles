@@ -148,6 +148,7 @@
     "defaultMode": "auto"
   },
   "model": "opus[1m]",
+  "autoCompactWindow": 600000,
   "enabledMcpjsonServers": [
     "slack"
   ],
