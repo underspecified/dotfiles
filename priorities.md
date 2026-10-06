@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-10-05
+Last updated: 2026-10-06
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -31,8 +31,20 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Its first test version leaked a real tmux session plus a live `claude` on tank; I killed it and the isolation is fixed. The fix-alongs merged as #212 (7f6bbe0) and are deployed and probed on all 7 hosts.
   - **#208 merged** (a023752, PR #213, 1 round): every wake arms the waiter unless the seat has a `waiter off` tombstone, and `status` has 3 states. Deployed and probed on all 7 hosts.
   - **#183 merged** (fb19219, PR #214, 2 rounds): dispatch pre-approves only its own `agent-mail` entry, never overwrites or approves a foreign one, revokes on drift, respects `disabledMcpjsonServers`, and fails closed on an unparseable `.mcp.json`. Deployed and probed on all 7 hosts.
-  - **#202+#177 plan signed off** (a fail-open monitor lock that doubles as the heartbeat; the sender warning is local-only). The engineer is building it. After it: #191+#201.
-  - **admin#27 (`/admin-ship`)**: Eric's 👍 verified; plan signed off with 2 conditions (the Chrome preflight cause; date-line-only annotation deletion). The admin engineer is building it. The live dry run needs Eric at Chrome.
+  - **#202+#177 merged** (d1ac018, PR #216, 2 rounds plus a CI fix). The ubuntu red had two dev-box-only causes: `dispatch` was installed and a bus was running. The fix is tests only. Deployed, gate-verified and send-probed on all 7 hosts. Carry-over: `_beat_lock` should `kill -0` before standing down; the engineer is filing it.
+  - **#218 is top priority** (Eric 10/6: "better hurry up"). It adds `wake --fresh` and writes `autoCompactWindow: 400000` into engineer seats' `settings.local.json` only if the key is absent; PL seats inherit the global 600k.
+    - Plan signed off 10/6 with 2 conditions: a cold seat skips the turn check, and the `**Seat role:**` parse is anchored at line start.
+    - Acceptance includes the `/autocompact` picker reading 400k in a fresh engineer seat. I measured that a project-local top-level key beats a user per-model one.
+    - After merge: the coordinator updates `workflow.md` step 9 from "wakes the seat" to `wake --fresh`. Until then, `destroy` + `wake` resumes, and only `/clear` gives a fresh context.
+    - Next: #191+#201.
+  - **Compaction:**
+    - The global `autoCompactWindow` is 600000 (13b1906) on all hosts.
+    - The dispatch typed `/compact` is off (`dispatch autocompact off`); #218 deprecates it.
+    - Running sessions didn't pick up the new key; fresh ones do. Eric set it fleetwide by hand.
+    - `/autocompact` writes `modelSettings` into the tracked settings file. I reset the 5 remote hosts whose only difference was a moved key to HEAD (backups at `~/.cache/settings.json.bak-20261006`). dgx02 and tank keep Eric's uncommitted `"model": "opus"`.
+  - **Branch hygiene** (org 35349e4, coordinator, approved by Eric): one worktree per issue off a fresh `origin/main`; after merge the engineer cleans up and replies `clean`. The tank skill engineers admin, kaiseki and planning confirmed, and I verified them. The coordinator is to push it and brief the PLs; then I pull `~/.claude/org` on the 6 remotes.
+  - **admin#28 (`/admin-ship`) merged and deployed.** The live dry run needs Eric at Chrome.
+  - **Brew upgrade, 10/6 13:50–14:40 (manual):** it removed python@3.14.6 (Python MCPs broke until reconnected), reinstalled Docker (the tank bus incident below) and reinstalled 1Password (signing failed). Mail.app: AutoReplyFormat is off and SendFormat is Plain, so replies are plain text.
   - **Tank bus incident, 10/6 14:13–14:44:** a Docker VM crash left the git archive with empty objects. Repaired and verified; follow-up #211. "Failed" sends in that window were delivered.
   - **Tank `ccp unstage`** (Eric): Claude in Chrome and computer use need the keychain login. `launch_ws` no longer stages the token (c7a6332).
     - Follow-ups filed: #209 (the ack `reply-to=` host isn't validated) and #210 (tmux `-t` without `=` matches by prefix).
