@@ -41,7 +41,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Scope: `send` wakes a seat that isn't running (`--continue`/`--fresh`/`--force`/`--no-wake`), and it absorbs planning's `dispatch_item.sh` (`--file`, `--rm`, `-C` backtick strip, `--json`, rc 3 = posted but the wake failed).
     - planning#32 (👍) deletes the script. Assign it once #227's PR interface is settled.
     - Deploy both together in the daytime, or good-night's items would wake seats at night.
-    - Next in the dispatch queue: #228 (CLAUDE.md is 177.6k chars, over the 150k limit; move Load-bearing comments to `docs/`). It's a doc-only fix with no Gate 1, queued after #227.
+    - Plan signed off 10/7 (decisions 3/4/6 OK). Blocker: `_install_hooks_local` rewrites `settings.local.json` on every warm wake, which #227 would make every send. Fix: write only if changed, in place.
+    - Next in the dispatch queue: #228 (CLAUDE.md 177.6k chars, over the 150k limit). Delete the Load-bearing narrative, keep ~6 rules, target under 15k (Eric 10/7). Doc-only, no Gate 1, after #227.
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
     - **OneDrive silently restored 2 gc-rewritten reflogs.** I restored the pruned commits from backup. All refs were verified against the backups.
