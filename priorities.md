@@ -42,7 +42,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Probes, all `--no-wake`: planning, llm-jp llm_gen, haru-5090 apps and dgx02 llm_eval each read theirs (21–93 s). germputer, llm-jp-2 and haru-4090 have no live seats (the lab PL shut them down), so those were post-only.
     - planning#32 merged (PR #33 → b758d74) and fast-forwarded on TANK: `dispatch_item.sh` is gone, and good-night always passes `--no-wake`. The coordinator was told (send wakes by default; broadcasts use `--no-wake`).
     - Follow-ups: #230 (deaf seat on invalid settings, MCP modal counted as success, fd leak, stray root files).
-    - Next in the dispatch queue: #228 (CLAUDE.md 177.6k chars, over the 150k limit). Delete the Load-bearing narrative, keep ~6 rules, target under 15k (Eric 10/7). Doc-only, no Gate 1, after #227.
+    - **#228 in progress** (CLAUDE.md 177.6k chars, over the 150k limit). Delete the Load-bearing narrative, keep ~6 rules, target under 15k (Eric 10/7). Doc-only, no Gate 1. Started on the reused #227 context, before the new seat cycle.
+    - **Seat cycle (org b4df768, Eric 10/7; pulled on all 7 hosts):** assign with `send --fresh "<issue URL>"`; after `clean` + deploy + `git worktree list`, run `dispatch -C <dir> destroy`. The planning seat was destroyed after its `clean` 10/7. For dispatch: after #228's `clean`, destroy, then `send --fresh` #230.
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
     - **OneDrive silently restored 2 gc-rewritten reflogs.** I restored the pruned commits from backup. All refs were verified against the backups.
