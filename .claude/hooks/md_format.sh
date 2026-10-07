@@ -48,4 +48,6 @@ esac
 # the merge is resolved.
 grep -qE '^(<<<<<<<|=======|>>>>>>>|\|\|\|\|\|\|\|)' "${file}" 2>/dev/null && exit 0
 
-rumdl check --fix "${file}" >/dev/null 2>&1 || true
+# --no-cache: one file per call gains nothing from a cache, and the default
+# `.rumdl_cache/` lands in the project dir, which syncs back as churn in OneDrive projects (10/7).
+rumdl check --fix --no-cache "${file}" >/dev/null 2>&1 || true
