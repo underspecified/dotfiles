@@ -42,6 +42,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - planning#32 (👍) deletes the script. Assign it once #227's PR interface is settled.
     - Deploy both together in the daytime, or good-night's items would wake seats at night.
     - Plan signed off 10/7 (decisions 3/4/6 OK). Blocker: `_install_hooks_local` rewrites `settings.local.json` on every warm wake, which #227 would make every send. Fix: write only if changed, in place.
+    - **PR #229** (CI green): round 1 has 8 must-fix items (signals → rc 3, remote `--fresh` gate fails closed, no second claude when one runs outside dispatch tmux, no `window_id` on remote headless, no writes/copies to a live seat, `--json` edges, wording). Round 2 is final. Follow-ups filed as #230.
+    - **planning PR #33** reviewed, no findings. Merge after #229 is installed on TANK, before 22:00; otherwise both go tomorrow morning.
     - Next in the dispatch queue: #228 (CLAUDE.md 177.6k chars, over the 150k limit). Delete the Load-bearing narrative, keep ~6 rules, target under 15k (Eric 10/7). Doc-only, no Gate 1, after #227.
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
