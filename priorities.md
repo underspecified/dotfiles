@@ -43,7 +43,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - planning#32 merged (PR #33 → b758d74) and fast-forwarded on TANK: `dispatch_item.sh` is gone, and good-night always passes `--no-wake`. The coordinator was told (send wakes by default; broadcasts use `--no-wake`).
     - Follow-ups: #230 (deaf seat on invalid settings, MCP modal counted as success, fd leak, stray root files).
     - **#228 merged** (PR #232 → f1f6033, 1 round): CLAUDE.md 177.6k → 7.0k chars, with 7 rules plus 3 bus invariants. The 11 rules found only in CLAUDE.md are now code comments. Deployed and probed on all 7 hosts (live seats read their probes in 10–31 s; germputer, llm-jp-2 and haru-4090 post-only).
-    - **Seat cycle (org b4df768, Eric 10/7; pulled on all 7 hosts):** assign with `send --fresh "<issue URL>"`; after `clean` + deploy + `git worktree list`, run `dispatch -C <dir> destroy`. The planning seat was destroyed after its `clean` 10/7. For dispatch: after #228's `clean`, destroy, then `send --fresh` #230.
+    - **Seat cycle (org b4df768, Eric 10/7; pulled on all 7 hosts):** assign with `send --fresh "<issue URL>"`; after `clean` + deploy + `git worktree list`, run `dispatch -C <dir> destroy`. The planning seat was destroyed after its `clean` 10/7. dispatch seat destroyed after #228's `clean`; #230 assigned 10/7 with `send --fresh --file` (woke:true, no `--continue` in the argv; first real use of #227).
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
     - **OneDrive silently restored 2 gc-rewritten reflogs.** I restored the pruned commits from backup. All refs were verified against the backups.
