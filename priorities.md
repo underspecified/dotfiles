@@ -32,7 +32,12 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - **#208 merged** (a023752, PR #213, 1 round): every wake arms the waiter unless the seat has a `waiter off` tombstone, and `status` has 3 states. Deployed and probed on all 7 hosts.
   - **#183 merged** (fb19219, PR #214, 2 rounds): dispatch pre-approves only its own `agent-mail` entry, never overwrites or approves a foreign one, revokes on drift, respects `disabledMcpjsonServers`, and fails closed on an unparseable `.mcp.json`. Deployed and probed on all 7 hosts.
   - **#202+#177 merged** (d1ac018, PR #216, 2 rounds plus a CI fix). The ubuntu red had two dev-box-only causes: `dispatch` was installed and a bus was running. The fix is tests only. Deployed, gate-verified and send-probed on all 7 hosts. Carry-over: `_beat_lock` should `kill -0` before standing down; the engineer is filing it.
-  - **#218 is top priority** (Eric 10/6: "better hurry up"). It adds `wake --fresh` and writes `autoCompactWindow: 400000` into engineer seats' `settings.local.json` only if the key is absent; PL seats inherit the global 600k.
+  - **#218 merged** (9820787, PR #222, 2 rounds): `wake --fresh`, and the mid-turn check is fixed for claude 2.1.291's spinner. Deployed and probed on all 7 hosts.
+    - The four seats (EWC, RwB, HR, animations) were restarted fresh: no `--continue` in the argv, new transcripts, waiters running, probes woke all four, no `autoCompactWindow` key written.
+    - Org step 9 now says `wake --fresh` (642ba9b, pulled on all hosts).
+    - Follow-up #223: `--fresh` prints a false "resuming" cost note.
+  - **#191+#201 assigned** to the dispatch engineer (Eric's +1 on both, 10/5).
+  - (History) **#218 was top priority** (Eric 10/6: "better hurry up"). It adds `wake --fresh` and writes `autoCompactWindow: 400000` into engineer seats' `settings.local.json` only if the key is absent; PL seats inherit the global 600k.
     - Plan signed off 10/6 with 2 conditions: a cold seat skips the turn check, and the `**Seat role:**` parse is anchored at line start.
     - Acceptance includes the `/autocompact` picker reading 400k in a fresh engineer seat. I measured that a project-local top-level key beats a user per-model one.
     - After merge: the coordinator updates `workflow.md` step 9 from "wakes the seat" to `wake --fresh`. Until then, `destroy` + `wake` resumes, and only `/clear` gives a fresh context.
