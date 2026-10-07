@@ -37,7 +37,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Org step 9 now says `wake --fresh` (642ba9b, pulled on all hosts).
     - Follow-up #223: `--fresh` prints a false "resuming" cost note.
   - **#191+#201 merged** (26d6205, PR #225) and #223 merged (a1d4837, PR #226). Both deployed and probed on all 7 hosts. The dispatch engineer is idle.
-  - **11 idle TANK seats shut down (Eric, 10/7):** kaiseki, planning, cambridge, EWC, dispatch, email-inbox, admin, HR, animations, hardware, haru.md. Still running: lnk, projects, RwB, llm, personal. The coordinator was told to follow each send with `wake --headless`. Filed #227 (`send` wakes a seat that isn't running; `--continue`/`--fresh`/`--no-wake`), waiting on Eric's 👍. The dispatch engineer is down, so wake it to assign.
+  - **11 idle TANK seats shut down (Eric, 10/7):** kaiseki, planning, cambridge, EWC, dispatch, email-inbox, admin, HR, animations, hardware, haru.md. Still running: lnk, projects, RwB, llm, personal. The coordinator was told to follow each send with `wake --headless`. #227 approved (Eric's 👍, 07:22Z) and assigned; the dispatch engineer was started with `wake --fresh` at 16:23.
+    - Scope: `send` wakes a seat that isn't running (`--continue`/`--fresh`/`--force`/`--no-wake`), and it absorbs planning's `dispatch_item.sh` (`--file`, `--rm`, `-C` backtick strip, `--json`, rc 3 = posted but the wake failed).
+    - planning#32 (👍) deletes the script. Assign it once #227's PR interface is settled.
+    - Deploy both together in the daytime, or good-night's items would wake seats at night.
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
     - **OneDrive silently restored 2 gc-rewritten reflogs.** I restored the pruned commits from backup. All refs were verified against the backups.
@@ -136,7 +139,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Waiting on Eric
 
-- 👍 on dispatch #227? `send` would wake a seat that isn't running (resume by default, `--fresh`, `--no-wake`). It also absorbs planning's `dispatch_item.sh` (`--file`, `--rm`, `-C` backtick strip, `--json`, rc 3 = posted but wake failed). planning#32 then deletes the script. Deploy both together in the daytime, or good-night's items would wake seats at night.
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
