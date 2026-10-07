@@ -41,6 +41,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Scope: `send` wakes a seat that isn't running (`--continue`/`--fresh`/`--force`/`--no-wake`), and it absorbs planning's `dispatch_item.sh` (`--file`, `--rm`, `-C` backtick strip, `--json`, rc 3 = posted but the wake failed).
     - planning#32 (👍) deletes the script. Assign it once #227's PR interface is settled.
     - Deploy both together in the daytime, or good-night's items would wake seats at night.
+    - Next in the dispatch queue: #228 (CLAUDE.md is 177.6k chars, over the 150k limit; move Load-bearing comments to `docs/`). It's a doc-only fix with no Gate 1, queued after #227.
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
     - **OneDrive silently restored 2 gc-rewritten reflogs.** I restored the pruned commits from backup. All refs were verified against the backups.
