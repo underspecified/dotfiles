@@ -37,13 +37,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - Org step 9 now says `wake --fresh` (642ba9b, pulled on all hosts).
     - Follow-up #223: `--fresh` prints a false "resuming" cost note.
   - **#191+#201 merged** (26d6205, PR #225) and #223 merged (a1d4837, PR #226). Both deployed and probed on all 7 hosts. The dispatch engineer is idle.
-  - **11 idle TANK seats shut down (Eric, 10/7):** kaiseki, planning, cambridge, EWC, dispatch, email-inbox, admin, HR, animations, hardware, haru.md. Still running: lnk, projects, RwB, llm, personal. The coordinator was told to follow each send with `wake --headless`. #227 approved (Eric's 👍, 07:22Z) and assigned; the dispatch engineer was started with `wake --fresh` at 16:23.
-    - Scope: `send` wakes a seat that isn't running (`--continue`/`--fresh`/`--force`/`--no-wake`), and it absorbs planning's `dispatch_item.sh` (`--file`, `--rm`, `-C` backtick strip, `--json`, rc 3 = posted but the wake failed).
-    - planning#32 (👍) deletes the script. Assign it once #227's PR interface is settled.
-    - Deploy both together in the daytime, or good-night's items would wake seats at night.
-    - Plan signed off 10/7 (decisions 3/4/6 OK). Blocker: `_install_hooks_local` rewrites `settings.local.json` on every warm wake, which #227 would make every send. Fix: write only if changed, in place.
-    - **PR #229** (CI green): round 1 has 8 must-fix items (signals → rc 3, remote `--fresh` gate fails closed, no second claude when one runs outside dispatch tmux, no `window_id` on remote headless, no writes/copies to a live seat, `--json` edges, wording). Round 2 is final. Follow-ups filed as #230.
-    - **planning PR #33** reviewed, no findings. Merge after #229 is installed on TANK, before 22:00; otherwise both go tomorrow morning.
+  - **11 idle TANK seats shut down (Eric, 10/7):** kaiseki, planning, cambridge, EWC, dispatch, email-inbox, admin, HR, animations, hardware, haru.md.
+  - **#227 merged and live** (PR #229 → b258e3a, 2 rounds): `send` wakes a stopped seat by default (`--continue`/`--fresh [--force]`/`--no-wake`), takes `--file`/`--rm`/`--json`, and rc 3 = posted, never resend. It won't start a second claude beside one running outside dispatch tmux. Installed on all 7 hosts on 10/7, ~19:00.
+    - Probes, all `--no-wake`: planning, llm-jp llm_gen, haru-5090 apps and dgx02 llm_eval each read theirs (21–93 s). germputer, llm-jp-2 and haru-4090 have no live seats (the lab PL shut them down), so those were post-only.
+    - planning#32 merged (PR #33 → b758d74) and fast-forwarded on TANK: `dispatch_item.sh` is gone, and good-night always passes `--no-wake`. The coordinator was told (send wakes by default; broadcasts use `--no-wake`).
+    - Follow-ups: #230 (deaf seat on invalid settings, MCP modal counted as success, fd leak, stray root files).
     - Next in the dispatch queue: #228 (CLAUDE.md 177.6k chars, over the 150k limit). Delete the Load-bearing narrative, keep ~6 rules, target under 15k (Eric 10/7). Doc-only, no Gate 1, after #227.
   - **OneDrive / git (10/7):**
     - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
