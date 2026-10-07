@@ -16,7 +16,7 @@ STANDALONE=(computation-graph dispatch email-inbox figure gantt-chart meeting pd
 
 # Composite skills (one repo, multiple sub-skills at <repo>/skills/<name>/)
 COMPOSITES=(
-  admin # 楽楽精算: /admin-add-receipt, /admin-reimburse-trip, /admin-reimburse-trip-domestic, /admin-expense-reimburse; FedEx: /admin-ship
+  admin # 楽楽精算: /admin-trip-apply, /admin-add-receipt, /admin-reimburse-trip, /admin-reimburse-trip-domestic, /admin-expense-reimburse; FedEx: /admin-ship
   research
   paper # manuscript authoring: /paper-plan, /paper-prosify, /paper-sync, ...
   planning
