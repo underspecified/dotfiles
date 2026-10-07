@@ -36,7 +36,20 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - The four seats (EWC, RwB, HR, animations) were restarted fresh: no `--continue` in the argv, new transcripts, waiters running, probes woke all four, no `autoCompactWindow` key written.
     - Org step 9 now says `wake --fresh` (642ba9b, pulled on all hosts).
     - Follow-up #223: `--fresh` prints a false "resuming" cost note.
-  - **#191+#201 assigned** to the dispatch engineer (Eric's +1 on both, 10/5).
+  - **#191+#201 merged** (26d6205, PR #225) and #223 merged (a1d4837, PR #226). Both deployed and probed on all 7 hosts. The dispatch engineer is idle.
+  - **OneDrive / git (10/7):**
+    - **Packed 27 repos** (Eric paused and resumed sync), about 5,800 `.git` files down to under 800. Backups are in `~/backups/git-*20261007*`.
+    - **OneDrive silently restored 2 gc-rewritten reflogs.** I restored the pruned commits from backup. All refs were verified against the backups.
+    - **Settings:** every synced repo has `gc.auto 256` plus `gc.reflogExpire never`, `gc.reflogExpireUnreachable never` and `gc.packRefs false`. The local ones (lnk, haru.md, lab) have `gc.auto 256` only.
+    - **Eric pinned all 24 synced `.git` folders** ("Always Keep on This Device"). The pin state isn't readable from the CLI.
+    - **Check on 10/8:** `find <repo>/.git -type f -flags +dataless` should still be 0 in all 24. It was 0 at 10/7 15:53.
+    - **Still open:** the OneDrive app dies overnight (log storm, an upload backlog of about 8k files). The watchdog isn't decided yet.
+  - **email-inbox:**
+    - #2 (replies over-quoted) is merged (PR #3) and live. It was verified with a real Apple Mail self-send.
+    - #4, `compose_email` new mail hiding the body in a cite blockquote, is open. Until it's fixed, Eric sends those drafts from Outlook.
+  - **admin:**
+    - #30 (ADM manuals), the #30 follow-up (return-month deadline), #29 (B2 海外発送) and #31 (`/admin-trip-apply`) are all merged and live on tank.
+    - Unverified until a live run with Eric at Chrome: the B2 scan attachment and the trip-application field names.
   - (History) **#218 was top priority** (Eric 10/6: "better hurry up"). It adds `wake --fresh` and writes `autoCompactWindow: 400000` into engineer seats' `settings.local.json` only if the key is absent; PL seats inherit the global 600k.
     - Plan signed off 10/6 with 2 conditions: a cold seat skips the turn check, and the `**Seat role:**` parse is anchored at line start.
     - Acceptance includes the `/autocompact` picker reading 400k in a fresh engineer seat. I measured that a project-local top-level key beats a user per-model one.
