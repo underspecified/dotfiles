@@ -34,6 +34,15 @@ install_brewfile() {
   brew bundle --file="${BREWFILE}"
 }
 
+fix_font_weights() {
+  # The font cask ships iMWriting Quat Bold with usWeightClass=400, so Zed
+  # renders Regular as bold. Every `brew upgrade` of the cask restores the stock
+  # files (10/6), so re-patch after the Brewfile. Idempotent.
+  log "Patching iMWriting Quat Bold weight metadata"
+  uv run "${ALL_DIR}/fix_imwriting_quat_weights.py" >/dev/null ||
+    warn "iMWriting Quat weight patch failed (Zed may render Regular as bold)"
+}
+
 setup_touchid_sudo() {
   # TouchID for sudo (incl. tmux/non-TTY) — needed for /good-morning's good-night
   # arm step. Runs after the Brewfile so pam-reattach is already installed.
@@ -98,12 +107,12 @@ pull_private_configs_from_1password() {
   fi
   # Defaults to the work (hri_jp) profile. For a personal-only machine,
   # swap to ssh-config-underspecified.sh + git-identity-underspecified.sh.
-  bash "${ALL_DIR}/ssh-config-hri-jp.sh" \
-    || warn "failed to pull ssh-config-hri-jp"
-  bash "${ALL_DIR}/ssh-config-honda.sh" \
-    || warn "failed to pull ssh-config-honda"
-  bash "${ALL_DIR}/git-identity-hri-jp.sh" \
-    || warn "failed to pull git-identity-work"
+  bash "${ALL_DIR}/ssh-config-hri-jp.sh" ||
+    warn "failed to pull ssh-config-hri-jp"
+  bash "${ALL_DIR}/ssh-config-honda.sh" ||
+    warn "failed to pull ssh-config-honda"
+  bash "${ALL_DIR}/git-identity-hri-jp.sh" ||
+    warn "failed to pull git-identity-work"
 }
 
 run_claude_bootstrap() {
@@ -184,6 +193,7 @@ render_ui() {
 main() {
   check_preconditions
   install_brewfile
+  fix_font_weights
   setup_touchid_sudo
   render_ui
   run_all_installers

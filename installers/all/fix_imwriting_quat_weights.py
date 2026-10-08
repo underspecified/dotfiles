@@ -8,13 +8,15 @@
 The Nerd-Fonts patched iA Writer Quattro Bold and BoldItalic .ttf files ship
 with usWeightClass=400 (Regular) instead of 700 (Bold). Fontdb-based apps such
 as Zed read OS/2 directly and end up serving the bold-glyph file when an app
-asks for Regular -- the "stuck in bold" symptom on Linux.
+asks for Regular -- the "stuck in bold" symptom, on Linux and macOS alike.
 
 This script rewrites usWeightClass to 700 on the four affected files.
-Idempotent: files already at 700 are skipped.
+Idempotent: files already at 700 are skipped. Every reinstall of the fonts
+(install_fonts.sh, or a `brew upgrade` of the font cask) restores the stock
+files, so the installers re-run this after installing.
 
-Usage: uv run ~/.config/lnk/installers/linux/fix_imwriting_quat_weights.py [font_dir]
-       (default font_dir: ~/.local/share/fonts)
+Usage: uv run ~/.config/lnk/installers/all/fix_imwriting_quat_weights.py [font_dir]
+       (default font_dir: ~/Library/Fonts on macOS, ~/.local/share/fonts elsewhere)
 Output: JSON list of {file, old, new, action} to stdout.
 """
 
@@ -43,7 +45,12 @@ def patch_one(path: Path) -> dict[str, object]:
         old = os2.usWeightClass
         if old == BOLD_WEIGHT:
             log.info("already correct: %s", path.name)
-            return {"file": path.name, "old": old, "new": old, "action": "already_correct"}
+            return {
+                "file": path.name,
+                "old": old,
+                "new": old,
+                "action": "already_correct",
+            }
         os2.usWeightClass = BOLD_WEIGHT
         font.save(str(path))
         log.info("fixed: %s (%d -> %d)", path.name, old, BOLD_WEIGHT)
@@ -51,7 +58,8 @@ def patch_one(path: Path) -> dict[str, object]:
 
 
 def main() -> int:
-    font_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.home() / ".local/share/fonts"
+    default = "Library/Fonts" if sys.platform == "darwin" else ".local/share/fonts"
+    font_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.home() / default
     if not font_dir.is_dir():
         log.error("font directory not found: %s", font_dir)
         return 1
