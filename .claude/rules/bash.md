@@ -26,9 +26,11 @@ set -uo pipefail
 
 - **`set -u`** — default on. Catches variable-name typos. Use `"${VAR:-}"` for optional reads.
 - **`set -o pipefail`** — default on. Without it, `false | true` succeeds. Append `|| true` to the pipeline when the upstream stage fails benignly (`tmux list-sessions` on cold server, `grep` finding nothing):
+
   ```bash
   out="$(cmd 2>/dev/null || true)"
   ```
+
 - **`set -e`** — **default off.** Disabled inside `if`/`while`/`&&`/`||` and any function called from them. Fires on benign exits. Forces `|| true` opt-outs that obscure intent. Use explicit `cmd || die "msg"` or `if ! cmd; then ...; fi` instead. Opt in only when a script is short, linear, and every failure should abort silently — add a comment naming why.
 
 ## Script Structure
@@ -42,7 +44,7 @@ set -uo pipefail
 
 Always use `bash` with home-relative paths:
 
-```
+```text
 bash ~/path/script.sh args
 ```
 
@@ -64,6 +66,7 @@ Cross-repo paths can't come from `script_dir` — read them from a declared sour
 - **Use `${var}`** not `$var` for clarity, especially in strings
 - **Modern substitution:** `$(command)` not backticks
 - **Lowercase** for local variables; **UPPERCASE** for exported/environment variables
+- **Quote associative-array keys:** `["iA-Writer"]=…`, `${arr["iA-Writer"]}`. The shfmt hook parses an unquoted key as arithmetic and silently rewrites `[iA-Writer]` to `[iA - Writer]`.
 
 ```bash
 # WRONG
@@ -79,7 +82,7 @@ result="$(date)"
 
 **Never prefix Bash commands with `VAR=value`** (e.g., `VAR=val cmd $VAR`). This breaks `allowed-tools` permission matching, which matches against the command name at the start of the string.
 
-```
+```text
 # WRONG -- Bash(quarto:*) won't match
 QUARTO_LATEX_AUTO_INSTALL=false quarto render file.qmd
 
@@ -89,7 +92,7 @@ export QUARTO_LATEX_AUTO_INSTALL=false && quarto render file.qmd
 
 If the variable is only needed once, inline the value directly into the arguments instead:
 
-```
+```text
 # ALSO RIGHT -- no variable needed
 quarto render file.qmd -M latex-auto-install:false
 ```
@@ -98,7 +101,7 @@ quarto render file.qmd -M latex-auto-install:false
 
 **Keep Bash tool calls simple and atomic.** The `allowed-tools` whitelist matches the command at the start of the string. Chained commands (`&&`, `;`, `|`), redirects (`2>&1`, `> file`), and subshells break permission matching and cause tool calls to be silently denied — especially in agent teams.
 
-```
+```text
 # WRONG -- whitelist can't match, gets denied
 ls -la /path && echo "---" && ls -la /other
 find . -name "*.json" | xargs grep "pattern" 2>/dev/null
@@ -113,6 +116,7 @@ bash ~/path/script.sh
 ```
 
 **Rules:**
+
 - One command per Bash tool call
 - No `&&`, `;`, or `|` chains in Bash tool calls
 - No `2>&1`, `2>/dev/null`, `> file` redirects — use the tool's built-in output
@@ -152,7 +156,7 @@ command1 \
 
 **Never make parallel Bash calls in a single message.** Due to cascade failure behavior (any failure causes all sibling calls to fail with "Sibling tool call errored"), use TaskCreate for independent operations:
 
-```
+```text
 # WRONG -- cascade failure risk
 Bash("command1") + Bash("command2") in same message
 

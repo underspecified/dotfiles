@@ -8,6 +8,12 @@
 | Proposals (DOCX) | Reserved for title | Sections | Subsections | Sub-subsections |
 | Slides (PPTX/RevealJS) | — | Slide title | — | — |
 
+## Line Breaks
+
+- **Never hard-wrap prose in `.md`.** Write each paragraph or list item as one line; the editor soft-wraps.
+- This holds even when the surrounding file is hard-wrapped: don't copy its wrapping. Leave existing wrapped files as they are.
+- `.qmd` is the exception: the panache hook formats it one sentence per line (`wrap = "sentence"`).
+
 ## Inline Formatting
 
 - `==text==` highlighting (requires `from: markdown+mark`, `mark.lua` + `highlight-text` filter)
@@ -164,7 +170,7 @@ Ordering matters -- listed in execution order:
 
 ## Project Layout Pattern
 
-```
+```text
 project/
 ├── paper/ or proposal/    # Main document + build.sh + references.bib + assets/
 ├── slides/                # Presentations + templates/
