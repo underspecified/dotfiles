@@ -9,10 +9,10 @@
 # [@citations], $math$, ~subscript~ / ^superscript^ — so they are not repeated below.
 
 [format]
-# One sentence per line → minimal git diffs when editing prose (a sentence edit
-# touches one line, not a whole reflowed paragraph). Change to "reflow" (fill to
-# line-width) or "preserve" (leave existing line breaks) if undesired.
-wrap = "sentence"
+# Never insert line breaks (Eric, 2026-10-08): prose is one line per paragraph,
+# as in .md (rules/markdown.md § Line Breaks). "preserve" leaves existing breaks
+# alone; "sentence" (one per line) and "reflow" (fill to line-width) both wrap.
+wrap = "preserve"
 
 [extensions]
 # Don't insert a space where a line breaks between two CJK characters (Japanese text).

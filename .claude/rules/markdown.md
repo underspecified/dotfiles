@@ -10,9 +10,9 @@
 
 ## Line Breaks
 
-- **Never hard-wrap prose in `.md`.** Write each paragraph or list item as one line; the editor soft-wraps.
+- **Never hard-wrap prose in `.md` or `.qmd`.** Write each paragraph or list item as one line; the editor soft-wraps.
 - This holds even when the surrounding file is hard-wrapped: don't copy its wrapping. Leave existing wrapped files as they are.
-- `.qmd` is the exception: the panache hook formats it one sentence per line (`wrap = "sentence"`).
+- The formatter hooks never insert breaks either: rumdl has MD013 off, and panache runs with `wrap = "preserve"`.
 
 ## Inline Formatting
 
