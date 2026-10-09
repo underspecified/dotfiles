@@ -34,6 +34,7 @@
 .claude/rules/email.md
 .claude/rules/markdown.md
 .claude/rules/python.md
+.claude/rules/questions.md
 .claude/rules/safety.md
 .claude/rules/skill.md
 .claude/settings.json
