@@ -60,7 +60,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
       - Eric approved asks 2 and 3 in the seat, (a) for ask 3.
       - **Merged** (PR #244 → b6b9cf9, round 1, no findings). 219/219 on the touched files, and the new rows fail on main's code. `install.sh` rc 0 on all 7 hosts. Probes: dgx02 10 s, lab 21 s, tank llm 30 s; 4 post-only.
       - Seats woken before the deploy keep a Stop-only waiter until their next wake. The seat reported clean and was destroyed. The #239 plan moves to done in the next PR.
-    - **Dispatch queue:** #240 (`bus-version` reads bus.env's ref on userspace boxes) is unassigned. kaiseki#47 is unassigned too.
+    - **Assigned 10/9** (Eric: "assign both"), each to a fresh seat:
+      - dispatch#240: `bus-version` reads bus.env's ref on userspace boxes; the PR also moves the #239 plan to done.
+      - kaiseki#47: the retry detector, `scan_todos` test fixtures, and a separate cache-token field. Treated as bugs (report accuracy), so no Gate 1.
     - **kaiseki#45 merged** (PR #46 → 69506ed, round 1, no findings; 254/254, and the 3 new tests fail on the old analyzer). hansei counts only in-window timestamped user/assistant records, and `.json` is no longer counted as a script. dispatch's 10/8 numbers go from 21 sessions/45,908 messages to 8/12,491. The tank tree is fast-forwarded and doctor is clean. The seat reported clean (no worktrees, on main) and was destroyed. The merge closed #45, so the retry-detector, `scan_todos` tests/ and cache-token items moved to kaiseki#47 (unassigned).
     - **Exposed token (hansei digest #1):** on 10/6 my `chrome_diag.sh` printed `CLAUDE_CODE_OAUTH_TOKEN` (cut at 120 chars) into this session's transcript. Rule added to `rules/safety.md` § Secrets in Diagnostic Output.
       - **Audit (10/9, Eric via the coordinator).** It ran on all 7 hosts and matched by value fingerprint, not by variable name; the scans were self-tested with a fake token. The leaked token is ccp's **`personal`** profile (`op://Personal/claude-personal/credential`, also the active profile); `work` is a different token.
