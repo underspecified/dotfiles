@@ -60,6 +60,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
       - Eric approved asks 2 and 3 in the seat, (a) for ask 3.
       - **Merged** (PR #244 → b6b9cf9, round 1, no findings). 219/219 on the touched files, and the new rows fail on main's code. `install.sh` rc 0 on all 7 hosts. Probes: dgx02 10 s, lab 21 s, tank llm 30 s; 4 post-only.
       - Seats woken before the deploy keep a Stop-only waiter until their next wake. The seat reported clean and was destroyed. The #239 plan moves to done in the next PR.
+      - **Live-confirmed 10/9 ~20:50.** The #240 seat's turn died ("Connection lost mid-response"). `peek` and `send --json` both warned (`server_error`), and the nudge was read in 11 s, so the StopFailure re-arm works on a real failure.
     - **Assigned 10/9** (Eric: "assign both"), each to a fresh seat:
       - dispatch#240: `bus-version` reads bus.env's ref on userspace boxes; the PR also moves the #239 plan to done.
       - **kaiseki#47 merged** (PR #48 → 5edce0f, round 1, no findings; 257/257, and the 3 new tests fail on main's code). Retries need a failed run first: lnk's count goes from 209 to 2. TODOs must open a comment (lnk 4 → 1). Cache reads get their own field. The tank tree is fast-forwarded. The seat reported clean and was destroyed.
