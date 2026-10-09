@@ -3,9 +3,6 @@ tap "codeforreal1/tap"
 tap "f/mcptools"
 tap "felixkratz/formulae"
 tap "graelo/tap"
-tap "homebrew/cask"
-tap "homebrew/core"
-tap "homebrew/services"
 tap "koekeishiya/formulae"
 tap "railwaycat/emacsmacport"
 tap "virtuslab/scala-cli"
@@ -158,7 +155,7 @@ cask "1password"
 # Command-line interface for 1Password
 cask "1password-cli"
 # AirPods companion app
-cask "airbuddy"
+#cask "airbuddy"
 # Menu bar tool to limit maximum charging percentage
 cask "aldente"
 # Application launcher and productivity software
@@ -255,7 +252,7 @@ cask "keyboardcleantool"
 # Open-source keystroke visualiser
 cask "keycastr"
 # GPU-based terminal emulator
-cask "kitty@nightly"
+cask "kitty"
 # Free cross-platform office suite, fresh version
 cask "libreoffice"
 # Host-based application firewall
