@@ -7,6 +7,8 @@
 #   2. Block `git commit` when a staged file exceeds GitHub's 100MB limit
 #   3. Nag the model to review docs before `git commit` (non-blocking
 #      reminder via additionalContext; commit still proceeds)
+#   4. Block anything that swaps the live dotfiles tree (~/.config/lnk):
+#      `gh pr checkout`, `git checkout|switch|stash|reset`
 #
 # Non-git Bash commands fall through (exit 0, no JSON output).
 
@@ -16,10 +18,54 @@ INPUT=$(cat)
 COMMAND=$(echo "${INPUT}" | jq -r '.tool_input.command // empty')
 ORIGINAL="${COMMAND}"
 
-# Fast path: not a git command.
-if [[ ! "${COMMAND}" =~ (^|[[:space:]]|&|\;)git([[:space:]]|$) ]]; then
+# Fast path: not a git (or gh) command.
+if [[ ! "${COMMAND}" =~ (^|[[:space:]]|&|\;)(git|gh)([[:space:]]|$) ]]; then
   exit 0
 fi
+
+deny() {
+  jq -n --arg msg "$1" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: $msg
+    }
+  }'
+  exit 0
+}
+
+# --- 0. Never swap the live dotfiles tree ---
+# ~/.config/lnk is a live tree: every session on the box reads the files linked
+# out of it. On 10/5 a forked review agent ran `gh pr checkout` there; every
+# linked file vanished for a minute and Karabiner regenerated a blank config.
+# Branch work belongs in a scratch clone or a `git worktree`, whose toplevel
+# differs and so passes. Only a git/gh word in command position counts, so a
+# commit message that mentions `git checkout` is not blocked. Scanning stops
+# after the first line that leaves a quote open or starts a heredoc: what
+# follows is a message or a body, not commands (10/9, a commit body line that
+# began "git stash" was denied).
+SWAP_RE='(^|&&|\|\||[;|(]|\$\()[[:space:]]*(git([[:space:]]+-C[[:space:]]+([^[:space:]]+))?[[:space:]]+(checkout|switch|stash|reset)|gh[[:space:]]+pr[[:space:]]+checkout)([[:space:]]|$)'
+while IFS= read -r line; do
+  dq="${line//\\\"/}" dq="${dq//[^\"]/}" sq="${line//[^\']/}"
+  more=1
+  if ((${#dq} % 2 || ${#sq} % 2)) || [[ "${line}" == *"<<"* ]]; then more=0; fi
+  if [[ "${line}" =~ ${SWAP_RE} ]]; then
+    dir="${BASH_REMATCH[4]:-}"
+    if [[ -z "${dir}" && "${ORIGINAL}" =~ ^[[:space:]]*cd[[:space:]]+([^[:space:]\&\;|]+)[[:space:]]*\&\& ]]; then
+      dir="${BASH_REMATCH[1]}"
+    fi
+    dir="${dir:-$(echo "${INPUT}" | jq -r '.cwd // empty')}"
+    dir="${dir%\"}" dir="${dir#\"}" dir="${dir%\'}" dir="${dir#\'}"
+    [[ "${dir}" == "~"* ]] && dir="${HOME}${dir#\~}"
+    top="$(git -C "${dir:-.}" rev-parse --show-toplevel 2>/dev/null || true)"
+    top="$(cd "${top:-/nonexistent}" 2>/dev/null && pwd -P || true)"
+    live="$(cd "${HOME}/.config/lnk" 2>/dev/null && pwd -P || true)"
+    if [[ -n "${top}" && "${top}" == "${live}" ]]; then
+      deny "🛑 Blocked: this would swap the live dotfiles tree (${live}), which every session on this box reads. Use a scratch clone (git clone ${live} \"\${TMPDIR}/lnk-review\") or a git worktree. To unstage a file, use git restore --staged. If Eric needs it here, he runs it himself with !."
+    fi
+  fi
+  ((more)) || break
+done <<<"${ORIGINAL}"
 
 # Pull the first line of the ORIGINAL, strip heredoc delimiter, for
 # commit-intent detection (semantic check — must happen before rewrite).

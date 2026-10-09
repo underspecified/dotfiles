@@ -32,6 +32,7 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 
 - `rm` is blocked outside temp directories (`/tmp/`, scratchpad, project temp) -- use `trash`
 - `git push --force` is blocked -- use `--force-with-lease`
+- In `~/.config/lnk` (a live tree), `gh pr checkout` and `git checkout|switch|stash|reset` are blocked -- use a scratch clone or `git worktree`
 - `git clean`, `git reset --hard`, `git checkout .` trigger warnings -- consider `git stash` first
 
 ## Tool Preferences
