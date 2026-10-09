@@ -64,7 +64,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
         - **Nothing to remove on the hosts.** 10/9: Eric dropped the Anthropic support contact, so the old token is not revoked server-side. It was exposed only locally, in 2 transcripts on tank.
         - **10/9: `personal` re-issued.** Eric ran `setup-token` and replaced the 1P item; the new fingerprint `a991be1a` differs from the leak. The profile is mapped again but deliberately not active, so ccp has no active profile and `ccp run` needs `-p`.
       - **Separate finding:** reported to Eric directly on 10/9 and recorded in this seat's private memory, not here, because this file is public. Eric decided on 10/9 to leave it; closed.
-    - **1Password-locked ssh (measured 10/7):** the `hri_jp` fallback doesn't work, because 1Password still offers `hri_jp` while locked and then refuses to sign. Proposed fix: stop offering `hri_jp` from 1Password's agent (`agent.toml`). Waiting on Eric.
+    - **1Password-locked ssh: fixed 10/9** (lnk 2049aca, Eric: "waiting for 1p is causing too much trouble"). 1Password's `agent.toml` (machine-local) now serves only `eric_nichols` and `underspecified`. Commit signing uses the `hri_jp` file via `.config/git/macos.conf` (includeIf `gitdir:/Users/`). Verified with the agent off: GitHub, germputer, llm-jp and dgx02, a signed commit, and a push.
     - **planning#34 merged** (PR #35 → 95e67cc), and TANK fast-forwarded on 10/8. good-night's unmatched recordings now take the unlisted default from `rules/meetings.md` (`en`; coordinator commit bc90491) instead of auto-detect. `/meeting`'s own default is left as-is. The seat was destroyed after `clean`.
     - **#228 merged** (PR #232 → f1f6033, 1 round): CLAUDE.md 177.6k → 7.0k chars, with 7 rules plus 3 bus invariants. The 11 rules found only in CLAUDE.md are now code comments. Deployed and probed on all 7 hosts (live seats read their probes in 10–31 s; germputer, llm-jp-2 and haru-4090 post-only).
     - **Seat cycle (org b4df768, Eric 10/7; pulled on all 7 hosts):** assign with `send --fresh "<issue URL>"`; after `clean` + deploy + `git worktree list`, run `dispatch -C <dir> destroy`. The planning seat was destroyed after its `clean` 10/7. dispatch seat destroyed after #228's `clean`; #230 assigned 10/7 with `send --fresh --file` (woke:true, no `--continue` in the argv; first real use of #227).
@@ -74,13 +74,13 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
     - **Settings:** every synced repo has `gc.auto 256` plus `gc.reflogExpire never`, `gc.reflogExpireUnreachable never` and `gc.packRefs false`. The local ones (lnk, haru.md, lab) have `gc.auto 256` only.
     - **Eric pinned all 24 synced `.git` folders** ("Always Keep on This Device"). The pin state isn't readable from the CLI.
     - **Check on 10/8:** `find <repo>/.git -type f -flags +dataless` should still be 0 in all 24. It was 0 at 10/7 15:53.
-    - **Still open:** the OneDrive app dies overnight (log storm, an upload backlog of about 8k files). The watchdog isn't decided yet.
+    - **OneDrive watchdog: dropped 10/9.** OneDrive has run continuously since 10/7 11:27, with no crash reports in 14 days, after the git packing. Revisit only if it dies again.
   - **email-inbox:**
     - #2 (replies over-quoted) is merged (PR #3) and live. It was verified with a real Apple Mail self-send.
-    - #4, `compose_email` new mail hiding the body in a cite blockquote, is open. Until it's fixed, Eric sends those drafts from Outlook.
+    - #4 (`compose_email` new mail hiding the body in a cite blockquote) was closed 10/9 on Eric's confirmation that it's fixed (upstream MCP; no change here). The PR #3 test drafts in Exchange Deleted Items are harmless; Eric empties them whenever.
   - **admin:**
     - #30 (ADM manuals), the #30 follow-up (return-month deadline), #29 (B2 海外発送) and #31 (`/admin-trip-apply`) are all merged and live on tank.
-    - Unverified until a live run with Eric at Chrome: the B2 scan attachment and the trip-application field names.
+    - Unverified: the B2 scan attachment and the trip-application field names. Eric 10/9: verify them the next time he runs those workflows, with no dedicated test session.
   - (History) **#218 was top priority** (Eric 10/6: "better hurry up"). It adds `wake --fresh` and writes `autoCompactWindow: 400000` into engineer seats' `settings.local.json` only if the key is absent; PL seats inherit the global 600k.
     - Plan signed off 10/6 with 2 conditions: a cold seat skips the turn check, and the `**Seat role:**` parse is anchored at line start.
     - Acceptance includes the `/autocompact` picker reading 400k in a fresh engineer seat. I measured that a project-local top-level key beats a user per-model one.
