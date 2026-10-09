@@ -61,7 +61,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
         - The only other copies are 2 transcripts on tank: this session and the 10/8 hansei subagent (`…projects/1555ba14…/subagents/agent-a7855dae….jsonl`).
         - No GitHub Actions or Dependabot secret across 72 repos. Codespaces user secrets weren't readable (gh scope).
         - Skipped 5 cloud-only settings files and 4 hansei reports, to avoid downloading them.
-        - **Nothing to remove on the hosts.** Revocation is with Anthropic support (Eric).
+        - **Nothing to remove on the hosts.** 10/9: Eric dropped the Anthropic support contact, so the old token is not revoked server-side. It was exposed only locally, in 2 transcripts on tank.
         - **10/9: `personal` re-issued.** Eric ran `setup-token` and replaced the 1P item; the new fingerprint `a991be1a` differs from the leak. The profile is mapped again but deliberately not active, so ccp has no active profile and `ccp run` needs `-p`.
       - **Separate finding:** reported to Eric directly on 10/9 and recorded in this seat's private memory, not here, because this file is public. It needs Eric's action.
     - **1Password-locked ssh (measured 10/7):** the `hri_jp` fallback doesn't work, because 1Password still offers `hri_jp` while locked and then refuses to sign. Proposed fix: stop offering `hri_jp` from 1Password's agent (`agent.toml`). Waiting on Eric.
