@@ -5,6 +5,11 @@
 [include]
 	path = ~/.config/git/identity.conf
 
+# macOS only: repos under /Users/ (Linux homes are /home/). Signs from the
+# on-disk ~/.ssh/hri_jp so a locked 1Password can't block commits.
+[includeIf "gitdir:/Users/"]
+	path = ~/.config/git/macos.conf
+
 [color]
 	ui = auto
 
