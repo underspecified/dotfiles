@@ -40,7 +40,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - Commit messages: `lnk: …` or `<component>: …`. Commits are SSH-signed (`gpg.format = ssh`, verified against `~/.config/git/allowed_signers`).
 - Auth prefers SSH.
   - **macOS:** the 1Password agent plus an additive, passphrase-free `IdentityFile ~/.ssh/hri_jp`. 1Password does **not** serve `hri_jp` (its `agent.toml`), so pushes, fleet ssh and commit signing (`.config/git/macos.conf`, included only under `/Users/`) use the file and never wait on 1Password. If 1Password served it too, ssh would merge the two into one identity, and a locked 1Password would block the file.
-  - **Linux:** ssh-agent via keychain.
+  - **Linux:** ssh-agent via keychain, but commit signing reads `~/.ssh/hri_jp` directly (`.config/git/linux.conf`, included only under `/home/`), because keychain comes back empty after a reboot.
   - **HTTPS fallback:** `gh auth git-credential` for GitHub, and the in-memory `cache` helper for Overleaf (HTTPS-only). Never the plaintext `store` helper.
 - `hooks/` is every repo's hooks dir: `core.hooksPath` is set in `.config/git/config`. One script, `_chain`, is symlinked under each hook name.
   - It runs the repo's **own** `.git/hooks/<name>` first, because `core.hooksPath` replaces the hooks dir wholesale and would otherwise silently disable per-repo hooks everywhere.

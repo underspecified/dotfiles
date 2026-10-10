@@ -10,6 +10,11 @@
 [includeIf "gitdir:/Users/"]
 	path = ~/.config/git/macos.conf
 
+# Linux only: repos under /home/. Same idea: sign from ~/.ssh/hri_jp so an
+# empty agent after a reboot can't block commits.
+[includeIf "gitdir:/home/"]
+	path = ~/.config/git/linux.conf
+
 [color]
 	ui = auto
 
