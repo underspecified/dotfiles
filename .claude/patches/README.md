@@ -1,33 +1,11 @@
 # Plugin Patches
 
-Local patches against plugins installed via the Claude Code marketplace. These
-live outside the plugin directories so they survive marketplace updates, but
-they must be re-applied manually after an update.
+Local patches against marketplace plugins. Claude Code runs each plugin from its installed copy (`~/.claude/plugins/cache/<marketplace>/<plugin>/<version>`, listed in `installed_plugins.json`), and a plugin update installs a fresh, unpatched copy.
 
-## Current patches
+`bootstrap.sh` patches every installed copy, plus the marketplace checkout, and is idempotent. `settings.json` runs it at every SessionStart with `--quiet`, which prints only failures, so an update is re-patched at the next session start. Run it by hand to see the status: `bash ~/.claude/patches/bootstrap.sh`.
 
-| Patch | Target | Purpose |
+| Patch | Plugin | Purpose |
 |---|---|---|
-| `hookify-global-rules.patch` | `claude-plugins-official/plugins/hookify/core/config_loader.py` | Load `hookify.*.local.md` rules from `~/.claude/` in addition to `$CWD/.claude/`, so global rules apply regardless of where Claude Code is launched. |
+| `hookify-global-rules.patch` | `hookify@claude-plugins-official` (`core/config_loader.py`) | Load `hookify.*.local.md` from `~/.claude/` as well as `$CWD/.claude/`, so the global rules fire in every project. |
 
-## Applying a patch
-
-```
-cd ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/<plugin>
-patch -p1 --dry-run < ~/.config/lnk/.claude/patches/<name>.patch   # sanity check
-patch -p1 < ~/.config/lnk/.claude/patches/<name>.patch
-```
-
-## Checking whether a patch is currently applied
-
-```
-patch -p1 -R --dry-run < ~/.config/lnk/.claude/patches/<name>.patch
-```
-
-Exit 0 means the patch is applied (it could be reverted cleanly). Exit 1
-means it isn't.
-
-## After a plugin update
-
-Re-run the "checking whether applied" command on each patch. Any that report
-"not applied" need to be re-applied with the forward `patch -p1 < ...` command.
+If a patch stops applying (upstream changed the file), the SessionStart line names the plugin copy. Refresh the patch against the new copy.

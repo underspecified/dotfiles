@@ -26,6 +26,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - `~/.claude/settings.local.json` is the **`~` project's** local file, not a user-level override: only sessions started in `~` read it (f205412 broke che-ical this way). Put tank-only plugins in the shared `settings.json` instead. On Linux such a plugin stays enabled but uninstalled, which is a no-op.
 - The hook toolchain (ruff, rumdl, panache, shfmt, shellcheck, jq) comes from `.claude/hooks/bootstrap.sh`. Without it, the PostToolUse formatters silently do nothing.
 - Default effort is set by `env.CLAUDE_CODE_EFFORT_LEVEL` in `settings.json`, not by `effortLevel` alone. Claude Code pins a launch-default effort for each newly released model, and that pin outranks the saved `effortLevel` (measured: fresh sessions ran at medium). `max` cannot be a saved default.
+- The `~/.claude` hookify rules (`block-rm`, `block-force-push`, `block-applescript-mail-send` and the warns) are global only through `.claude/patches/hookify-global-rules.patch`. Upstream hookify reads only `$CWD/.claude/`. The SessionStart hook re-applies the patch to every installed hookify copy. Without the patch, the rules fire only in `~` and `~/.config/lnk` sessions (measured 10-10).
 - `.claude/hooks/md_format.sh` skips the Obsidian vault and files with conflict markers. Its header explains why; read it before removing a guard.
 - Don't use the legacy `setup.sh`; use `lnk`. The shell is zsh with `ZDOTDIR=~/.config/zsh`.
 

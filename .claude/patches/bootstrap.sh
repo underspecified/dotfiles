@@ -1,68 +1,73 @@
 #!/usr/bin/env bash
-# Usage: bash ~/.claude/patches/bootstrap.sh
+# Usage: bash ~/.claude/patches/bootstrap.sh [--quiet]
 # Apply all local plugin patches idempotently. Safe to re-run.
-set -euo pipefail
+#
+# Claude Code runs a plugin from its INSTALLED copy
+# (plugins/cache/<marketplace>/<plugin>/<version>, listed in
+# installed_plugins.json), not from the marketplace checkout, and a plugin
+# update installs a fresh, unpatched copy. So every installed copy is patched,
+# and settings.json runs this at SessionStart with --quiet to re-patch after
+# an update. --quiet prints only failures and always exits 0.
+set -uo pipefail
 
 PATCH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUGINS_ROOT="${HOME}/.claude/plugins/marketplaces"
+PLUGINS="${HOME}/.claude/plugins"
+QUIET=0
+[[ "${1:-}" == "--quiet" ]] && QUIET=1
 
-# Patch registry: "<patch-filename>|<target-dir-relative-to-PLUGINS_ROOT>"
-# Each target dir is passed to `patch -d`; the patch itself uses -p1 paths
-# rooted at that directory.
+# Patch registry: "<patch-filename>|<plugin@marketplace>". Each patch uses -p1
+# paths rooted at the plugin directory.
 PATCHES=(
-  "hookify-global-rules.patch|claude-plugins-official/plugins/hookify"
+  "hookify-global-rules.patch|hookify@claude-plugins-official"
 )
 
+say() { [[ "${QUIET}" -eq 1 ]] || echo "$*"; }
+
+# Print every directory holding a copy of the plugin: the installed copies,
+# then the marketplace checkout if present.
+plugin_dirs() {
+  local key="$1" name="${1%@*}" market="${1#*@}"
+  if command -v jq >/dev/null 2>&1 && [[ -f "${PLUGINS}/installed_plugins.json" ]]; then
+    jq -r --arg k "${key}" '.plugins[$k][]?.installPath' "${PLUGINS}/installed_plugins.json"
+  fi
+  echo "${PLUGINS}/marketplaces/${market}/plugins/${name}"
+}
+
 apply_one() {
-  local patch_file="$1"
-  local target_dir="$2"
-  local patch_path="${PATCH_DIR}/${patch_file}"
-  local abs_target="${PLUGINS_ROOT}/${target_dir}"
-
-  if [[ ! -f "${patch_path}" ]]; then
-    echo "error: patch file not found: ${patch_path}" >&2
-    return 1
-  fi
-
-  if [[ ! -d "${abs_target}" ]]; then
-    echo "skip: target plugin not installed: ${target_dir}" >&2
+  local patch_path="$1" dir="$2"
+  [[ -d "${dir}" ]] || return 0
+  if patch -d "${dir}" -p1 -R --dry-run -s -f <"${patch_path}" >/dev/null 2>&1; then
+    say "ok (already applied): ${dir}"
     return 0
   fi
-
-  # Already applied? Reverse dry-run succeeds if patch is in place.
-  if patch -d "${abs_target}" -p1 -R --dry-run -s -f <"${patch_path}" >/dev/null 2>&1; then
-    echo "ok (already applied): ${patch_file}"
-    return 0
-  fi
-
-  # Not applied yet — verify a forward apply would succeed before doing it.
-  if ! patch -d "${abs_target}" -p1 --dry-run -s -f <"${patch_path}" >/dev/null 2>&1; then
-    echo "error: ${patch_file} does not apply cleanly to ${target_dir}" >&2
-    echo "       (plugin may have been updated; patch needs a refresh)" >&2
+  if ! patch -d "${dir}" -p1 --dry-run -s -f <"${patch_path}" >/dev/null 2>&1; then
+    echo "plugin patch $(basename "${patch_path}") does not apply to ${dir} (plugin updated? refresh the patch)"
     return 1
   fi
-
-  patch -d "${abs_target}" -p1 -s <"${patch_path}"
-  echo "applied: ${patch_file}"
+  if ! patch -d "${dir}" -p1 -s -f <"${patch_path}" >/dev/null 2>&1; then
+    echo "plugin patch $(basename "${patch_path}") failed to apply to ${dir}"
+    return 1
+  fi
+  say "applied: ${dir}"
 }
 
 main() {
-  echo "=== Applying plugin patches from ${PATCH_DIR} ==="
-  local failed=0
-  local entry patch_file target_dir
+  say "=== Applying plugin patches from ${PATCH_DIR} ==="
+  local failed=0 entry patch_file key dir
   for entry in "${PATCHES[@]}"; do
     patch_file="${entry%%|*}"
-    target_dir="${entry##*|}"
-    if ! apply_one "${patch_file}" "${target_dir}"; then
-      failed=1
-    fi
+    key="${entry##*|}"
+    while IFS= read -r dir; do
+      [[ -n "${dir}" ]] || continue
+      apply_one "${PATCH_DIR}/${patch_file}" "${dir}" || failed=1
+    done < <(plugin_dirs "${key}")
   done
-
   if [[ "${failed}" -ne 0 ]]; then
+    [[ "${QUIET}" -eq 1 ]] && exit 0
     echo "=== Some patches failed ===" >&2
     exit 1
   fi
-  echo "=== All patches applied ==="
+  say "=== All patches applied ==="
 }
 
 main "$@"
