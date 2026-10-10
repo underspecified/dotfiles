@@ -19,6 +19,7 @@ QUIET=0
 # paths rooted at the plugin directory.
 PATCHES=(
   "hookify-global-rules.patch|hookify@claude-plugins-official"
+  "hookify-model-messages.patch|hookify@claude-plugins-official"
 )
 
 say() { [[ "${QUIET}" -eq 1 ]] || echo "$*"; }
@@ -28,7 +29,7 @@ say() { [[ "${QUIET}" -eq 1 ]] || echo "$*"; }
 plugin_dirs() {
   local key="$1" name="${1%@*}" market="${1#*@}"
   if command -v jq >/dev/null 2>&1 && [[ -f "${PLUGINS}/installed_plugins.json" ]]; then
-    jq -r --arg k "${key}" '.plugins[$k][]?.installPath' "${PLUGINS}/installed_plugins.json"
+    jq -r --arg k "${key}" '[.plugins[$k][]?.installPath] | unique[]' "${PLUGINS}/installed_plugins.json"
   fi
   echo "${PLUGINS}/marketplaces/${market}/plugins/${name}"
 }

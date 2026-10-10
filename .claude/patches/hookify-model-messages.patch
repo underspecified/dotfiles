@@ -1,0 +1,42 @@
+Subject: hookify: let the model see block reasons and warnings
+
+Upstream hookify puts a rule's message only in systemMessage, which the human
+sees and the model doesn't. A block returns a bare deny, so the model sees
+just "Blocked by hook" and never learns the safe form, and a warn is invisible
+to the model. Add permissionDecisionReason to the deny, and additionalContext
+to PreToolUse/PostToolUse warnings.
+
+Applied by ~/.claude/patches/bootstrap.sh to every installed hookify copy.
+
+--- a/core/rule_engine.py	2026-10-10 20:46:44
++++ b/core/rule_engine.py	2026-10-10 20:47:18
+@@ -73,7 +73,9 @@
+                 return {
+                     "hookSpecificOutput": {
+                         "hookEventName": hook_event,
+-                        "permissionDecision": "deny"
++                        "permissionDecision": "deny",
++                        # Shown to the model, so it sees why and the safe form.
++                        "permissionDecisionReason": combined_message
+                     },
+                     "systemMessage": combined_message
+                 }
+@@ -86,9 +88,15 @@
+         # If only warnings, show them but allow operation
+         if warning_rules:
+             messages = [f"**[{r.name}]**\n{r.message}" for r in warning_rules]
+-            return {
+-                "systemMessage": "\n\n".join(messages)
+-            }
++            combined_message = "\n\n".join(messages)
++            result = {"systemMessage": combined_message}
++            # systemMessage reaches only the human; additionalContext reaches the model.
++            if hook_event in ['PreToolUse', 'PostToolUse']:
++                result["hookSpecificOutput"] = {
++                    "hookEventName": hook_event,
++                    "additionalContext": combined_message
++                }
++            return result
+ 
+         # No matches - allow operation
+         return {}
