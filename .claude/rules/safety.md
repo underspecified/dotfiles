@@ -13,6 +13,13 @@ Never print a secret's value into a session; session logs are plaintext on disk.
 
 - When you dump an env or tmux env, print only names, or redact the values: `sed -E 's/^([A-Za-z0-9_]*(TOKEN|KEY|SECRET|PASS)[A-Za-z0-9_]*=).*/\1<redacted>/'`
 - A broad prefix filter such as `CLAUDE` or `CLAUDE_[A-Z_]*` also matches the token, so redact after filtering.
+- **Process listings and service definitions carry argv, and some services take a token as an argument.** On 10/10, a full `ps` on llm-jp-2 printed a cloudflared `--token`. Never print full argv. Avoid all of these:
+  - `ps aux`, `ps -ef`, and `ps -o args`/`command`;
+  - `pgrep -a`, `-af` or `-lf` without a narrow pattern;
+  - `/proc/*/cmdline`;
+  - `systemctl cat` or `status` on a unit that holds credentials;
+  - `docker inspect` (`Config.Cmd`, `Config.Env`) and `docker ps --no-trunc`.
+- Instead print the pid and the name (`ps -eo pid,user,comm`, `pgrep -l`), or redact the args: `sed -E 's/(--?(token|password|secret|api[-_]?key)[= ])[^ ]+/\1<redacted>/g'`.
 
 ## Approval Gating
 
