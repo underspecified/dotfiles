@@ -1,9 +1,3 @@
----
-paths:
-  - "**/*.sh"
-  - "**/bin/**"
----
-
 # Bash Script Conventions
 
 Based on [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html) and project-specific rules.

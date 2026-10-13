@@ -1,9 +1,3 @@
----
-paths:
-  - "**/*.py"
-  - "**/pyproject.toml"
----
-
 # Python Script Conventions
 
 ## Stand-Alone Scripts (PEP 723)

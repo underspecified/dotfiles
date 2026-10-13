@@ -1,9 +1,3 @@
----
-paths:
-  - "**/*.md"
-  - "**/*.qmd"
----
-
 # Markdown / Quarto Conventions
 
 ## Heading Hierarchy

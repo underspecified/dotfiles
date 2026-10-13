@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 See `README.md` for directory structure, plugins, skills, and status line reference.
-See `rules/` for development conventions. `python.md`, `bash.md` and `markdown.md` load only when working on matching files.
+See `rules/` for development conventions (python, bash, markdown, skill, authoring, safety).
 
 ## Design Principles
 
