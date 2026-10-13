@@ -323,8 +323,6 @@ cask "skim"
 cask "slack"
 # Sound and audio controller
 cask "soundsource"
-# Menu bar indicator showing the currently selected space
-cask "spaceid"
 # Video game digital distribution service
 cask "steam"
 # Application for inspecting installer packages
@@ -359,7 +357,6 @@ mas "DaisyDisk", id: 411643860
 mas "Dark Reader for Safari", id: 1438243180
 mas "Dato", id: 1470584107
 mas "Deliveries", id: 290986013
-mas "djay Pro", id: 450527929
 mas "Drafts", id: 1435957248
 mas "Dropover", id: 1355679052
 mas "F5Access", id: 1243219105
