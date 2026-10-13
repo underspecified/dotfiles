@@ -13,7 +13,8 @@ Claude Code user configuration directory. Config files are tracked by `lnk` (sym
 | `hookify.*.local.md` | Safety rules (3 files, must stay at root -- plugin constraint) |
 | `rules/` | Convention files (python, bash, markdown, skill, authoring, safety) |
 | `hooks/` | Shell hook scripts (commit workflow, doc nag) |
-| `commands/` | Slash command definitions (12 `.md` files) |
+| `commands/` | Slash command definitions (3 `.md` files) |
+| `commands-obsolete/` | Retired commands, kept for reference; not linked, so they never load |
 | `agents/dont-ask.md` | Auto-approve agent definition |
 | `skills/bootstrap.sh` | Skills bootstrap script |
 | `mcp/bootstrap.sh` | MCP server bootstrap script |
@@ -32,7 +33,7 @@ Claude Code user configuration directory. Config files are tracked by `lnk` (sym
 
 Skills are private git repos on `underspecified`, cloned directly into `~/.claude/skills/`. Composite skills (research, planning) have sub-skills symlinked as top-level entries via relative paths.
 
-```
+```text
 ~/.claude/skills/
 ├── computation-graph/    github:underspecified/computation-graph
 ├── dispatch/             github:underspecified/dispatch
@@ -73,6 +74,7 @@ MCP servers are registered via `claude mcp add` (stored in `~/.claude.json`, not
 ## Bootstrap
 
 After `lnk pull` on a new machine, run `bash ~/.claude/bootstrap.sh` to:
+
 - Clone claude-limitline fork and build it
 - Clone all skill repos into `~/.claude/skills/`
 - Create sub-skill symlinks
