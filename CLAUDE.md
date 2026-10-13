@@ -15,7 +15,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 ## Blast-radius rules
 
 - Test new hooks on one project before global rollout.
-- Never disable safety rules (`block-rm`, `block-force-push`, AppleScript-send block) without Eric's explicit OK.
+- Never disable safety rules (`block-rm`, `block-force-push`, AppleScript-send block, `mail_send_gate.sh` + the Apple Mail deny rules) without Eric's explicit OK.
 - When a canonical MCP is missing, ask for a `/mcp` reconnect. Don't roll out AppleScript fallbacks proactively.
 - Skill deploy trees (`~/.claude/skills/<name>`) stay on `main` and clean (`rules/skill.md`). After a merge, fast-forward the tree and redeploy wherever there is a deploy step (dispatch: `install.sh`).
 
