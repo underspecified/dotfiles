@@ -69,7 +69,8 @@ MCP servers are registered via `claude mcp add` (stored in `~/.claude.json`, not
 | che-ical-mcp | plugin | Managed by psychquant-claude-plugins marketplace |
 | Claude Gmail | built-in | `mcp__claude_ai_Gmail__*` |
 | Claude Calendar | built-in | `mcp__claude_ai_Google_Calendar__*` |
-| Apple Mail | built-in | `mcp__apple-mail-imdinu__*`, `mcp__apple-mail-patrickfreyer__*` |
+| apple-mail-patrickfreyer | stdio | `uvx --with "mcp<2" mcp-apple-mail` (work Macs only) |
+| apple-mail-imdinu | stdio | `apple-mail-mcp`, via `uv tool install --prerelease allow apple-mail-mcp` (work Macs only) |
 
 ## Bootstrap
 
