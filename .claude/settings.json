@@ -1,6 +1,6 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_EFFORT_LEVEL": "xhigh",
     "SECURITY_REVIEW_MODEL": "claude-opus-5-5",
     "SG_AGENTIC_MODEL": "claude-opus-5-5"
