@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Usage: menubar-tint-helper dark|light   (run by menubar-tint-notify)
+# Output: one log line per call on stdout (the LaunchAgent's log)
+# Recolors WhichSpace's icon to match the menu bar tint: a white square on a
+# dark menu bar, black on a light one, with the Space number cut out
+# (transparent foreground). WhichSpace itself follows the system light/dark
+# mode, not the tint. Writes per-Space overrides on every display, so this
+# replaces any colors set in WhichSpace's settings.
+set -uo pipefail
+
+case "${1:-}" in
+  dark) background="FFFFFF" ;;
+  light) background="000000" ;;
+  *)
+    echo "usage: menubar-tint-helper dark|light" >&2
+    exit 2
+    ;;
+esac
+foreground="00000000"
+stamp="$(date '+%F %T') $1"
+
+# Don't launch WhichSpace just to recolor it: menubar-tint-notify reruns this
+# when WhichSpace starts.
+if ! pgrep -xq WhichSpace; then
+  echo "${stamp}: WhichSpace not running, skipped"
+  exit 0
+fi
+
+osascript - "${foreground}" "${background}" <<'EOF'
+on run {fg, bg}
+  tell application "WhichSpace"
+    repeat with d in displays
+      repeat with s in (spaces of d)
+        set foreground color of s to fg
+        set background color of s to bg
+      end repeat
+    end repeat
+  end tell
+end run
+EOF
+status=$?
+echo "${stamp}: WhichSpace background ${background} (osascript exit ${status})"
+exit "${status}"
