@@ -27,11 +27,11 @@ Silent send failures (AppleScript `send` → Mail.app) leave no Sent-folder conf
 
 Use `mcp__apple-mail-patrickfreyer__compose_email`:
 
-- `mode: "open"` — compose window (default)
+- `mode: "open"` — compose window. **Always pass `mode`:** the tool's own default is `"send"`.
 - `mode: "draft"` — silent save to Drafts
-- `mode: "send"` — immediate send. Requires an explicit ask to bypass the draft step ("send X to Y without showing me a draft"); plain "Send X to Y" still means "open a draft" per Send Approval above.
+- `mode: "send"` — immediate send. Requires an explicit ask to bypass the draft step ("send X to Y without showing me a draft"); plain "Send X to Y" still means "open a draft" per Send Approval above. `mail_send_gate.sh` makes every send (this, or `manage_drafts` `action: "send"`) prompt for confirmation.
 
-Forbidden: `create_rich_email_draft`, `open /path/to/draft.eml`, AppleScript `send` against Mail.app.
+Forbidden: `create_rich_email_draft`, `forward_email` (always sends; no draft mode — both denied in settings), `open /path/to/draft.eml`, AppleScript `send` against Mail.app.
 
 If `compose_email` is unavailable, **alert the user** and offer the visible-draft AppleScript fallback (`make new outgoing message {visible:true, ...}` with no `send` action) as a user-confirmed choice. See `~/.claude/skills/email-inbox/CLAUDE.md`.
 
@@ -43,7 +43,7 @@ For replies, do not shortcut. `compose_email` skips threading; `reply_to_email` 
 
 **1. Inspect recipients:**
 
-```
+```text
 bash ~/.claude/skills/email-inbox/scripts/get_recipients.sh --subject "<keyword>" [--mailbox <name>]
 ```
 
@@ -51,7 +51,7 @@ Returns JSON `{date, subject, from, to, cc, bcc}` per match — the only path to
 
 **2. Compose the threaded reply:**
 
-```
+```text
 bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh \
   --subject "<keyword>" \
   --mailbox "<Inbox|Sent Items|Archive>" \
