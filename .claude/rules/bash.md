@@ -68,6 +68,51 @@ echo "${filename}"
 result="$(date)"
 ```
 
+## No Inline Variable Assignments
+
+**Never prefix Bash commands with `VAR=value`** (e.g., `VAR=val cmd $VAR`). This breaks `allowed-tools` permission matching, which matches against the command name at the start of the string.
+
+```text
+# WRONG -- Bash(quarto:*) won't match
+QUARTO_LATEX_AUTO_INSTALL=false quarto render file.qmd
+
+# RIGHT -- command name comes first
+export QUARTO_LATEX_AUTO_INSTALL=false && quarto render file.qmd
+```
+
+If the variable is only needed once, inline the value directly into the arguments instead:
+
+```text
+# ALSO RIGHT -- no variable needed
+quarto render file.qmd -M latex-auto-install:false
+```
+
+## One Command Per Bash Call
+
+**Keep Bash tool calls simple and atomic.** The `allowed-tools` whitelist matches the command at the start of the string. Chained commands (`&&`, `;`, `|`), redirects (`2>&1`, `> file`), and subshells break permission matching and cause tool calls to be silently denied — especially in agent teams.
+
+```text
+# WRONG -- whitelist can't match, gets denied
+ls -la /path && echo "---" && ls -la /other
+find . -name "*.json" | xargs grep "pattern" 2>/dev/null
+
+# RIGHT -- one command per Bash call
+ls -la /path
+# (separate call)
+ls -la /other
+
+# RIGHT -- if you need pipes/chains, put them in a script
+bash ~/path/script.sh
+```
+
+**Rules:**
+
+- One command per Bash tool call
+- No `&&`, `;`, or `|` chains in Bash tool calls
+- No `2>&1`, `2>/dev/null`, `> file` redirects — use the tool's built-in output
+- If you need complex logic, write a script and invoke it
+- Exception: `export VAR=val && command` is acceptable (see "No Inline Variable Assignments" above)
+
 ## Pipes in Scripts
 
 When pipes are needed inside a script file (not a Bash tool call), split across lines with the pipe at the start of the continuation line:
