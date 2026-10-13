@@ -6,14 +6,6 @@
 - **Hookify rules**: `hookify.{name}.local.md` (e.g., `hookify.block-rm.local.md`)
 - **Research papers**: `YEAR_FirstAuthorLastName_VENUE.{pdf,md}` -- normalize author to ASCII for filenames, keep accents in summaries. Collision handling: add co-author (`YEAR_First-Second_VENUE`), then suffix `_b` (no `_a` -- base name is implicitly first)
 
-## Commands
-
-Frontmatter fields: `name`, `description`, `argument-hint`, `allowed-tools`, `model`, optionally `disable-model-invocation`, `skills`.
-
-Dynamic context injection: `` !`git status` `` embeds live command output.
-
-Argument substitution: `$ARGUMENTS` (all args), `$1`/`$2`/`$3` (positional).
-
 ## Agents
 
 Key fields: `name`, `description`, `tools`/`allowed-tools`, `model`, `color`, `permissionMode` (`dontAsk`/`ask`/`default`).
@@ -36,6 +28,7 @@ Block/warn message shown to user
 ```
 
 Multi-field conditions use `field` + `operator` + `pattern`:
+
 - **Operators**: `regex_match`, `contains`, `not_contains`
 - **Event fields**: `bash` exposes `command`, `file` exposes `file_path`/`new_text`, `stop` exposes `transcript`, `prompt` exposes `prompt`
 

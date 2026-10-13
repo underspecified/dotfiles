@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/*.py"
+  - "**/pyproject.toml"
+---
+
 # Python Script Conventions
 
 ## Stand-Alone Scripts (PEP 723)
@@ -14,14 +20,6 @@ For single-file scripts, use inlined `uv run` with PEP 723 metadata:
 Output: JSON with result fields
 """
 ```
-
-Invocation — always home-relative paths:
-
-```
-uv run ~/path/script.py args
-```
-
-Never use relative paths. Never invoke with an explicit interpreter (`python3 script.py`).
 
 ## Path Resolution
 

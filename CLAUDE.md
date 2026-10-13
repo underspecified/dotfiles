@@ -50,13 +50,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 
 ## Bootstrap
 
-`bootstrap.sh`, auto-run by `lnk init -r`, picks one installer in this order:
-
-1. the `LNK_HOST=nosudo` override;
-2. on Linux without passwordless sudo, `installers/nosudo/install.sh`;
-3. otherwise the OS default: `installers/macos/bootstrap_finish.sh` or `installers/linux/install.sh`.
-
-Both Linux paths run `~/.claude/bootstrap.sh`.
+`bootstrap.sh`, auto-run by `lnk init -r`, picks the installer (order in its header). Every installer runs `~/.claude/bootstrap.sh`.
 
 - `installers/nosudo/` is independent of `installers/linux/`. It is user-space only, with one idempotent `install_<tool>.sh` per tool. It pins btop v1.3.2 (the last C++20 release with GPU support) and builds nvtop NVIDIA-only, to avoid the libdrm dev packages.
 - The dispatcher does **not** pass `--host` through (`lnk init` has no `--host`), so on a nosudo box run `lnk pull --host nosudo` once after init.

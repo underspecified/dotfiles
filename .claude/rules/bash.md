@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/*.sh"
+  - "**/bin/**"
+---
+
 # Bash Script Conventions
 
 Based on [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html) and project-specific rules.
@@ -40,16 +46,6 @@ set -uo pipefail
 - **Function headers:** comment with purpose, arguments, outputs, return values for non-trivial functions
 - **Indentation:** 2 spaces, no tabs
 
-## Invocation
-
-Always use `bash` with home-relative paths:
-
-```text
-bash ~/path/script.sh args
-```
-
-Never use relative paths.
-
 ## Path Resolution
 
 Self-locate; never assume cwd. Resolve assets from the script dir, not `$PWD`:
@@ -77,51 +73,6 @@ result=`date`
 echo "${filename}"
 result="$(date)"
 ```
-
-## No Inline Variable Assignments
-
-**Never prefix Bash commands with `VAR=value`** (e.g., `VAR=val cmd $VAR`). This breaks `allowed-tools` permission matching, which matches against the command name at the start of the string.
-
-```text
-# WRONG -- Bash(quarto:*) won't match
-QUARTO_LATEX_AUTO_INSTALL=false quarto render file.qmd
-
-# RIGHT -- command name comes first
-export QUARTO_LATEX_AUTO_INSTALL=false && quarto render file.qmd
-```
-
-If the variable is only needed once, inline the value directly into the arguments instead:
-
-```text
-# ALSO RIGHT -- no variable needed
-quarto render file.qmd -M latex-auto-install:false
-```
-
-## One Command Per Bash Call
-
-**Keep Bash tool calls simple and atomic.** The `allowed-tools` whitelist matches the command at the start of the string. Chained commands (`&&`, `;`, `|`), redirects (`2>&1`, `> file`), and subshells break permission matching and cause tool calls to be silently denied — especially in agent teams.
-
-```text
-# WRONG -- whitelist can't match, gets denied
-ls -la /path && echo "---" && ls -la /other
-find . -name "*.json" | xargs grep "pattern" 2>/dev/null
-
-# RIGHT -- one command per Bash call
-ls -la /path
-# (separate call)
-ls -la /other
-
-# RIGHT -- if you need pipes/chains, put them in a script
-bash ~/path/script.sh
-```
-
-**Rules:**
-
-- One command per Bash tool call
-- No `&&`, `;`, or `|` chains in Bash tool calls
-- No `2>&1`, `2>/dev/null`, `> file` redirects — use the tool's built-in output
-- If you need complex logic, write a script and invoke it
-- Exception: `export VAR=val && command` is acceptable (see "No Inline Variable Assignments" above)
 
 ## Pipes in Scripts
 
@@ -151,18 +102,6 @@ command1 \
 | `jq -s '.'` | Slurp NDJSON into arrays |
 | `jq -r '... \| @tsv'` | Tab-separated extraction |
 | `\|\| echo '[]'` | Fallback to empty structure on error |
-
-## No Parallel Bash Calls
-
-**Never make parallel Bash calls in a single message.** Due to cascade failure behavior (any failure causes all sibling calls to fail with "Sibling tool call errored"), use TaskCreate for independent operations:
-
-```text
-# WRONG -- cascade failure risk
-Bash("command1") + Bash("command2") in same message
-
-# RIGHT -- failures isolated
-TaskCreate for each independent operation
-```
 
 ## Linting
 

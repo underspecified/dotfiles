@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 See `README.md` for directory structure, plugins, skills, and status line reference.
-See `rules/` for development conventions (python, bash, skill, authoring, safety).
+See `rules/` for development conventions. `python.md`, `bash.md` and `markdown.md` load only when working on matching files.
 
 ## Design Principles
 
@@ -41,6 +41,9 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 - Edit over sed/awk
 - Write over echo/cat heredoc
 - Never parallel Bash calls in one message (cascade failure) -- use TaskCreate
+- One command per Bash call: no `&&`/`;`/`|` chains, subshells or `2>&1`/`>` redirects. They break `allowed-tools` prefix matching, so the call gets denied. Put pipelines in a script. Exception: `export VAR=val && cmd`.
+- Never prefix a command with `VAR=value` (same reason): `export` it first, or pass the value as an argument.
+- Never hard-wrap prose in `.md`/`.qmd`: one line per paragraph or list item, even when the surrounding file is wrapped. Leave existing wrapped files as they are.
 
 ## Script Invocation
 
