@@ -4,7 +4,7 @@
 
 Only `SKILL.md` is required:
 
-```
+```text
 skill-name/
 +-- SKILL.md          # Execution plan -- the skill definition
 +-- CLAUDE.md         # Project guidance for Claude working inside this skill
@@ -50,10 +50,10 @@ description: One-line description for the skill picker UI.
 argument-hint: "<required_arg> [optional_arg] [--flag]"
 clear-context: before
 allowed-tools:
-  - Bash(~/claude/skills/skill-name/scripts/*.py)
-  - Bash(~/claude/skills/skill-name/scripts/*.py *)
-  - Bash(~/claude/skills/skill-name/scripts/*.sh)
-  - Bash(~/claude/skills/skill-name/scripts/*.sh *)
+  - Bash(uv run ~/.claude/skills/skill-name/scripts/*.py)
+  - Bash(uv run ~/.claude/skills/skill-name/scripts/*.py *)
+  - Bash(bash ~/.claude/skills/skill-name/scripts/*.sh)
+  - Bash(bash ~/.claude/skills/skill-name/scripts/*.sh *)
   - Read
   - Write
   - Skill(computation-graph)
@@ -65,8 +65,8 @@ allowed-tools:
 Every script needs two `allowed-tools` entries -- one without args and one with args:
 
 ```yaml
-- Bash(~/claude/skills/skill-name/scripts/run.sh)
-- Bash(~/claude/skills/skill-name/scripts/run.sh *)
+- Bash(bash ~/.claude/skills/skill-name/scripts/run.sh)
+- Bash(bash ~/.claude/skills/skill-name/scripts/run.sh *)
 ```
 
 For system commands, use the colon syntax: `Bash(jq:*)`, `Bash(uv:*)`.
@@ -84,6 +84,7 @@ The `{parallel}` marker on a parent means its children run concurrently; the par
 ```
 
 Task item syntax:
+
 - `/skill-name args` -- skill invocation
 - `$ command` or `` `command` `` -- Bash execution
 - Plain text -- general-purpose agent instructions
