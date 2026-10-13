@@ -11,4 +11,6 @@ options=(
 	width=10.0
 )
 
-/opt/homebrew/bin/borders "${options[@]}" &
+# Detach output: when this starts the daemon, an inherited stdout pipe stays
+# open for its lifetime and hangs any caller reading it (dark-mode-notify-helper).
+/opt/homebrew/bin/borders "${options[@]}" >/dev/null 2>&1 &
