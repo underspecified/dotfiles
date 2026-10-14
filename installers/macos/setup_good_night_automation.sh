@@ -13,9 +13,10 @@
 # work-day-only: it runs only on days good-morning (or you) armed it.
 #
 # Edits the lnk-tracked plist in place (commit + push to persist across Macs).
-# The power-wake uses `sudo pmset`, authenticated by TouchID (pam_tid +
-# pam_reattach in /etc/pam.d/sudo_local) so the prompt works from tmux / non-TTY
-# contexts like /good-morning. Wake is honored only on AC power.
+# No sudo when a repeating wake already covers today at that time; set it once
+# per Mac with `sudo pmset repeat wake MTWRF 21:55:00` (for the 22:00 default).
+# Otherwise falls back to a one-time `sudo pmset schedule wake`, which needs a
+# terminal for the TouchID/password prompt. Wake is honored only on AC power.
 set -euo pipefail
 
 # shellcheck source=SCRIPTDIR/../lib.sh
@@ -35,6 +36,22 @@ plist_real="${repo_root}/macos.lnk/Library/LaunchAgents/${label}.plist"
 
 usage() { die "usage: $(basename "$0") schedule [today] HH:MM"; }
 
+# True if a repeating pmset wake fires today at H:M (24h). pmset prints it as
+# e.g. "  wake at 9:55PM weekdays only" under "Repeating power events:".
+repeat_wake_covers() {
+  local h12=$(($1 % 12 == 0 ? 12 : $1 % 12)) ampm="AM" line
+  (($1 >= 12)) && ampm="PM"
+  line="$(pmset -g sched | sed -n '/^Repeating power events:/,/^[^ ]/p' |
+    grep -E "^ +wake[a-z]* at $(printf '%d:%02d%s' "${h12}" "$2" "${ampm}") " || true)"
+  case "${line}" in
+  "") return 1 ;;
+  *"every day"*) return 0 ;;
+  *"weekdays only"*) (($(date +%u) <= 5)) ;;
+  *"weekends only"*) (($(date +%u) >= 6)) ;;
+  *) [[ "${line}" == *"$(LC_ALL=C date +%A)"* ]] ;;
+  esac
+}
+
 check_preconditions() {
   [[ "$(uname -s)" == "Darwin" ]] || die "good-night automation is macOS-only"
   [[ -x "${plistbuddy}" ]] || die "PlistBuddy not found at ${plistbuddy}"
@@ -49,8 +66,8 @@ cmd_schedule() {
   [[ -n "${arg_time}" ]] || usage
   [[ "${arg_time}" =~ ^([0-9]{1,2}):([0-9]{2})$ ]] || die "invalid time '${arg_time}' — expected HH:MM (24h)"
   local h=$((10#${BASH_REMATCH[1]})) m=$((10#${BASH_REMATCH[2]}))
-  (( h <= 23 )) || die "hour out of range in '${arg_time}'"
-  (( m <= 59 )) || die "minute out of range in '${arg_time}'"
+  ((h <= 23)) || die "hour out of range in '${arg_time}'"
+  ((m <= 59)) || die "minute out of range in '${arg_time}'"
 
   # Set the plist fire time.
   "${plistbuddy}" -c "Set :StartCalendarInterval:Hour ${h}" "${plist_real}"
@@ -64,23 +81,27 @@ cmd_schedule() {
 
   # Warn if HH:MM already passed today (launchd would fire tomorrow, not tonight).
   local hh mm now_min target_min
-  hh="$(date +%H)"; mm="$(date +%M)"
-  now_min=$(( 10#${hh} * 60 + 10#${mm} ))
-  target_min=$(( h * 60 + m ))
-  if (( target_min <= now_min )); then
+  hh="$(date +%H)"
+  mm="$(date +%M)"
+  now_min=$((10#${hh} * 60 + 10#${mm}))
+  target_min=$((h * 60 + m))
+  if ((target_min <= now_min)); then
     warn "$(printf '%02d:%02d' "${h}" "${m}") already passed today — launchd will fire tomorrow, not tonight"
   fi
 
   # One-time power wake at (target - offset) today.
   local wake_min wh wm wake_dt
-  wake_min=$(( (target_min - wake_offset_min + 1440) % 1440 ))
-  wh=$(( wake_min / 60 )); wm=$(( wake_min % 60 ))
+  wake_min=$(((target_min - wake_offset_min + 1440) % 1440))
+  wh=$((wake_min / 60))
+  wm=$((wake_min % 60))
   wake_dt="$(date '+%m/%d/%Y') $(printf '%02d:%02d:00' "${wh}" "${wm}")"
-  # sudo runs pmset as root; TouchID is wired via pam_tid (+ pam_reattach for
-  # tmux/non-TTY) in /etc/pam.d/sudo_local, so the auth is a TouchID tap.
-  log "scheduling one-time power wake at ${wake_dt} (approve with TouchID)"
-  sudo pmset schedule wake "${wake_dt}" \
-    || die "power-wake auth cancelled/failed — agent is loaded but no wake scheduled"
+  if repeat_wake_covers "${wh}" "${wm}"; then
+    log "repeating power wake at $(printf '%02d:%02d' "${wh}" "${wm}") covers today — no sudo needed"
+  else
+    log "scheduling one-time power wake at ${wake_dt} (approve with TouchID)"
+    sudo pmset schedule wake "${wake_dt}" ||
+      die "power-wake auth cancelled/failed — agent is loaded but no wake scheduled"
+  fi
   warn "scheduled wake is honored only on AC power; keep the Mac plugged in"
 
   log "good-night armed (one-shot) for today $(printf '%02d:%02d' "${h}" "${m}")"
@@ -89,8 +110,11 @@ cmd_schedule() {
 main() {
   check_preconditions
   case "${1:-}" in
-    schedule) shift; cmd_schedule "$@" ;;
-    *) usage ;;
+  schedule)
+    shift
+    cmd_schedule "$@"
+    ;;
+  *) usage ;;
   esac
 }
 
