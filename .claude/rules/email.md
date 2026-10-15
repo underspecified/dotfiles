@@ -61,13 +61,14 @@ bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh \
 
 Opens Mail with proper threading + quoted chain. Works on any mailbox. Returns JSON `{ok, subject, to, cc}`.
 
-### Attachments in a reply
+## Attachments
 
-`threaded_reply.sh` doesn't support `--attach` yet (tracked at <https://github.com/underspecified/email-inbox/issues/1>). Until it does:
+**A draft that needs a file either carries it, or opens with the exact file revealed and named.**
 
-1. Open the threaded draft via `threaded_reply.sh`
-2. Ask the user to drag-drop the file into the open Mail.app draft
-3. Do NOT fall back to `compose_email` — breaks threading (Reply-To / In-Reply-To / References headers)
+- **New mail:** attach it with `compose_email`'s `attachments` (absolute paths, comma-separated).
+- **Reply:** `threaded_reply.sh` can't attach yet (<https://github.com/underspecified/email-inbox/issues/1>). When the draft opens, run `open -R <path>` so Finder shows the file, and say in the same message: "drag `<filename>` into the open draft". Don't fall back to `compose_email`: it breaks threading (In-Reply-To / References).
+
+**Why (10/15):** a draft saying "sign the attached confidentiality agreement" went out with nothing attached; the drag-in instruction was only in chat.
 
 ## Reading
 
