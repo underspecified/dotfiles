@@ -73,6 +73,13 @@ cmd_schedule() {
   "${plistbuddy}" -c "Set :StartCalendarInterval:Hour ${h}" "${plist_real}"
   "${plistbuddy}" -c "Set :StartCalendarInterval:Minute ${m}" "${plist_real}"
 
+  # Record the date this run is armed for. The plist sits in ~/Library/LaunchAgents,
+  # so launchd reloads it at every login; after a reboot or a slept-through 22:00 it
+  # fires at the next HH:MM, possibly days later (10/9 armed, fired Sat 10/10).
+  # run-nightly.sh skips any fire whose date doesn't match this marker.
+  mkdir -p "${HOME}/.cache/dispatch"
+  date '+%Y-%m-%d' >"${HOME}/.cache/dispatch/good-night-armed-for"
+
   # (Re)load the agent so it fires at the next HH:MM (today if not yet passed).
   local domain
   domain="gui/$(id -u)"
