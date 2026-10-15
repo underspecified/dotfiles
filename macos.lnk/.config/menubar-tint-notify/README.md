@@ -27,7 +27,9 @@ Log: `~/Library/Logs/menubar-tint-notify.log`, one watcher line (tint + sample s
 
 It captures the left end of the main display's menu bar with ScreenCaptureKit (Apple logo + app name, always present at a fixed spot). The median luminance is the backdrop; pixels far from it are glyphs. Mostly lighter glyphs means white glyphs, so the tint is `dark`. This copies the color macOS actually drew, so there is no threshold to tune.
 
-It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a system mode change, Space change, wake, WhichSpace launch, and every 10s, because a dynamic wallpaper shifts with no notification ("Macintosh" animates its colors continuously). The capture shows no screen-recording indicator.
+It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a system mode change, Space change, wake, display wake, WhichSpace launch, and every 10s, because a dynamic wallpaper shifts with no notification ("Macintosh" animates its colors continuously). The capture shows no screen-recording indicator.
+
+While the display is off, ScreenCaptureKit lists no displays and every capture fails. The watcher logs that once ("capture failed, keeping the last tint") and keeps the last sampled tint until the display wakes. It used to fall back to the proxy here, which recolored WhichSpace wrong overnight (10-14).
 
 ## What didn't work (macOS 27)
 

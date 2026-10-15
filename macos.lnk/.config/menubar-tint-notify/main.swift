@@ -9,10 +9,11 @@
 // backdrop, i.e. copies the color macOS actually drew. No API reports that:
 // AppKit's private _menuBarAppearanceProxy says VibrantLight over a mid-tone
 // wallpaper while macOS draws white glyphs. Needs Screen Recording permission;
-// without it, falls back to that proxy.
-// Samples at start, on tint/mode change, Space change, wake, WhichSpace launch,
-// and every 10s: a dynamic wallpaper ("Macintosh" animates its colors) shifts
-// with no notification.
+// without it, falls back to that proxy. While the display is off there is
+// nothing to capture, so it keeps the last tint.
+// Samples at start, on tint/mode change, Space change, wake, display wake,
+// WhichSpace launch, and every 10s: a dynamic wallpaper ("Macintosh" animates
+// its colors) shifts with no notification.
 // Debug: MENUBAR_TINT_DUMP=<dir> writes each captured sample there.
 // Build: swiftc -O main.swift -o /tmp/mtn && mv /tmp/mtn menubar-tint-notify
 
@@ -86,11 +87,13 @@ if !CGPreflightScreenCaptureAccess() {
     CGRequestScreenCaptureAccess()
 }
 
+struct CaptureError: Error, CustomStringConvertible { let description: String }
+
 // The left end of the main display's menu bar, as drawn on screen.
 @Sendable func captureMenuBar() async throws -> CGImage {
     let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
     guard let display = content.displays.first(where: { $0.displayID == CGMainDisplayID() }) ?? content.displays.first
-    else { throw CocoaError(.featureUnsupported) }
+    else { throw CaptureError(description: "no display to capture (display off?)") }
     let screen = await MainActor.run {
         NSScreen.screens.first {
             ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
@@ -116,21 +119,29 @@ if !CGPreflightScreenCaptureAccess() {
     CGImageDestinationFinalize(dest)
 }
 
-// nil = inconclusive this time: keep the last tint.
+var captureFailing = false
+
+// nil = inconclusive this time: keep the last tint. A failed capture keeps it
+// too (it fails whenever the display is off); only a missing permission falls
+// back to the proxy, which is wrong over mid-tone wallpapers.
 @MainActor @Sendable
 func readTint() async -> (tint: String, detail: String)? {
-    if CGPreflightScreenCaptureAccess() {
-        do {
-            let sample = try await captureMenuBar()
-            dump(sample)
-            return classify(sample)
-        } catch {
-            warn("capture failed: \(error)")
-        }
+    guard CGPreflightScreenCaptureAccess() else {
+        let appearance = proxy?.value(forKey: "effectiveAppearance") as? NSAppearance ?? app.effectiveAppearance
+        let tint = appearance.name.rawValue.lowercased().contains("dark") ? "dark" : "light"
+        return (tint, "proxy \(appearance.name.rawValue)")
     }
-    let appearance = proxy?.value(forKey: "effectiveAppearance") as? NSAppearance ?? app.effectiveAppearance
-    let tint = appearance.name.rawValue.lowercased().contains("dark") ? "dark" : "light"
-    return (tint, "proxy \(appearance.name.rawValue)")
+    do {
+        let sample = try await captureMenuBar()
+        if captureFailing { warn("capture works again") }
+        captureFailing = false
+        dump(sample)
+        return classify(sample)
+    } catch {
+        if !captureFailing { warn("capture failed, keeping the last tint until it works: \(error)") }
+        captureFailing = true
+        return nil
+    }
 }
 
 var lastTint: String?
@@ -187,6 +198,9 @@ center.addObserver(forName: NSWorkspace.activeSpaceDidChangeNotification, object
 }
 center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { _ in
     notifySoon(after: 2, force: true)
+}
+center.addObserver(forName: NSWorkspace.screensDidWakeNotification, object: nil, queue: .main) { _ in
+    notifySoon(after: 1)
 }
 center.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { note in
     let launched = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
