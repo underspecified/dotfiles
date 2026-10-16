@@ -16,8 +16,8 @@
 #   * No display assumed: kitty still gets installed (it's a user-space
 #     curl-pipe) because it's useful as a remote-side terminfo target
 #     for `kitten ssh`, but we don't drive any GUI from here.
-#   * User-space tools only, all under ~/.local: uv, claude, gh, btop,
-#     nvtop, gpu-burn, kitty, shellcheck, shfmt, node, trash-cli. Then
+#   * User-space tools only, all under ~/.local: uv, claude, otelcol, gh,
+#     btop, nvtop, gpu-burn, kitty, shellcheck, shfmt, node, trash-cli. Then
 #     runs ~/.claude/bootstrap.sh.
 #   * Per-step delegation: each tool lives in its own installers/nosudo/
 #     install_<tool>.sh -- so you can re-run a single piece for debug
@@ -92,6 +92,7 @@ run_user_installers() {
   #      take the longest and self-skip when their preconds aren't met.
   run_step "${LINUX_DIR}/install_uv.sh"
   run_step "${ALL_DIR}/install_claude_code.sh"
+  run_step "${ALL_DIR}/install_otelcol.sh"     "otelcol (pinned tarball -- Claude Code metrics collector, systemd --user)"
   run_step "${CUR_DIR}/install_gh.sh"          "gh (prebuilt tarball)"
   run_step "${CUR_DIR}/install_shellcheck.sh"  "shellcheck (prebuilt tarball -- required by .claude shellcheck_lint hook)"
   run_step "${CUR_DIR}/install_shfmt.sh"       "shfmt (prebuilt binary -- required by .claude shellcheck_lint hook)"

@@ -55,6 +55,7 @@ run_all_installers() {
   local script
   for script in \
     "${ALL_DIR}/install_claude_code.sh" \
+    "${ALL_DIR}/install_otelcol.sh" \
     "${ALL_DIR}/install_btop.sh"; do
     if [[ -x "${script}" ]]; then
       log "  $(basename "${script}")"

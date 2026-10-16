@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Claude Code metrics collector. installers/all/install_otelcol.sh renders
+     @HOME@ and installs this to ~/Library/LaunchAgents/; edit here and re-run. -->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.eric.otelcol</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.local/bin/otelcol</string>
+		<string>--config</string>
+		<string>@HOME@/.config/otelcol/config.yaml</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>StandardErrorPath</key>
+	<string>@HOME@/Library/Logs/otelcol.log</string>
+	<key>StandardOutPath</key>
+	<string>@HOME@/Library/Logs/otelcol.log</string>
+</dict>
+</plist>

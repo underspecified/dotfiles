@@ -1,0 +1,12 @@
+# Claude Code metrics collector. Installed by installers/all/install_otelcol.sh
+# to ~/.config/systemd/user/; edit here and re-run the installer.
+[Unit]
+Description=OpenTelemetry Collector: Claude Code metrics to ~/.local/state/otelcol
+
+[Service]
+ExecStart=%h/.local/bin/otelcol --config %h/.config/otelcol/config.yaml
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
