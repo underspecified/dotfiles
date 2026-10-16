@@ -18,6 +18,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - lnk: dotfiles #7, the telemetry `env` plus a localhost collector per host, TANK first. The engineer works in the worktree `~/git/lnk-7-otel-telemetry`, branch `7-otel-telemetry`. Destroy that seat and remove the worktree after `clean`.
   - kaiseki: #51, `seat_time.py`. Its issue fixes the JSON shape.
   - planning: #37 itself, built against both contracts, with the dependent parts wired in last.
+  - All three implementation plans were signed off on 10/16. Changes I asked for:
+    - dotfiles #7: the port-conflict guard must check the listener's pid.
+    - planning #37: never edit the notes of an event with other attendees (it can send an invite update).
+    - kaiseki #51: split gaps that cross midnight.
+  - On 10/16 the kaiseki and planning deploy trees on all 6 Linux hosts were behind (kaiseki at 7f12409 since 5/14). I fast-forwarded all of them to TANK's main (kaiseki 7158bd9, planning 95e67cc); dgx02 pulled fine too. After the #51 and #37 merges, fast-forward them again on all 7 hosts before the backfill, which waits for my go.
   - `projects` added the owners and research columns to `meetings.md` (f134937, Eric confirmed 10/16) and relayed them to the planning engineer. Eric installs ActivityWatch (see Waiting on Eric).
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
