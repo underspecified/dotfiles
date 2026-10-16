@@ -1,5 +1,6 @@
-# Claude Code metrics collector. Installed by installers/all/install_otelcol.sh
-# to ~/.config/systemd/user/; edit here and re-run the installer.
+# Claude Code metrics collector. Installed by the dotfiles repo's
+# installers/all/install_otelcol.sh, which reverts edits made to installed copies:
+# edit installers/all/otelcol/otelcol.service in the repo, then re-run the installer.
 [Unit]
 Description=OpenTelemetry Collector: Claude Code metrics to ~/.local/state/otelcol
 

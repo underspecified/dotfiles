@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Claude Code metrics collector. installers/all/install_otelcol.sh renders
-     @HOME@ and installs this to ~/Library/LaunchAgents/; edit here and re-run. -->
+<!-- Claude Code metrics collector. Installed by the dotfiles repo's
+     installers/all/install_otelcol.sh, which reverts edits made to installed copies:
+     edit installers/all/otelcol/com.eric.otelcol.plist in the repo, then re-run. -->
 <plist version="1.0">
 <dict>
 	<key>Label</key>

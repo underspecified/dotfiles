@@ -1,5 +1,6 @@
-# Claude Code metrics -> local JSONL. Installed by installers/all/install_otelcol.sh
-# to ~/.config/otelcol/config.yaml; edit here and re-run the installer.
+# Claude Code metrics -> local JSONL. Installed by the dotfiles repo's
+# installers/all/install_otelcol.sh, which reverts edits made to installed copies:
+# edit installers/all/otelcol/config.yaml in the repo, then re-run the installer.
 receivers:
   otlp:
     protocols:
@@ -9,6 +10,7 @@ exporters:
   file:
     path: ${env:HOME}/.local/state/otelcol/metrics.jsonl
     create_directory: true
+    directory_permissions: "0700"
     rotation:
       max_megabytes: 50
       max_days: 30
