@@ -18,7 +18,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - lnk: dotfiles #7, the telemetry `env` plus a localhost collector per host, TANK first. The engineer works in the worktree `~/git/lnk-7-otel-telemetry`, branch `7-otel-telemetry`. Destroy that seat and remove the worktree after `clean`.
   - kaiseki: #51, `seat_time.py`. Its issue fixes the JSON shape.
   - planning: #37 itself, built against both contracts, with the dependent parts wired in last.
-  - `projects` adds owners and research columns to `meetings.md`. Eric installs ActivityWatch (see Waiting on Eric).
+  - `projects` added the owners and research columns to `meetings.md` (f134937, Eric confirmed 10/16) and relayed them to the planning engineer. Eric installs ActivityWatch (see Waiting on Eric).
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **#189 reopened 10/5; it's top priority (Eric, direct).** Eric's ruling: "Yes, roll out fleetwide now". The heartbeat criterion and the one-seat-at-a-time order are waived.
