@@ -34,7 +34,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 
 - `.lnk` applies to all hosts.
 - `.lnk.macos` and `.lnk.linux` are selected by `uname -s`. `.lnk.linux` is pulled on **any** Linux host; its GUI helpers become dead but harmless symlinks on headless boxes.
-- The host file `.lnk.nosudo` is layered **on top of** the others (lnk has no exclusion mechanism). It applies only with `--host nosudo` on `lnk pull` / `add` / `list`.
+- The host file `.lnk.nosudo` is layered **on top of** the others (lnk has no exclusion mechanism). It applies only with `--host nosudo` on `lnk pull` / `add` / `list`, and `lnk pull --host nosudo` links **only** that layer. So a nosudo box needs both `lnk pull` and `lnk pull --host nosudo` (dgx02, 10/16).
 
 ## Git
 
@@ -53,7 +53,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 `bootstrap.sh`, auto-run by `lnk init -r`, picks the installer (order in its header). Every installer runs `~/.claude/bootstrap.sh`.
 
 - `installers/nosudo/` is independent of `installers/linux/`. It is user-space only, with one idempotent `install_<tool>.sh` per tool. It pins btop v1.3.2 (the last C++20 release with GPU support) and builds nvtop NVIDIA-only, to avoid the libdrm dev packages.
-- The dispatcher does **not** pass `--host` through (`lnk init` has no `--host`), so on a nosudo box run `lnk pull --host nosudo` once after init.
+- The dispatcher does **not** pass `--host` through (`lnk init` has no `--host`), so on a nosudo box run `lnk pull --host nosudo` once after init, and run both pulls after any later update.
 
 ## Telemetry
 
