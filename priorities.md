@@ -14,6 +14,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 **Review rule (2026-09-26):** `/code-review` at high effort returns 15 findings (its cap) on every pass, so rounds don't converge. Block only on silent data loss, regressions the PR introduced, and the PR's own acceptance criteria. Everything else is a small fix-along, a follow-up issue, or won't-fix. Round 2 is the final round: round 3 only checks the listed items. **Merge order:** none pending.
 
 - **Workflow friction fixes** — Eric approved all 8 on 2026-09-23. Ready-to-apply wording has been sent to the coordinator, who owns `~/.claude/org`. The fixed sign-off/review prefixes for `workflow.md` were proposed to `projects` and are pending there.
+- **Time ledger (planning #37):** approved by Eric's 👍 on 2026-10-16 at 11:20Z, verified on the issue, and split (split comment 6214446027). The first `/weekly-review` is Fri 10/23. Three engineers were assigned on 10/16 and each posts an implementation plan for sign-off:
+  - lnk: dotfiles #7, the telemetry `env` plus a localhost collector per host, TANK first. The engineer works in the worktree `~/git/lnk-7-otel-telemetry`, branch `7-otel-telemetry`. Destroy that seat and remove the worktree after `clean`.
+  - kaiseki: #51, `seat_time.py`. Its issue fixes the JSON shape.
+  - planning: #37 itself, built against both contracts, with the dependent parts wired in last.
+  - `projects` adds owners and research columns to `meetings.md`. Eric installs ActivityWatch (see Waiting on Eric).
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
   - **#189 reopened 10/5; it's top priority (Eric, direct).** Eric's ruling: "Yes, roll out fleetwide now". The heartbeat criterion and the one-seat-at-a-time order are waived.
@@ -179,15 +184,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
-- 👍 on planning #37 (time ledger in four views; no open decisions; Eric's four 10/16 changes folded in, sent to `projects` as dispatch id 6405):
-  1. Seat activity for every seat on every host, no labels, from Claude Code telemetry (`active_time`, one collector per host, mapped to seats by `session.id`); transcripts for the backfill and fallback.
-  2. Confirm-once task labels: `(label, owners, research Y/N)`, looked up from the registry at roll-up. Calendar blocks count too, tagged `time: <owners> / research` in the event notes or per series in `meetings.md`.
-  3. Screen Time from ActivityWatch on TANK (Eric installs it; no Full Disk Access needed; no history before install).
-  4. A papers dashboard: (paper, hours this week, last worked on, state). Stalled = 0h for 14 days; on 10/23 STAIC and the safety survey must show stalled, and Irmak's work and Jin's next thing nascent.
-
-  Owners get full credit, and totals are plain sums (simultaneous agents add up). Only Eric's own calendar time is de-overlapped: each minute goes to the most recently started event. New labels are asked about at the next good-morning and again in the Friday `/weekly-review` batch; the first review is on 10/23.
-
-  It splits into lnk (telemetry and collectors, TANK first), kaiseki (`seat_time.py`) and then planning.
+- Install ActivityWatch on TANK for planning #37's Screen Time view (arm64 build v0.14.1, start at login, allow the System Events prompt). There is no history before install, so installing by 10/16 gives the 10/23 review a full week.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
