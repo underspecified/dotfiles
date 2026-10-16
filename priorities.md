@@ -17,7 +17,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Time ledger (planning #37): closed 10/17.** It shipped as dotfiles #8 (b4597ec, telemetry plus a collector per host), kaiseki #52 (8dfb450, `seat_time.py`) and planning #38 (81f0c0b), all deployed on 7 hosts. The backfill is done (results on #37), and all three seats are closed.
   - **Checks:** the coordinator runs `/good-night time 2026-10-16` on the morning of 10/17. The 10/17 good-night is the first real run, so check its daily-log `Time distribution` table on 10/18. The first `/weekly-review` is Fri 10/23, where Eric gets the labelling calls.
   - **Telemetry:** no running seat sends yet. The keys are read at launch, and TANK's settings got them at 21:44 on 10/16, after every seat started. Fresh sessions do send (probed 10/17). Seats start sending as they restart; transcripts cover the rest.
-  - **Open:** planning #39 (host status said telemetry on days with no points): PR #40 merged 10/17 (0963568), deployed on 7 hosts; the engineer re-runs the stored days 9/16–10/15, then replies `clean`. kaiseki #54 (watch-only sessions over-counted; assigned 10/17, plan due). kaiseki #53, dotfiles #9, dispatch #252.
+  - **Open:** kaiseki #54 (watch-only sessions over-counted; assigned 10/17, plan due). kaiseki #53, dotfiles #9, dispatch #252.
   - llm-jp's rollback record is at llm-jp:/tmp/otel-llmjp-rollback. The shared-host port-squat risk was accepted (option A, my call).
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
 - **dispatch queue:** #189 merged 2026-10-02 (PR #192 → 98d7288; the opt-in is off by default).
@@ -196,6 +196,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
+- 2026-10-17 — merged planning #40 (0963568, closes #39): a host is `telemetry` only on days with points. Deployed on 7 hosts; the stored days 9/16–10/15 were re-run with labels intact. Seat closed.
 - 2026-10-16 — per lab ("every non-judge seat runs Opus 5.5"), removed the model pins in haru.md, the coordinator and HRI2027_ETHOS_WS (gitignored `settings.local.json`); lab accepted. The 10 other paper-repo Fable pins are Eric's to configure himself, not this seat's. admin and animations' Fable runs on 10/7–10/13 stay unexplained (no pin, flag or env var; parent-dir pins don't inherit).
 - 2026-10-01 — merged dispatch #186 (b99f3ba, closes #184) and #190 (d478dfd, closes #188), and ran install.sh on tank and all 6 hosts; main CI is green.
   - Remote `wake` now detects a dead claude and respawns it. Every non-answer, multi-pane session or pgrep error counts as ALIVE.
