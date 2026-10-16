@@ -178,6 +178,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Waiting on Eric
 
+- Paper seats on Fable? On 10/16, per lab's relay of "every non-judge seat runs Opus 5.5", I removed the model pins in haru.md, the coordinator and HRI2027_ETHOS_WS (all gitignored `settings.local.json`).
+  - Ten more paper repos on tank pin `claude-fable-5-1`: FoRMA2026_eval, HRI2026, HRI2027_altHRI, HRI2027_expressivity, HRI2027_persona, ICRA2027_architecture, ICRA2027_gaze, ICRA2027_leaderboard, ROMAN2026_LBR and ROMAN2026. That looks like a deliberate Fable-for-papers choice, so they are untouched pending Eric.
+  - admin and animations ran claude-fable-5 on 10/7–10/13 with no pin, flag or env var. A parent-dir pin was ruled out by a real-CLI test, and one `/model` appears on 10/9.
+
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - 👍 on planning #37 (time ledger in four views; no open decisions; re-sent to `projects` 10/16, dispatch id 6399):
   1. Seat activity for every seat on every host, no labels.
