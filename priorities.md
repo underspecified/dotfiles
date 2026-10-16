@@ -18,6 +18,10 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - lnk: dotfiles #7, the telemetry `env` plus a localhost collector per host, TANK first. The engineer works in the worktree `~/git/lnk-7-otel-telemetry`, branch `7-otel-telemetry`. Destroy that seat and remove the worktree after `clean`.
   - kaiseki: #51, `seat_time.py`. Its issue fixes the JSON shape.
   - planning: #37 itself, built against both contracts, with the dependent parts wired in last.
+  - PRs, round 1 on 10/16:
+    - kaiseki #52: 2 blocking (queued prompts lost; a crash on a half-written line) plus fix-alongs, including a new `source` value `headless`.
+    - dotfiles #8: 1 blocking (the metrics file is readable by other users) plus fix-alongs. The shared-host port-squat risk was accepted (option A, my call). Follow-ups are in dotfiles #9.
+    - planning #38: in review.
   - All three implementation plans were signed off on 10/16. Changes I asked for:
     - dotfiles #7: the port-conflict guard must check the listener's pid.
     - planning #37: never edit the notes of an event with other attendees (it can send an invite update).
