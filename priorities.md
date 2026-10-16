@@ -20,8 +20,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - planning: #37 itself, built against both contracts, with the dependent parts wired in last.
   - PRs, round 1 on 10/16:
     - kaiseki #52: 2 blocking (queued prompts lost; a crash on a half-written line) plus fix-alongs, including a new `source` value `headless`.
-    - dotfiles #8: 1 blocking (the metrics file is readable by other users) plus fix-alongs. The shared-host port-squat risk was accepted (option A, my call). Follow-ups are in dotfiles #9.
-    - planning #38: in review.
+    - dotfiles #8: **merged 10/16 (b4597ec)** after round 2, and TANK's live tree is pulled. The shared-host port-squat risk was accepted (option A, my call). Follow-ups are in dotfiles #9. The engineer is doing the TANK post-merge check and the Linux rollout one host at a time, then replies `clean`. After that: destroy the seat, and remove the worktree `~/git/lnk-7-otel-telemetry`.
+    - planning #38: 6 blocking. The main one is a design change: never edit a calendar event, and put all answers in the registry. kaiseki #52 also gains `session` per task. Merge order: kaiseki #52, then planning #38.
   - All three implementation plans were signed off on 10/16. Changes I asked for:
     - dotfiles #7: the port-conflict guard must check the listener's pid.
     - planning #37: never edit the notes of an event with other attendees (it can send an invite update).
