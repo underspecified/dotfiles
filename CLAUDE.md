@@ -57,9 +57,9 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 
 ## Telemetry
 
-Every session sends Claude Code's metrics (no prompts, no logs) to a loopback OpenTelemetry Collector on its own host. The four `CLAUDE_CODE_ENABLE_TELEMETRY` / `OTEL_*` keys in `.claude/settings.json` `env` turn it on; `installers/all/install_otelcol.sh` (run by every installer; re-run it after editing `installers/all/otelcol/`) installs the collector.
+Every session sends Claude Code's metrics (no prompts, no logs) to a loopback OpenTelemetry Collector on its own host. The `CLAUDE_CODE_ENABLE_TELEMETRY` and `OTEL_*` keys in `.claude/settings.json` `env` turn it on (port 24318, not the OTLP default 4318, so it never meets another user's collector or exporter on a shared host; the 500 ms timeout keeps a wedged collector from slowing `claude -p` exits); `installers/all/install_otelcol.sh` (run by every installer; re-run it after editing `installers/all/otelcol/`) installs the collector.
 
 - **File:** `~/.local/state/otelcol/metrics.jsonl`, one OTLP/JSON request per line, rotated at 50 MB. Data points carry `session.id` and the account's email and ids, so the file stays on the host.
-- **Check:** `launchctl print gui/$(id -u)/com.eric.otelcol` or `systemctl --user status otelcol`; `lsof -nP -iTCP:4318 -sTCP:LISTEN` shows only `127.0.0.1`.
-- **Off:** on one host, stop the service (`launchctl bootout gui/$(id -u)/com.eric.otelcol`, `systemctl --user disable --now otelcol`). Sessions run fine without it, and re-running the installer starts it again. Everywhere: remove the four `env` keys.
-- **Inherited:** tool subprocesses inherit these `env` keys, so an OTel-instrumented program run from a session also exports to `127.0.0.1:4318`. Readers filter on `service.name` (`claude-code`, `claude-code-desktop`).
+- **Check:** `launchctl print gui/$(id -u)/com.eric.otelcol` or `systemctl --user status otelcol`; `lsof -nP -iTCP:24318 -sTCP:LISTEN` shows only `127.0.0.1`.
+- **Off:** on one host, stop the service: `launchctl bootout gui/$(id -u)/com.eric.otelcol` and `trash ~/Library/LaunchAgents/com.eric.otelcol.plist` (or it returns at login), or `systemctl --user disable --now otelcol`. Sessions run fine without it, and re-running the installer starts it again. Everywhere: remove those `env` keys.
+- **Inherited:** tool subprocesses inherit these `env` keys, so an OTel-instrumented program run from a session also exports to `127.0.0.1:24318`. Readers filter on `service.name` (`claude-code`, `claude-code-desktop`).

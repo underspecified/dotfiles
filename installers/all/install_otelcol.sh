@@ -2,7 +2,7 @@
 # Usage: bash ~/.config/lnk/installers/all/install_otelcol.sh
 #
 # Pinned OpenTelemetry Collector (core `otelcol`) as a user service that takes
-# Claude Code metrics on 127.0.0.1:4318 and writes ~/.local/state/otelcol/
+# Claude Code metrics on 127.0.0.1:24318 and writes ~/.local/state/otelcol/
 # metrics.jsonl (see otelcol/config.yaml). macOS: LaunchAgent com.eric.otelcol.
 # Linux: systemd --user otelcol.service. No sudo. Idempotent: a re-run with
 # everything current downloads, writes and restarts nothing.
@@ -45,7 +45,9 @@ put() {
     return 0
   fi
   mkdir -p "$(dirname "$2")"
-  cp "$1" "$2.tmp" && mv -f "$2.tmp" "$2"
+  # Separate statements: set -e ignores a failure on the left of &&.
+  cp "$1" "$2.tmp"
+  mv -f "$2.tmp" "$2"
   log "installed: $2"
   changed=1
 }
@@ -116,14 +118,14 @@ service_pid() {
   esac
 }
 
-# True when pid $1 itself holds the 127.0.0.1:4318 listener. "Service running
+# True when pid $1 itself holds the 127.0.0.1:24318 listener. "Service running
 # and the port answers" is not enough: another process can hold the port while
 # the service crash-loops on bind.
 owns_port() {
   if command -v lsof >/dev/null 2>&1; then
-    lsof -nP -a -p "$1" -iTCP@127.0.0.1:4318 -sTCP:LISTEN >/dev/null 2>&1
+    lsof -nP -a -p "$1" -iTCP@127.0.0.1:24318 -sTCP:LISTEN >/dev/null 2>&1
   else
-    ss -ltnp 'sport = :4318' 2>/dev/null | grep -q "127.0.0.1:4318 .*pid=$1,"
+    ss -ltnp 'sport = :24318' 2>/dev/null | grep -q "127.0.0.1:24318 .*pid=$1,"
   fi
 }
 
@@ -132,12 +134,12 @@ check_listener() {
   for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
     pid="$(service_pid)"
     if [[ -n "${pid}" && "${pid}" != 0 ]] && owns_port "${pid}"; then
-      log "otelcol (pid ${pid}) is listening on 127.0.0.1:4318"
+      log "otelcol (pid ${pid}) is listening on 127.0.0.1:24318"
       return 0
     fi
     sleep 0.5
   done
-  die "otelcol is not the listener on 127.0.0.1:4318: port taken? (logs: ~/Library/Logs/otelcol.log or journalctl --user -u otelcol)"
+  die "otelcol is not the listener on 127.0.0.1:24318: port taken? (logs: ~/Library/Logs/otelcol.log or journalctl --user -u otelcol)"
 }
 
 main() {

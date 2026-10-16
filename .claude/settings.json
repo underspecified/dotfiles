@@ -7,7 +7,8 @@
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
     "OTEL_METRICS_EXPORTER": "otlp",
     "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL": "http/protobuf",
-    "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "http://127.0.0.1:4318/v1/metrics"
+    "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "http://127.0.0.1:24318/v1/metrics",
+    "OTEL_EXPORTER_OTLP_METRICS_TIMEOUT": "500"
   },
   "permissions": {
     "allow": [
