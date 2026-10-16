@@ -179,10 +179,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
-- 👍 on planning #37 (time ledger in three views; re-sent to `projects` 10/16, dispatch id 6394):
+- 👍 on planning #37 (time ledger in four views; re-sent to `projects` 10/16, dispatch id 6397):
   1. Seat activity for every seat on every host, no labels.
-  2. Confirm-once task labels: `(label, owners, research Y/N)`, looked up from the registry at roll-up. Stalled = an active research-Y label at 0h for 14 days; STAIC must flag on 10/23.
+  2. Confirm-once task labels: `(label, owners, research Y/N)`, looked up from the registry at roll-up.
   3. Screen Time from TANK's `knowledgeC.db`. It is readable interactively; nightly Full Disk Access is still open.
+  4. A papers dashboard: each active research-Y label, its week's hours and a state Eric confirms. Stalled = 0h for 14 days; on 10/23 STAIC and the safety survey must show stalled, and Irmak's work and Jin's next thing nascent.
 
   A Friday `/weekly-review` follows, the first on 10/23. One decision: ask about new labels in the Friday batch (recommended) or in good-morning daily.
 
