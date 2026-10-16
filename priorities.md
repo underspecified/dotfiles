@@ -185,7 +185,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   3. Screen Time from ActivityWatch on TANK (Eric installs it; no Full Disk Access needed; no history before install).
   4. A papers dashboard: (paper, hours this week, last worked on, state). Stalled = 0h for 14 days; on 10/23 STAIC and the safety survey must show stalled, and Irmak's work and Jin's next thing nascent.
 
-  Owners get full credit; every total counts overlap once. New labels are asked about at the next good-morning and again in the Friday `/weekly-review` batch; the first review is on 10/23.
+  Owners get full credit, and totals are plain sums (simultaneous agents add up). Only Eric's own calendar time is de-overlapped: each minute goes to the most recently started event. New labels are asked about at the next good-morning and again in the Friday `/weekly-review` batch; the first review is on 10/23.
 
   It splits into lnk (telemetry and collectors, TANK first), kaiseki (`seat_time.py`) and then planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
