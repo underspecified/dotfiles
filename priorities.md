@@ -179,15 +179,15 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
-- 👍 on planning #37 (time ledger in four views; no open decisions; re-sent to `projects` 10/16, dispatch id 6399):
-  1. Seat activity for every seat on every host, no labels.
-  2. Confirm-once task labels: `(label, owners, research Y/N)`, looked up from the registry at roll-up.
-  3. Screen Time from TANK's `knowledgeC.db`. It is readable interactively; nightly Full Disk Access is still open.
+- 👍 on planning #37 (time ledger in four views; no open decisions; Eric's four 10/16 changes folded in, sent to `projects` as dispatch id 6405):
+  1. Seat activity for every seat on every host, no labels, from Claude Code telemetry (`active_time`, one collector per host, mapped to seats by `session.id`); transcripts for the backfill and fallback.
+  2. Confirm-once task labels: `(label, owners, research Y/N)`, looked up from the registry at roll-up. Calendar blocks count too, tagged `time: <owners> / research` in the event notes or per series in `meetings.md`.
+  3. Screen Time from ActivityWatch on TANK (Eric installs it; no Full Disk Access needed; no history before install).
   4. A papers dashboard: (paper, hours this week, last worked on, state). Stalled = 0h for 14 days; on 10/23 STAIC and the safety survey must show stalled, and Irmak's work and Jin's next thing nascent.
 
-  New labels are asked about at the next good-morning and again in the Friday `/weekly-review` batch; the first review is on 10/23.
+  Owners get full credit; every total counts overlap once. New labels are asked about at the next good-morning and again in the Friday `/weekly-review` batch; the first review is on 10/23.
 
-  It splits into kaiseki (`seat_time.py`) and then planning.
+  It splits into lnk (telemetry and collectors, TANK first), kaiseki (`seat_time.py`) and then planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
