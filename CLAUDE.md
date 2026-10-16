@@ -65,4 +65,5 @@ Claude Code sends its metrics to an OpenTelemetry Collector on the same host. Lo
 - **Check:** `launchctl print gui/$(id -u)/com.eric.otelcol` or `systemctl --user status otelcol`. `lsof -nP -iTCP:24318 -sTCP:LISTEN` shows only `127.0.0.1`.
 - **Off on one host:** `launchctl bootout gui/$(id -u)/com.eric.otelcol` and `trash ~/Library/LaunchAgents/com.eric.otelcol.plist`, or `systemctl --user disable --now otelcol`. Sessions run fine without it. Re-running the installer turns it back on.
 - **Off everywhere:** remove those `env` keys.
-- **Inherited:** tool subprocesses inherit these keys. An OTel-instrumented program run from a session sends its metrics to `127.0.0.1:24318` and exports no logs or traces. Readers filter on `service.name` (`claude-code`, `claude-code-desktop`).
+- **Read at launch:** a running session starts sending only after a restart.
+- **Not inherited:** tool subprocesses get `CLAUDE_CODE_ENABLE_TELEMETRY` but none of the `OTEL_*` keys, so a session's Bash env never shows them, even in a session that sends (measured 10/17). Readers filter on `service.name` (`claude-code`, `claude-code-desktop`).
