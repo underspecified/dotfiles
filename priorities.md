@@ -184,7 +184,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
-- Install ActivityWatch on TANK for planning #37's Screen Time view (arm64 build v0.14.1, start at login, allow the System Events prompt). There is no history before install, so installing by 10/16 gives the 10/23 review a full week.
+- Install ActivityWatch on TANK for planning #37's Screen Time view: the arm64 build v0.14.1, start at login, allow the System Events prompt, and set Settings → Start of day to 00:00 (the default is 04:00; the ledger uses midnight). There is no history before install, so installing by 10/16 gives the 10/23 review a full week.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
