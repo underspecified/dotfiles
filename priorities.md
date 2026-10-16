@@ -1,6 +1,6 @@
 # Priorities — settings
 
-Last updated: 2026-10-06
+Last updated: 2026-10-16
 
 Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; history lives in git and the nikki logs.
 
@@ -179,7 +179,11 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
-- 👍 on planning #24? good-night would run `/meeting --headless` on the day's recordings and route each overview to its PL. Three decisions: speaker tagging, the nightly cap, and mail vs. auto-edit. It splits across meeting, `projects` (the columns in `meetings.md`) and planning.
+- 👍 on planning #37 (time ledger; sent to `projects` 10/16, dispatch id 6386). Each night, every host's transcripts would yield per-task seat time, which is then labelled by paper and commitment. A Friday `/weekly-review` follows, the first on 10/23. Two decisions:
+  - even split vs. full credit for a task with several commitments;
+  - which commitment the haru-5090 Haru repos serve (5.8h on 10/15, no default).
+
+  It splits into kaiseki (`seat_time.py`) and then planning.
 - 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
 - Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
