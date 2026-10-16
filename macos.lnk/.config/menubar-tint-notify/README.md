@@ -1,6 +1,6 @@
 # menubar-tint-notify
 
-Recolors the WhichSpace menu bar icon to match the menu bar's tint: a white square on a dark menu bar, black on a light one.
+Recolors the WhichSpace menu bar icon to match the menu bar's tint: a light (`#E9F1F3`) square on a dark menu bar, a dark (`#1F1E0B`) one on a light menu bar.
 
 macOS picks the menu bar tint from the wallpaper behind it, not from the system light/dark mode. WhichSpace draws a full-color icon that follows only the system mode, so with a dynamic wallpaper it ends up the wrong color. Other icons are template images, which macOS tints itself. `dark-mode-notify` can't fix this either, because it also sees only the system mode.
 
@@ -20,7 +20,7 @@ Log: `~/Library/Logs/menubar-tint-notify.log`, one watcher line (tint + sample s
 - **Screen Recording permission** is required on each Mac: System Settings → Privacy & Security → Screen & System Audio Recording → `menubar-tint-notify`. Then `launchctl kickstart -k gui/$(id -u)/com.eric.menubar-tint-notify`. Without it, the log says so and the watcher falls back to the appearance proxy, which is wrong over mid-tone wallpapers.
 - **Rebuild** after editing `main.swift`: `swiftc -O main.swift -o /tmp/mtn && mv /tmp/mtn menubar-tint-notify` (replace the inode; never overwrite the running binary), then kickstart. The binary is ad-hoc signed, so **a rebuild can drop the permission** (it did on 10-14, not on 10-15). Check the log after the kickstart. If it says no permission, toggling it off and on doesn't help: remove the entry with **−**, kickstart (the watcher re-requests and re-adds itself), enable it, and kickstart again.
 - **Load now** instead of at the next login: `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.eric.menubar-tint-notify.plist`.
-- **Manual toggle:** `bash ~/.config/menubar-tint-notify/menubar-tint-helper dark` or `light`. The argument names the **menu bar** tint, so `dark` gives a white icon. The watcher overrides it at the next check.
+- **Manual toggle:** `bash ~/.config/menubar-tint-notify/menubar-tint-helper dark` or `light`. The argument names the **menu bar** tint, so `dark` gives the light icon. The watcher overrides it at the next check.
 - **Colors** are hard-coded in the helper and replace whatever is set in WhichSpace's settings.
 
 ## How it reads the tint

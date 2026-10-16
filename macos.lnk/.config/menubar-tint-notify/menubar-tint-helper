@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # Usage: menubar-tint-helper dark|light   (run by menubar-tint-notify)
 # Output: one log line per call on stdout (the LaunchAgent's log)
-# Recolors WhichSpace's icon to match the menu bar tint: a white square on a
-# dark menu bar, black on a light one, with the Space number cut out
+# Recolors WhichSpace's icon to match the menu bar tint: a light (#E9F1F3)
+# square on a dark menu bar, a dark (#1F1E0B) one on a light menu bar, with the
+# Space number cut out
 # (transparent foreground). WhichSpace itself follows the system light/dark
 # mode, not the tint. Writes per-Space overrides on every display, so this
 # replaces any colors set in WhichSpace's settings.
 set -uo pipefail
 
 case "${1:-}" in
-  dark) background="FFFFFF" ;;
-  light) background="000000" ;;
+  dark) background="E9F1F3" ;;
+  light) background="1F1E0B" ;;
   *)
     echo "usage: menubar-tint-helper dark|light" >&2
     exit 2
