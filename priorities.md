@@ -19,8 +19,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - kaiseki: #51, `seat_time.py`. Its issue fixes the JSON shape.
   - planning: #37 itself, built against both contracts, with the dependent parts wired in last.
   - PRs, round 1 on 10/16:
-    - kaiseki #52: **merged 10/16 (8dfb450)** after round 2 (it adds `session` per task and `source: headless`). Deployed on all 7 hosts, and a smoke test over ssh passes everywhere. Waiting for the engineer's `clean`, then destroy the seat.
-    - dotfiles #8: **merged 10/16 (b4597ec)** after round 2, and TANK's live tree is pulled. The shared-host port-squat risk was accepted (option A, my call). Follow-ups are in dotfiles #9. The engineer is doing the TANK post-merge check and the Linux rollout one host at a time, then replies `clean`. After that: destroy the seat, and remove the worktree `~/git/lnk-7-otel-telemetry`.
+    - kaiseki #52: **merged 10/16 (8dfb450)** after round 2 (it adds `session` per task and `source: headless`). Deployed on all 7 hosts, and a smoke test over ssh passes everywhere. The engineer reported clean, and the seat is destroyed. Follow-up: kaiseki #53 (nikki and hansei miss queued prompts too).
+    - dotfiles #8: **merged 10/16 (b4597ec)** after round 2. Telemetry is live on all 7 hosts (results on #7). On llm-jp, the 1password=false edit survived via build-validate-swap (rollback record: llm-jp:/tmp/otel-llmjp-rollback). `lnk pull` ran on the 6 Linux hosts: 2 new links each, and 9 dangling command links removed (also on TANK). The shared-host port-squat risk was accepted (option A, my call). The engineer reported clean; the worktree and branch are gone, and the seat is destroyed. Follow-ups: dotfiles #9, and dispatch #252 (`destroy` fails when the seat's dir was removed).
     - planning #38: 6 blocking. The main one is a design change: never edit a calendar event, and put all answers in the registry. kaiseki #52 also gains `session` per task. Merge order: kaiseki #52, then planning #38.
   - All three implementation plans were signed off on 10/16. Changes I asked for:
     - dotfiles #7: the port-conflict guard must check the listener's pid.
