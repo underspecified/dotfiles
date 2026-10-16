@@ -1,0 +1,27 @@
+# Claude Code metrics -> local JSONL. Installed by the dotfiles repo's
+# installers/all/install_otelcol.sh, which reverts edits made to installed copies:
+# edit installers/all/otelcol/config.yaml in the repo, then re-run the installer.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 127.0.0.1:24318
+exporters:
+  file:
+    path: ${env:HOME}/.local/state/otelcol/metrics.jsonl
+    create_directory: true
+    directory_permissions: "0700"
+    rotation:
+      max_megabytes: 50
+      max_days: 30
+      max_backups: 20
+service:
+  telemetry:
+    logs:
+      level: warn
+    metrics:
+      level: none
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [file]

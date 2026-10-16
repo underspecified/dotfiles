@@ -54,3 +54,15 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 
 - `installers/nosudo/` is independent of `installers/linux/`. It is user-space only, with one idempotent `install_<tool>.sh` per tool. It pins btop v1.3.2 (the last C++20 release with GPU support) and builds nvtop NVIDIA-only, to avoid the libdrm dev packages.
 - The dispatcher does **not** pass `--host` through (`lnk init` has no `--host`), so on a nosudo box run `lnk pull --host nosudo` once after init.
+
+## Telemetry
+
+Claude Code sends its metrics to an OpenTelemetry Collector on the same host. Logs and traces stay off.
+
+- **On:** the `CLAUDE_CODE_ENABLE_TELEMETRY` and `OTEL_*` keys in `.claude/settings.json` `env`.
+- **Collector:** `installers/all/install_otelcol.sh` installs it. Every installer runs it. To change it, edit `installers/all/otelcol/` and re-run the script.
+- **File:** `~/.local/state/otelcol/metrics.jsonl`, one OTLP/JSON request per line, rotated at 50 MB. The lines carry the account email and ids, so the directory is owner-only (0700).
+- **Check:** `launchctl print gui/$(id -u)/com.eric.otelcol` or `systemctl --user status otelcol`. `lsof -nP -iTCP:24318 -sTCP:LISTEN` shows only `127.0.0.1`.
+- **Off on one host:** `launchctl bootout gui/$(id -u)/com.eric.otelcol` and `trash ~/Library/LaunchAgents/com.eric.otelcol.plist`, or `systemctl --user disable --now otelcol`. Sessions run fine without it. Re-running the installer turns it back on.
+- **Off everywhere:** remove those `env` keys.
+- **Inherited:** tool subprocesses inherit these keys. An OTel-instrumented program run from a session sends its metrics to `127.0.0.1:24318` and exports no logs or traces. Readers filter on `service.name` (`claude-code`, `claude-code-desktop`).

@@ -1,0 +1,13 @@
+# Claude Code metrics collector. Installed by the dotfiles repo's
+# installers/all/install_otelcol.sh, which reverts edits made to installed copies:
+# edit installers/all/otelcol/otelcol.service in the repo, then re-run the installer.
+[Unit]
+Description=OpenTelemetry Collector: Claude Code metrics to ~/.local/state/otelcol
+
+[Service]
+ExecStart=%h/.local/bin/otelcol --config %h/.config/otelcol/config.yaml
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
