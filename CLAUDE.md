@@ -40,13 +40,17 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 
 - Commit messages: `lnk: …` or `<component>: …`. Commits are SSH-signed (`gpg.format = ssh`, verified against `~/.config/git/allowed_signers`).
 - Auth prefers SSH.
-  - **macOS:** the 1Password agent plus an additive, passphrase-free `IdentityFile ~/.ssh/hri_jp`. 1Password does **not** serve `hri_jp` (its `agent.toml`), so pushes, fleet ssh and commit signing (`.config/git/macos.conf`, included only under `/Users/`) use the file and never wait on 1Password. If 1Password served it too, ssh would merge the two into one identity, and a locked 1Password would block the file.
-  - **Linux:** ssh-agent via keychain, but commit signing reads `~/.ssh/hri_jp` directly (`.config/git/linux.conf`, included only under `/home/`), because keychain comes back empty after a reboot.
+  - **git, every host:** `.config/git/config` sets `core.sshCommand` (agent off, `-i ~/.ssh/hri_jp`) and `user.signingkey = ~/.ssh/hri_jp`.
+    - Transport never asks an agent. A remote that needs a key other than `hri_jp` sets a repo-local `core.sshCommand`.
+    - Signing (`ssh-keygen -Y sign`) still asks the agent in `SSH_AUTH_SOCK` whether it holds `hri_jp`, then signs from the file, because 1Password doesn't serve it (`agent.toml`). If 1Password ever serves `hri_jp` again, the fallback is a `gpg.ssh.program` wrapper that runs `ssh-keygen` with `SSH_AUTH_SOCK` unset.
+    - Find a signing-key override with `git config --show-origin --get user.signingkey`.
+  - **Other ssh, macOS:** the 1Password agent plus an additive, passphrase-free `IdentityFile ~/.ssh/hri_jp`. 1Password does **not** serve `hri_jp` (its `agent.toml`); if it did, ssh would merge the two into one identity, and a locked 1Password would block the file.
+  - **Other ssh, Linux:** ssh-agent via keychain.
   - **HTTPS fallback:** `gh auth git-credential` for GitHub, and the in-memory `cache` helper for Overleaf (HTTPS-only). Never the plaintext `store` helper.
   - **gh on Linux:** log in with `gh auth login --insecure-storage`, which keeps the token in `~/.config/gh/hosts.yml` (untracked). The desktop keyring stays locked after a reboot until someone logs into the desktop, and gh then reports the token as invalid (llm-jp-2, 10-10).
 - `hooks/` is every repo's hooks dir: `core.hooksPath` is set in `.config/git/config`. One script, `_chain`, is symlinked under each hook name.
   - It runs the repo's **own** `.git/hooks/<name>` first, because `core.hooksPath` replaces the hooks dir wholesale and would otherwise silently disable per-repo hooks everywhere.
-  - Guard: `pre-commit` blocks an `autoMode` key in a staged `.claude/settings.json`.
+  - Guards: `pre-commit` blocks an `autoMode` key in a staged `.claude/settings.json`. `pre-commit` and `pre-merge-commit` block a repo-local `user.signingkey` in a repo that signs.
 
 ## Bootstrap
 

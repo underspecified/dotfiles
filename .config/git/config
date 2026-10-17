@@ -1,19 +1,21 @@
-# email + signingkey come from the machine-local include below,
-# pulled from 1Password on bootstrap (see installers/all/op-config-pull.sh
-# and bootstrap_finish.sh's pull_private_configs_from_1password step).
+# name, email and a public-key signingkey literal come from the machine-local
+# include below, pulled from 1Password on bootstrap (see
+# installers/all/op-config-pull.sh and bootstrap_finish.sh's
+# pull_private_configs_from_1password step). The literal is overridden below for
+# signing, but installers/all/git-allowed-signers-regen.sh still reads it to
+# build allowed_signers.
 
 [include]
 	path = ~/.config/git/identity.conf
 
-# macOS only: repos under /Users/ (Linux homes are /home/). Signs from the
-# on-disk ~/.ssh/hri_jp so a locked 1Password can't block commits.
-[includeIf "gitdir:/Users/"]
-	path = ~/.config/git/macos.conf
-
-# Linux only: repos under /home/. Same idea: sign from ~/.ssh/hri_jp so an
-# empty agent after a reboot can't block commits.
-[includeIf "gitdir:/home/"]
-	path = ~/.config/git/linux.conf
+# Sign from the on-disk key on every machine and in every repo (dotfiles#10).
+# This comes after the include, so it beats identity.conf's public-key literal,
+# which only an agent can sign with. git >= 2.34 expands the ~.
+# ssh-keygen still asks the agent in SSH_AUTH_SOCK whether it holds the key,
+# then signs from the file, because 1Password doesn't serve hri_jp. If it ever
+# does again, add a gpg.ssh.program wrapper that unsets SSH_AUTH_SOCK.
+[user]
+	signingkey = ~/.ssh/hri_jp
 
 [color]
 	ui = auto
@@ -29,6 +31,10 @@
 	excludesfile = ~/.config/git/ignore
 	whitespace = trailing-space,space-before-tab
 	hooksPath = ~/.config/lnk/hooks
+	# git's ssh never asks an agent (dotfiles#10): 1Password prompts or refuses
+	# when nobody is at the desk, and keychain's agent is empty after a reboot.
+	# Non-git ssh keeps its agent (.ssh/config.d/agent.conf).
+	sshCommand = ssh -o IdentityAgent=none -o IdentitiesOnly=yes -i ~/.ssh/hri_jp
 
 [init]
 	defaultBranch = main
