@@ -1,6 +1,9 @@
-# name + email come from the machine-local include below,
-# pulled from 1Password on bootstrap (see installers/all/op-config-pull.sh
-# and bootstrap_finish.sh's pull_private_configs_from_1password step).
+# name, email and a public-key signingkey literal come from the machine-local
+# include below, pulled from 1Password on bootstrap (see
+# installers/all/op-config-pull.sh and bootstrap_finish.sh's
+# pull_private_configs_from_1password step). The literal is overridden below for
+# signing, but installers/all/git-allowed-signers-regen.sh still reads it to
+# build allowed_signers.
 
 [include]
 	path = ~/.config/git/identity.conf
@@ -8,6 +11,9 @@
 # Sign from the on-disk key on every machine and in every repo (dotfiles#10).
 # This comes after the include, so it beats identity.conf's public-key literal,
 # which only an agent can sign with. git >= 2.34 expands the ~.
+# ssh-keygen still asks the agent in SSH_AUTH_SOCK whether it holds the key,
+# then signs from the file, because 1Password doesn't serve hri_jp. If it ever
+# does again, add a gpg.ssh.program wrapper that unsets SSH_AUTH_SOCK.
 [user]
 	signingkey = ~/.ssh/hri_jp
 

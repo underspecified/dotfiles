@@ -26,7 +26,7 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 `git commit` is allowed; `git_gate.sh` hook nags about doc updates — see `hooks/commit_guidelines.md`. Prefer `git -C <dir>` over `cd <dir> && git ...`.
 
 - `git add` a new file before `git commit -- <path>`; an untracked path fails the pathspec.
-- Signing refused → `git config --show-origin --get user.signingkey`. If a repo-local value shows, `git config --unset user.signingkey` and retry once; otherwise leave the work staged and tell Eric once.
+- Signing refused → run `git config --show-origin --get user.signingkey`, leave the work staged, and tell Eric once, naming the file the key comes from. Don't unset it yourself.
 
 ## Safety Rules (Hook-Enforced)
 
