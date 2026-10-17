@@ -33,7 +33,7 @@ fi
 
 # Hooks with no lnk-side guard: hand off entirely. `exec` keeps stdin intact,
 # which pre-push and post-rewrite depend on.
-if [ "${hook}" != "pre-commit" ]; then
+if [ "${hook}" != "pre-commit" ] && [ "${hook}" != "pre-merge-commit" ]; then
   if [ -x "${own}" ] && [ "${own_is_self}" -eq 0 ]; then
     export LNK_HOOK_CHAINED=1
     exec "${own}" "$@"
@@ -41,29 +41,33 @@ if [ "${hook}" != "pre-commit" ]; then
   exit 0
 fi
 
-# --- pre-commit: repo's own hook first, then the lnk guards -------------------
-# pre-commit receives no stdin, so running them in sequence is safe.
+# --- pre-commit / pre-merge-commit: repo's own hook first, then lnk guards ----
+# Neither receives stdin, so running them in sequence is safe.
 if [ -x "${own}" ] && [ "${own_is_self}" -eq 0 ]; then
   LNK_HOOK_CHAINED=1 "${own}" "$@" || exit $?
 fi
 
-# --- signingkey guard (dotfiles#10) ------------------------------------------
-# The global config signs from ~/.ssh/hri_jp with no agent. A repo's own
-# user.signingkey beats it, and a public-key literal there needs an agent that
-# holds the key, so the commit dies at signing ("Couldn't find key in agent?").
+# --- signingkey guard (dotfiles#10), commits and merge commits ---------------
+# The global config signs from ~/.ssh/hri_jp. A repo's own user.signingkey
+# beats it, and a public-key literal there needs an agent that holds the key,
+# so the commit dies at signing ("Couldn't find key in agent?").
 # A repo that doesn't sign never reaches the key, so it passes.
 scope="$(git config --show-scope --get user.signingkey 2>/dev/null | cut -f1)"
 case "${scope}" in
   local | worktree)
     if [ "$(git config --type=bool --get commit.gpgsign)" = "true" ] &&
-      [ "$(git config --type=path --get user.signingkey)" != "${HOME}/.ssh/hri_jp" ]; then
-      echo "pre-commit: BLOCKED — this repo overrides the global signing key (~/.ssh/hri_jp):" >&2
+      ! [ "$(git config --type=path --get user.signingkey)" -ef "${HOME}/.ssh/hri_jp" ]; then
+      echo "${hook}: BLOCKED — this repo overrides the global signing key (~/.ssh/hri_jp):" >&2
       git config --show-origin --get user.signingkey >&2
       echo "  To fix: git config --${scope} --unset user.signingkey" >&2
+      echo "  Or commit unsigned: git -c commit.gpgsign=false <commit|merge> ..." >&2
       exit 1
     fi
     ;;
 esac
+
+# The autoMode guard below is for pre-commit only.
+[ "${hook}" = "pre-commit" ] || exit 0
 
 # --- autoMode guard ----------------------------------------------------------
 # Claude Code's /auto-mode-setup regenerates an `autoMode` block into
