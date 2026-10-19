@@ -23,6 +23,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 - **Hansei 10/16 picks (Eric "do it" at good-morning 10/19, via `projects`):**
   - **Deaf seats, dispatch #253 (bug, assigned 10/19):** a seat whose claude is alive but whose waiter is dead never reads its mail, and `send` says `woke: false`. hardware 2.95 d and RwB 2.4 d on 10/19; 3rd time in 3 weeks for hardware.
   - **Analyzer counts, kaiseki #56 (bug, assigned 10/19):** subagents counted as sessions, nikki message counts ~3× for admin, and invocation advice that contradicts the rules. #53 and #3 follow, one PR each. The global CLAUDE.md's "never explicit interpreter" line, the source of the contradiction, is fixed.
+  - **kaiseki #57 (the #56 PR):** round 2 at b6c813a has both blocking items fixed. Eric chose C (remove the script-invocation check), but the engineer had already built the rewrite. Asked Eric whether to keep it.
+  - **Remote PLs in good-night, planning #43 (plan, waiting on Eric's 👍):** nikki and the deaf-seat check skip remote roster seats (`active_projects.py:48`), so lab's day never reaches the daily log.
   - **Headless security reviews:** the security-guidance plugin's agentic commit reviewer (layer 3) spawns the headless runs. Opus has been pinned since 9/30 (5b73a9d, Eric via lab). Over the week: 76 runs, 28 sandbox blocks, the same diff reviewed twice, and 0 confirmed findings in 26 Opus runs. **Waiting on Eric for the cost call**, then a one-line `env` change.
   - llm-jp's rollback record is at llm-jp:/tmp/otel-llmjp-rollback. The shared-host port-squat risk was accepted (option A, my call).
 - **planning:** #16 merged (9f6914f, PR #21); tonight's good-night is the first with DATE pinning. #24 (meetings) waits on Eric.
