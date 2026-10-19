@@ -44,6 +44,6 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 
 ## Script Invocation
 
-- Always use `~/` home-relative paths, never relative, never explicit interpreter
+- Always use `~/` home-relative paths, never relative; never `python`/`python3` directly
 - Python: `uv run ~/path/script.py args`
 - Bash: `bash ~/path/script.sh args`
