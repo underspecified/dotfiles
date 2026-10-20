@@ -11,9 +11,10 @@
 // wallpaper while macOS draws white glyphs. Needs Screen Recording permission;
 // without it, falls back to that proxy. While the display is off there is
 // nothing to capture, so it keeps the last tint.
-// Samples at start, on tint/mode change, Space change, wake, display wake,
-// WhichSpace launch, and every 10s: a dynamic wallpaper ("Macintosh" animates
-// its colors) shifts with no notification.
+// Samples at start, on tint/mode change, Space change, wake, display wake, and
+// every 10s: a dynamic wallpaper ("Macintosh" animates its colors) shifts with
+// no notification. Each sample also reruns the command when WhichSpace has
+// (re)started or the displays changed since the last run.
 // Debug: MENUBAR_TINT_DUMP=<dir> writes each captured sample there.
 // Build: swiftc -O main.swift -o /tmp/mtn && mv /tmp/mtn menubar-tint-notify
 
@@ -120,6 +121,7 @@ struct CaptureError: Error, CustomStringConvertible { let description: String }
 }
 
 var captureFailing = false
+var inconclusive = false
 
 // nil = inconclusive this time: keep the last tint. A failed capture keeps it
 // too (it fails whenever the display is off); only a missing permission falls
@@ -136,7 +138,10 @@ func readTint() async -> (tint: String, detail: String)? {
         if captureFailing { warn("capture works again") }
         captureFailing = false
         dump(sample)
-        return classify(sample)
+        let result = classify(sample)
+        if result == nil, !inconclusive { warn("inconclusive sample, keeping the last tint until one is clear") }
+        inconclusive = result == nil
+        return result
     } catch {
         if !captureFailing { warn("capture failed, keeping the last tint until it works: \(error)") }
         captureFailing = true
@@ -144,7 +149,25 @@ func readTint() async -> (tint: String, detail: String)? {
     }
 }
 
+// What the command last colored. A WhichSpace restart drops the colors, and
+// the helper writes only connected displays. NSWorkspace posts no launch
+// notification for WhichSpace (an LSUIElement app), so each sample compares.
+struct Target: Equatable {
+    let whichSpace: pid_t?
+    let displays: [CGDirectDisplayID]
+
+    @MainActor static func current() -> Target {
+        Target(
+            whichSpace: NSRunningApplication.runningApplications(withBundleIdentifier: "io.gechr.WhichSpace")
+                .first?.processIdentifier,
+            displays: NSScreen.screens.compactMap {
+                ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
+            }.sorted())
+    }
+}
+
 var lastTint: String?
+var lastTarget: Target?
 var sampling = false
 var pending: (force: Bool, queued: Bool) = (false, false)
 
@@ -156,9 +179,15 @@ func notify(force: Bool = false) {
     }
     sampling = true
     Task { @MainActor in
-        if let (tint, detail) = await readTint(), force || tint != lastTint {
+        let target = Target.current()
+        var stale = ""
+        if let lastTarget, target.whichSpace != nil, target != lastTarget {
+            stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started" : "; displays changed"
+        }
+        if let (tint, detail) = await readTint(), force || tint != lastTint || !stale.isEmpty {
             lastTint = tint
-            warn("\(tint) (\(detail))")
+            lastTarget = target
+            warn("\(tint) (\(detail)\(stale))")
             let task = Process()
             task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
             task.arguments = command + [tint]
@@ -201,12 +230,6 @@ center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue:
 }
 center.addObserver(forName: NSWorkspace.screensDidWakeNotification, object: nil, queue: .main) { _ in
     notifySoon(after: 1)
-}
-center.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { note in
-    let launched = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
-    if launched?.bundleIdentifier == "io.gechr.WhichSpace" {
-        notifySoon(after: 1, force: true)
-    }
 }
 Timer.scheduledTimer(withTimeInterval: pollSeconds, repeats: true) { _ in
     MainActor.assumeIsolated { notify() }
