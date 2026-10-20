@@ -8,7 +8,7 @@ macOS picks the menu bar tint from the wallpaper behind it, not from the system 
 
 | File | Role |
 |------|------|
-| `main.swift` | Watcher source. Runs `<command> dark\|light` at start and whenever the sampled tint changes. |
+| `main.swift` | Watcher source. Runs `<command> dark\|light` at start, whenever the sampled tint changes, and when WhichSpace restarts or the displays change. |
 | `menubar-tint-notify` | Compiled watcher, committed so other Macs need no build step. |
 | `menubar-tint-helper` | Sets WhichSpace's per-Space colors via AppleScript. Skips if WhichSpace isn't running. |
 | `~/Library/LaunchAgents/com.eric.menubar-tint-notify.plist` | Runs the watcher at login, keeps it alive. Tracked in `.lnk.macos`. |
@@ -27,9 +27,15 @@ Log: `~/Library/Logs/menubar-tint-notify.log`, one watcher line (tint + sample s
 
 It captures the left end of the main display's menu bar with ScreenCaptureKit (Apple logo + app name, always present at a fixed spot). The median luminance is the backdrop; pixels far from it are glyphs. Mostly lighter glyphs means white glyphs, so the tint is `dark`. This copies the color macOS actually drew, so there is no threshold to tune.
 
-It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a system mode change, Space change, wake, display wake, WhichSpace launch, and every 10s, because a dynamic wallpaper shifts with no notification ("Macintosh" animates its colors continuously). The capture shows no screen-recording indicator.
+It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a system mode change, Space change, wake, display wake, and every 10s, because a dynamic wallpaper shifts with no notification ("Macintosh" animates its colors continuously). The capture shows no screen-recording indicator.
 
-While the display is off, ScreenCaptureKit lists no displays and every capture fails. The watcher logs that once ("capture failed, keeping the last tint") and keeps the last sampled tint until the display wakes. It used to fall back to the proxy here, which recolored WhichSpace wrong overnight (10-14).
+Each check also reruns the helper, even with no tint change, when WhichSpace's pid or the set of displays differs from the last run. A relaunched WhichSpace shows the colors it last saved, which can be stale, and the helper writes only connected displays. This catches a WhichSpace that starts after the watcher (login) or restarts, within one poll. NSWorkspace posts no launch notification for WhichSpace (an `LSUIElement` app), so a launch observer never fired (10-20).
+
+- **Settling:** a WhichSpace counts as running only once it has finished launching and been up 2s. Earlier, it may not be scriptable yet, or may load its saved colors over the helper's. The watcher rechecks when the 2s are up.
+- **Repair without a sample:** if the sample is inconclusive at that moment, it repaints the last tint.
+- **Retries:** a helper run counts only if it exits 0. A failed run logs "command failed" once and is retried at every check.
+
+While the display is off, ScreenCaptureKit lists no displays and every capture fails. The watcher logs that once ("capture failed, keeping the last tint") and keeps the last sampled tint until the display wakes. It used to fall back to the proxy here, which recolored WhichSpace wrong overnight (10-14). A sample with too few glyph pixels to judge also keeps the last tint. It logs "inconclusive sample" once per run of them, and "sample conclusive again" when the run ends.
 
 ## What didn't work (macOS 27)
 
