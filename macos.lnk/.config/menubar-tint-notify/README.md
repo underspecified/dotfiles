@@ -31,7 +31,11 @@ It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a
 
 Each check also reruns the helper, even with no tint change, when WhichSpace's pid or the set of displays differs from the last run. A relaunched WhichSpace shows the colors it last saved, which can be stale, and the helper writes only connected displays. This catches a WhichSpace that starts after the watcher (login) or restarts, within one poll. NSWorkspace posts no launch notification for WhichSpace (an `LSUIElement` app), so a launch observer never fired (10-20).
 
-While the display is off, ScreenCaptureKit lists no displays and every capture fails. The watcher logs that once ("capture failed, keeping the last tint") and keeps the last sampled tint until the display wakes. It used to fall back to the proxy here, which recolored WhichSpace wrong overnight (10-14). A sample with too few glyph pixels to judge also keeps the last tint, and logs "inconclusive sample" once per run of them.
+- **Settling:** a WhichSpace counts as running only once it has finished launching and been up 2s. Earlier, it may not be scriptable yet, or may load its saved colors over the helper's. The watcher rechecks when the 2s are up.
+- **Repair without a sample:** if the sample is inconclusive at that moment, it repaints the last tint.
+- **Retries:** a helper run counts only if it exits 0. A failed run logs "command failed" once and is retried at every check.
+
+While the display is off, ScreenCaptureKit lists no displays and every capture fails. The watcher logs that once ("capture failed, keeping the last tint") and keeps the last sampled tint until the display wakes. It used to fall back to the proxy here, which recolored WhichSpace wrong overnight (10-14). A sample with too few glyph pixels to judge also keeps the last tint. It logs "inconclusive sample" once per run of them, and "sample conclusive again" when the run ends.
 
 ## What didn't work (macOS 27)
 

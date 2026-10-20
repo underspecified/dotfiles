@@ -90,16 +90,20 @@ if !CGPreflightScreenCaptureAccess() {
 
 struct CaptureError: Error, CustomStringConvertible { let description: String }
 
+extension NSScreen {
+    var displayID: CGDirectDisplayID? {
+        (deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
+    }
+}
+
 // The left end of the main display's menu bar, as drawn on screen.
 @Sendable func captureMenuBar() async throws -> CGImage {
     let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
     guard let display = content.displays.first(where: { $0.displayID == CGMainDisplayID() }) ?? content.displays.first
     else { throw CaptureError(description: "no display to capture (display off?)") }
     let screen = await MainActor.run {
-        NSScreen.screens.first {
-            ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
-                == display.displayID
-        }.map { (barHeight: $0.frame.maxY - $0.visibleFrame.maxY, scale: $0.backingScaleFactor) }
+        NSScreen.screens.first { $0.displayID == display.displayID }
+            .map { (barHeight: $0.frame.maxY - $0.visibleFrame.maxY, scale: $0.backingScaleFactor) }
     }
     let scale = screen?.scale ?? 2
     let rect = CGRect(x: 0, y: 0, width: sampleWidth, height: max(screen?.barHeight ?? 0, 24))
@@ -140,34 +144,46 @@ func readTint() async -> (tint: String, detail: String)? {
         dump(sample)
         let result = classify(sample)
         if result == nil, !inconclusive { warn("inconclusive sample, keeping the last tint until one is clear") }
+        if result != nil, inconclusive { warn("sample conclusive again") }
         inconclusive = result == nil
         return result
     } catch {
         if !captureFailing { warn("capture failed, keeping the last tint until it works: \(error)") }
         captureFailing = true
+        inconclusive = false
         return nil
     }
 }
 
-// What the command last colored. A WhichSpace restart drops the colors, and
-// the helper writes only connected displays. NSWorkspace posts no launch
-// notification for WhichSpace (an LSUIElement app), so each sample compares.
+// A WhichSpace counts as running once it has finished launching and been up
+// this long. Earlier it may not be scriptable yet, or may still be loading its
+// saved colors over the ones the helper writes.
+let settleSeconds: TimeInterval = 2
+
+// What the command last colored. A relaunched WhichSpace shows the colors it
+// last saved, which can be stale, and the helper writes only connected
+// displays. NSWorkspace posts no launch notification for WhichSpace (an
+// LSUIElement app), so each sample compares.
 struct Target: Equatable {
     let whichSpace: pid_t?
     let displays: [CGDirectDisplayID]
 
-    @MainActor static func current() -> Target {
-        Target(
-            whichSpace: NSRunningApplication.runningApplications(withBundleIdentifier: "io.gechr.WhichSpace")
-                .first?.processIdentifier,
-            displays: NSScreen.screens.compactMap {
-                ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
-            }.sorted())
+    // settlesIn: seconds until a WhichSpace that is still settling counts.
+    @MainActor static func current() -> (target: Target, settlesIn: TimeInterval?) {
+        let instance = NSRunningApplication.runningApplications(withBundleIdentifier: "io.gechr.WhichSpace")
+            .first { !$0.isTerminated }
+        let age = instance?.launchDate.map { -$0.timeIntervalSinceNow } ?? settleSeconds
+        let settled = instance?.isFinishedLaunching == true && age >= settleSeconds
+        let target = Target(
+            whichSpace: settled ? instance?.processIdentifier : nil,
+            displays: NSScreen.screens.compactMap(\.displayID).sorted())
+        return (target, instance != nil && age < settleSeconds ? settleSeconds - age + 0.1 : nil)
     }
 }
 
 var lastTint: String?
 var lastTarget: Target?
+var commandFailing = false
 var sampling = false
 var pending: (force: Bool, queued: Bool) = (false, false)
 
@@ -179,24 +195,37 @@ func notify(force: Bool = false) {
     }
     sampling = true
     Task { @MainActor in
-        let target = Target.current()
+        let (target, settlesIn) = Target.current()
+        if let settlesIn { notifySoon(after: settlesIn) }
         var stale = ""
         if let lastTarget, target.whichSpace != nil, target != lastTarget {
             stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started" : "; displays changed"
         }
-        if let (tint, detail) = await readTint(), force || tint != lastTint || !stale.isEmpty {
-            lastTint = tint
-            lastTarget = target
-            warn("\(tint) (\(detail)\(stale))")
+        // A restart or display change needs no fresh sample: repaint the last tint.
+        let sample = await readTint() ?? (stale.isEmpty ? nil : lastTint.map { (tint: $0, detail: "last tint") })
+        if let (tint, detail) = sample, force || commandFailing || tint != lastTint || !stale.isEmpty {
+            // While the command keeps failing, its own line is the only one per retry.
+            if !commandFailing { warn("\(tint) (\(detail)\(stale))") }
             let task = Process()
             task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
             task.arguments = command + [tint]
+            var ok = false
             do {
                 try task.run()
                 task.waitUntilExit()
+                ok = task.terminationStatus == 0
             } catch {
                 warn("\(error)")
             }
+            // Only a run that worked counts as done; a failed one is retried at every check.
+            if ok {
+                if commandFailing { warn("command works again") }
+                lastTint = tint
+                lastTarget = target
+            } else if !commandFailing {
+                warn("command failed, retrying at every check")
+            }
+            commandFailing = !ok
         }
         sampling = false
         if pending.queued {
