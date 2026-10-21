@@ -18,7 +18,9 @@
 // no notification. Each sample also reruns the command when WhichSpace has
 // (re)started or the displays changed since the last run.
 // Debug: MENUBAR_TINT_DUMP=<dir> writes each captured sample there.
-// Build: swiftc -O main.swift -o /tmp/mtn && mv /tmp/mtn menubar-tint-notify
+// Build (signing identity from setup-signing.sh; see the README):
+//   swiftc -O main.swift -o /tmp/mtn && codesign -f -s menubar-tint-notify \
+//     --identifier com.eric.menubar-tint-notify /tmp/mtn && mv /tmp/mtn menubar-tint-notify
 
 import Cocoa
 import ScreenCaptureKit

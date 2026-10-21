@@ -11,6 +11,7 @@ macOS picks the menu bar tint from the wallpaper behind it, not from the system 
 | `main.swift` | Watcher source. Runs `<command> dark\|light [RRGGBB]` at start, whenever the sampled tint or glyph color changes, and when WhichSpace restarts or the displays change. |
 | `menubar-tint-notify` | Compiled watcher, committed so other Macs need no build step. |
 | `menubar-tint-helper` | Sets WhichSpace's per-Space colors via AppleScript: `RRGGBB` if given, else the tint's fixed color. Skips if WhichSpace isn't running. |
+| `setup-signing.sh` | One-time setup of the signing identity used by the rebuild. |
 | `~/Library/LaunchAgents/com.eric.menubar-tint-notify.plist` | Runs the watcher at login, keeps it alive. Tracked in `.lnk.macos`. |
 
 Log: `~/Library/Logs/menubar-tint-notify.log`, one watcher line (tint, sampled hex, sample stats) and one helper line (the hex it painted) per recolor.
@@ -18,7 +19,9 @@ Log: `~/Library/Logs/menubar-tint-notify.log`, one watcher line (tint, sampled h
 ## Usage
 
 - **Screen Recording permission** is required on each Mac: System Settings → Privacy & Security → Screen & System Audio Recording → `menubar-tint-notify`. Then `launchctl kickstart -k gui/$(id -u)/com.eric.menubar-tint-notify`. Without it, the log says so and the watcher falls back to the appearance proxy, which is wrong over mid-tone wallpapers.
-- **Rebuild** after editing `main.swift`: `swiftc -O main.swift -o /tmp/mtn && mv /tmp/mtn menubar-tint-notify` (replace the inode; never overwrite the running binary), then kickstart. The binary is ad-hoc signed, so **a rebuild can drop the permission** (it did on 10-14, not on 10-15). Check the log after the kickstart. If it says no permission, toggling it off and on doesn't help: remove the entry with **−**, kickstart (the watcher re-requests and re-adds itself), enable it, and kickstart again.
+- **Signing setup**, once, on the Mac that rebuilds: `bash setup-signing.sh`. It creates the self-signed code-signing identity `menubar-tint-notify` in the login keychain and lets `codesign` use it. Only a Mac holding that key can rebuild; other Macs run the committed binary.
+- **Rebuild** after editing `main.swift`: `swiftc -O main.swift -o /tmp/mtn && codesign -f -s menubar-tint-notify --identifier com.eric.menubar-tint-notify /tmp/mtn && mv /tmp/mtn menubar-tint-notify` (replace the inode; never overwrite the running binary), then kickstart. The designated requirement names the identifier and the certificate, not one build, so **a rebuild keeps Screen Recording** on every Mac. Ad-hoc builds (until 10-21) didn't: each rebuild could drop it.
+- **Permission lost anyway** (the first signed build replaces an ad-hoc grant): the log says no permission, and toggling it off and on doesn't help. Remove the entry with **−**, kickstart (the watcher re-requests and re-adds itself), enable it, and kickstart again.
 - **Load now** instead of at the next login: `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.eric.menubar-tint-notify.plist`.
 - **Manual toggle:** `bash ~/.config/menubar-tint-notify/menubar-tint-helper dark` or `light`, optionally followed by an sRGB hex color (`light 2B2A26`). The argument names the **menu bar** tint, so `dark` gives the light icon. The watcher overrides it at its next recolor.
 - **Colors** replace whatever is set in WhichSpace's settings. The fixed fallbacks are hard-coded in the helper; the watcher uses them when it has no sample (no Screen Recording) or too few solid glyph pixels.
