@@ -21,8 +21,8 @@ case "${1:-}" in
   *) usage ;;
 esac
 if [[ -n "${2:-}" ]]; then
-  [[ "$2" =~ ^[0-9A-Fa-f]{6}$ ]] || usage
-  background="$2"
+  [[ "${2}" =~ ^[0-9A-Fa-f]{6}$ ]] || usage
+  background="${2}"
 fi
 foreground="00000000"
 stamp="$(date '+%F %T') $1"

@@ -36,6 +36,10 @@ struct RGB: Equatable {
     var hex: String { String(format: "%02X%02X%02X", r, g, b) }
 }
 
+extension RGB {
+    init(_ c: [Double]) { self.init(r: Int(c[0].rounded()), g: Int(c[1].rounded()), b: Int(c[2].rounded())) }
+}
+
 // A color change of at most this (in every channel, 0-255) doesn't recolor, so
 // a slowly animating wallpaper doesn't rerun the command at every poll.
 let colorThreshold = 8
@@ -46,13 +50,19 @@ func moved(_ a: RGB?, _ b: RGB?) -> Bool {
     return max(abs(a.r - b.r), abs(a.g - b.g), abs(a.b - b.b)) > colorThreshold
 }
 
-// color: the glyph color to paint, or nil for the helper's fixed one.
+// color: the color to paint, or nil when the sample gives none (the proxy, or
+// no trustworthy glyph color).
 struct Sample { let tint: String, color: RGB?, detail: String }
 
 // The Apple logo and app name are drawn solid white or black, but the status
 // items around WhichSpace (input source, clock) let this much of the wallpaper
 // through. Empirical: 10-13% on two wallpapers (10-21).
 let backdropShare = 0.12
+
+// Menu bar glyphs are near-neutral. A solid color with a wider channel spread
+// (0-255) is app content under the strip: a full-screen Space with the menu bar
+// hidden, or an open menu's highlight.
+let maxGlyphSpread = 16.0
 
 // Glyph pixels are those far from the backdrop (the median luminance); the
 // tint is dark when most of them are lighter than it (white glyphs). The solid
@@ -83,21 +93,25 @@ func classify(_ image: CGImage) -> Sample? {
     let tint = lighter.count * 2 > glyph.count ? "dark" : "light"
     let side = tint == "dark" ? lighter : glyph.filter { lum[$0] < backdrop }
     let solid = side.sorted { abs(lum[$0] - backdrop) > abs(lum[$1] - backdrop) }.prefix(side.count / 10)
-    // nil with too few solid pixels to trust: the helper's fixed color.
+    // No color from this sample with too few solid pixels to trust, or a solid
+    // color that isn't near-neutral. It is on the tint's side of the backdrop by
+    // construction: every solid pixel is, by more than 0.2.
     var color: RGB?
+    var glyphHex = "none"
     if solid.count >= 12 {
-        let ground = lum.indices.filter { abs(lum[$0] - backdrop) < 0.05 }
         func mean(_ of: some Collection<Int>, _ channel: Int) -> Double {
             of.map { Double(px[$0 * 4 + channel]) }.reduce(0, +) / Double(of.count)
         }
-        let c = (0..<3).map {
-            Int((mean(solid, $0) * (1 - backdropShare) + mean(ground, $0) * backdropShare).rounded())
+        let glyphColor = (0..<3).map { mean(solid, $0) }
+        glyphHex = RGB(glyphColor).hex
+        if glyphColor.max()! - glyphColor.min()! <= maxGlyphSpread {
+            let ground = lum.indices.filter { abs(lum[$0] - backdrop) < 0.05 }
+            color = RGB((0..<3).map { glyphColor[$0] * (1 - backdropShare) + mean(ground, $0) * backdropShare })
         }
-        color = RGB(r: c[0], g: c[1], b: c[2])
     }
     let detail = String(
-        format: "backdrop %.2f, %d glyph px, %d%% lighter, %d solid px",
-        backdrop, glyph.count, lighter.count * 100 / glyph.count, solid.count)
+        format: "backdrop %.2f, %d glyph px, %d%% lighter, %d solid px, glyph %@",
+        backdrop, glyph.count, lighter.count * 100 / glyph.count, solid.count, glyphHex)
     return Sample(tint: tint, color: color, detail: detail)
 }
 
@@ -257,8 +271,11 @@ func notify(force: Bool = false) {
             stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started" : "; displays changed"
         }
         // A restart or display change needs no fresh sample: repaint the last tint and color.
-        let sample = await readTint()
-            ?? (stale.isEmpty ? nil : lastTint.map { Sample(tint: $0, color: lastColor, detail: "last tint") })
+        // A sample with no color keeps the color last painted for its tint, so the
+        // square doesn't flash the fixed color: that is for a tint with no color yet.
+        let sample = await readTint().map {
+            Sample(tint: $0.tint, color: $0.color ?? ($0.tint == lastTint ? lastColor : nil), detail: $0.detail)
+        } ?? (stale.isEmpty ? nil : lastTint.map { Sample(tint: $0, color: lastColor, detail: "last tint") })
         if let sample,
            force || commandFailing || sample.tint != lastTint || moved(sample.color, lastColor) || !stale.isEmpty
         {
