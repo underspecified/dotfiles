@@ -1,6 +1,6 @@
 # menubar-tint-notify
 
-Recolors the WhichSpace menu bar icon to match the menu bar: a square in the color macOS drew the menu bar glyphs in, sampled from the screen. Without a sample it falls back to a fixed color for the tint: a light (`#E9F1F3`) square on a dark menu bar, a dark (`#1F1E0B`) one on a light menu bar.
+Recolors the WhichSpace menu bar icon to match the menu bar: a square in the color of the status items around it, sampled from the screen. Without a sample it falls back to a fixed color for the tint: a light (`#E9F1F3`) square on a dark menu bar, a dark (`#1F1E0B`) one on a light menu bar.
 
 macOS picks the menu bar tint from the wallpaper behind it, not from the system light/dark mode. WhichSpace draws a full-color icon that follows only the system mode, so with a dynamic wallpaper it ends up the wrong color. Other icons are template images, which macOS tints itself. `dark-mode-notify` can't fix this either, because it also sees only the system mode.
 
@@ -30,7 +30,7 @@ Log: `~/Library/Logs/menubar-tint-notify.log`, one watcher line (tint, sampled h
 
 It captures the left end of the main display's menu bar with ScreenCaptureKit (Apple logo + app name, always present at a fixed spot). The median luminance is the backdrop; pixels far from it are glyphs. Mostly lighter glyphs means white glyphs, so the tint is `dark`. This copies the color macOS actually drew, so there is no threshold to tune.
 
-The square's color is the mean of the 10% of the tint's glyph pixels farthest from the backdrop: the solid strokes, not their anti-aliased edges. It needs at least 12 such pixels, or the helper's fixed color is used. The capture is in the display's color profile; the watcher reads it in sRGB, the space WhichSpace parses AppleScript hex colors in, so the square matches the glyphs on screen. A color change of 8 or less (0–255, in every channel) since the last recolor doesn't recolor, so an animating wallpaper doesn't rerun the helper at every poll. A tint change always does.
+The square's color starts from the mean of the 10% of the tint's glyph pixels farthest from the backdrop: the solid strokes, not their anti-aliased edges. It needs at least 12 such pixels, or the helper's fixed color is used. Those strokes are pure white or black, but the status items next to WhichSpace (input source, clock) let some wallpaper through, so the watcher mixes in 12% of the backdrop color. The 12% is empirical: it was 10–13% on the two wallpapers measured (10-21). The capture is in the display's color profile; the watcher reads it in sRGB, the space WhichSpace parses AppleScript hex colors in, so the square matches the glyphs on screen. A color change of 8 or less (0–255, in every channel) since the last recolor doesn't recolor, so an animating wallpaper doesn't rerun the helper at every poll. A tint change always does.
 
 It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a system mode change, Space change, wake, display wake, and every 10s, because a dynamic wallpaper shifts with no notification ("Macintosh" animates its colors continuously). The capture shows no screen-recording indicator.
 

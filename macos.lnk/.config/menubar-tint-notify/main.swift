@@ -1,9 +1,10 @@
 // Usage: menubar-tint-notify <command> [args...]
 //        menubar-tint-notify --classify <menubar.png>   (test the sampler on a screenshot)
 // Runs `<command> [args...] dark|light [RRGGBB]` at start and whenever the menu
-// bar's tint or glyph color changes. RRGGBB is the sRGB color macOS drew the
-// glyphs in; it's left out when there's no sample (no Screen Recording) or too
-// few solid glyph pixels. The tint follows the wallpaper behind the menu bar,
+// bar's tint or glyph color changes. RRGGBB is the sRGB color the status items
+// show: the sampled glyph color with a little of the backdrop mixed in. It's
+// left out when there's no sample (no Screen Recording) or too few solid glyph
+// pixels. The tint follows the wallpaper behind the menu bar,
 // not the system light/dark mode (that's dark-mode-notify), so a dynamic
 // wallpaper can flip it during the day with no mode change.
 // How: samples the menu bar's left end (Apple logo + app name) with
@@ -48,11 +49,18 @@ func moved(_ a: RGB?, _ b: RGB?) -> Bool {
 // color: the glyph color to paint, or nil for the helper's fixed one.
 struct Sample { let tint: String, color: RGB?, detail: String }
 
+// The Apple logo and app name are drawn solid white or black, but the status
+// items around WhichSpace (input source, clock) let this much of the wallpaper
+// through. Empirical: 10-13% on two wallpapers (10-21).
+let backdropShare = 0.12
+
 // Glyph pixels are those far from the backdrop (the median luminance); the
-// tint is dark when most of them are lighter than it (white glyphs). The glyph
-// color is the mean of the 10% of those farthest from the backdrop: solid
-// strokes, not anti-aliased edges. Pixels are read in sRGB, which converts the
-// capture out of the display's profile.
+// tint is dark when most of them are lighter than it (white glyphs). The solid
+// glyph color is the mean of the 10% of those farthest from the backdrop:
+// strokes, not anti-aliased edges. The color to paint mixes it with
+// backdropShare of the backdrop color (the mean of the pixels near the median),
+// like the status items. Pixels are read in sRGB, which converts the capture
+// out of the display's profile.
 func classify(_ image: CGImage) -> Sample? {
     let w = image.width, h = image.height
     var px = [UInt8](repeating: 0, count: w * h * 4)
@@ -75,11 +83,18 @@ func classify(_ image: CGImage) -> Sample? {
     let tint = lighter.count * 2 > glyph.count ? "dark" : "light"
     let side = tint == "dark" ? lighter : glyph.filter { lum[$0] < backdrop }
     let solid = side.sorted { abs(lum[$0] - backdrop) > abs(lum[$1] - backdrop) }.prefix(side.count / 10)
-    // Too few solid pixels to trust: the helper's fixed color.
-    let color = solid.count < 12 ? nil : RGB(
-        r: solid.map { Int(px[$0 * 4]) }.reduce(0, +) / solid.count,
-        g: solid.map { Int(px[$0 * 4 + 1]) }.reduce(0, +) / solid.count,
-        b: solid.map { Int(px[$0 * 4 + 2]) }.reduce(0, +) / solid.count)
+    // nil with too few solid pixels to trust: the helper's fixed color.
+    var color: RGB?
+    if solid.count >= 12 {
+        let ground = lum.indices.filter { abs(lum[$0] - backdrop) < 0.05 }
+        func mean(_ of: some Collection<Int>, _ channel: Int) -> Double {
+            of.map { Double(px[$0 * 4 + channel]) }.reduce(0, +) / Double(of.count)
+        }
+        let c = (0..<3).map {
+            Int((mean(solid, $0) * (1 - backdropShare) + mean(ground, $0) * backdropShare).rounded())
+        }
+        color = RGB(r: c[0], g: c[1], b: c[2])
+    }
     let detail = String(
         format: "backdrop %.2f, %d glyph px, %d%% lighter, %d solid px",
         backdrop, glyph.count, lighter.count * 100 / glyph.count, solid.count)
