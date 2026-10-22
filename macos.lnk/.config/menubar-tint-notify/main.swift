@@ -17,7 +17,8 @@
 // Samples at start, on tint/mode change, Space change, wake, display wake, and
 // every 10s: a dynamic wallpaper ("Macintosh" animates its colors) shifts with
 // no notification. Each sample also reruns the command when WhichSpace has
-// (re)started or the displays changed since the last run.
+// (re)started, the displays changed, or a Space was added or removed since the
+// last run.
 // Debug: MENUBAR_TINT_DUMP=<dir> writes each captured sample there.
 // Build (signing identity from setup-signing.sh; see the README):
 //   swiftc -O main.swift -o /tmp/mtn && codesign -f -s menubar-tint-notify \
@@ -228,13 +229,21 @@ func readTint() async -> Sample? {
 // saved colors over the ones the helper writes.
 let settleSeconds: TimeInterval = 2
 
+// The Spaces of each display, fullscreen ones included: the private call
+// WhichSpace builds its Space list from. Needs no permission.
+@_silgen_name("CGSMainConnectionID") func CGSMainConnectionID() -> Int32
+@_silgen_name("CGSCopyManagedDisplaySpaces") func CGSCopyManagedDisplaySpaces(_ cid: Int32) -> Unmanaged<CFArray>?
+
 // What the command last colored. A relaunched WhichSpace shows the colors it
 // last saved, which can be stale, and the helper writes only connected
-// displays. NSWorkspace posts no launch notification for WhichSpace (an
-// LSUIElement app), so each sample compares.
+// displays and the Spaces that exist: WhichSpace keeps colors per Space
+// position, so a new Space has none. NSWorkspace posts no launch notification
+// for WhichSpace (an LSUIElement app) and none for a new Space, so each sample
+// compares.
 struct Target: Equatable {
     let whichSpace: pid_t?
     let displays: [CGDirectDisplayID]
+    let spaces: [Int]
 
     // settlesIn: seconds until a WhichSpace that is still settling counts.
     @MainActor static func current() -> (target: Target, settlesIn: TimeInterval?) {
@@ -242,9 +251,11 @@ struct Target: Equatable {
             .first { !$0.isTerminated }
         let age = instance?.launchDate.map { -$0.timeIntervalSinceNow } ?? settleSeconds
         let settled = instance?.isFinishedLaunching == true && age >= settleSeconds
+        let managed = CGSCopyManagedDisplaySpaces(CGSMainConnectionID())?.takeRetainedValue() as? [[String: Any]]
         let target = Target(
             whichSpace: settled ? instance?.processIdentifier : nil,
-            displays: NSScreen.screens.compactMap(\.displayID).sorted())
+            displays: NSScreen.screens.compactMap(\.displayID).sorted(),
+            spaces: (managed ?? []).map { ($0["Spaces"] as? [Any])?.count ?? 0 })
         return (target, instance != nil && age < settleSeconds ? settleSeconds - age + 0.1 : nil)
     }
 }
@@ -268,9 +279,10 @@ func notify(force: Bool = false) {
         if let settlesIn { notifySoon(after: settlesIn) }
         var stale = ""
         if let lastTarget, target.whichSpace != nil, target != lastTarget {
-            stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started" : "; displays changed"
+            stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started"
+                : target.displays != lastTarget.displays ? "; displays changed" : "; Spaces changed"
         }
-        // A restart or display change needs no fresh sample: repaint the last tint and color.
+        // A restart, display or Space change needs no fresh sample: repaint the last tint and color.
         // A sample with no color keeps the color last painted for its tint, so the
         // square doesn't flash the fixed color: that is for a tint with no color yet.
         let sample = await readTint().map {

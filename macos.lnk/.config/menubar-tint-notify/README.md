@@ -8,7 +8,7 @@ macOS picks the menu bar tint from the wallpaper behind it, not from the system 
 
 | File | Role |
 |------|------|
-| `main.swift` | Watcher source. Runs `<command> dark\|light [RRGGBB]` at start, whenever the sampled tint or glyph color changes, and when WhichSpace restarts or the displays change. |
+| `main.swift` | Watcher source. Runs `<command> dark\|light [RRGGBB]` at start, whenever the sampled tint or glyph color changes, and when WhichSpace restarts, the displays change, or a Space is added or removed. |
 | `menubar-tint-notify` | Compiled watcher, committed so other Macs need no build step. |
 | `menubar-tint-helper` | Sets WhichSpace's per-Space colors via AppleScript: `RRGGBB` if given, else the tint's fixed color. Skips if WhichSpace isn't running. |
 | `setup-signing.sh` | One-time setup of the signing identity used by the rebuild. |
@@ -38,8 +38,9 @@ The square's color starts from the mean of the 10% of the tint's glyph pixels fa
 
 It checks at start, on `NSWorkspaceMenuBarAppearanceDidChangeNotification`, on a system mode change, Space change, wake, display wake, and every 10s, because a dynamic wallpaper shifts with no notification ("Macintosh" animates its colors continuously). The capture shows no screen-recording indicator.
 
-Each check also reruns the helper, even with no tint change, when WhichSpace's pid or the set of displays differs from the last run. A relaunched WhichSpace shows the colors it last saved, which can be stale, and the helper writes only connected displays. This catches a WhichSpace that starts after the watcher (login) or restarts, within one poll. NSWorkspace posts no launch notification for WhichSpace (an `LSUIElement` app), so a launch observer never fired (10-20).
+Each check also reruns the helper, even with no tint change, when WhichSpace's pid, the set of displays, or the number of Spaces on a display differs from the last run. A relaunched WhichSpace shows the colors it last saved, which can be stale, and the helper writes only connected displays and the Spaces that exist. This catches a WhichSpace that starts after the watcher (login) or restarts, and a new Space, within one poll. NSWorkspace posts no launch notification for WhichSpace (an `LSUIElement` app), so a launch observer never fired (10-20).
 
+- **New Space:** WhichSpace keeps colors per Space position, so a Space added after the last run shows WhichSpace's default style until the helper reruns (10-22). macOS posts no notification for it. The watcher counts each display's Spaces with `CGSCopyManagedDisplaySpaces`, the private call WhichSpace builds its Space list from, so fullscreen Spaces count too. It needs no permission and sends no Apple event. Removing a Space reruns the helper once.
 - **Settling:** a WhichSpace counts as running only once it has finished launching and been up 2s. Earlier, it may not be scriptable yet, or may load its saved colors over the helper's. The watcher rechecks when the 2s are up.
 - **Repair without a sample:** if the sample is inconclusive at that moment, it repaints the last tint and color.
 - **Retries:** a helper run counts only if it exits 0. A failed run logs "command failed" once and is retried at every check.
