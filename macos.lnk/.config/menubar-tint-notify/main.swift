@@ -1,9 +1,12 @@
 // Usage: menubar-tint-notify <command> [args...]
 //        menubar-tint-notify --classify <menubar.png>   (test the sampler on a screenshot)
-// Runs `<command> [args...] dark|light` at start and whenever the menu bar's
-// tint changes. The tint follows the wallpaper behind the menu bar, not the
-// system light/dark mode (that's dark-mode-notify), so a dynamic wallpaper can
-// flip it during the day with no mode change.
+// Runs `<command> [args...] dark|light [RRGGBB]` at start and whenever the menu
+// bar's tint or glyph color changes. RRGGBB is the sRGB color the status items
+// show: the sampled glyph color with a little of the backdrop mixed in. It's
+// left out when there's no sample (no Screen Recording) or too few solid glyph
+// pixels. The tint follows the wallpaper behind the menu bar,
+// not the system light/dark mode (that's dark-mode-notify), so a dynamic
+// wallpaper can flip it during the day with no mode change.
 // How: samples the menu bar's left end (Apple logo + app name) with
 // ScreenCaptureKit and checks whether the glyphs are lighter or darker than the
 // backdrop, i.e. copies the color macOS actually drew. No API reports that:
@@ -16,7 +19,9 @@
 // no notification. Each sample also reruns the command when WhichSpace has
 // (re)started or the displays changed since the last run.
 // Debug: MENUBAR_TINT_DUMP=<dir> writes each captured sample there.
-// Build: swiftc -O main.swift -o /tmp/mtn && mv /tmp/mtn menubar-tint-notify
+// Build (signing identity from setup-signing.sh; see the README):
+//   swiftc -O main.swift -o /tmp/mtn && codesign -f -s menubar-tint-notify \
+//     --identifier com.eric.menubar-tint-notify /tmp/mtn && mv /tmp/mtn menubar-tint-notify
 
 import Cocoa
 import ScreenCaptureKit
@@ -25,15 +30,54 @@ import ScreenCaptureKit
     FileHandle.standardError.write(Data("\(Date()) menubar-tint-notify: \(message)\n".utf8))
 }
 
+// An sRGB color, the space WhichSpace parses its AppleScript hex colors in.
+struct RGB: Equatable {
+    let r, g, b: Int
+    var hex: String { String(format: "%02X%02X%02X", r, g, b) }
+}
+
+extension RGB {
+    init(_ c: [Double]) { self.init(r: Int(c[0].rounded()), g: Int(c[1].rounded()), b: Int(c[2].rounded())) }
+}
+
+// A color change of at most this (in every channel, 0-255) doesn't recolor, so
+// a slowly animating wallpaper doesn't rerun the command at every poll.
+let colorThreshold = 8
+
+// nil = the helper's fixed color for the tint.
+func moved(_ a: RGB?, _ b: RGB?) -> Bool {
+    guard let a, let b else { return (a == nil) != (b == nil) }
+    return max(abs(a.r - b.r), abs(a.g - b.g), abs(a.b - b.b)) > colorThreshold
+}
+
+// color: the color to paint, or nil when the sample gives none (the proxy, or
+// no trustworthy glyph color).
+struct Sample { let tint: String, color: RGB?, detail: String }
+
+// The Apple logo and app name are drawn solid white or black, but the status
+// items around WhichSpace (input source, clock) let this much of the wallpaper
+// through. Empirical: 10-13% on two wallpapers (10-21).
+let backdropShare = 0.12
+
+// Menu bar glyphs are near-neutral. A solid color with a wider channel spread
+// (0-255) is app content under the strip: a full-screen Space with the menu bar
+// hidden, or an open menu's highlight.
+let maxGlyphSpread = 16.0
+
 // Glyph pixels are those far from the backdrop (the median luminance); the
-// tint is dark when most of them are lighter than it (white glyphs).
-func classify(_ image: CGImage) -> (tint: String, detail: String)? {
+// tint is dark when most of them are lighter than it (white glyphs). The solid
+// glyph color is the mean of the 10% of those farthest from the backdrop:
+// strokes, not anti-aliased edges. The color to paint mixes it with
+// backdropShare of the backdrop color (the mean of the pixels near the median),
+// like the status items. Pixels are read in sRGB, which converts the capture
+// out of the display's profile.
+func classify(_ image: CGImage) -> Sample? {
     let w = image.width, h = image.height
     var px = [UInt8](repeating: 0, count: w * h * 4)
     let drawn = px.withUnsafeMutableBytes { buf -> Bool in
-        guard let ctx = CGContext(
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB), let ctx = CGContext(
             data: buf.baseAddress, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
-            space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return false }
         ctx.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
         return true
@@ -43,13 +87,37 @@ func classify(_ image: CGImage) -> (tint: String, detail: String)? {
         (0.2126 * Double(px[$0]) + 0.7152 * Double(px[$0 + 1]) + 0.0722 * Double(px[$0 + 2])) / 255
     }
     let backdrop = lum.sorted()[lum.count / 2]
-    let glyph = lum.filter { abs($0 - backdrop) > 0.2 }
+    let glyph = lum.indices.filter { abs(lum[$0] - backdrop) > 0.2 }
     guard glyph.count >= 12 else { return nil }
-    let lighter = glyph.filter { $0 > backdrop }.count
-    let tint = lighter * 2 > glyph.count ? "dark" : "light"
+    let lighter = glyph.filter { lum[$0] > backdrop }
+    let tint = lighter.count * 2 > glyph.count ? "dark" : "light"
+    let side = tint == "dark" ? lighter : glyph.filter { lum[$0] < backdrop }
+    let solid = side.sorted { abs(lum[$0] - backdrop) > abs(lum[$1] - backdrop) }.prefix(side.count / 10)
+    // No color from this sample with too few solid pixels to trust, or a solid
+    // color that isn't near-neutral. It is on the tint's side of the backdrop by
+    // construction: every solid pixel is, by more than 0.2.
+    var color: RGB?
+    var glyphHex = "none"
+    if solid.count >= 12 {
+        func mean(_ of: some Collection<Int>, _ channel: Int) -> Double {
+            of.map { Double(px[$0 * 4 + channel]) }.reduce(0, +) / Double(of.count)
+        }
+        let glyphColor = (0..<3).map { mean(solid, $0) }
+        glyphHex = RGB(glyphColor).hex
+        if glyphColor.max()! - glyphColor.min()! <= maxGlyphSpread {
+            let ground = lum.indices.filter { abs(lum[$0] - backdrop) < 0.05 }
+            color = RGB((0..<3).map { glyphColor[$0] * (1 - backdropShare) + mean(ground, $0) * backdropShare })
+        }
+    }
     let detail = String(
-        format: "backdrop %.2f, %d glyph px, %d%% lighter", backdrop, glyph.count, lighter * 100 / glyph.count)
-    return (tint, detail)
+        format: "backdrop %.2f, %d glyph px, %d%% lighter, %d solid px, glyph %@",
+        backdrop, glyph.count, lighter.count * 100 / glyph.count, solid.count, glyphHex)
+    return Sample(tint: tint, color: color, detail: detail)
+}
+
+// The log and --classify name a sample by its tint and, if sampled, its color.
+func describe(_ s: Sample, _ more: String = "") -> String {
+    "\(s.tint)\(s.color.map { " \($0.hex)" } ?? "") (\(s.detail)\(more))"
 }
 
 // Points from the left edge to sample: the Apple logo plus the start of the app name.
@@ -64,7 +132,7 @@ if CommandLine.arguments.count == 3, CommandLine.arguments[1] == "--classify" {
         exit(1)
     }
     // A screenshot's scale is unknown; treat its full width as the sample.
-    print(classify(image).map { "\($0.tint) (\($0.detail))" } ?? "inconclusive")
+    print(classify(image).map { describe($0) } ?? "inconclusive")
     exit(0)
 }
 
@@ -131,11 +199,11 @@ var inconclusive = false
 // too (it fails whenever the display is off); only a missing permission falls
 // back to the proxy, which is wrong over mid-tone wallpapers.
 @MainActor @Sendable
-func readTint() async -> (tint: String, detail: String)? {
+func readTint() async -> Sample? {
     guard CGPreflightScreenCaptureAccess() else {
         let appearance = proxy?.value(forKey: "effectiveAppearance") as? NSAppearance ?? app.effectiveAppearance
         let tint = appearance.name.rawValue.lowercased().contains("dark") ? "dark" : "light"
-        return (tint, "proxy \(appearance.name.rawValue)")
+        return Sample(tint: tint, color: nil, detail: "proxy \(appearance.name.rawValue)")
     }
     do {
         let sample = try await captureMenuBar()
@@ -182,6 +250,7 @@ struct Target: Equatable {
 }
 
 var lastTint: String?
+var lastColor: RGB?
 var lastTarget: Target?
 var commandFailing = false
 var sampling = false
@@ -201,14 +270,20 @@ func notify(force: Bool = false) {
         if let lastTarget, target.whichSpace != nil, target != lastTarget {
             stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started" : "; displays changed"
         }
-        // A restart or display change needs no fresh sample: repaint the last tint.
-        let sample = await readTint() ?? (stale.isEmpty ? nil : lastTint.map { (tint: $0, detail: "last tint") })
-        if let (tint, detail) = sample, force || commandFailing || tint != lastTint || !stale.isEmpty {
+        // A restart or display change needs no fresh sample: repaint the last tint and color.
+        // A sample with no color keeps the color last painted for its tint, so the
+        // square doesn't flash the fixed color: that is for a tint with no color yet.
+        let sample = await readTint().map {
+            Sample(tint: $0.tint, color: $0.color ?? ($0.tint == lastTint ? lastColor : nil), detail: $0.detail)
+        } ?? (stale.isEmpty ? nil : lastTint.map { Sample(tint: $0, color: lastColor, detail: "last tint") })
+        if let sample,
+           force || commandFailing || sample.tint != lastTint || moved(sample.color, lastColor) || !stale.isEmpty
+        {
             // While the command keeps failing, its own line is the only one per retry.
-            if !commandFailing { warn("\(tint) (\(detail)\(stale))") }
+            if !commandFailing { warn(describe(sample, stale)) }
             let task = Process()
             task.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-            task.arguments = command + [tint]
+            task.arguments = command + [sample.tint] + (sample.color.map { [$0.hex] } ?? [])
             var ok = false
             do {
                 try task.run()
@@ -220,7 +295,8 @@ func notify(force: Bool = false) {
             // Only a run that worked counts as done; a failed one is retried at every check.
             if ok {
                 if commandFailing { warn("command works again") }
-                lastTint = tint
+                lastTint = sample.tint
+                lastColor = sample.color
                 lastTarget = target
             } else if !commandFailing {
                 warn("command failed, retrying at every check")

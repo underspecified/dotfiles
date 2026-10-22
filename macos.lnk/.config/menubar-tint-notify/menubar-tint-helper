@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
-# Usage: menubar-tint-helper dark|light   (run by menubar-tint-notify)
+# Usage: menubar-tint-helper dark|light [RRGGBB]   (run by menubar-tint-notify)
 # Output: one log line per call on stdout (the LaunchAgent's log)
-# Recolors WhichSpace's icon to match the menu bar tint: a light (#E9F1F3)
-# square on a dark menu bar, a dark (#1F1E0B) one on a light menu bar, with the
-# Space number cut out
-# (transparent foreground). WhichSpace itself follows the system light/dark
-# mode, not the tint. Writes per-Space overrides on every display, so this
-# replaces any colors set in WhichSpace's settings.
+# Recolors WhichSpace's icon to match the menu bar: a square in the glyph color
+# menubar-tint-notify sampled (RRGGBB, sRGB), with the Space number cut out
+# (transparent foreground). Without RRGGBB it uses a fixed color for the tint:
+# a light (#E9F1F3) square on a dark menu bar, a dark (#1F1E0B) one on a light
+# menu bar. WhichSpace itself follows the system light/dark mode, not the tint.
+# Writes per-Space overrides on every display, so this replaces any colors set
+# in WhichSpace's settings.
 set -uo pipefail
+
+usage() {
+  echo "usage: menubar-tint-helper dark|light [RRGGBB]" >&2
+  exit 2
+}
 
 case "${1:-}" in
   dark) background="E9F1F3" ;;
   light) background="1F1E0B" ;;
-  *)
-    echo "usage: menubar-tint-helper dark|light" >&2
-    exit 2
-    ;;
+  *) usage ;;
 esac
+if [[ -n "${2:-}" ]]; then
+  [[ "${2}" =~ ^[0-9A-Fa-f]{6}$ ]] || usage
+  background="${2}"
+fi
 foreground="00000000"
 stamp="$(date '+%F %T') $1"
 
