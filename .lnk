@@ -31,6 +31,7 @@
 .claude/rules/python.md
 .claude/rules/questions.md
 .claude/rules/safety.md
+.claude/rules/slack.md
 .claude/rules/skill.md
 .claude/settings.json
 .claude/skills/bootstrap.sh
