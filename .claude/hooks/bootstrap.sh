@@ -27,9 +27,14 @@
 #
 # No `set -e`: one unavailable tool must not abort the rest of the chain.
 #
-# Versions: the uv tools and panache are pinned below; bump them by PR
-# (~/.claude/README.md, "Versions are pinned"). Homebrew and apt install
-# whatever version they carry, and only when the tool is missing.
+# Versions: on Linux, ruff, rumdl and panache are pinned below; bump them by
+# PR (~/.claude/README.md, "Versions are pinned"). Not pinned yet:
+#   macOS   Homebrew installs a missing tool at whatever version it carries;
+#           the pins below don't apply. The bring-up's `brew bundle
+#           --no-upgrade` upgrades a formula only as a new install's dependency.
+#   Linux   apt's jq/shellcheck/shfmt are the distro's; the nosudo installers
+#           for shfmt and shellcheck fetch releases/latest (dotfiles#22).
+#   uv      itself (dotfiles#21).
 #
 # Env overrides:
 #   PREFIX   install prefix for user-space installs (default: $HOME/.local)
@@ -40,6 +45,8 @@ PREFIX="${PREFIX:-${HOME}/.local}"
 LNK_DIR="${LNK_DIR:-${HOME}/.config/lnk}"
 RUFF_VERSION="0.16.8"
 RUMDL_VERSION="0.2.75"
+# After every file of both releases: a wheel added to them later is ignored.
+UV_TOOL_EXCLUDE_NEWER="2026-09-21T00:00:00Z"
 PANACHE_REPO="jolars/panache"
 PANACHE_TAG="v3.11.0"
 FAILED=""
@@ -48,6 +55,8 @@ log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
 have() { command -v "$1" >/dev/null 2>&1; }
 fail() { FAILED="${FAILED} $1"; }
+# First version number in `<tool> --version` (jq prints e.g. "jq-1.7").
+version_of() { "$1" --version 2>/dev/null | grep -oE '[0-9]+(\.[0-9]+)+' | head -1; }
 
 # --- apt ------------------------------------------------------------------
 apt_usable() { have apt-get && sudo -n true 2>/dev/null; }
@@ -75,13 +84,16 @@ uv_tool() {
     return 1
   }
   log "uv tool install ${pkg}==${ver}"
-  uv tool install "${pkg}==${ver}" >/dev/null 2>&1 ||
+  uv tool install --exclude-newer "${UV_TOOL_EXCLUDE_NEWER}" "${pkg}==${ver}" >/dev/null 2>&1 ||
     {
       warn "uv tool install ${pkg}==${ver} failed"
       return 1
     }
-  have "${bin}" ||
+  if ! have "${bin}"; then
     warn "${bin} installed but not on PATH -- is ${HOME}/.local/bin in \$PATH?"
+  elif [[ "$(version_of "${bin}")" != "${ver}" ]]; then
+    warn "${bin} on PATH ($(command -v "${bin}")) is not ${ver} -- it shadows the pinned one"
+  fi
 }
 
 # --- install_panache_linux ------------------------------------------------
@@ -90,7 +102,7 @@ uv_tool() {
 # would put a wrong `panache` on PATH for the .qmd hook to call.
 # The tarball must match the sha256 of the pinned release asset.
 install_panache_linux() {
-  local tag="${PANACHE_TAG}" arch sha cur tmp url
+  local tag="${PANACHE_TAG}" arch sha tmp url
   case "$(uname -m)" in
   x86_64 | amd64)
     arch="x86_64"
@@ -106,28 +118,28 @@ install_panache_linux() {
     ;;
   esac
 
-  if have panache; then
-    cur="$(panache --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
-    [[ "v${cur}" == "${tag}" ]] && {
-      log "panache ${tag} already installed"
-      return 0
-    }
-  fi
-
-  url="https://github.com/${PANACHE_REPO}/releases/download/${tag}/panache-${arch}-unknown-linux-gnu.tar.gz"
-  tmp="$(mktemp -d)"
-  log "installing panache ${tag} -> ${PREFIX}/bin"
-  if curl -fsSL -o "${tmp}/p.tgz" "${url}" &&
-    echo "${sha}  ${tmp}/p.tgz" | sha256sum -c --status - &&
-    tar -xzf "${tmp}/p.tgz" -C "${tmp}"; then
-    mkdir -p "${PREFIX}/bin"
-    install -m 755 "${tmp}/panache" "${PREFIX}/bin/panache"
-    rm -rf "${tmp}"
+  # Judge the copy this function installs, not whichever panache is first on PATH.
+  if [[ -x "${PREFIX}/bin/panache" && "v$(version_of "${PREFIX}/bin/panache")" == "${tag}" ]]; then
+    log "panache ${tag} already installed"
   else
-    warn "panache download, sha256 check or extract failed"
+    url="https://github.com/${PANACHE_REPO}/releases/download/${tag}/panache-${arch}-unknown-linux-gnu.tar.gz"
+    tmp="$(mktemp -d)"
+    log "installing panache ${tag} -> ${PREFIX}/bin"
+    if ! {
+      curl -fsSL -o "${tmp}/p.tgz" "${url}" &&
+        echo "${sha}  ${tmp}/p.tgz" | sha256sum -c --status - &&
+        tar -xzf "${tmp}/p.tgz" -C "${tmp}" &&
+        mkdir -p "${PREFIX}/bin" &&
+        install -m 755 "${tmp}/panache" "${PREFIX}/bin/panache"
+    }; then
+      warn "panache download, sha256 check, extract or install failed"
+      rm -rf "${tmp}"
+      return 1
+    fi
     rm -rf "${tmp}"
-    return 1
   fi
+  [[ "$(command -v panache)" == "${PREFIX}/bin/panache" ]] ||
+    warn "panache on PATH ($(command -v panache)) shadows ${PREFIX}/bin/panache"
 }
 
 # --- per-platform ---------------------------------------------------------
@@ -207,7 +219,7 @@ main() {
   log "hook toolchain:"
   for t in ruff rumdl panache shfmt shellcheck jq; do
     if have "$t"; then
-      printf '  %-11s OK       %s\n' "$t" "$(command -v "$t")"
+      printf '  %-11s %-9s %s\n' "$t" "$(version_of "$t")" "$(command -v "$t")"
     else
       printf '  %-11s MISSING\n' "$t"
     fi
