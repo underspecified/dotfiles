@@ -59,6 +59,13 @@ unset _agent_path
 # a non-mosh box is never broken. Force-off a host with DISPATCH_REMOTE_MOSH_<HOST>=0.
 export DISPATCH_REMOTE_MOSH=1
 
+##### SELF-UPDATERS #####
+
+# The antigravity CLI (agy) self-updates on launch; this env var is its only
+# off switch. Here, not .zshrc, so it reaches agy from every zsh: login,
+# `ssh host cmd`, and Claude Code's Bash tool. Upgrade agy deliberately.
+export AGY_CLI_DISABLE_AUTO_UPDATE=true
+
 ##### ALIASES #####
 
 # Sourced here (not .zshrc) so aliases are available non-interactively too —
