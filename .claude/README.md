@@ -64,13 +64,19 @@ MCP servers are registered via `claude mcp add` (stored in `~/.claude.json`, not
 
 | Server | Transport | Command |
 |--------|-----------|---------|
-| google-workspace | stdio | `uvx workspace-mcp --tools drive docs sheets --single-user` |
-| markitdown-mcp | stdio | `uvx markitdown-mcp` |
+| google-workspace | stdio | `uvx --exclude-newer <date> workspace-mcp==2.1.2 --tools drive docs sheets --single-user` |
+| markitdown-mcp | stdio | `uvx --exclude-newer <date> markitdown-mcp==0.0.1a8` |
 | che-ical-mcp | plugin | Managed by psychquant-claude-plugins marketplace |
 | Claude Gmail | built-in | `mcp__claude_ai_Gmail__*` |
 | Claude Calendar | built-in | `mcp__claude_ai_Google_Calendar__*` |
-| apple-mail-patrickfreyer | stdio | `uvx --with "mcp<2" mcp-apple-mail==3.2.0` (work Macs only; sends gated by `hooks/mail_send_gate.sh`) |
-| apple-mail-imdinu | stdio | `apple-mail-mcp`, via `uv tool install apple-mail-mcp==0.5.0` (work Macs only) |
+| apple-mail-patrickfreyer | stdio | `uvx --exclude-newer <date> --with "mcp<2" mcp-apple-mail==3.2.0` (work Macs only; sends gated by `hooks/mail_send_gate.sh`) |
+| apple-mail-imdinu | stdio | `apple-mail-mcp`, via `uv tool install --exclude-newer <date> apple-mail-mcp==0.5.0` (work Macs only) |
+
+**Versions are pinned** in `mcp/bootstrap.sh` and `hooks/bootstrap.sh`: an exact version for each tool, and for the MCP servers an `--exclude-newer` date that freezes their dependencies. A start never pulls a new release. To bump one:
+
+1. Open a PR that changes the version (and the `--exclude-newer` date, if the dependencies should move too; for panache, the tag and both sha256s). Never bump on a live host first.
+2. In the PR, show that a resolve at the new date gives the versions you expect: `uv pip compile --exclude-newer <date>` on the pinned requirement. For an Apple Mail server, also re-check `settings.json`'s deny list and `mail_send_gate.sh` against the new release's send-capable tools.
+3. After merge, the bootstrap adds only missing servers, so on each host edit the `args` of the existing entry in `~/.claude.json` to match, leaving its `env` untouched. Re-run `hooks/bootstrap.sh` for the hook tools.
 
 ## Bootstrap
 
