@@ -64,8 +64,8 @@ MCP servers are registered via `claude mcp add` (stored in `~/.claude.json`, not
 
 | Server | Transport | Command |
 |--------|-----------|---------|
-| google-workspace | stdio | `uvx --exclude-newer <date> workspace-mcp==2.1.2 --tools drive docs sheets --single-user` |
-| markitdown-mcp | stdio | `uvx --exclude-newer <date> markitdown-mcp==0.0.1a8` |
+| google-workspace | stdio | `uvx --exclude-newer <date> workspace-mcp==2.1.0 --tools drive docs sheets --single-user` |
+| markitdown-mcp | stdio | `uvx --exclude-newer <date> markitdown-mcp==0.0.1a7` |
 | che-ical-mcp | plugin | Managed by psychquant-claude-plugins marketplace |
 | Claude Gmail | built-in | `mcp__claude_ai_Gmail__*` |
 | Claude Calendar | built-in | `mcp__claude_ai_Google_Calendar__*` |

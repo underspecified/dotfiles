@@ -2,15 +2,16 @@
 # Usage: bash ~/.claude/mcp/bootstrap.sh
 # Registers MCP servers via claude mcp add.
 #
-# Every server is pinned: an exact version, plus --exclude-newer at the date
-# its dependencies were last resolved, so a start never pulls a new release.
+# Every server is pinned: an exact version, plus --exclude-newer, which
+# freezes its dependencies at that date, so a start never pulls a new release.
 # Bump by PR (~/.claude/README.md, "Versions are pinned"). Only missing
 # servers are added here; an existing registration keeps its old args until
 # they are edited.
 set -euo pipefail
 
-# Dependency snapshot for the uvx servers, and for the apple-mail-mcp tool.
-UVX_EXCLUDE_NEWER="2026-10-23T00:00:00Z"
+# Dependency snapshots: the hosts' 10/16 resolve for the uvx servers, and
+# apple-mail-mcp's install date for its tool env.
+UVX_EXCLUDE_NEWER="2026-10-16T12:00:00Z"
 TOOL_EXCLUDE_NEWER="2026-10-13T00:00:00Z"
 
 echo "--- Registering MCP servers ---"
@@ -19,7 +20,7 @@ echo "--- Registering MCP servers ---"
 if ! claude mcp list 2>/dev/null | grep -q "^google-workspace:"; then
   echo "Adding MCP: google-workspace (drive/docs/sheets)"
   claude mcp add -s user --transport stdio google-workspace \
-    -- uvx --exclude-newer "${UVX_EXCLUDE_NEWER}" "workspace-mcp==2.1.2" \
+    -- uvx --exclude-newer "${UVX_EXCLUDE_NEWER}" "workspace-mcp==2.1.0" \
     --tools drive docs sheets --single-user
 fi
 
@@ -27,7 +28,7 @@ fi
 if ! claude mcp list 2>/dev/null | grep -q "^markitdown-mcp:"; then
   echo "Adding MCP: markitdown-mcp"
   claude mcp add -s user --transport stdio markitdown-mcp \
-    -- uvx --exclude-newer "${UVX_EXCLUDE_NEWER}" "markitdown-mcp==0.0.1a8"
+    -- uvx --exclude-newer "${UVX_EXCLUDE_NEWER}" "markitdown-mcp==0.0.1a7"
 fi
 
 # Apple Mail (rules/email.md): work Macs only, detected by the HRI-JP OneDrive
