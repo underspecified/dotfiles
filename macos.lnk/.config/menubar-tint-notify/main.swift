@@ -17,7 +17,8 @@
 // Samples at start, on tint/mode change, Space change, wake, display wake, and
 // every 10s: a dynamic wallpaper ("Macintosh" animates its colors) shifts with
 // no notification. Each sample also reruns the command when WhichSpace has
-// (re)started or the displays changed since the last run.
+// (re)started, the displays changed, or a Space was added or removed since the
+// last run.
 // Debug: MENUBAR_TINT_DUMP=<dir> writes each captured sample there.
 // Build (signing identity from setup-signing.sh; see the README):
 //   swiftc -O main.swift -o /tmp/mtn && codesign -f -s menubar-tint-notify \
@@ -228,13 +229,49 @@ func readTint() async -> Sample? {
 // saved colors over the ones the helper writes.
 let settleSeconds: TimeInterval = 2
 
+// The Spaces of each display, fullscreen ones included, from the private call
+// WhichSpace builds its Space list from. Needs no permission. Looked up at run
+// time, so if macOS drops it only the Space trigger is lost, not the watcher.
+let rtldDefault = UnsafeMutableRawPointer(bitPattern: -2)
+let mainConnectionID = dlsym(rtldDefault, "CGSMainConnectionID")
+    .map { unsafeBitCast($0, to: (@convention(c) () -> Int32).self) }
+let copyManagedDisplaySpaces = dlsym(rtldDefault, "CGSCopyManagedDisplaySpaces")
+    .map { unsafeBitCast($0, to: (@convention(c) (Int32) -> Unmanaged<CFArray>?).self) }
+var spaceCountMissing = false
+
+// Spaces per display identifier. Empty when the call is missing or returns
+// something unexpected, logged once: new Spaces then don't trigger a recolor.
+@MainActor func spaceCounts() -> [String: Int] {
+    var counts: [String: Int]?
+    if let mainConnectionID, let copyManagedDisplaySpaces,
+       let displays = copyManagedDisplaySpaces(mainConnectionID())?.takeRetainedValue() as? [[String: Any]]
+    {
+        counts = [:]
+        for display in displays {
+            guard let id = display["Display Identifier"] as? String, let spaces = display["Spaces"] as? [Any] else {
+                counts = nil
+                break
+            }
+            counts?[id] = spaces.count
+        }
+    }
+    if counts == nil, !spaceCountMissing {
+        warn("Space count unavailable, new Spaces won't trigger a recolor")
+        spaceCountMissing = true
+    }
+    return counts ?? [:]
+}
+
 // What the command last colored. A relaunched WhichSpace shows the colors it
 // last saved, which can be stale, and the helper writes only connected
-// displays. NSWorkspace posts no launch notification for WhichSpace (an
-// LSUIElement app), so each sample compares.
+// displays and the Spaces that exist: WhichSpace keeps colors per Space
+// position, so a new Space has none. NSWorkspace posts no launch notification
+// for WhichSpace (an LSUIElement app) and none for a new Space, so each sample
+// compares.
 struct Target: Equatable {
     let whichSpace: pid_t?
     let displays: [CGDirectDisplayID]
+    let spaces: [String: Int]
 
     // settlesIn: seconds until a WhichSpace that is still settling counts.
     @MainActor static func current() -> (target: Target, settlesIn: TimeInterval?) {
@@ -244,7 +281,8 @@ struct Target: Equatable {
         let settled = instance?.isFinishedLaunching == true && age >= settleSeconds
         let target = Target(
             whichSpace: settled ? instance?.processIdentifier : nil,
-            displays: NSScreen.screens.compactMap(\.displayID).sorted())
+            displays: NSScreen.screens.compactMap(\.displayID).sorted(),
+            spaces: spaceCounts())
         return (target, instance != nil && age < settleSeconds ? settleSeconds - age + 0.1 : nil)
     }
 }
@@ -252,6 +290,9 @@ struct Target: Equatable {
 var lastTint: String?
 var lastColor: RGB?
 var lastTarget: Target?
+// After a run for changed Spaces, run once more at the next check: WhichSpace
+// may not have listed a new Space yet when the command ran.
+var recheckSpaces = false
 var commandFailing = false
 var sampling = false
 var pending: (force: Bool, queued: Bool) = (false, false)
@@ -268,9 +309,12 @@ func notify(force: Bool = false) {
         if let settlesIn { notifySoon(after: settlesIn) }
         var stale = ""
         if let lastTarget, target.whichSpace != nil, target != lastTarget {
-            stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started" : "; displays changed"
+            stale = target.whichSpace != lastTarget.whichSpace ? "; WhichSpace started"
+                : target.displays != lastTarget.displays ? "; displays changed" : "; Spaces changed"
+        } else if recheckSpaces, target.whichSpace != nil {
+            stale = "; Spaces recheck"
         }
-        // A restart or display change needs no fresh sample: repaint the last tint and color.
+        // A restart, display or Space change needs no fresh sample: repaint the last tint and color.
         // A sample with no color keeps the color last painted for its tint, so the
         // square doesn't flash the fixed color: that is for a tint with no color yet.
         let sample = await readTint().map {
@@ -295,6 +339,7 @@ func notify(force: Bool = false) {
             // Only a run that worked counts as done; a failed one is retried at every check.
             if ok {
                 if commandFailing { warn("command works again") }
+                recheckSpaces = lastTarget.map { $0.spaces != target.spaces } ?? false
                 lastTint = sample.tint
                 lastColor = sample.color
                 lastTarget = target
