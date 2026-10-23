@@ -37,7 +37,9 @@ bash "${CLAUDE_DIR}/skills/bootstrap.sh"
 # MCP servers
 echo ""
 echo "--- Bootstrapping MCP servers ---"
-bash "${CLAUDE_DIR}/mcp/bootstrap.sh"
+# Non-fatal, like the hook toolchain: the plugin patches below (the hookify
+# global safety rules) must still be applied when an MCP install fails.
+bash "${CLAUDE_DIR}/mcp/bootstrap.sh" || echo "!! MCP bootstrap incomplete (continuing)"
 
 # Plugin patches
 echo ""

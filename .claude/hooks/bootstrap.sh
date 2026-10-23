@@ -27,6 +27,15 @@
 #
 # No `set -e`: one unavailable tool must not abort the rest of the chain.
 #
+# Versions: on Linux, ruff, rumdl and panache are pinned below; bump them by
+# PR (~/.claude/README.md, "Versions are pinned"). Not pinned yet:
+#   macOS   Homebrew installs a missing tool at whatever version it carries;
+#           the pins below don't apply. The bring-up's `brew bundle
+#           --no-upgrade` upgrades a formula only as a new install's dependency.
+#   Linux   apt's jq/shellcheck/shfmt are the distro's; the nosudo installers
+#           for shfmt and shellcheck fetch releases/latest (dotfiles#22).
+#   uv      itself (dotfiles#21).
+#
 # Env overrides:
 #   PREFIX   install prefix for user-space installs (default: $HOME/.local)
 #   LNK_DIR  dotfiles checkout (default: $HOME/.config/lnk)
@@ -34,13 +43,20 @@ set -uo pipefail
 
 PREFIX="${PREFIX:-${HOME}/.local}"
 LNK_DIR="${LNK_DIR:-${HOME}/.config/lnk}"
+RUFF_VERSION="0.16.8"
+RUMDL_VERSION="0.2.75"
+# After every file of both releases: a wheel added to them later is ignored.
+UV_TOOL_EXCLUDE_NEWER="2026-09-21T00:00:00Z"
 PANACHE_REPO="jolars/panache"
+PANACHE_TAG="v3.11.0"
 FAILED=""
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
 have() { command -v "$1" >/dev/null 2>&1; }
 fail() { FAILED="${FAILED} $1"; }
+# First version number in `<tool> --version` (jq prints e.g. "jq-1.7").
+version_of() { "$1" --version 2>/dev/null | grep -oE '[0-9]+(\.[0-9]+)+' | head -1; }
 
 # --- apt ------------------------------------------------------------------
 apt_usable() { have apt-get && sudo -n true 2>/dev/null; }
@@ -57,67 +73,73 @@ apt_install() {
     }
 }
 
-# --- uv_tool <pypi-pkg> <binary> ------------------------------------------
-# `uv tool install --upgrade` is idempotent: installs when absent, upgrades
-# in place otherwise. Used only for tools whose PyPI package IS upstream.
+# --- uv_tool <pypi-pkg> <version> <binary> --------------------------------
+# `uv tool install pkg==ver` is idempotent: a no-op when that exact version
+# is installed, otherwise it installs it (replacing any other version).
+# Used only for tools whose PyPI package IS upstream.
 uv_tool() {
-  local pkg="$1" bin="$2"
+  local pkg="$1" ver="$2" bin="$3"
   have uv || {
     warn "uv not found -- cannot install ${pkg}"
     return 1
   }
-  log "uv tool install --upgrade ${pkg}"
-  uv tool install --upgrade "${pkg}" >/dev/null 2>&1 ||
+  log "uv tool install ${pkg}==${ver}"
+  uv tool install --exclude-newer "${UV_TOOL_EXCLUDE_NEWER}" "${pkg}==${ver}" >/dev/null 2>&1 ||
     {
-      warn "uv tool install ${pkg} failed"
+      warn "uv tool install ${pkg}==${ver} failed"
       return 1
     }
-  have "${bin}" ||
+  if ! have "${bin}"; then
     warn "${bin} installed but not on PATH -- is ${HOME}/.local/bin in \$PATH?"
+  elif [[ "$(version_of "${bin}")" != "${ver}" ]]; then
+    warn "${bin} on PATH ($(command -v "${bin}")) is not ${ver} -- it shadows the pinned one"
+  fi
 }
 
 # --- install_panache_linux ------------------------------------------------
 # Tarball, NOT PyPI. The PyPI name `panache` belongs to sebogh/panache,
 # "Pandoc wrapped in styles" -- an entirely unrelated project. Installing it
 # would put a wrong `panache` on PATH for the .qmd hook to call.
+# The tarball must match the sha256 of the pinned release asset.
 install_panache_linux() {
-  local arch tag cur tmp url
+  local tag="${PANACHE_TAG}" arch sha tmp url
   case "$(uname -m)" in
-  x86_64 | amd64) arch="x86_64" ;;
-  aarch64 | arm64) arch="aarch64" ;;
+  x86_64 | amd64)
+    arch="x86_64"
+    sha="738ad7b1d7e2528728dfcacae2a19ad60f13f0241b3c3788ade8204e0dab023c"
+    ;;
+  aarch64 | arm64)
+    arch="aarch64"
+    sha="3d40b0bbb7a1267d8a951af96d2caa0633ce3f406d77af46b177618abe78ebbb"
+    ;;
   *)
     warn "unknown arch $(uname -m) -- skipping panache"
     return 1
     ;;
   esac
 
-  tag="$(curl -fsSL "https://api.github.com/repos/${PANACHE_REPO}/releases/latest" 2>/dev/null | jq -r '.tag_name')"
-  [[ -n "${tag}" && "${tag}" != "null" ]] ||
-    {
-      warn "panache release lookup failed -- skipping"
-      return 1
-    }
-
-  if have panache; then
-    cur="$(panache --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
-    [[ "v${cur}" == "${tag}" ]] && {
-      log "panache ${tag} already current"
-      return 0
-    }
-  fi
-
-  url="https://github.com/${PANACHE_REPO}/releases/download/${tag}/panache-${arch}-unknown-linux-gnu.tar.gz"
-  tmp="$(mktemp -d)"
-  log "installing panache ${tag} -> ${PREFIX}/bin"
-  if curl -fsSL -o "${tmp}/p.tgz" "${url}" && tar -xzf "${tmp}/p.tgz" -C "${tmp}"; then
-    mkdir -p "${PREFIX}/bin"
-    install -m 755 "${tmp}/panache" "${PREFIX}/bin/panache"
-    rm -rf "${tmp}"
+  # Judge the copy this function installs, not whichever panache is first on PATH.
+  if [[ -x "${PREFIX}/bin/panache" && "v$(version_of "${PREFIX}/bin/panache")" == "${tag}" ]]; then
+    log "panache ${tag} already installed"
   else
-    warn "panache download/extract failed"
+    url="https://github.com/${PANACHE_REPO}/releases/download/${tag}/panache-${arch}-unknown-linux-gnu.tar.gz"
+    tmp="$(mktemp -d)"
+    log "installing panache ${tag} -> ${PREFIX}/bin"
+    if ! {
+      curl -fsSL -o "${tmp}/p.tgz" "${url}" &&
+        echo "${sha}  ${tmp}/p.tgz" | sha256sum -c --status - &&
+        tar -xzf "${tmp}/p.tgz" -C "${tmp}" &&
+        mkdir -p "${PREFIX}/bin" &&
+        install -m 755 "${tmp}/panache" "${PREFIX}/bin/panache"
+    }; then
+      warn "panache download, sha256 check, extract or install failed"
+      rm -rf "${tmp}"
+      return 1
+    fi
     rm -rf "${tmp}"
-    return 1
   fi
+  [[ "$(command -v panache)" == "${PREFIX}/bin/panache" ]] ||
+    warn "panache on PATH ($(command -v panache)) shadows ${PREFIX}/bin/panache"
 }
 
 # --- per-platform ---------------------------------------------------------
@@ -137,6 +159,9 @@ install_macos() {
   else
     log "all hook tools already present"
   fi
+  # Formulae aren't version-pinned: list what is installed.
+  brew list --versions ruff rumdl panache shfmt shellcheck jq 2>/dev/null |
+    sed 's/^/  installed: /'
   # Report staleness rather than forcing it: panache 2->3 changes formatting
   # behaviour, and this is the highest-blast-radius PL. Upgrade deliberately.
   brew outdated --formula ruff rumdl panache shfmt shellcheck jq 2>/dev/null |
@@ -161,8 +186,8 @@ install_linux() {
   }
 
   # 2. uv for the two whose PyPI package is upstream.
-  uv_tool ruff ruff || fail ruff
-  uv_tool rumdl rumdl || fail rumdl
+  uv_tool ruff "${RUFF_VERSION}" ruff || fail ruff
+  uv_tool rumdl "${RUMDL_VERSION}" rumdl || fail rumdl
 
   # 3. panache: release tarball only.
   install_panache_linux || fail panache
@@ -194,7 +219,7 @@ main() {
   log "hook toolchain:"
   for t in ruff rumdl panache shfmt shellcheck jq; do
     if have "$t"; then
-      printf '  %-11s OK       %s\n' "$t" "$(command -v "$t")"
+      printf '  %-11s %-9s %s\n' "$t" "$(version_of "$t")" "$(command -v "$t")"
     else
       printf '  %-11s MISSING\n' "$t"
     fi

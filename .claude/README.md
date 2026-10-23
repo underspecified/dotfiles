@@ -64,13 +64,25 @@ MCP servers are registered via `claude mcp add` (stored in `~/.claude.json`, not
 
 | Server | Transport | Command |
 |--------|-----------|---------|
-| google-workspace | stdio | `uvx workspace-mcp --tools drive docs sheets --single-user` |
-| markitdown-mcp | stdio | `uvx markitdown-mcp` |
+| google-workspace | stdio | `uvx --exclude-newer <date> workspace-mcp==<version> --tools drive docs sheets --single-user` |
+| markitdown-mcp | stdio | `uvx --exclude-newer <date> markitdown-mcp==<version>` |
 | che-ical-mcp | plugin | Managed by psychquant-claude-plugins marketplace |
 | Claude Gmail | built-in | `mcp__claude_ai_Gmail__*` |
 | Claude Calendar | built-in | `mcp__claude_ai_Google_Calendar__*` |
-| apple-mail-patrickfreyer | stdio | `uvx --with "mcp<2" mcp-apple-mail==3.2.0` (work Macs only; sends gated by `hooks/mail_send_gate.sh`) |
-| apple-mail-imdinu | stdio | `apple-mail-mcp`, via `uv tool install apple-mail-mcp==0.5.0` (work Macs only) |
+| apple-mail-patrickfreyer | stdio | `uvx --exclude-newer <date> --with "mcp<2" mcp-apple-mail==<version>` (work Macs only; sends gated by `hooks/mail_send_gate.sh`) |
+| apple-mail-imdinu | stdio | `apple-mail-mcp`, via `uv tool install --exclude-newer <date> apple-mail-mcp==<version>` (work Macs only) |
+
+### Versions are pinned
+
+The versions and dates live in variables at the top of `mcp/bootstrap.sh` (MCP servers) and `hooks/bootstrap.sh` (ruff, rumdl and panache on Linux). Each is an exact version, and `--exclude-newer` freezes dependencies at a date, so a start never pulls a new release.
+
+**Not pinned yet:** on the Mac, Homebrew installs a missing hook tool at whatever version it carries. The bring-up runs `brew bundle --no-upgrade`, which upgrades an installed formula only when a new install depends on a newer one. On Linux, apt's jq, shellcheck and shfmt are the distro's, and the nosudo installers for shfmt and shellcheck fetch the latest release (dotfiles#22). uv itself isn't pinned (dotfiles#21).
+
+To bump a version:
+
+1. Open a PR that changes the variable (and the `--exclude-newer` date if the dependencies should move too; for panache, the tag and both sha256s). Never bump on a live host first.
+2. In the PR, show that a resolve at the new date gives the versions you expect: `uv pip compile --exclude-newer <date>` on the pinned requirement. For an Apple Mail server, also re-check `settings.json`'s deny list and `mail_send_gate.sh` against the new release's send-capable tools.
+3. After merge, run `bash ~/.claude/mcp/bootstrap.sh` on each host. It starts no server, adds missing entries, reinstalls `apple-mail-mcp`, and warns for each existing entry whose args differ from the pin. Edit those `args` in `~/.claude.json`, leaving `env` untouched, with no Claude sessions open, since a running session can write its old copy back. Check after a new session starts that the edit stayed. On Linux, re-run `bash ~/.claude/hooks/bootstrap.sh` for the hook tools.
 
 ## Bootstrap
 

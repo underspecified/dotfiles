@@ -31,7 +31,9 @@ check_preconditions() {
 
 install_brewfile() {
   log "Installing packages from Brewfile (this takes a while)"
-  brew bundle --file="${BREWFILE}"
+  # --no-upgrade: install what's missing, never move an installed formula
+  # (the hook formatters among them) to a newer release. Upgrade deliberately.
+  brew bundle --no-upgrade --file="${BREWFILE}"
 }
 
 fix_font_weights() {
