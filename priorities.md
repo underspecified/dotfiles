@@ -203,9 +203,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## Waiting on Eric
 
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
-- 👍 on dispatch #183? It would let dispatch pre-approve its own MCP server for a headless cold start, only when the `.mcp.json` entry exactly matches what dispatch writes. Until then, headless wakes into a fresh dir stop at the MCP modal (PR #182 turns that into a warning).
-- Restart running remote sessions so they load superpowers (apps and llm_eval on 5 hosts, lab on llm-jp), or let them pick it up at their next restart.
-- Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it's Eric's call. The workaround is planning #12.
+- Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it needs Eric's yes. Under Hou-Ren-Sou I bring the ready issue text, not a bare question; not drafted yet. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - the kanban's 16 angle-bracket URLs;
@@ -214,83 +212,16 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
-- 2026-10-17 — merged dotfiles #11 (bb330a4, closes #10; Eric asked): on every host, git's ssh uses `~/.ssh/hri_jp` with no agent, every repo signs from the file (including outside `/Users` and `/home`), and pre-commit and pre-merge-commit block a repo-local `user.signingkey` in repos that sign. Rolled out on all 7 hosts; the harness passed 8/8 on each with no agent. llm-jp's 1password=false edit survived (autostash). Lab told. Same day, `hri_jp` registered as a GitHub signing key; GitHub now shows its commits as Verified (checked on 54cc100). llm-jp-2's `llm_eval` checkout set a personal email locally (177 commits since 9/07, linked to no GitHub account); Eric chose to unset it, history unchanged. Lab unset it 10/17 (no other checkout on llm-jp-2 sets one); I verified the email now comes from `identity.conf`.
-- 2026-10-17 — merged kaiseki #55 (5deac7b, closes #54): the wait before a watch or dispatch-mail wake is idle; unknown origins count as a person; nikki shares the rule. Deployed on 7 hosts. 10/15: tank 7.57→6.57h, llm-jp 3.20→1.63h. Stored ledgers 9/16–10/15 re-run; `monitor idle` for 10/02–10/08 fell 19.7→9.7h. One lost label (10/07 personal task) I restored. Seat closed.
-- 2026-10-17 — merged planning #40 (0963568, closes #39): a host is `telemetry` only on days with points. Deployed on 7 hosts; the stored days 9/16–10/15 were re-run with labels intact. Seat closed.
-- 2026-10-16 — per lab ("every non-judge seat runs Opus 5.5"), removed the model pins in haru.md, the coordinator and HRI2027_ETHOS_WS (gitignored `settings.local.json`); lab accepted. The 10 other paper-repo Fable pins are Eric's to configure himself, not this seat's. admin and animations' Fable runs on 10/7–10/13 stay unexplained (no pin, flag or env var; parent-dir pins don't inherit).
-- 2026-10-01 — merged dispatch #186 (b99f3ba, closes #184) and #190 (d478dfd, closes #188), and ran install.sh on tank and all 6 hosts; main CI is green.
-  - Remote `wake` now detects a dead claude and respawns it. Every non-answer, multi-pane session or pgrep error counts as ALIVE.
-  - tmux targets are exact-matched with `=`; checked live on dgx02 tmux 3.2a.
-  - The post-respawn modal check now polls, which fixes #181's local gap too. That was my verification miss, saved as a memory.
-  - The `monitor-start` banner goes to stderr, about 12% fewer idle wakes, confirmed live on this seat.
-- 2026-10-01 — Eric approved the DOTS version of hansei recommendations 2 and 4, applied in `~/.claude/CLAUDE.md` (80696e2, all hosts):
-  - signing refused → leave the work staged, tell Eric once, don't retry. 1Password stays on-demand by design, which settles the old tank-ssh question.
-  - `git add` before `git commit -- <new file>`;
-  - the Grep/Glob preferences are dropped.
+Rolling 1-week window (Hou-Ren-Sou, org 314e2e9): decisions, approved plans, results. Older entries live in git history. Details are in In flight.
 
-  The hooks are untouched. Recommendation 3 (the hansei analyzer) is skipped. Recommendation 1 became dispatch #188/#189.
-- 2026-10-01 — 1Password was locked from about 20:30 on 9/30 until the morning. That held up every commit and push overnight; the hansei digest's item 2 proposes a fix. After the unlock:
-  - merged planning #21 (9f6914f, closes #16), so DATE is pinned from tonight;
-  - merged dispatch #185 (1be7c37, closes #179) and ran install.sh on tank and all 6 hosts. The mark-read race is gone: the drain prints before it acks and fails closed.
-- 2026-09-30 — the 22:00 good-night ran cleanly: daily log at 22:07, drafts at 22:19.
-  - It produced the first weekly hansei digest. The five proposals, three of them owned by settings (the idle monitor cost, 1Password signing, the hansei analyzer), are in drafts.md for good-morning.
-  - `cambridge` was logged through its symlink (kaiseki #2), and the open PRs showed as "unmerged, on <branch>" (kaiseki #31).
-  - Then merged planning #23 (1958af9, closes #18) and deployed it. The 1Password agent was locked, so the planning pull went through `IdentityAgent=none`.
-- 2026-09-30 — merged dispatch #182 (b835620, closes #181) after round 2. `wake` now:
-  - respawns a dead claude in a live session (a shell in the pane **and** no child process);
-  - bounds the kitty probe, which the headless path never touches;
-  - never calls a modal-blocked pane alive, and gives correct local and remote remedies.
-
-  Checked live: idle panes have no children on tank, dgx02 and llm-jp. Deployed with install.sh to tank and all 6 hosts. Follow-ups: #183 and #184.
-- 2026-09-30 — merged planning #26 (8bfbac6, closes #25): good-morning arms good-night for 22:00, with a power-wake at 21:55. The lnk plist is at 22:00 (be4f396).
-- 2026-09-30 — merged kaiseki #39 (5411f72, closes #32) after round 2: `scan_activity` prints absolute paths, and a transcript cwd is printed only if it exists and isn't a duplicate, the coordinator or planning root, or an engineer worktree. A live audit of 09-24..09-30 gives 34 → 8 lines. The nightly `active_projects.py` output is byte-identical. Deployed.
-- 2026-09-30 — merged kaiseki #37 (187e963, closes #29) after round 2: every gather script takes `<project>` (a leading `~` is expanded), subdirectory projects are scoped with `-- .`, `/nikki <DATE>` works, `date -j` is fixed, exit codes follow the contract and paths are absolute. It passed a live check on `~/projects/animations`. Deployed. Follow-up #38 (merges dropped under the pathspec). Tonight's good-night is the first to use it.
-- 2026-09-30 — merged kaiseki #28 (cdad794, closes #27: hansei workflow-compliance audit; follow-ups #33/#34) and planning #9 (6554470, closes #8: weekly hansei from good-night; follow-up #17). Both deploy trees fast-forwarded, and `projects` was told the spot-check line can go. The first live weekly hansei is tonight's good-night; kaiseki #30 (`cd` in the `--all` fan-out) was moved to the front of the queue for it.
-  - Filed dispatch #181 for the wake hangs. On dgx02, wake reattaches to a session whose claude has exited and times out on kitty. On llm-jp, llm_gen is sitting at the trust dialog. Eric has to clear both by hand for now.
-  - planning PRs merged and deployed the same afternoon:
-    - #13 (0-repo scan fix; roster allowlist through `active_projects.py`);
-    - #20 (closes #19: skill symlinks no longer count as projects);
-    - #15 (sent mail through read-only AppleScript; the security items pass);
-    - #14 (Owes parser).
-
-  Tonight's good-night is the first run with all of them. kaiseki #35 (#30) is in review. Next for planning: #16 (pin DATE); low priority: #17, #18.
-- 2026-09-30 — worked through the queue of mail from projects and lab.
-  - **che-ical:** enabled at user scope (d26fc50). The keys were removed from `~/.claude/settings.local.json` and the stale psychquant entries uninstalled. The fleet-wide auto-approval of mail/Slack/calendar tools stays local; that's Eric's call.
-  - **security-guidance:** now reviews on Opus 5.5 (5b73a9d). It passed live on a real commit and push review, and all 6 hosts are synced.
-  - **Fable:** pinned in 11 paper repos via their untracked `settings.local.json`.
-  - **Effort:** the change was cancelled by lab and left at xhigh.
-  - **Engineers:** planning, kaiseki and dispatch were restarted after the weekly-limit stall.
-  - **"dispatch wake hangs":** not reproduced. mosh works to llm-jp and dgx02, so I've asked projects for the exact command.
-  - **Correction:** the llm-jp claude sessions were never gone. I had checked the default tmux socket, not `-L dispatch`.
-- 2026-09-25 — superpowers deployed fleet-wide. It was enabled in settings everywhere but installed only on tank and llm-jp. I added the `superpowers-marketplace` marketplace and installed the plugin on llm-jp-2 (pilot), germputer, haru-4090, haru-5090 and dgx02. All 6 Linux hosts are on lnk f0ad16f, which also carries 8cbae25 (frontend-design, duplicate superpowers dropped).
-- 2026-09-24 — merged claude-limitline #2 (rebase, head eb963fc), rebuilt `dist/` in the live tree; the statusline runs. What changed:
-  - the OAuth endpoints moved to `platform.claude.com` / `claude.com/cai`;
-  - refreshes back off exponentially up to 24h;
-  - `auth!` appears after a day of failures;
-  - a lock now serializes refreshes across statusline processes. Refresh tokens are one-time use, so concurrent refreshes clobbered each other, which is the likely June killer.
-  Lnk pushed and pulled on all 6 Linux hosts (cae3034), including the `dispatch-monitor` allow rule.
-- 2026-09-24 — merged kaiseki #24 (08095f9, closes #23): planning-log links use absolute logical targets. The one-shot migration hit an incident. OneDrive treated the rename-over swap as a conflict, and 110 links became dataless stubs plus `<name> 2.md`; nothing was lost. Recovered by moving the stubs into `logs/.conflict-stubs-2026-09-24/` (a same-domain move, with no trash and no rm) and renaming to free names. End state: 377 links, 316 absolute, 0 conflict copies, all verified against the pre-migration manifest. Lesson saved as a memory.
-- 2026-09-24 — applied the approved settings audit (from the 09-23 drafts; Eric approved it at good-morning). Promoted 8 rules to global (d8be213): pdfinfo, pdftoppm, pdftotext, sort, ps, uvx, git add, git commit. Deleted 137 redundant or dead project-local allow entries across 9 files; deny rules are intact. The classifier refused nothing. The kaiseki checked-in `settings.json` removal is kaiseki #25, queued after #23.
-- 2026-09-24 — merged planning #7 (f460976, closes #6). good-morning now checks in with PLs before presenting drafts: it reports each PL's `priorities.md` commits and uncommitted edits since good-night's `Written:` line (mtime as the fallback), names unreadable PLs, and re-runs the Owes roll-up. First live run is tomorrow morning.
-- 2026-09-23 — merged dispatch #175 (bc6a542, closes #172) and deployed it to tank plus all 6 Linux hosts.
-  - A seat started or restarted with unread mail or a monitor sentinel now gets a kickoff prompt and acts without anyone typing. The E2E proved it with zero keystrokes.
-  - Known limit: a never-trusted dir still stalls on first-launch modals (the trust prompt, then MCP-server approval) before the kickoff runs.
-- 2026-09-23 — merged dispatch #173 (c5135b1, closes #171) and #174 (954aeb5, closes #169), and deployed both to tank plus all 6 Linux hosts. Every host is in sync, and dgx02 adopted its bus. What changed:
-  - `monitor` warns instead of aborting when the bus is down;
-  - `dispatch version` compares deployed bytes, not commits, so a tests-only merge no longer reads as drift;
-  - both #134 reversals are accepted and recorded at D13.
-- 2026-09-23 — kaiseki follow-ups closed:
-  - #18 (#20): tool caches no longer count as changed files; on lnk they were 71 of 78.
-  - #15 (#21): hansei's transcript window is bounded, and its 9h UTC skew is fixed.
-  - #14 (#22, plus planning #5): same-basename projects keep separate planning-log names. The lost May links are restored, and planning.md → the coordinator on 41/41 days.
-  - Known limit: two same-basename nikki runs finishing at the same instant could still race; recorded on #14.
-- 2026-09-23 — merged kaiseki #16 (d76e3ae, closes #13): nikki and hansei on a skill deploy tree now write outside it. The migration moved 31 stray files out of the skill trees and removed 10 planning symlinks into them; `--doctor` is all clean. Merged kaiseki #17 (e79d790) and #19 (5506b8a), which close #12: every kaiseki date window is now whole local days, `scan_activity` takes a range, and its sections are bounded, with transcripts matched by overlap. Low-priority follow-ups filed and unassigned: kaiseki #14 (`planning` name clash), #15 (no end date in `analyze_conversations.py`), plus a travel issue and a `.rumdl_cache` issue.
-- 2026-09-23 — merged planning #3 (9df6713, closes #2), which delivered my Owes line to the coordinator a week early. good-night now writes `## Owed across PLs` into drafts.md every night, and good-morning shows it. Most live Owes lines use free-text dates and show as undated, so I asked the coordinator to enforce `(due YYYY-MM-DD)`.
-- 2026-09-23 — fleet deploy: all six Linux hosts are on lnk f44206d plus the private `underspecified/org` repo (a182833, cloned at `~/.claude/org`, never folded into the public lnk). All 10 old stashes were reviewed with Eric and dropped. The Linux docker config is no longer managed by lnk: a ghcr.io token had been written into the public-tracked file. Every host now has haru-4090's config as a per-host 0600 file.
-- 2026-09-23 — merged research #29 (closes #28, rebase-merged: ca99d82 format + 2a5dd00 behavior): `queue_manager add` now reports "already in library/queue" as `Skipped:` with exit 0.
-- 2026-09-23 — default effort is now really xhigh, via `env.CLAUDE_CODE_EFFORT_LEVEL` (32e8915). The saved `effortLevel` was being overridden by the Opus 5.5 launch pin, so fresh sessions ran at medium. Also restored `settings.json` after a stale session wrote back an old snapshot, and dropped the obsolete 2026-04 stash.
-- 2026-09-23 — che-ical-mcp was stuck at 1.12.0 because upstream moved it out of `psychquant-claude-plugins` to its own marketplace on 2026-07-07. Reinstalled as `che-ical-mcp@che-ical-mcp` 1.18.0. Tank-only, so it is enabled in `~/.claude/settings.local.json`, not the shared settings (f205412). superpowers is global (Eric).
-- 2026-09-23 — committed the superpowers marketplace registration (4835cca). The good-night re-arm is handed to the coordinator (projects).
-- 2026-09-23 — merged paper #2 (6a0c402, closes #1): new paper repos get `**Seat role:** paper` on line 3.
-- 2026-09-23 — merged kaiseki #11 (e1ae5ba, closes #9): the git window starts at midnight. It also fixed `git_file_churn.sh` emitting `[]\n[]`, plus a silent `[]` on 5000+-file windows. This was the first full Gate 2 run.
-- 2026-09-23 — merged dispatch #166/#167/#170 (positional-dir guard, #168 doctrine) and kaiseki #8 (no-sender mail) + #10 (superpowers pilot); fixed md_format hook distribution (f803bb6); triaged the April research plans.
+- 2026-10-25 — **Hou-Ren-Sou adopted.** I approve my own plans now; Eric signs off only on external communication and spending. Pushed the org repo (3 commits, to 314e2e9) and pulled it on all 7 hosts. **Plans approved** (`Plan approved (PL:settings)`), from the coordinator's brief on Eric's time and decisions talk: planning #53 (`## Recent` required, and the weekly check-in collects every PL's Recent), #54 ("Your time" plus a plain-words time log), #55 (Eric's "I want…" asks become Owes lines), #56 (good-morning: 3 default-yes decisions, 14-day flags, focus block), #57 (no blank pages). kaiseki #64 is fast lane: hansei's audit accepts the PL's Gate 1. Assigned kaiseki #64 and planning #53; planning runs the rest one at a time. When #54 lands, I add the global rule that lets any seat log Eric's time.
+- 2026-10-25 — **Decision:** my review comments start `PL review (settings)` and my plan approvals `Plan approved (PL:settings)`, the fixed prefixes hansei's audit matches. My earlier `Settings PL review` headers didn't match.
+- 2026-10-25 — **Decision:** "Waiting on Eric" now holds only external communication, spending, and things only he can do. dispatch #183 (dispatch pre-approves its own MCP server) is mine to decide; it goes back into the dispatch queue. The 9/25 "restart remote sessions for superpowers" item is dropped as stale, since every seat has restarted since.
+- 2026-10-25 — **codex's self-updater is off on all 7 hosts** (Eric's "yes", lab#106 item 11): `autoUpdateEnabled: false` and `check_for_update_on_startup = false`, TOML-validated, and codex loads its config everywhere. Table on lab#112. apps stops haru-5090's daemon.
+- 2026-10-25 — **dotfiles #26 merged** (PR #27, 0fee01d, 2 rounds; on all 7 hosts). The hook chain runs a listed repo's `.githooks/pre-push` from its remote's main. **Decision:** the list is per repo and stores hashes, because an owner-wide rule (my first plan) let a synced fork run its upstream's hook. lab_runs is covered on llm-jp-2 with nothing to install. Follow-up dispatch #263.
+- 2026-10-25 — **dispatch #261 merged** (PR #262, 1b672f0, 2 rounds). A local pre-push hook runs the old Actions jobs, and the `tests` workflow is disabled on GitHub (the minutes ran out). **Decision:** Linux coverage is my pre-merge run on germputer, with the Mac's bats copied in (no Linux host has bats). 987/987 there.
+- 2026-10-25 — **dotfiles #24 merged** (bbc433f): repo hooks run from linked worktrees too. A fleet scan found llm_eval's empty-file guard was off in its 33 worktrees; it's on now, and lab and llm were told.
+- 2026-10-24 — **Supply-chain first round complete:** script locks in all 11 skill repos, MCP and hook pins (dotfiles #19), and bus image pins (dispatch #258). The bus was rebuilt host by host, with every gate and real send passing. Posted on lab#112.
+- 2026-10-24 — merged research #35 (paper_manager path; the title check only warns, after 14 false mismatches in 28) and #38 (arXiv duplicate check), and planning #51 (Papers table columns and repo-based stall) and #52 (weekend nikki catch-up). All deployed on 7 hosts.
+- 2026-10-22/23 — merged dotfiles #16 (sampled tint color, stable signing) and #18 (new Spaces recolored), kaiseki #57, #59 and #62 (nikki sources and counts), and claude-limitline #7 (budget from stdin). All deployed.
+- 2026-10-19 — merged dispatch #256 (deaf seats restart in place) and planning #44 (remote PLs in good-night). security-guidance's model reviews are off (Eric).
