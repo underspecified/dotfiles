@@ -214,6 +214,8 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Result: lab confirmed dotfiles #26 live. The two hand-installed hooks on llm-jp are trashed, and a real push from llm-jp-2 ran lab_runs's checker from main (2/2 pass). lab#106 item 12 is closed.
+- 2026-10-25 — Signed off kaiseki #67's plan: nikki narrates a waiter wake's or kickoff's mail through shared pairing code, with seat_time byte-identical.
 - 2026-10-25 — Merged planning #60 (846df1d; on 7 hosts): good-night finds Eric's "I want…" asks, good-morning asks once, and tracked ones become Owes lines, flagged after 14 quiet days. Live find on 10/23: 4 candidates, 1 already tracked. planning #56 is next.
 - 2026-10-25 — Merged kaiseki #69 (caa159f; on 7 hosts): nikki and seat_time share one prompt filter (nikki-only prompts 220 → 0; seat_time unchanged on all 666 TANK transcripts). kaiseki #67 (narrate waiter mail) is next.
 - 2026-10-25 — Signed off planning #55's plan: Eric's "I want…" asks come from the time ledger's own-prompt tasks (every seat and host; the 120-char cut accepted), and good-morning asks once, then dispatches the Owes line.
