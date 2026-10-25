@@ -21,6 +21,10 @@ A seat declares its role in its project CLAUDE.md with a `**Seat role:**` line. 
 - **Paper** (`**Seat role:** paper`) — a paper repo. Prose is usually driven by the owning PL, sometimes by Eric directly; either way, write directly — no issue/PR engineer workflow.
 - **Engineer** — cwd is a git repo with no `Seat role` declared, or a non-git project dir that a PL sent a request to. Read and follow `~/.claude/org/engineer.md` before starting work.
 
+## Eric's Time
+
+When Eric says he spent time on something ("today I spent 2 hours on Y"), log it: `uv run ~/.claude/skills/planning/skills/good-night/scripts/log_time.py --hours 2 "Y"`. Add `--date YYYY-MM-DD` for another day, and `--tag "<owners> / research|non_research"` only when you know the project; otherwise it's labelled at the weekly review. On a host without the ledger it refuses and prints a ready dispatch to the coordinator: send that.
+
 ## Commit Workflow
 
 `git commit` is allowed; `git_gate.sh` hook nags about doc updates — see `hooks/commit_guidelines.md`. Prefer `git -C <dir>` over `cd <dir> && git ...`.
