@@ -52,7 +52,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - `hooks/` is every repo's hooks dir: `core.hooksPath` is set in `.config/git/config`. One script, `_chain`, is symlinked under each hook name.
   - It runs the repo's **own** `.git/hooks/<name>` first, because `core.hooksPath` replaces the hooks dir wholesale and would otherwise silently disable per-repo hooks everywhere.
   - Guards: `pre-commit` blocks an `autoMode` key in a staged `.claude/settings.json`. `pre-commit` and `pre-merge-commit` block a repo-local `user.signingkey` in a repo that signs.
-  - Tracked `pre-push`: a repo opts in by merging `.githooks/pre-push` to its default branch. `_chain` runs main's copy (as of the last fetch, never the branch's) after the repo's own hook, only for a github.com push URL whose owner is on `tracked_owners` in `_chain`.
+  - Tracked `pre-push`: `_chain` runs `.githooks/pre-push` from the remote's main (as of the last fetch, never the branch's copy) after the repo's own hook, for repos on `tracked_repos` in `_chain`. That list holds hashes, not names. To opt a repo in, merge its hook first, then add its id in a PR here (the recipe is in `_chain`).
 
 ## Bootstrap
 
