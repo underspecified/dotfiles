@@ -15,7 +15,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **Eric's 10/25 time and decisions talk (coordinator's brief), one planning issue at a time:** #53 (weekly Check-in), #54 (Your time) and #55 (Eric's asks) are merged. #56 (good-morning: 3 decisions, 14-day flags, focus block) has its plan signed off and is being built. #57 (no blank pages) is next.
+- **Eric's 10/25 time and decisions talk (coordinator's brief), one planning issue at a time:** #53 (weekly Check-in), #54 (Your time), #55 (Eric's asks) and #56 (good-morning: 3 decisions, 14-day flags, focus block) are merged. #57 (no blank pages) is the last one.
 - **kaiseki queue:** #67 (nikki narrates waiter mail) has its plan signed off and is being built. #3 is next.
 - **Supply chain (lab#112):** the first round is complete, and so is the codex updater. The monthly audit and the upgrade YES/NO list are lab's.
 - **claude-limitline:** revisit removing the OAuth fallback after a week on stdin (about 10/29). #8 (trend arrow on an old snapshot) is low priority.
@@ -42,6 +42,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged planning #61 (b6b4538; on 7 hosts): good-morning shows at most 3 default-yes decisions, an "Untouched 14 days" list (5 of 72 shown today), and a focus block on the most stalled paper (the LLM safety survey, 110 d). planning #57 is last.
 - 2026-10-25 — Decision: In flight pruned to open items only (297 → 69 lines), before planning #56 starts flagging untouched priorities. Durable procedures moved to Standing rules.
 - 2026-10-25 — Result: lab confirmed dotfiles #26 live. The two hand-installed hooks on llm-jp are trashed, and a real push from llm-jp-2 ran lab_runs's checker from main (2/2 pass). lab#106 item 12 is closed.
 - 2026-10-25 — Signed off kaiseki #67's plan: nikki narrates a waiter wake's or kickoff's mail through shared pairing code, with seat_time byte-identical.
