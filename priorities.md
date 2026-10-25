@@ -15,7 +15,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## In flight
 
-- **Eric's 10/25 time and decisions talk (coordinator's brief), one planning issue at a time:** #53 (weekly Check-in), #54 (Your time), #55 (Eric's asks) and #56 (good-morning: 3 decisions, 14-day flags, focus block) are merged. #57 (no blank pages) is the last one.
+- **Eric's 10/25 time and decisions talk (coordinator's brief):** done; all of planning #53–#57 are merged and deployed. Next, after two weeks of "Your time" data (about 11/8), per-project time targets come up again.
 - **kaiseki queue:** #67 (nikki narrates waiter mail) has its plan signed off and is being built. #3 is next.
 - **Supply chain (lab#112):** the first round is complete, and so is the codex updater. The monthly audit and the upgrade YES/NO list are lab's.
 - **claude-limitline:** revisit removing the OAuth fallback after a week on stdin (about 10/29). #8 (trend arrow on an old snapshot) is low priority.
@@ -42,6 +42,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged planning #62 (2b78ab6; on 7 hosts) after 2 rounds. Message cards link their PL's draft, and talks 7 days out get one deck ask (HRI Forum 10/28 is first). Round 1 blocked an ssh host from card text (`-oProxyCommand`). **The coordinator's 10/25 brief is done (#53–#57); coordinator told.**
 - 2026-10-25 — Signed off planning #57's plan: message cards carry their PL's draft link, and talks 7 days out get one first-draft deck ask each. Decision: drafts and decks never go into git (the asks say so, and lnk now ignores `/drafts/` and `/decks/`, since it's public).
 - 2026-10-25 — Merged planning #61 (b6b4538; on 7 hosts): good-morning shows at most 3 default-yes decisions, an "Untouched 14 days" list (5 of 72 shown today), and a focus block on the most stalled paper (the LLM safety survey, 110 d). planning #57 is last.
 - 2026-10-25 — Decision: In flight pruned to open items only (297 → 69 lines), before planning #56 starts flagging untouched priorities. Durable procedures moved to Standing rules.
