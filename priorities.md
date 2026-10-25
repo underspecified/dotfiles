@@ -212,16 +212,18 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Recent
 
-Rolling 1-week window (Hou-Ren-Sou, org 314e2e9): decisions, approved plans, results. Older entries live in git history. Details are in In flight.
+Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
-- 2026-10-25 — **Hou-Ren-Sou adopted.** I approve my own plans now; Eric signs off only on external communication and spending. Pushed the org repo (3 commits, to 314e2e9) and pulled it on all 7 hosts. **Plans approved** (`Plan approved (PL:settings)`), from the coordinator's brief on Eric's time and decisions talk: planning #53 (`## Recent` required, and the weekly check-in collects every PL's Recent), #54 ("Your time" plus a plain-words time log), #55 (Eric's "I want…" asks become Owes lines), #56 (good-morning: 3 default-yes decisions, 14-day flags, focus block), #57 (no blank pages). kaiseki #64 is fast lane: hansei's audit accepts the PL's Gate 1. Assigned kaiseki #64 and planning #53; planning runs the rest one at a time. When #54 lands, I add the global rule that lets any seat log Eric's time.
-- 2026-10-25 — **Decision:** my review comments start `PL review (settings)` and my plan approvals `Plan approved (PL:settings)`, the fixed prefixes hansei's audit matches. My earlier `Settings PL review` headers didn't match.
-- 2026-10-25 — **Decision:** "Waiting on Eric" now holds only external communication, spending, and things only he can do. dispatch #183 (dispatch pre-approves its own MCP server) is mine to decide; it goes back into the dispatch queue. The 9/25 "restart remote sessions for superpowers" item is dropped as stale, since every seat has restarted since.
-- 2026-10-25 — **codex's self-updater is off on all 7 hosts** (Eric's "yes", lab#106 item 11): `autoUpdateEnabled: false` and `check_for_update_on_startup = false`, TOML-validated, and codex loads its config everywhere. Table on lab#112. apps stops haru-5090's daemon.
-- 2026-10-25 — **dotfiles #26 merged** (PR #27, 0fee01d, 2 rounds; on all 7 hosts). The hook chain runs a listed repo's `.githooks/pre-push` from its remote's main. **Decision:** the list is per repo and stores hashes, because an owner-wide rule (my first plan) let a synced fork run its upstream's hook. lab_runs is covered on llm-jp-2 with nothing to install. Follow-up dispatch #263.
-- 2026-10-25 — **dispatch #261 merged** (PR #262, 1b672f0, 2 rounds). A local pre-push hook runs the old Actions jobs, and the `tests` workflow is disabled on GitHub (the minutes ran out). **Decision:** Linux coverage is my pre-merge run on germputer, with the Mac's bats copied in (no Linux host has bats). 987/987 there.
-- 2026-10-25 — **dotfiles #24 merged** (bbc433f): repo hooks run from linked worktrees too. A fleet scan found llm_eval's empty-file guard was off in its 33 worktrees; it's on now, and lab and llm were told.
-- 2026-10-24 — **Supply-chain first round complete:** script locks in all 11 skill repos, MCP and hook pins (dotfiles #19), and bus image pins (dispatch #258). The bus was rebuilt host by host, with every gate and real send passing. Posted on lab#112.
-- 2026-10-24 — merged research #35 (paper_manager path; the title check only warns, after 14 false mismatches in 28) and #38 (arXiv duplicate check), and planning #51 (Papers table columns and repo-based stall) and #52 (weekend nikki catch-up). All deployed on 7 hosts.
-- 2026-10-22/23 — merged dotfiles #16 (sampled tint color, stable signing) and #18 (new Spaces recolored), kaiseki #57, #59 and #62 (nikki sources and counts), and claude-limitline #7 (budget from stdin). All deployed.
-- 2026-10-19 — merged dispatch #256 (deaf seats restart in place) and planning #44 (remote PLs in good-night). security-guidance's model reviews are off (Eric).
+- 2026-10-25 — Signed off planning #53's implementation plan: the weekly Check-in reads every PL's Recent, Direction items first.
+- 2026-10-25 — Plans approved: planning #53–#57 (the weekly check-in, Eric's time, Eric's asks, good-morning, no blank pages) and kaiseki #64 (fast lane). Assigned #53 and #64; the rest are queued.
+- 2026-10-25 — Decision: Waiting on Eric holds only external communication, spending, and things only he can do. dispatch #183 is mine now, and a stale 9/25 item is dropped.
+- 2026-10-25 — Decision: PL comments open with hansei's prefixes (`Plan approved (PL:settings)`, `Signed off (PL:settings)`, `PL review (settings)`).
+- 2026-10-25 — Org docs pushed and pulled on all 7 hosts (314e2e9, Hou-Ren-Sou).
+- 2026-10-25 — codex's self-updater is off on all 7 hosts (Eric's "yes"; table on lab#112).
+- 2026-10-25 — dotfiles #26 merged: listed repos' `.githooks/pre-push` runs from main on every host. Decision: a hashed per-repo list, because an owner-wide rule let forks run upstream hooks.
+- 2026-10-25 — dispatch #261 merged: tests run in a local pre-push hook, and Actions is off. Decision: Linux coverage is my pre-merge run on germputer.
+- 2026-10-25 — dotfiles #24 merged: repo hooks also run from linked worktrees, which re-enables llm_eval's empty-file guard in 33 worktrees.
+- 2026-10-24 — Supply-chain first round complete: script locks in 11 repos, MCP and hook pins, bus pins, and the bus rebuilt on 7 hosts.
+- 2026-10-24 — Merged research #35 and #38 (library checks live again) and planning #51 (Papers table) and #52 (weekend nikki).
+- 2026-10-23 — Merged (10/22–23) dotfiles #16 and #18 (tint), kaiseki #57, #59 and #62 (nikki counts), and claude-limitline #7.
+- 2026-10-19 — Merged dispatch #256 (deaf seats restart in place) and planning #44 (remote PLs in good-night).
