@@ -214,6 +214,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged kaiseki #65 (46758cf; on 7 hosts): hansei's audit accepts `Plan approved (PL:<slug>)` for Gate 1. Filed kaiseki #66 (lock the test runner; `uv run --with pytest` is unpinned).
 - 2026-10-25 — Signed off planning #53's implementation plan: the weekly Check-in reads every PL's Recent, Direction items first.
 - 2026-10-25 — Plans approved: planning #53–#57 (the weekly check-in, Eric's time, Eric's asks, good-morning, no blank pages) and kaiseki #64 (fast lane). Assigned #53 and #64; the rest are queued.
 - 2026-10-25 — Decision: Waiting on Eric holds only external communication, spending, and things only he can do. dispatch #183 is mine now, and a stale 9/25 item is dropped.
