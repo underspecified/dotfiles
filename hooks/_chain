@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Usage: invoked by git as <hook-name>; every hook file here symlinks to this.
 # Output: runs the repo's OWN hook of the same name, then any lnk-side guard.
+#   pre-push also runs an opted-in repo's tracked hook from its remote's main.
 #
 # Why this exists: `core.hooksPath` REPLACES the hooks directory wholesale — it
 # does not merge. Pointing it at a shared dir silently stops every per-repo
@@ -30,6 +31,58 @@ if [ -x "${own}" ]; then
   own_dir="$(cd "$(dirname "${own}")" 2>/dev/null && pwd -P)" || own_dir=""
   self_dir="$(cd "$(dirname "$0")" 2>/dev/null && pwd -P)" || self_dir=""
   [ -n "${own_dir}" ] && [ "${own_dir}" = "${self_dir}" ] && own_is_self=1
+fi
+
+# --- pre-push: the repo's tracked hook, taken from the remote's main (dotfiles#26)
+# A repo opts in by merging .githooks/pre-push to its default branch. It runs
+# only for a push to a github.com repo whose owner is listed here: owners, not
+# repo names, because this repo is public. Without the owner check, a push from
+# any third-party clone would run that project's own hook.
+tracked_owners="underspecified"
+
+# Print the commit whose .githooks/pre-push this push runs, or nothing.
+# Args: git's pre-push args, <remote> <url>.
+tracked_commit() {
+  local remote="${1:-}" url="${2:-}" path owner o ref sha
+  # A push to a bare URL passes the URL as both args: no remote-tracking refs.
+  [ -n "${remote}" ] && [ "${remote}" != "${url}" ] || return 0
+  case "${url}" in
+    git@github.com:*) path="${url#git@github.com:}" ;;
+    ssh://git@github.com/*) path="${url#ssh://git@github.com/}" ;;
+    https://github.com/*) path="${url#https://github.com/}" ;;
+    *) return 0 ;;
+  esac
+  case "${path}" in */?*) ;; *) return 0 ;; esac
+  owner="${path%%/*}"
+  for o in ${tracked_owners}; do
+    [ "${owner}" = "${o}" ] || continue
+    # The default branch as of the last fetch: no network here. A branch's own
+    # copy never runs, or it could edit or empty its own check.
+    for ref in "refs/remotes/${remote}/HEAD" "refs/remotes/${remote}/main"; do
+      sha="$(git rev-parse --verify --quiet "${ref}^{commit}")" || continue
+      git cat-file -e "${sha}:.githooks/pre-push" 2>/dev/null && echo "${sha}"
+      return 0
+    done
+  done
+}
+
+if [ "${hook}" = "pre-push" ] && sha="$(tracked_commit "$@")" && [ -n "${sha}" ]; then
+  export LNK_HOOK_CHAINED=1
+  tmp="$(mktemp -d)" || exit 1
+  trap 'rm -rf "${tmp}"' EXIT
+  git show "${sha}:.githooks/pre-push" >"${tmp}/pre-push" || exit 1
+  chmod 700 "${tmp}/pre-push"
+  if [ -x "${own}" ] && [ "${own_is_self}" -eq 0 ]; then
+    # stdin (the pushed refs) can be read only once: save it, feed it to both.
+    cat >"${tmp}/stdin"
+    "${own}" "$@" <"${tmp}/stdin" || exit $?
+    "${tmp}/pre-push" "$@" <"${tmp}/stdin"
+  else
+    "${tmp}/pre-push" "$@"
+  fi
+  rc=$?
+  [ "${rc}" -eq 0 ] || echo "pre-push: refused by .githooks/pre-push from ${1}'s default branch (${sha:0:7})" >&2
+  exit "${rc}"
 fi
 
 # Hooks with no lnk-side guard: hand off entirely. `exec` keeps stdin intact,
