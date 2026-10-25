@@ -214,6 +214,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged planning #60 (846df1d; on 7 hosts): good-night finds Eric's "I want…" asks, good-morning asks once, and tracked ones become Owes lines, flagged after 14 quiet days. Live find on 10/23: 4 candidates, 1 already tracked. planning #56 is next.
 - 2026-10-25 — Merged kaiseki #69 (caa159f; on 7 hosts): nikki and seat_time share one prompt filter (nikki-only prompts 220 → 0; seat_time unchanged on all 666 TANK transcripts). kaiseki #67 (narrate waiter mail) is next.
 - 2026-10-25 — Signed off planning #55's plan: Eric's "I want…" asks come from the time ledger's own-prompt tasks (every seat and host; the 120-char cut accepted), and good-morning asks once, then dispatches the Owes line.
 - 2026-10-25 — Merged planning #59 (acb397e; on 7 hosts) after 2 rounds: the weekly review shows "Your time" (calendar plus logged), and Tasks is agent-only (10/23: 107.7 h = 80.5 h agent + 27.2 h Eric). Round 1 blocked silent loss on llm-jp's stray logs dir; checked live that it now refuses. Added the global "Eric's Time" rule (lnk 5332ef3). planning #55 is next.
