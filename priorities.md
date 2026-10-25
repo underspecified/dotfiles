@@ -214,6 +214,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged travel #6 (5e53d9f; on 7 hosts): install.sh installs chromium from a locked playwright 1.64.0, matching the scripts' locks. A no-op on TANK.
 - 2026-10-25 — Signed off planning #54's plan: Eric's calendar and logged time move out of the agent Tasks table into "Your time" (they were counted twice), and `log_time.py` takes a tag and refuses on hosts without the ledger.
 - 2026-10-25 — Merged planning #58 (7ec825e; on 7 hosts): the weekly review opens with the Check-in of every PL's Recent. planning #54 is next.
 - 2026-10-25 — Result: three more unpinned `uv run --with` installs found, which my 10/24 search missed. Assigned travel #5 (playwright in install.sh) and admin #39 (test deps); widened kaiseki #66. Correction posted on lab#112.
