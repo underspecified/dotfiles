@@ -42,6 +42,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Signed off planning #57's plan: message cards carry their PL's draft link, and talks 7 days out get one first-draft deck ask each. Decision: drafts and decks never go into git (the asks say so, and lnk now ignores `/drafts/` and `/decks/`, since it's public).
 - 2026-10-25 — Merged planning #61 (b6b4538; on 7 hosts): good-morning shows at most 3 default-yes decisions, an "Untouched 14 days" list (5 of 72 shown today), and a focus block on the most stalled paper (the LLM safety survey, 110 d). planning #57 is last.
 - 2026-10-25 — Decision: In flight pruned to open items only (297 → 69 lines), before planning #56 starts flagging untouched priorities. Durable procedures moved to Standing rules.
 - 2026-10-25 — Result: lab confirmed dotfiles #26 live. The two hand-installed hooks on llm-jp are trashed, and a real push from llm-jp-2 ran lab_runs's checker from main (2/2 pass). lab#106 item 12 is closed.
