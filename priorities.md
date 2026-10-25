@@ -16,7 +16,6 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Eric's 10/25 time and decisions talk (coordinator's brief):** done; all of planning #53–#57 are merged and deployed. Next, after two weeks of "Your time" data (about 11/8), per-project time targets come up again.
-- **planning #63** (good-night lists each repo's nikki log under its owning PLs from time-labels.md, no bullet twice): plan signed off; being built. kaiseki's queue is empty and its seat is stopped.
 - **Supply chain (lab#112):** the first round is complete, and so is the codex updater. The monthly audit and the upgrade YES/NO list are lab's.
 - **claude-limitline:** revisit removing the OAuth fallback after a week on stdin (about 10/29). #8 (trend arrow on an old snapshot) is low priority.
 - **Workflow prefixes (proposed to the coordinator 9/23):** the fixed sign-off and review prefixes for `workflow.md`. hansei's audit already matches them; check whether the coordinator still wants them in `workflow.md`.
@@ -42,6 +41,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged planning #64 (bffbea8; on 7 hosts), closing #63: good-night's daily log shows a paper repo's bullets under its owning PL (10/05: leaderboard under RwB; altHRI and ETHOS_WS under cambridge). On real days every log is placed once. kaiseki #3 is fully done.
 - 2026-10-25 — Signed off planning #63's plan: a new `log_groups.py` places each day's nikki log once. A co-owned repo shows under its first PL owner, naming all its PL owners; a repo with no PL owner keeps its own heading. I added one test, so the Papers stall check still counts grouped repos.
 - 2026-10-25 — Merged kaiseki #71 (78673ee; on 7 hosts), closing #3: nikki's empty day now says where it looked. Nothing matched the old "No activity in period." line. planning #63 (owned repos under their PLs) is approved and assigned.
 - 2026-10-25 — Approved kaiseki #3's plan A: most of the issue is fixed on main. What's left is that a PL's log misses the repos it owns (RwB on 8/10: 0 of 11 commits). That's fixed in good-night's digest using time-labels.md owners, not by nikki scanning repos twice.
