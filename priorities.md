@@ -214,6 +214,9 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-25 — Merged planning #58 (7ec825e; on 7 hosts): the weekly review opens with the Check-in of every PL's Recent. planning #54 is next.
+- 2026-10-25 — Result: three more unpinned `uv run --with` installs found, which my 10/24 search missed. Assigned travel #5 (playwright in install.sh) and admin #39 (test deps); widened kaiseki #66. Correction posted on lab#112.
+- 2026-10-25 — Signed off kaiseki #63's plan (one shared prompt filter). #66 goes first so its tests run on a locked pytest.
 - 2026-10-25 — Merged kaiseki #65 (46758cf; on 7 hosts): hansei's audit accepts `Plan approved (PL:<slug>)` for Gate 1. Filed kaiseki #66 (lock the test runner; `uv run --with pytest` is unpinned).
 - 2026-10-25 — Signed off planning #53's implementation plan: the weekly Check-in reads every PL's Recent, Direction items first.
 - 2026-10-25 — Plans approved: planning #53–#57 (the weekly check-in, Eric's time, Eric's asks, good-morning, no blank pages) and kaiseki #64 (fast lane). Assigned #53 and #64; the rest are queued.
