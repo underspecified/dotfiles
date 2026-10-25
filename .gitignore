@@ -20,6 +20,11 @@ macos.lnk/.config/kitty/display.conf
 # the env symlink is no longer used but may linger as a stale local artifact)
 linux.lnk/.config/display/env
 
+# This seat's message drafts and first-draft decks (planning#57): unsent email text
+# and slides for Eric. Never published from this public repo.
+/drafts/
+/decks/
+
 # Homebrew-managed per-machine state (Brewfile + brew.env are tracked; this isn't)
 macos.lnk/.homebrew/trust.json
 macos.lnk/.homebrew/trust.json.lock
