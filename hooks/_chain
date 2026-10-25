@@ -11,8 +11,9 @@
 #
 # Load-bearing: `git rev-parse --git-path hooks/<name>` CANNOT be used to find
 # the repo's own hook — it FOLLOWS core.hooksPath and returns this very script,
-# which would exec itself forever. Verified 2026-09-21. Use --git-dir, which
-# resolves to the repo's real .git regardless of hooksPath.
+# which would exec itself forever. Verified 2026-09-21. Use --git-common-dir,
+# which resolves to the repo's real .git regardless of hooksPath. Not --git-dir:
+# in a linked worktree that is .git/worktrees/<name>, which has no hooks/.
 set -uo pipefail
 
 # Recursion guard: if a repo's own hook is itself this script (symlinked, or a
@@ -20,8 +21,8 @@ set -uo pipefail
 [ -n "${LNK_HOOK_CHAINED:-}" ] && exit 0
 
 hook="$(basename "$0")"
-gitdir="$(git rev-parse --git-dir 2>/dev/null)" || exit 0
-own="${gitdir}/hooks/${hook}"
+commondir="$(git rev-parse --git-common-dir 2>/dev/null)" || exit 0
+own="${commondir}/hooks/${hook}"
 
 # Don't chain to ourselves: compare resolved directories, not paths as written.
 own_is_self=0
