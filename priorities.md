@@ -41,6 +41,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-26 — agy's built-in updater is off on every Linux host with zsh (Eric's ask via the coordinator, lab#106 item 6): `AGY_CLI_DISABLE_AUTO_UPDATE=true` in zshrc.linux (66b75b1). A new shell has it on 5 hosts; dgx02 has no zsh or agy. Lab told.
 - 2026-10-25 — Result: Eric logged Claude Code back in on germputer and haru-4090. Verified with a real headless call on each; no seat there has unread mail.
 - 2026-10-25 — Merged planning #64 (bffbea8; on 7 hosts), closing #63: good-night's daily log shows a paper repo's bullets under its owning PL (10/05: leaderboard under RwB; altHRI and ETHOS_WS under cambridge). On real days every log is placed once. kaiseki #3 is fully done.
 - 2026-10-25 — Signed off planning #63's plan: a new `log_groups.py` places each day's nikki log once. A co-owned repo shows under its first PL owner, naming all its PL owners; a repo with no PL owner keeps its own heading. I added one test, so the Papers stall check still counts grouped repos.
