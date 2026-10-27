@@ -35,7 +35,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
   - `sudo powermetrics` for the WindowServer load;
   - the kanban's 16 angle-bracket URLs;
   - Delete `planning/logs/.conflict-stubs-2026-09-24/` from Finder (110 OneDrive placeholder stubs from the #23 incident; Finder sends them to the OneDrive recycle bin). Trash and `rm` both fail on the OneDrive volume.
-  - Overleaf token rotation (moved from Eric's TODO, 2026-09-24). `~/.git-credentials` is a stale plaintext file (0600) holding an Overleaf token; no `store` helper reads it anymore. Eric revokes the old token in Overleaf and confirms the new one is in 1Password, then I trash the file.
+  - Overleaf token rotation (moved from Eric's TODO, 2026-09-24). Eric revokes the old token in Overleaf and confirms the new one is in 1Password; then I clean up the old copy (details in this seat's memory, not here).
 
 ## Recent
 
