@@ -16,6 +16,7 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 ## In flight
 
 - **Eric's 10/25 time and decisions talk (coordinator's brief):** done; all of planning #53–#57 are merged and deployed. Next, after two weeks of "Your time" data (about 11/8), per-project time targets come up again.
+- **This file leaves the public repo (hansei 10/26):** planning #65 first (pl_checkin and stalled follow a symlinked priorities.md; tests pass a minimal env). Then I move the file to a private repo, leave a gitignored symlink here, and untrack it.
 - **Supply chain (lab#112):** the first round is complete, and so is the codex updater. The monthly audit and the upgrade YES/NO list are lab's.
 - **claude-limitline:** revisit removing the OAuth fallback after a week on stdin (about 10/29). #8 (trend arrow on an old snapshot) is low priority.
 - **Workflow prefixes (proposed to the coordinator 9/23):** the fixed sign-off and review prefixes for `workflow.md`. hansei's audit already matches them; check whether the coordinator still wants them in `workflow.md`.
@@ -29,18 +30,19 @@ Time-sensitive state for the settings PL. Durable facts live in `CLAUDE.md`; his
 
 ## Waiting on Eric
 
+- Revoke the old Overleaf token (raised by hansei 10/26; moved from Eric's TODO 9/24). Eric revokes it in Overleaf and confirms the new one is in 1Password; then I clean up the old copy (details in this seat's memory, not here).
 - ppm-application PDF attach (Eric, via `projects`): the auto-mode classifier blocked my edit as self-modification. It adds `file_upload` and `cp` to the allowed-tools and drops the "can't attach" hard rule. The full change is in this session's scratchpad `ppm_attach_pdf_proposal.md`. Eric applies it himself, or OKs it here.
 - Report the Apple Mail MCP Sent Items bug upstream (imdinu)? That's outward-facing, so it needs Eric's yes. Under Hou-Ren-Sou I bring the ready issue text, not a bare question; not drafted yet. The workaround is planning #12.
 - Low priority (Eric, 2026-09-23):
   - `sudo powermetrics` for the WindowServer load;
   - the kanban's 16 angle-bracket URLs;
   - Delete `planning/logs/.conflict-stubs-2026-09-24/` from Finder (110 OneDrive placeholder stubs from the #23 incident; Finder sends them to the OneDrive recycle bin). Trash and `rm` both fail on the OneDrive volume.
-  - Overleaf token rotation (moved from Eric's TODO, 2026-09-24). Eric revokes the old token in Overleaf and confirms the new one is in 1Password; then I clean up the old copy (details in this seat's memory, not here).
 
 ## Recent
 
 Rolling 1-week window: one short line per entry. Details are in In flight, and history is in git.
 
+- 2026-10-27 — Decision (hansei 10/26): this file moves to a private repo once planning #65 lands, and a credential file's location is already out of it. Result: the 10/19 bus token was not rotated, by Eric's 10/19 choice; that is now on record in the private planning repo.
 - 2026-10-26 — agy's built-in updater is off on every Linux host with zsh (Eric's ask via the coordinator, lab#106 item 6): `AGY_CLI_DISABLE_AUTO_UPDATE=true` in zshrc.linux (66b75b1). A new shell has it on 5 hosts; dgx02 has no zsh or agy. Lab told.
 - 2026-10-25 — Result: Eric logged Claude Code back in on germputer and haru-4090. Verified with a real headless call on each; no seat there has unread mail.
 - 2026-10-25 — Merged planning #64 (bffbea8; on 7 hosts), closing #63: good-night's daily log shows a paper repo's bullets under its owning PL (10/05: leaderboard under RwB; altHRI and ETHOS_WS under cambridge). On real days every log is placed once. kaiseki #3 is fully done.
