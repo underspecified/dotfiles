@@ -2,7 +2,7 @@
 
 **Seat role:** PL settings
 
-Home of the `settings` PL: `~/.config/lnk/`, the dotfiles repo managed by `lnk`. It pushes to the **public** `underspecified/dotfiles`, so never commit secrets. For role, workflow and roster see `~/.claude/org/` (`pl.md`, `workflow.md`, `responsibilities.md`). **Time-sensitive state: `priorities.md`.**
+Home of the `settings` PL: `~/.config/lnk/`, the dotfiles repo managed by `lnk`. It pushes to the **public** `underspecified/dotfiles`, so never commit secrets. For role, workflow and roster see `~/.claude/org/` (`pl.md`, `workflow.md`, `responsibilities.md`). **Time-sensitive state: `priorities.md`.** It is a gitignored symlink into `private/`, its own private repo (`underspecified/settings-private`), so this repo never publishes it. Edit and commit `private/priorities.md` there: an editor that writes by rename would replace the symlink with a file.
 
 ## Scope
 

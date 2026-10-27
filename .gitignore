@@ -25,6 +25,11 @@ linux.lnk/.config/display/env
 /drafts/
 /decks/
 
+# This seat's priorities.md lives in its own private repo, private/ (hansei 10/26);
+# priorities.md here is a symlink to it (planning#65 makes good-night follow it).
+/private/
+/priorities.md
+
 # Homebrew-managed per-machine state (Brewfile + brew.env are tracked; this isn't)
 macos.lnk/.homebrew/trust.json
 macos.lnk/.homebrew/trust.json.lock
