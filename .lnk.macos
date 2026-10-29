@@ -24,6 +24,7 @@
 .local/bin/echo_and_eval
 .local/bin/fix_audio
 .local/bin/get_macos_mode
+.local/bin/hydrate
 .local/bin/launch_ws
 .local/bin/open_alfred
 .local/bin/open_drafts

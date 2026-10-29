@@ -1,0 +1,140 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = []
+# ///
+"""Usage: hydrate [--max-mb N] [--max-total-gb G] <path>...
+Output: JSON {downloaded, failed: [{path, error}], skipped: [{path, bytes}]};
+exit 1 if anything failed.
+
+Downloads cloud-only (dataless) File Provider files: OneDrive, Google Drive,
+iCloud. A file argument is downloaded; a directory has every dataless file
+under it downloaded, smallest first. Files over --max-mb (default 50) are
+skipped, and it stops at --max-total-gb (default 2); both are listed in
+`skipped`. Safe to re-run: it only touches files that are still cloud-only.
+
+Claude Code sessions inherit an I/O policy that makes any read of a dataless
+file fail with EDEADLK ("Resource deadlock avoided") instead of downloading it.
+This turns that policy ON for this process only (setiopolicy_np); nothing
+system-wide changes.
+"""
+
+import argparse
+import ctypes
+import json
+import os
+import stat
+import sys
+
+IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES = 3
+IOPOL_SCOPE_PROCESS = 0
+IOPOL_MATERIALIZE_DATALESS_FILES_ON = 2
+SF_DATALESS = 0x40000000  # stat.SF_DATALESS, Python 3.13+
+CHUNK = 1 << 20
+HINT = (
+    "check that the provider's app is running "
+    "(OneDrive has failed with error -17 while its main app was down)"
+)
+
+
+def materialize_on() -> None:
+    libc = ctypes.CDLL("libc.dylib", use_errno=True)
+    if libc.setiopolicy_np(
+        IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES,
+        IOPOL_SCOPE_PROCESS,
+        IOPOL_MATERIALIZE_DATALESS_FILES_ON,
+    ):
+        sys.exit(f"hydrate: setiopolicy_np failed: {os.strerror(ctypes.get_errno())}")
+
+
+def dataless_size(path: str) -> int | None:
+    """Size of a regular dataless file at path, else None."""
+    st = os.lstat(path)
+    if stat.S_ISREG(st.st_mode) and st.st_flags & SF_DATALESS:
+        return st.st_size
+    return None
+
+
+def error(e: OSError) -> str:
+    return f"{e.strerror} (errno {e.errno})"
+
+
+def collect(paths: list[str], failed: list[dict]) -> dict[str, int]:
+    """Map each dataless file under paths to its size.
+
+    Arguments that are symlinks are followed; symlinks inside a directory are not.
+    """
+    found: dict[str, int] = {}
+
+    def add(path: str) -> None:
+        try:
+            size = dataless_size(path)
+        except OSError as e:
+            failed.append({"path": path, "error": error(e)})
+            return
+        if size is not None:
+            found[path] = size
+
+    def walk_error(e: OSError) -> None:
+        failed.append({"path": e.filename, "error": f"{error(e)}; {HINT}"})
+
+    for p in map(os.path.realpath, paths):
+        if not os.path.isdir(p):
+            add(p)
+            continue
+        for root, _, files in os.walk(p, onerror=walk_error):
+            for name in files:
+                add(os.path.join(root, name))
+    return found
+
+
+def download(path: str) -> str | None:
+    """Read path to its end, which downloads it; return an error or None."""
+    try:
+        with open(path, "rb") as fh:
+            while fh.read(CHUNK):
+                pass
+        if dataless_size(path) is not None:
+            return f"still cloud-only after reading; {HINT}"
+    except OSError as e:
+        return f"{error(e)}; {HINT}"
+    return None
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(
+        prog="hydrate", description="Download cloud-only (dataless) files."
+    )
+    ap.add_argument("--max-mb", type=float, default=50, help="skip larger files")
+    ap.add_argument("--max-total-gb", type=float, default=2, help="stop after this")
+    ap.add_argument("paths", nargs="+")
+    args = ap.parse_args()
+    if sys.platform != "darwin":
+        sys.exit("hydrate: macOS only")
+
+    materialize_on()
+    failed: list[dict] = []
+    skipped: list[dict] = []
+    downloaded = 0
+    total = 0
+    max_bytes = args.max_mb * 1e6
+    budget = args.max_total_gb * 1e9
+    found = collect(args.paths, failed)
+    for path, size in sorted(found.items(), key=lambda kv: kv[1]):
+        if size > max_bytes or total + size > budget:
+            skipped.append({"path": path, "bytes": size})
+            continue
+        err = download(path)
+        if err:
+            failed.append({"path": path, "error": err})
+        else:
+            downloaded += 1
+            total += size
+
+    out = {"downloaded": downloaded, "failed": failed, "skipped": skipped}
+    print(json.dumps(out, indent=2))
+    sys.exit(1 if failed else 0)
+
+
+if __name__ == "__main__":
+    main()
