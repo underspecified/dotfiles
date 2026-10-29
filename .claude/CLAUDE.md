@@ -45,6 +45,7 @@ When Eric says he spent time on something ("today I spent 2 hours on Y"), log it
 - Edit over sed/awk
 - Write over echo/cat heredoc
 - Never parallel Bash calls in one message (cascade failure) -- use TaskCreate
+- A read that fails with "Resource deadlock avoided" means the file is cloud-only (OneDrive, Google Drive): run `hydrate <path>` (macOS) instead of retrying
 
 ## Script Invocation
 

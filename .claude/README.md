@@ -94,6 +94,10 @@ After `lnk pull` on a new machine, run `bash ~/.claude/bootstrap.sh` to:
 - Register MCP servers via `claude mcp add`
 - Apply local plugin patches from `patches/` (idempotent — safe to re-run)
 
+## Commands
+
+- `hydrate [--max-mb N] [--max-total-gb G] <path>...` (macOS, `~/.local/bin`): downloads cloud-only OneDrive/Google Drive/iCloud files, which a Claude session can't read (EDEADLK). Skips files over 50 MB, stops at 2 GB, prints JSON.
+
 ## Status Line
 
 `claude-limitline-fork/` -- Node.js status line (selenized-light theme), tracks context window with warning/critical thresholds (60%/85%). Configured via `claude-limitline.json`.
