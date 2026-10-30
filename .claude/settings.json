@@ -266,7 +266,8 @@
     "frontend-design@claude-plugins-official": true,
     "che-ical-mcp@che-ical-mcp": true,
     "1password@1password": true,
-    "swift-lsp@claude-plugins-official": true
+    "swift-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
