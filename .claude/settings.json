@@ -267,7 +267,9 @@
     "che-ical-mcp@che-ical-mcp": true,
     "1password@1password": true,
     "swift-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true
+    "clangd-lsp@claude-plugins-official": true,
+    "codex-image@codex-image-in-cc": true,
+    "agent-intern@agent-intern": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
@@ -292,6 +294,18 @@
       "source": {
         "source": "github",
         "repo": "1Password/1password-claude-plugin"
+      }
+    },
+    "codex-image-in-cc": {
+      "source": {
+        "source": "github",
+        "repo": "KingGyuSuh/codex-image-in-cc"
+      }
+    },
+    "agent-intern": {
+      "source": {
+        "source": "github",
+        "repo": "SinanTufekci/agent-intern"
       }
     }
   },
