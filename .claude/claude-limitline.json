@@ -2,6 +2,7 @@
   "theme": "selenized-light",
   "display": { "compactMode": "auto", "compactWidth": 60 },
   "model": { "enabled": false },
+  "block": { "enabled": false },
   "context": {
     "enabled": true
   },
