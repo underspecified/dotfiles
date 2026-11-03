@@ -61,6 +61,9 @@ bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh \
 
 Opens Mail with proper threading + quoted chain. Works on any mailbox. Returns JSON `{ok, subject, to, cc}`.
 
+- **Runs from all seats take turns.** Each waits up to 60 s, and a run can take about 110 s in total, so never set a Bash timeout under 120 s for it. "No window opened" means it timed out waiting: retry it.
+- **On `ok:false`, point Eric to the body copy the error names** (`~/Library/Caches/email-inbox/drafts/…`), not only the clipboard.
+
 ## Attachments
 
 **A draft that needs a file either carries it, or opens with the exact file revealed and named.**
