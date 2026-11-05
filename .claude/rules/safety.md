@@ -16,7 +16,7 @@ Never print a secret's value into a session; session logs are plaintext on disk.
 - **Process listings and service definitions carry argv, and some services take a token as an argument.** On 10/10, a full `ps` on llm-jp-2 printed a cloudflared `--token`. Never print full argv. Avoid all of these:
   - `ps aux`, `ps -ef`, and `ps -o args`/`command`;
   - `pgrep -a`, `-af` or `-lf` without a narrow pattern;
-  - `/proc/*/cmdline`;
+  - `/proc/*/cmdline`, and anything that adds each process's env: `ps e`/`ps eww`/`ps -E`, `/proc/*/environ` (meeting passes the HF token to whisply by env since #9);
   - `systemctl cat` or `status` on a unit that holds credentials;
   - `docker inspect` (`Config.Cmd`, `Config.Env`) and `docker ps --no-trunc`.
 - Instead print the pid and the name (`ps -eo pid,user,comm`, `pgrep -l`), or redact the args: `sed -E 's/(--?(token|password|secret|api[-_]?key)[= ])[^ ]+/\1<redacted>/g'`.
