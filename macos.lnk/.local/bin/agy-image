@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Usage: agy-image "<prompt>" <out> [--ref <image>]...
+# Output: JSON {"ok": true, "path": "<out>"}, or {"ok": false, "error": "..."}
+#   with exit 1. agy's own output goes to stderr.
+#
+# Makes an image with `agy -p` on Eric's Google AI Pro login and copies it to
+# <out>. It never passes agy's permission-bypass flag (dotfiles#30), so agy
+# can't write <out> itself: the image lands in its brain dir as
+# <stem>_<epoch-ms>.jpg. This finds the newest such file made during the run.
+set -uo pipefail
+
+brain="${HOME}/.gemini/antigravity-cli/brain"
+
+fail() {
+  jq -n --arg e "$1" '{ok: false, error: $e}'
+  exit 1
+}
+
+main() {
+  (($# >= 2)) || fail 'usage: agy-image "<prompt>" <out> [--ref <image>]...'
+  local prompt="$1" out="$2"
+  shift 2
+  local -a flags=()
+  local refs="" dir
+  while (($#)); do
+    [[ "$1" == "--ref" && $# -ge 2 ]] || fail "unknown argument: $1"
+    [[ -f "$2" ]] || fail "reference image not found: $2"
+    dir="$(cd "$(dirname "$2")" && pwd)"
+    refs+="${refs:+, }${dir}/$(basename "$2")"
+    flags+=(--add-dir "${dir}")
+    shift 2
+  done
+  command -v agy >/dev/null || fail "agy not found (brew install --cask antigravity-cli)"
+  # Before agy runs, so a bad <out> fails without spending quota.
+  mkdir -p "$(dirname "${out}")" || fail "can't create the directory of ${out}"
+
+  # agy names the file after the stem; keep it to [a-z0-9_] so the match holds.
+  local name stem
+  name="$(basename "${out}")"
+  stem="$(printf '%s' "${name%.*}" | tr -c '[:alnum:]_' '_' | tr '[:upper:]' '[:lower:]')"
+  stem="${stem:-image}"
+  [[ -n "${refs}" ]] && prompt+=". Reference images: ${refs}"
+  prompt+=". Name the image file ${stem}."
+
+  # Global, not local: the EXIT trap runs after main returns.
+  marker="$(mktemp "${TMPDIR:-/tmp}/agy-image.XXXXXX")" || fail "mktemp failed"
+  trap 'rm -f "${marker}"' EXIT
+
+  # -p last: flags must come before the prompt. The ${a[@]+...} form keeps
+  # set -u quiet on an empty array under macOS's bash 3.2.
+  agy ${flags[@]+"${flags[@]}"} -p "${prompt}" >&2
+  local rc=$?
+
+  local img
+  img="$(
+    find "${brain}" -type f -newer "${marker}" -iname "${stem}*" \
+      \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) \
+      -exec stat -f '%Fm%t%N' {} + 2>/dev/null \
+      | sort -rn \
+      | head -n 1 \
+      | cut -f 2-
+  )"
+  [[ -n "${img}" ]] || fail "no image named ${stem}* appeared under ${brain} (agy exit ${rc})"
+  cp "${img}" "${out}" || fail "copy failed: ${img} -> ${out}"
+  jq -n --arg p "${out}" '{ok: true, path: $p}'
+}
+
+main "$@"
