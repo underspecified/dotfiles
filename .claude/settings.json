@@ -269,7 +269,7 @@
     "swift-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
     "codex-image@codex-image-in-cc": true,
-    "agent-intern@agent-intern": true
+    "agent-intern@agent-intern": false
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
