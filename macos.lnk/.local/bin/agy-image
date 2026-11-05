@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# Usage: agy-image "<prompt>" <out.jpg|out.png> [--ref <image>]...
+# Output: JSON {"ok": true, "path": "<out>"}, or {"ok": false, "error": "..."}
+#   with exit 1. agy's own output goes to stderr.
+#
+# Makes an image with `agy -p` on Eric's Google AI Pro login, never with agy's
+# permission-bypass flag (dotfiles#30), so agy can't write <out>: the image lands
+# in brain/<id>/<stem>_<epoch-ms>.jpg, with <id> from agy's log ("Print mode:
+# conversation=<id>"). Refs are copied to a temp folder; agy sees only that.
+set -uo pipefail
+
+brain="${HOME}/.gemini/antigravity-cli/brain"
+
+fail() {
+  jq -n --arg e "${1}" '{ok: false, error: $e}'
+  exit 1
+}
+lower() { printf '%s' "${1}" | LC_ALL=C tr '[:upper:]' '[:lower:]'; }
+
+main() {
+  if ! command -v jq >/dev/null; then
+    printf '{"ok": false, "error": "jq not found"}\n'
+    exit 1
+  fi
+  (($# >= 2)) || fail 'usage: agy-image "<prompt>" <out.jpg|out.png> [--ref <image>]...'
+  local prompt="${1}" out="${2}"
+  shift 2
+  local -a refs=()
+  while (($#)); do
+    case "${1}" in
+      --ref) (($# >= 2)) || fail "--ref needs an image path" ;;
+      *) fail "unknown argument: ${1}" ;;
+    esac
+    [[ -f "${2}" ]] || fail "reference image not found: ${2}"
+    refs+=("${2}")
+    shift 2
+  done
+  [[ -d "${out}" || "${out}" == */ ]] && fail "<out> is a directory: ${out}"
+  local fmt name stem
+  case "$(lower "${out##*.}")" in
+    jpg | jpeg) fmt=jpeg ;;
+    png) fmt=png ;;
+    *) fail "<out> must end in .jpg, .jpeg or .png: ${out}" ;;
+  esac
+  command -v agy >/dev/null || fail "agy not found (brew install --cask antigravity-cli)"
+  # Before agy runs, so a bad <out> fails without spending quota.
+  mkdir -p "$(dirname "${out}")" || fail "can't create the directory of ${out}"
+  # Global, not local: the EXIT trap runs after main returns.
+  tmp="$(mktemp -d "${TMPDIR:-/tmp}/agy-image.XXXXXX")" || fail "mktemp failed"
+  trap 'rm -rf "${tmp}"' EXIT
+  # 100 s keeps the whole run inside a seat's default 120 s Bash timeout.
+  local -a flags=(--disable-slash-commands --print-timeout 100s --log-file "${tmp}/agy.log")
+  if ((${#refs[@]})); then
+    # A seat can't read cloud-only files until they are downloaded.
+    if command -v hydrate >/dev/null; then
+      hydrate "${refs[@]}" >/dev/null || fail "couldn't download the reference images"
+    fi
+    mkdir "${tmp}/refs"
+    local i=0 r staged list=""
+    for r in "${refs[@]}"; do
+      i=$((i + 1))
+      staged="${tmp}/refs/ref${i}.$(lower "${r##*.}" | LC_ALL=C tr -cd 'a-z0-9')"
+      cp "${r}" "${staged}" || fail "can't copy reference image: ${r}"
+      list+="${list:+, }${staged}"
+    done
+    flags+=(--add-dir "${tmp}/refs")
+    prompt+=". Reference images: ${list}"
+  fi
+
+  # agy names the file after the stem; keep it to [a-z0-9_] so the match holds.
+  name="$(basename "${out}")"
+  stem="$(lower "${name%.*}" | LC_ALL=C tr -c 'a-z0-9_' '_')"
+  [[ "${stem}" =~ [a-z0-9] ]] || stem=image
+  prompt+=". Name the image file ${stem}."
+
+  agy "${flags[@]}" -p "${prompt}" >&2 # -p last: flags go before the prompt
+  local rc=$? conv img src
+  conv="$(sed -nE 's/.*Print mode: conversation=([0-9a-f-]{36}).*/\1/p' "${tmp}/agy.log" 2>/dev/null | head -n 1)"
+  [[ -n "${conv}" ]] || fail "agy's log has no conversation id (agy exit ${rc})"
+  img="$(
+    find "${brain}/${conv}" -mindepth 1 -maxdepth 1 -type f \
+      \( -iname "${stem}_[0-9]*" -o -iname "${stem}.*" \) \
+      \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) \
+      -exec stat -f '%Fm%t%N' {} + 2>/dev/null \
+      | sort -rn | head -n 1 | cut -f 2-
+  )"
+  [[ -n "${img}" ]] || fail "no image named ${stem}_* in ${brain}/${conv} (agy exit ${rc})"
+  src="$(lower "${img##*.}")"
+  [[ "${src}" == jpg ]] && src=jpeg
+  if [[ "${src}" == "${fmt}" ]]; then
+    cp "${img}" "${out}" || fail "copy failed: ${img} -> ${out}"
+  else
+    sips -s format "${fmt}" "${img}" --out "${out}" >/dev/null || fail "conversion to ${fmt} failed: ${img}"
+  fi
+  jq -n --arg p "${out}" '{ok: true, path: $p}'
+}
+
+main "$@"

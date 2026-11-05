@@ -97,6 +97,7 @@ After `lnk pull` on a new machine, run `bash ~/.claude/bootstrap.sh` to:
 ## Commands
 
 - `hydrate [--max-mb N] [--max-total-gb G] <path>...` (macOS, `~/.local/bin`): downloads cloud-only OneDrive/Google Drive/iCloud files, which a Claude session can't read (EDEADLK). Skips files over 50 MB, stops at 2 GB, prints JSON.
+- `agy-image "<prompt>" <out.jpg|out.png> [--ref <image>]...` (macOS, `~/.local/bin`): makes a Google image with `agy -p` on Eric's login, never with agy's permission-bypass flag, and copies this run's image from agy's brain dir to `<out>`. agy sees only temp copies of the refs. Prints `{"ok": …}` JSON. A run takes about a minute; agy is cut off at 100 s, so the default 120 s Bash timeout is enough.
 
 ## Status Line
 
