@@ -29,6 +29,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - The `~/.claude` hookify rules (`block-rm`, `block-force-push`, `block-applescript-mail-send` and the warns) are global only through `.claude/patches/hookify-global-rules.patch`. Upstream hookify reads only `$CWD/.claude/`. The SessionStart hook re-applies the patch to every installed hookify copy. Without the patch, the rules fire only in `~` and `~/.config/lnk` sessions (measured 10-10).
 - security-guidance's model reviews (end-of-turn, per-commit, push) are off: `ENABLE_CODE_SECURITY_REVIEW=0` in `settings.json` `env` (Eric, 10/19). Its free pattern warnings stay on. PR reviewers run `/security-review` by hand on PRs that handle shell, ssh, credentials or outside input, in a worktree or scratch clone.
 - `.claude/hooks/md_format.sh` skips the Obsidian vault and files with conflict markers. Its header explains why; read it before removing a guard.
+- **Tank's launchd job `com.underspecified.dispatch.tmux-server`** (dispatch `install.sh`, #248) keeps `tmux -L dispatch` running from desktop login, so seats never run in an SSH login (no TCC, no keychain). Check with `dispatch version`; to remove it, follow dispatch's SKILL.md "tmux server job". A bootout kills every seat.
 - Don't use the legacy `setup.sh`; use `lnk`. The shell is zsh with `ZDOTDIR=~/.config/zsh`.
 
 ## Manifests
