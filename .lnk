@@ -55,11 +55,11 @@
 .docker/mcp/catalog.json
 .docker/mcp/config.yaml
 .docker/mcp/registry.yaml
+.local/bin/claude_theme_toggle
 .local/bin/kitty_layout_horizontal
 .local/bin/kitty_layout_last_used
 .local/bin/kitty_layout_tall
 .local/bin/kitty_remote
-.local/bin/toggle_claude_theme
 .screenrc
 .ssh/config
 .zshenv

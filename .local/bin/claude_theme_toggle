@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: toggle_claude_theme [dark|light] [--push] [--hosts "h1 h2 ..."]
+# Usage: claude_theme_toggle [dark|light] [--push] [--hosts "h1 h2 ..."]
 # Point Claude Code's dynamic "Selenized" theme (~/.claude/themes/selenized.json)
 # at the light or dark palette by swapping a relative symlink. Claude watches
 # ~/.claude/themes/ and hot-reloads on the retarget, so running sessions follow
@@ -13,7 +13,7 @@ set -euo pipefail
 
 THEMES="${HOME}/.claude/themes"
 
-toggle_claude_theme() {
+claude_theme_toggle() {
     local mode="$1" target
     if [[ "${mode}" == "dark" ]]; then
         target="selenized-dark.json"
@@ -21,7 +21,7 @@ toggle_claude_theme() {
         target="selenized-light.json"
     fi
     if [[ ! -e "${THEMES}/${target}" ]]; then
-        echo "toggle_claude_theme: missing ${THEMES}/${target}" >&2
+        echo "claude_theme_toggle: missing ${THEMES}/${target}" >&2
         return 1
     fi
     # Write the statusline (claude-limitline) override FIRST. If swapping the
@@ -77,7 +77,7 @@ fleet_push() {
     while IFS= read -r host; do
         [[ -z "${host}" ]] && continue
         ssh -n -o BatchMode=yes -o ConnectTimeout=3 "${host}" \
-            "bash ~/.local/bin/toggle_claude_theme ${mode}" >/dev/null 2>&1 &
+            "bash ~/.local/bin/claude_theme_toggle ${mode}" >/dev/null 2>&1 &
     done < <(fleet_hosts)
     wait
 }
@@ -90,7 +90,7 @@ while [[ $# -gt 0 ]]; do
         dark|light) mode="$1" ;;
         --push)     push=1 ;;
         --hosts)    shift; hosts_override="${1:-}" ;;
-        *) echo "toggle_claude_theme: ignoring unknown arg: $1" >&2 ;;
+        *) echo "claude_theme_toggle: ignoring unknown arg: $1" >&2 ;;
     esac
     shift
 done
@@ -104,13 +104,13 @@ if [[ "${mode}" != "dark" && "${mode}" != "light" ]]; then
     elif command -v darkman >/dev/null 2>&1; then
         mode="$(darkman get)"
     else
-        echo "toggle_claude_theme: no mode given and no get_macos_mode/darkman found" >&2
+        echo "claude_theme_toggle: no mode given and no get_macos_mode/darkman found" >&2
         exit 1
     fi
 fi
 
-echo "toggle_claude_theme => ${mode}"
-toggle_claude_theme "${mode}"
+echo "claude_theme_toggle => ${mode}"
+claude_theme_toggle "${mode}"
 
 # --push: propagate this mode to the remote fleet. Detached + best-effort so the
 # local flip never blocks on a slow/down box; the fan-out omits --push, so a box
