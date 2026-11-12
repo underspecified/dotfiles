@@ -62,7 +62,8 @@ bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh \
 Opens Mail with proper threading + quoted chain. Works on any mailbox. Returns JSON `{ok, subject, to, cc}`.
 
 - **Runs from all seats take turns.** Each waits up to 60 s, and a run can take about 110 s in total, so never set a Bash timeout under 120 s for it. "No window opened" means it timed out waiting: retry it.
-- **On `ok:false`, point Eric to the body copy the error names** (`~/Library/Caches/email-inbox/drafts/…`), not only the clipboard.
+- **On `ok:false`, point Eric to the body copy the error names** (`~/Library/Caches/email-inbox/drafts/…`), not only the clipboard. Say plainly that the reply window may be open with an **empty body**, so he doesn't send it.
+- **Check the recipients before calling a draft ready.** Show the draft's actual To/CC (the JSON `to`/`cc`) next to the recipient you meant. A mismatch, or `ok:false`, means the draft is not ready: say so, never "ready". **Why (11/11):** a reply to Eric's own Sent mail opened To Eric; the JSON showed it, the seat called the draft ready, and he sent it to himself twice.
 
 ## Attachments
 
