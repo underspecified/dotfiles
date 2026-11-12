@@ -314,7 +314,7 @@
   "syntaxHighlightingDisabled": false,
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
-  "autoCompactWindow": 600000,
+  "autoCompactWindow": 400000,
   "tui": "fullscreen",
   "showThinkingSummaries": true,
   "skipWorkflowUsageWarning": true,
