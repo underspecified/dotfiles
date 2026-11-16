@@ -20,6 +20,7 @@
 .claude/hooks/panache_format.sh
 .claude/hooks/shellcheck_lint.sh
 .claude/mcp/bootstrap.sh
+.claude/mcp/secure_google_workspace.sh
 .claude/patches/README.md
 .claude/patches/bootstrap.sh
 .claude/patches/hookify-global-rules.patch
