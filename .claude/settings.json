@@ -21,10 +21,6 @@
       "Edit(~/haru.md/**)",
       "Edit(~/projects/**)",
       "Read",
-      "Read(*)",
-      "Read(~/git/**)",
-      "Read(~/haru.md/**)",
-      "Read(~/projects/**)",
       "Search",
       "Skill",
       "Skill(*)",
@@ -154,7 +150,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "enabledMcpjsonServers": [
     "slack"
   ],
