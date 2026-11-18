@@ -1,0 +1,179 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = []
+# ///
+"""Usage: box_login [--top N]
+Output: a plain-text report on stdout; opens the Box login page.
+
+Box refuses this Mac ("Required antivirus software must be installed") when
+its process list is too long, not when antivirus is missing. Box Tools 4.32.0's
+device check runs `/bin/ps -axc` to look for an antivirus and waits for ps to
+exit before reading its output. A pipe holds 64 KB, so once that list is
+longer, ps blocks, Box kills it after 10 s and counts the check as failed
+(measured 11/18: failed at 66,551 bytes, passed at 64,946).
+
+1. Makes sure the CrowdStrike Falcon sensor is running (Box accepts the
+   process names falcond and com.crowdstrike.falcon.Agent); loads it with
+   `sudo falconctl load` if not.
+2. Makes sure Box Device Trust is running; Box can't check the Mac without it.
+3. Prints the size of `ps -axc` against the limit, then what to close, biggest
+   gain first: each Claude session with its helpers, each app with its
+   process tree, and repeated processes grouped by name.
+4. Opens the Box login page. Reload it after closing things.
+"""
+
+import argparse
+import os
+import subprocess
+import sys
+import time
+from collections import defaultdict
+from dataclasses import dataclass, field
+from pathlib import Path
+
+LIMIT = 65536  # bytes a pipe holds before ps blocks
+BOX_URL = "https://honda-ri.app.box.com/"
+FALCONCTL = "/Applications/Falcon.app/Contents/Resources/falconctl"
+FALCON_NAMES = {"falcond", "com.crowdstrike.falcon.Agent"}
+DEVICE_TRUST_NAME = "Box Device Trust"
+DEVICE_TRUST_BUNDLE = "com.box.Box-Device-Trust"
+
+
+@dataclass(slots=True)
+class Proc:
+    pid: int
+    ppid: int
+    uid: int
+    name: str
+
+
+@dataclass(slots=True)
+class Group:
+    label: str
+    pids: list[int] = field(default_factory=list)
+    roots: int = 0
+
+
+def run(cmd: list[str], timeout: int = 30) -> str:
+    return subprocess.run(
+        cmd, check=True, capture_output=True, text=True, timeout=timeout
+    ).stdout
+
+
+def processes() -> dict[int, Proc]:
+    procs = {}
+    for line in run(["/bin/ps", "-A", "-o", "pid=,ppid=,uid=,comm="]).splitlines():
+        parts = line.split(None, 3)
+        if len(parts) == 4:
+            pid, ppid, uid = int(parts[0]), int(parts[1]), int(parts[2])
+            procs[pid] = Proc(pid, ppid, uid, Path(parts[3]).name)
+    return procs
+
+
+def running(names: set[str]) -> bool:
+    return any(p.name in names for p in processes().values())
+
+
+def ensure_falcon() -> None:
+    if running(FALCON_NAMES):
+        print("Falcon sensor: running")
+        return
+    print("Falcon sensor: not running; loading it (asks for your password)")
+    subprocess.run(["sudo", FALCONCTL, "load"], check=False, timeout=120)
+    for _ in range(15):
+        if running(FALCON_NAMES):
+            print("Falcon sensor: running")
+            return
+        time.sleep(1)
+    print(
+        "Falcon sensor: STILL NOT RUNNING. Open Falcon.app, and allow its extension "
+        "in System Settings > General > Login Items & Extensions."
+    )
+
+
+def ensure_device_trust() -> None:
+    if running({DEVICE_TRUST_NAME}):
+        print("Box Device Trust: running")
+        return
+    subprocess.run(["open", "-g", "-b", DEVICE_TRUST_BUNDLE], check=False, timeout=30)
+    print("Box Device Trust: started")
+
+
+def cwd_of(pid: int) -> str:
+    out = run(["lsof", "-a", "-p", str(pid), "-d", "cwd", "-Fn"], timeout=10)
+    return next((ln[1:] for ln in out.splitlines() if ln.startswith("n")), "?")
+
+
+def group_processes(procs: dict[int, Proc]) -> list[Group]:
+    """Each process goes to its nearest Claude ancestor, else to the app (the
+    ancestor just below launchd) that started it. Apps with the same name
+    are one group, so 110 copies of a helper show as one line."""
+    me = os.getuid()
+    groups: dict[str, Group] = {}
+    claude_cwd = {p.pid: cwd_of(p.pid) for p in procs.values() if p.name == "claude"}
+    names = defaultdict(set)
+    for path in claude_cwd.values():
+        names[Path(path).name].add(path)
+    for pid, proc in procs.items():
+        node, key = proc, None
+        while node.ppid in procs and node.pid not in claude_cwd and node.ppid > 1:
+            node = procs[node.ppid]
+        if node.uid != me or node.pid <= 1:
+            continue
+        if node.pid in claude_cwd:
+            path = claude_cwd[node.pid]
+            short = Path(path).name
+            if len(names[short]) > 1:
+                short = f"{Path(path).parent.name}/{short}"
+            key = f"Claude session: {short}"
+        else:
+            key = node.name
+        group = groups.setdefault(key, Group(key))
+        group.pids.append(pid)
+        group.roots += node.pid == pid
+    return list(groups.values())
+
+
+def report(top: int) -> None:
+    listing = subprocess.run(
+        ["/bin/ps", "-axc"], check=True, capture_output=True, timeout=30
+    ).stdout
+    lines = listing.splitlines()[1:]
+    size = len(listing)
+    line_bytes = {int(ln.split()[0]): len(ln) + 1 for ln in lines if ln.split()}
+    avg = size / max(len(lines), 1)
+    room = LIMIT - size
+    print(f"Process list: {size:,} of {LIMIT:,} bytes ({len(lines):,} processes)")
+    if room >= 0:
+        print(f"  OK: {room:,} bytes (about {room / avg:.0f} processes) to spare")
+    else:
+        print(
+            f"  OVER by {-room:,} bytes: close about {-room / avg + 1:.0f} processes "
+            "from the list below, then reload the Box page"
+        )
+
+    groups = group_processes(processes())
+    gains = [(sum(line_bytes.get(p, 0) for p in g.pids), g) for g in groups]
+    gains.sort(key=lambda t: t[0], reverse=True)
+    print(f"\nClose to free (biggest first, top {top}):")
+    print(f"  {'bytes':>7}  {'procs':>5}  what")
+    for gain, g in gains[:top]:
+        copies = f" (x{g.roots})" if g.roots > 1 else ""
+        print(f"  {gain:>7,}  {len(g.pids):>5}  {g.label}{copies}")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--top", type=int, default=15, help="rows to list")
+    args = parser.parse_args()
+    ensure_falcon()
+    ensure_device_trust()
+    report(args.top)
+    print(f"\nOpening {BOX_URL}")
+    subprocess.run(["open", BOX_URL], check=False, timeout=30)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
