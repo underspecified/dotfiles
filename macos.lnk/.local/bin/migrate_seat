@@ -1,0 +1,961 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = []
+# ///
+"""Usage: migrate_seat <slug> --old <cloud dir> --new <local dir> --infra <manifest>
+                    [--remote <url>] [--rewrite-logs <dir>] [--apply]
+       migrate_seat --rollback <slug> [--apply]
+Output: one line per action (copy, link, rewrite, rename, git, dispatch, ...).
+Exit 1 on a refusal or a failed step, with the steps that are left on stderr.
+
+Moves a seat's Claude infra out of a cloud-synced folder into a local git repo
+and links the seat's documents back. Without --apply it is a dry run: it prints
+every action and changes nothing.
+
+The manifest lists the infra, one path per line, relative to --old ('#' starts
+a comment). Listed paths are copied and tracked. A folder that holds a listed
+path becomes a real local folder. Everything else next to them becomes a
+symlink into --old. A listed folder with its own .git is copied whole and
+ignored by the parent repo; its remotes are left as they are.
+
+Seats, processes, Claude project dirs and waiter markers are handled only for
+paths that stay real (--old itself, the folders made real, listed paths). A
+seat inside a folder that becomes a link keeps running.
+
+Running it again after the swap adds links for new entries in --old.
+--rollback undoes the swap (step 6) and keeps the migrated tree at
+<new>.rolledback. State: ~/.local/state/migrate_seat/<slug>.json.
+"""
+
+import argparse
+import ctypes
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+from dataclasses import dataclass, field
+from datetime import date
+
+IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES = 3
+IOPOL_SCOPE_PROCESS = 0
+IOPOL_MATERIALIZE_DATALESS_FILES_ON = 2
+
+STEPS = (
+    "1 Preflight",
+    "2 Stage",
+    "3 Links",
+    "4 Git",
+    "5 Claude state",
+    "6 Swap",
+    "7 Print",
+)
+# Ignored paths that may exist without being a link or a nested repo. Anything
+# else that git ignores would be in neither git nor the cloud after the move.
+KNOWN_CACHES = frozenset(
+    {
+        ".DS_Store",
+        "__pycache__",
+        ".ruff_cache",
+        ".rumdl_cache",
+        ".pytest_cache",
+        ".mcp.json",
+    }
+)
+LOCAL_SETTINGS = ".claude/settings.local.json"
+BLOCK_START = "# >>> migrate_seat: document links and nested repos (managed)"
+BLOCK_END = "# <<< migrate_seat"
+MESSAGE = "migrate_seat: {slug} infra moved out of the cloud folder"
+ROLLBACK = "migrate_seat --rollback {slug} --apply"
+
+
+class Fail(Exception):
+    """A refusal or a failed step. The message is shown as is."""
+
+
+@dataclass(slots=True)
+class Job:
+    slug: str
+    old: str  # the cloud dir, physical path
+    new: str  # the local dir as given (its last component is never resolved)
+    new_phys: str  # where the local dir physically sits
+    entries: list[str]
+    apply: bool
+    remote: str | None = None
+    logs: str | None = None
+    lsof_wait: float = 10
+    state: dict = field(default_factory=dict)
+    refused: bool = False
+    containers: set[str] = field(default_factory=set)  # folders made real
+
+    @property
+    def stage(self) -> str:
+        return os.path.join(os.path.dirname(self.new_phys), ".staging", self.slug)
+
+    def under_entry(self, rel: str) -> bool:
+        return any(rel == e or rel.startswith(e + "/") for e in self.entries)
+
+    def stays_real(self, rel: str) -> bool:
+        """True for --old itself, a folder made real, or a listed path."""
+        return rel == "" or rel in self.containers or self.under_entry(rel)
+
+
+@dataclass(slots=True)
+class Plan:
+    copies: list[str] = field(default_factory=list)  # listed paths found in --old
+    links: list[str] = field(default_factory=list)  # paths that become links
+    symlinks: list[str] = field(default_factory=list)  # symlinks inside the infra
+    dirs: list[str] = field(default_factory=list)  # folders that stay real
+    nested: list[str] = field(default_factory=list)  # listed folders with a .git
+    rewrites: list[tuple[str, str, str]] = field(default_factory=list)
+    reaches: dict[str, tuple[str, str]] = field(default_factory=dict)
+    state_copies: list[tuple[str, str]] = field(default_factory=list)
+    seats: list[str] = field(default_factory=list)  # rel paths under --old
+
+
+# ── small helpers ────────────────────────────────────────────────────────────
+
+
+def materialize_on() -> None:
+    """Let this process and its children download cloud-only files (as hydrate)."""
+    libc = ctypes.CDLL("libc.dylib", use_errno=True)
+    if libc.setiopolicy_np(
+        IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES,
+        IOPOL_SCOPE_PROCESS,
+        IOPOL_MATERIALIZE_DATALESS_FILES_ON,
+    ):
+        raise Fail(f"setiopolicy_np failed: {os.strerror(ctypes.get_errno())}")
+
+
+def run(
+    argv: list[str], check: bool = True, timeout: int = 3600
+) -> subprocess.CompletedProcess[str]:
+    try:
+        r = subprocess.run(
+            argv,
+            check=False,
+            capture_output=True,
+            text=True,
+            errors="surrogateescape",
+            timeout=timeout,
+        )
+    except (OSError, subprocess.TimeoutExpired) as e:
+        raise Fail(f"{argv[0]}: {e}") from e
+    if check and r.returncode:
+        detail = (r.stderr or r.stdout).strip()
+        raise Fail(f"`{' '.join(argv)}` exited {r.returncode}: {detail}")
+    return r
+
+
+def git(repo: str, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
+    return run(["git", "-C", repo, *args], check=check)
+
+
+def encode(path: str) -> str:
+    """Claude Code's project key (and dispatch's seat key) for a physical path."""
+    return re.sub(r"[^A-Za-z0-9-]", "-", path)
+
+
+def join(root: str, rel: str) -> str:
+    return os.path.join(root, rel) if rel else root
+
+
+def rel_under(path: str, root: str) -> str | None:
+    """path relative to root ('' for root itself), or None when outside it."""
+    if path == root:
+        return ""
+    if path.startswith(root + "/"):
+        return path[len(root) + 1 :]
+    return None
+
+
+def show(kind: str, text: str) -> None:
+    print(f"{kind:<8} {text}", flush=True)
+
+
+def act(job: Job, kind: str, text: str, fn=None, *args) -> None:
+    """Print one action; with --apply, also do it."""
+    show(kind, text)
+    if job.apply and fn:
+        try:
+            fn(*args)
+        except OSError as e:
+            raise Fail(f"{kind} {text}: {e.strerror or e}") from e
+
+
+def refuse(job: Job, message: str) -> None:
+    """Stop an --apply run; a dry run reports it and carries on."""
+    if job.apply:
+        raise Fail(message)
+    show("REFUSE", message)
+    job.refused = True
+
+
+def state_path(slug: str) -> str:
+    home = os.path.expanduser("~")
+    return os.path.join(home, ".local", "state", "migrate_seat", f"{slug}.json")
+
+
+def load_state(slug: str) -> dict:
+    try:
+        with open(state_path(slug)) as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as e:
+        raise Fail(f"can't read the state file {state_path(slug)}: {e}") from e
+
+
+def save_state(job: Job) -> None:
+    if not job.apply:
+        return
+    path = state_path(job.slug)
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path + ".tmp", "w") as fh:
+            json.dump(job.state, fh, indent=2)
+        os.replace(path + ".tmp", path)
+    except OSError as e:
+        raise Fail(f"can't write the state file {path}: {e.strerror}") from e
+
+
+def free_rename(src: str, dst: str) -> None:
+    """Rename onto a free name, never over an existing one."""
+    if os.path.lexists(dst):
+        raise FileExistsError(17, f"{dst} already exists")
+    os.rename(src, dst)
+
+
+def relink(path: str, target: str) -> None:
+    os.unlink(path)
+    os.symlink(target, path)
+
+
+# ── the manifest and what it means for --old ─────────────────────────────────
+
+
+def read_manifest(path: str) -> list[str]:
+    try:
+        with open(path) as fh:
+            lines = fh.read().splitlines()
+    except OSError as e:
+        raise Fail(f"--infra {path}: {e.strerror}") from e
+    entries: list[str] = []
+    for raw in lines:
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if os.path.isabs(line):
+            raise Fail(f"manifest: '{line}' is an absolute path")
+        rel = os.path.normpath(line)
+        top = rel.split("/")[0]
+        if top == "..":
+            raise Fail(f"manifest: '{line}' uses '..'")
+        if rel == "." or top == ".git":
+            raise Fail(f"manifest: '{line}' can't be listed")
+        if rel not in entries:
+            entries.append(rel)
+    for e in entries:
+        for other in entries:
+            if e.startswith(other + "/"):
+                raise Fail(f"manifest: '{e}' is inside another entry, '{other}'")
+    if ".gitignore" not in entries:
+        entries.append(".gitignore")  # always infra: this tool writes it
+    return entries
+
+
+def check_layout(job: Job) -> None:
+    """Refuse anything that would make the run unsafe, before it starts."""
+    old, new = job.old, job.new
+    for e in job.entries:
+        if e != ".gitignore" and not os.path.lexists(join(old, e)):
+            raise Fail(f"manifest: '{e}' not found in {old}")
+    for c in sorted(job.containers):
+        path = join(old, c)
+        if os.path.islink(path) or not os.path.isdir(path):
+            raise Fail(f"manifest: '{c}' holds a listed path, so it must be a folder")
+        if os.path.lexists(join(path, ".git")):
+            raise Fail(f"manifest: '{c}' is a git repo; list it whole, not its parts")
+    for e in [*job.entries, ".git"]:
+        path = join(old, e)
+        if os.path.lexists(path) and os.path.lexists(path + ".migrated"):
+            raise Fail(f"{path}.migrated already exists; move it away first")
+    if not os.path.isdir(os.path.dirname(job.new_phys)):
+        raise Fail(f"the parent of --new does not exist: {os.path.dirname(new)}")
+    if os.path.islink(new):
+        if os.path.realpath(new) != old:
+            raise Fail(f"--new {new} is a symlink that does not point at --old")
+        if os.path.lexists(new + ".cloudlink"):
+            raise Fail(f"{new}.cloudlink already exists; move it away first")
+    elif os.path.lexists(new):
+        raise Fail(
+            f"--new {new} exists and is not a symlink, nor a seat this tool moved"
+        )
+    if job.logs and not os.path.isdir(job.logs):
+        raise Fail(f"--rewrite-logs {job.logs} is not a folder")
+    if os.path.lexists(job.stage) and not job.state.get("staged"):
+        raise Fail(
+            f"{job.stage} exists but this tool has no record of it; move it away"
+        )
+
+
+def scan(job: Job, plan: Plan) -> None:
+    """Sort each entry of --old (and of the folders made real) into copy or link."""
+    for level in ["", *sorted(job.containers)]:
+        for name in sorted(os.listdir(join(job.old, level))):
+            rel = join(level, name) if level else name
+            skipped = name in (".git", ".DS_Store") or name.endswith(".migrated")
+            if rel in job.entries:
+                plan.copies.append(rel)
+            elif rel not in job.containers and not skipped:
+                plan.links.append(rel)
+
+
+def survey(job: Job, plan: Plan) -> None:
+    """Walk the listed paths: their symlinks, folders and nested git repos."""
+
+    def walk_error(e: OSError) -> None:
+        raise Fail(f"can't read {e.filename}: {e.strerror}")
+
+    plan.dirs = ["", *sorted(job.containers)]
+    for e in job.entries:
+        top = join(job.old, e)
+        if os.path.islink(top):
+            plan.symlinks.append(e)
+            continue
+        if not os.path.isdir(top):
+            continue
+        is_repo = os.path.lexists(join(top, ".git"))
+        if is_repo:
+            plan.nested.append(e)
+        plan.dirs.append(e)
+        for dirpath, dirnames, filenames in os.walk(top, onerror=walk_error):
+            if ".git" in dirnames:
+                dirnames.remove(".git")
+            rel_dir = os.path.relpath(dirpath, job.old)
+            inner_repo = dirpath != top and os.path.lexists(join(dirpath, ".git"))
+            if inner_repo and not is_repo:
+                raise Fail(
+                    f"'{rel_dir}' is a git repo inside the listed '{e}'. List it on "
+                    f"its own line, and list its siblings in place of '{e}'."
+                )
+            for name in dirnames + filenames:
+                rel = os.path.join(rel_dir, name)
+                if os.path.islink(join(job.old, rel)):
+                    plan.symlinks.append(rel)
+                elif name in dirnames:
+                    plan.dirs.append(rel)
+
+
+def plan_rewrites(job: Job, plan: Plan) -> None:
+    """Find the symlinks that would reach a different target from --new.
+
+    A target that stays real is expected at the same place under --new; any
+    other target is expected where it physically was.
+    """
+
+    def ident(phys: str) -> tuple[str, str]:
+        r = rel_under(phys, job.old)
+        return ("new", r) if r is not None and job.stays_real(r) else ("old", phys)
+
+    for rel in plan.symlinks:
+        text = os.readlink(join(job.old, rel))
+        want = ident(os.path.realpath(join(job.old, rel)))
+        plan.reaches[rel] = want
+        base = os.path.dirname(join(job.new, rel))
+        lexical = os.path.normpath(os.path.join(base, text))
+        got = ("old", os.path.realpath(lexical))
+        for root in (job.new, job.new_phys):
+            r = rel_under(lexical, root)
+            if r is not None:
+                got = ident(os.path.realpath(join(job.old, r)))
+        if got != want:
+            target = join(job.new, want[1]) if want[0] == "new" else want[1]
+            plan.rewrites.append((rel, text, target))
+
+
+# ── step 1: preflight ────────────────────────────────────────────────────────
+
+
+def live_seats() -> list[str]:
+    """Physical cwd of each live local seat, from `dispatch list local`."""
+    seats = []
+    for line in run(["dispatch", "list", "local"], timeout=120).stdout.splitlines():
+        parts = re.split(r"\s{2,}", line.strip(), maxsplit=4)
+        if len(parts) == 5 and parts[3] == "local" and parts[4].startswith("/"):
+            seats.append(os.path.realpath(parts[4]))
+    return seats
+
+
+def cwd_procs(root: str) -> list[tuple[str, str]]:
+    """('pid name', cwd relative to root) of each process under root. Never argv."""
+    r = run(["lsof", "-a", "-d", "cwd", "-Fpcn"], check=False, timeout=120)
+    procs, pid, cmd = [], "", ""
+    for line in r.stdout.splitlines():
+        if line.startswith("p"):
+            pid, cmd = line[1:], ""
+        elif line.startswith("c"):
+            cmd = line[1:]
+        elif line.startswith("n") and (rel := rel_under(line[1:], root)) is not None:
+            procs.append((f"{pid} {cmd}", rel))
+    return procs
+
+
+def busy(job: Job) -> list[str]:
+    """'pid name' of each process whose cwd is a path that stays real."""
+    return [who for who, rel in cwd_procs(job.old) if job.stays_real(rel)]
+
+
+def newest_mtime(path: str) -> float:
+    newest = os.lstat(path).st_mtime
+    for dirpath, dirnames, filenames in os.walk(path):
+        for name in dirnames + filenames:
+            newest = max(newest, os.lstat(os.path.join(dirpath, name)).st_mtime)
+    return newest
+
+
+def plan_state_copies(job: Job, plan: Plan) -> None:
+    """Claude project dirs and waiter markers of the folders that stay real."""
+    home = os.path.expanduser("~")
+    projects = os.path.join(home, ".claude", "projects")
+    cache = os.environ.get("DISPATCH_CACHE_DIR") or os.path.join(
+        home, ".cache/dispatch"
+    )
+    seen: set[str] = set()
+    for rel in plan.dirs:
+        ok, nk = encode(join(job.old, rel)), encode(join(job.new_phys, rel))
+        if ok in seen:
+            continue
+        seen.add(ok)
+        pairs = [(os.path.join(projects, ok), os.path.join(projects, nk))]
+        for ext in ("waiter", "waiter-off"):
+            pairs.append((f"{cache}/{ok}.{ext}", f"{cache}/{nk}.{ext}"))
+        plan.state_copies += [(src, dst) for src, dst in pairs if os.path.lexists(src)]
+
+
+def copy_needed(job: Job, src: str, dst: str) -> bool:
+    """False when this tool already made dst and src has not changed since."""
+    if not os.path.lexists(dst):
+        return True
+    made = job.state.get("copies", {}).get(dst)
+    if made is None:
+        stale = dst in job.state.get("stale", [])
+        hint = " (left by a run that was rolled back)" if stale else ""
+        raise Fail(
+            f"Claude state already exists at {dst}{hint}. It could hide newer "
+            "transcripts and memory: move it away, then re-run."
+        )
+    if newest_mtime(src) > made:
+        raise Fail(
+            f"{src} changed since this tool copied it to {dst}: "
+            "move the copy away, then re-run."
+        )
+    return False
+
+
+def step_preflight(job: Job, plan: Plan) -> None:
+    old = job.old
+    check_layout(job)
+    scan(job, plan)
+    survey(job, plan)
+    plan_rewrites(job, plan)
+    plan_state_copies(job, plan)
+    for src, dst in plan.state_copies:
+        try:
+            copy_needed(job, src, dst)
+        except Fail as e:
+            refuse(job, str(e))
+
+    found = [rel_under(cwd, old) for cwd in live_seats()]
+    seats = [r for r in found if r is not None and job.stays_real(r)]
+    caller = os.path.realpath(os.environ.get("DISPATCH_SEAT") or os.getcwd())
+    me = rel_under(caller, old)
+    if me is not None and job.stays_real(me):
+        refuse(job, f"the seat running this script is in {caller}: run it from outside")
+    for r in seats:
+        seat = join(old, r)
+        show("dispatch", f"-C {seat} new")
+        probe = run(["dispatch", "-C", seat, "new"], check=False, timeout=120)
+        if probe.returncode or probe.stdout.strip() != "(empty)":
+            refuse(job, f"seat {seat} has unread mail (or `dispatch new` failed)")
+    plan.seats = sorted(set(job.state.get("seats", [])) | set(seats))
+
+    job.state.update(slug=job.slug, old=old, new=job.new, new_phys=job.new_phys)
+    job.state["seats"] = plan.seats
+    save_state(job)
+    for r in seats:
+        argv = ["dispatch", "-C", join(old, r), "destroy"]
+        act(job, "dispatch", " ".join(argv[1:]), run, argv)
+
+    waited = 0.0
+    while procs := busy(job):
+        listing = "processes have their cwd under --old (pid name):\n  "
+        listing += "\n  ".join(procs)
+        if not job.apply and seats:
+            show("note", f"{len(procs)} process(es) under --old now; seats still run")
+            break
+        if not job.apply or waited >= job.lsof_wait:
+            refuse(job, listing)
+            break
+        time.sleep(1)
+        waited += 1
+
+
+# ── steps 2 and 3: stage, links ──────────────────────────────────────────────
+
+
+def rsync(src: str, dst: str) -> None:
+    if os.path.isdir(src) and not os.path.islink(src):
+        run(["rsync", "-a", "--exclude", ".DS_Store", src + "/", dst + "/"])
+    else:
+        run(["rsync", "-a", src, dst])
+
+
+def step_stage(job: Job, plan: Plan) -> None:
+    stage, old = job.stage, job.old
+    if os.path.lexists(stage):
+        act(job, "remove", f"{stage} (left by an earlier run)", shutil.rmtree, stage)
+    act(job, "mkdir", stage, os.makedirs, stage)
+    job.state["staged"] = True
+    save_state(job)
+    for c in sorted(job.containers):
+        act(job, "mkdir", join(stage, c), os.mkdir, join(stage, c))
+    for rel in plan.copies:
+        src, dst = join(old, rel), join(stage, rel)
+        act(job, "copy", f"{src} -> {dst}", rsync, src, dst)
+    for rel in plan.links:
+        src, dst = join(old, rel), join(stage, rel)
+        act(job, "link", f"{dst} -> {src}", os.symlink, src, dst)
+
+
+def step_links(job: Job, plan: Plan) -> None:
+    for rel, text, target in plan.rewrites:
+        path = join(job.stage, rel)
+        act(job, "rewrite", f"{path}: {text} -> {target}", relink, path, target)
+    if not plan.rewrites:
+        show("note", "every symlink in the infra already reaches the same target")
+
+
+# ── step 4: git ──────────────────────────────────────────────────────────────
+
+
+def stray_history(job: Job) -> list[str] | None:
+    """Paths in the old repo's log that are not infra; None when there is no repo."""
+    if not os.path.isdir(join(job.old, ".git")):
+        return None
+    log = git(
+        job.old, "-c", "core.quotepath=off", "log", "--all", "--no-renames",
+        "--name-only", "--format=", "-z",
+    )  # fmt: skip
+    paths = {p.lstrip("\n") for p in log.stdout.split("\0")}
+    return sorted(p for p in paths if p and not job.under_entry(p))
+
+
+def ignore_line(rel: str, folder: bool = False) -> str:
+    escaped = re.sub(r"([\\*?\[\]])", r"\\\1", rel)
+    if escaped.endswith(" "):
+        escaped = escaped[:-1] + "\\ "
+    return "/" + escaped + ("/" if folder else "")
+
+
+def write_ignore(root: str, links: list[str], nested: list[str]) -> None:
+    """Replace the managed block of root/.gitignore; keep the rest."""
+    path = join(root, ".gitignore")
+    text = ""
+    if os.path.lexists(path):
+        with open(path) as fh:
+            text = fh.read()
+        if os.path.islink(path):  # never write through a link into the cloud folder
+            os.unlink(path)
+    block = re.escape(BLOCK_START) + r".*?" + re.escape(BLOCK_END) + r"\n?"
+    text = re.sub(block, "", text, flags=re.DOTALL)
+    if text and not text.endswith("\n"):
+        text += "\n"
+    lines = [ignore_line(r) for r in links]
+    lines += [ignore_line(r, folder=True) for r in nested]
+    with open(path, "w") as fh:
+        fh.write(text + "\n".join([BLOCK_START, *lines, BLOCK_END]) + "\n")
+
+
+def commit_all(repo: str, message: str) -> None:
+    git(repo, "add", "-A")
+    if git(repo, "diff", "--cached", "--quiet", check=False).returncode:
+        git(repo, "commit", "-q", "-m", message)
+
+
+def check_ignored(repo: str, allowed: set[str]) -> None:
+    """Nothing untracked, and nothing ignored but links, nested repos and caches."""
+    args = ("-c", "core.quotepath=off", "status", "--porcelain", "--ignored", "-z")
+    bad = []
+    for item in git(repo, *args).stdout.split("\0"):
+        if not item:
+            continue
+        code, path = item[:2], item[3:].rstrip("/")
+        local = path == LOCAL_SETTINGS or path.endswith("/" + LOCAL_SETTINGS)
+        if code != "!!":
+            bad.append(f"{code.strip()} {path}")
+        elif not (path in allowed or os.path.basename(path) in KNOWN_CACHES or local):
+            bad.append(f"ignored: {path}")
+    if bad:
+        raise Fail(
+            "git status must show only the document links and known caches, "
+            "but shows:\n  " + "\n  ".join(bad) + "\nAn ignored path would be in "
+            "neither git nor the cloud after the move."
+        )
+
+
+def push(repo: str, remote: str) -> None:
+    verb = "set-url" if "origin" in git(repo, "remote").stdout.split() else "add"
+    git(repo, "remote", verb, "origin", remote)
+    git(repo, "push", "-q", "-u", "origin", "HEAD")
+
+
+def step_git(job: Job, plan: Plan) -> None:
+    stage, old_git = job.stage, join(job.old, ".git")
+    stray = stray_history(job)
+    if stray == []:
+        text = f"keep history (every path in the log is infra): copy {old_git}"
+        act(job, "git", text, rsync, old_git, join(stage, ".git"))
+        act(job, "git", "fsck", git, stage, "fsck", "--no-progress")
+    else:
+        why = "no repo in --old"
+        if stray:
+            why = f"{len(stray)} path(s) in the log are not infra, e.g. {stray[0]}"
+        text = f"start fresh ({why}): init"
+        act(job, "git", text, git, stage, "init", "-q", "-b", "main")
+    text = f"write .gitignore: {len(plan.links)} link(s), {len(plan.nested)} nested repo(s)"
+    act(job, "git", text, write_ignore, stage, plan.links, plan.nested)
+    act(job, "git", "add -A, commit", commit_all, stage, MESSAGE.format(slug=job.slug))
+    allowed = set(plan.links) | set(plan.nested)
+    text = "check: status --ignored shows only links and known caches"
+    act(job, "git", text, check_ignored, stage, allowed)
+    if job.remote:
+        text = f"remote origin = {job.remote}; push"
+        act(job, "git", text, push, stage, job.remote)
+
+
+# ── step 5: Claude state ─────────────────────────────────────────────────────
+
+
+def clone(job: Job, src: str, dst: str) -> None:
+    """APFS-clone src to dst through a temp name, and record that we made it."""
+    started = time.time()
+    tmp = f"{dst}.migrate_seat-tmp"
+    if os.path.isdir(tmp) and not os.path.islink(tmp):
+        shutil.rmtree(tmp)
+    elif os.path.lexists(tmp):
+        os.unlink(tmp)
+    run(["cp", "-c", "-R", src, tmp])
+    os.rename(tmp, dst)
+    job.state.setdefault("copies", {})[dst] = started
+    save_state(job)
+
+
+def step_claude(job: Job, plan: Plan) -> None:
+    for src, dst in plan.state_copies:
+        try:
+            needed = copy_needed(job, src, dst)
+        except Fail as e:
+            refuse(job, str(e))
+            continue
+        if needed:
+            act(job, "copy", f"{src} -> {dst}", clone, job, src, dst)
+        else:
+            show("skip", f"{dst} (copied by an earlier run, source unchanged)")
+    if not plan.state_copies:
+        show("note", "no Claude project dirs or waiter markers to copy")
+
+
+# ── steps 6 and 7: swap, print ───────────────────────────────────────────────
+
+
+def journaled(job: Job, kind: str, src: str, dst: str) -> None:
+    free_rename(src, dst)
+    job.state.setdefault("journal", []).append([kind, src, dst])
+    save_state(job)
+
+
+def write_pointer(job: Job, path: str, text: str) -> None:
+    with open(path, "x") as fh:
+        fh.write(text)
+    job.state["pointer"] = text
+    job.state.setdefault("journal", []).append(["pointer", path, ""])
+    save_state(job)
+
+
+def verify_links(job: Job, plan: Plan) -> None:
+    wrong = []
+    for rel, (where, target) in plan.reaches.items():
+        want = target
+        if where == "new":
+            want = os.path.realpath(join(job.new_phys, target))
+        got = os.path.realpath(join(job.new_phys, rel))
+        if got != want:
+            wrong.append(f"{join(job.new, rel)} reaches {got}, expected {want}")
+    if wrong:
+        raise Fail(
+            "the swap is done, but these links reach the wrong target; "
+            "fix them by hand:\n  " + "\n  ".join(wrong)
+        )
+
+
+def step_swap(job: Job, plan: Plan) -> None:
+    old, new = job.old, job.new
+
+    def move(kind: str, src: str, dst: str) -> None:
+        act(job, "rename", f"{src} -> {dst}", journaled, job, kind, src, dst)
+
+    if os.path.islink(new):
+        move("cloudlink", new, new + ".cloudlink")
+    move("swap", job.stage, new)
+    for e in [*job.entries, ".git"]:
+        if os.path.lexists(join(old, e)):
+            move("rename", join(old, e), join(old, e) + ".migrated")
+    pointer = join(old, "CLAUDE.md")
+    if "CLAUDE.md" in job.entries or not os.path.lexists(pointer):
+        text = f"# Moved\nThis seat's Claude files now live at `{new}` "
+        text += f"(migrate_seat {job.slug}, {date.today().isoformat()}); "
+        text += "the documents stay here.\n"
+        label = f"{pointer} (a two-line pointer to {new})"
+        act(job, "write", label, write_pointer, job, pointer, text)
+    else:
+        show("note", f"{pointer} is not infra, so no pointer is written")
+    if job.apply:
+        job.state.update(swapped=True, staged=False)
+        save_state(job)
+
+    for dirpath, dirnames, filenames in os.walk(job.logs) if job.logs else ():
+        for name in dirnames + filenames:
+            path = os.path.join(dirpath, name)
+            text = os.readlink(path) if os.path.islink(path) else ""
+            r = rel_under(text, old)
+            if r is not None:
+                target = join(new, r)
+                act(job, "rewrite", f"{path}: {text} -> {target}", relink, path, target)
+    if job.apply:
+        verify_links(job, plan)
+        if not os.listdir(os.path.dirname(job.stage)):
+            os.rmdir(os.path.dirname(job.stage))
+
+
+def step_print(job: Job, plan: Plan) -> None:
+    print("Run these yourself; this script does not:")
+    for r in plan.seats:
+        show("dispatch", f"-C {join(job.new, r)} wake")
+        show("dispatch", f"-C {join(job.new, r)} waiter status")
+    show("git", f"-C {job.new} status --short")
+
+
+# ── re-run after the swap, and rollback ──────────────────────────────────────
+
+
+def commit_ignore(repo: str) -> None:
+    git(repo, "add", ".gitignore")
+    staged = git(repo, "diff", "--cached", "--quiet", "--", ".gitignore", check=False)
+    if staged.returncode:
+        message = "migrate_seat: ignore new document links"
+        git(repo, "commit", "-q", "-m", message, "--", ".gitignore")
+
+
+def top_up(job: Job) -> None:
+    """After the swap: link what is new in --old, and ignore it."""
+    old, new = job.old, job.new
+    plan = Plan()
+    scan(job, plan)
+    for rel in plan.copies:
+        if rel not in ("CLAUDE.md", ".gitignore"):
+            show(
+                "note", f"{join(old, rel)} is back in --old; it is infra, so left alone"
+            )
+    added = 0
+    for rel in plan.links:
+        if not os.path.lexists(join(new, rel)):
+            src, dst = join(old, rel), join(new, rel)
+            act(job, "link", f"{dst} -> {src}", os.symlink, src, dst)
+            added += 1
+    if not added:
+        show("note", f"nothing new in {old}")
+        return
+    # Ignore only what is (or is about to be) a link: never a real local file.
+    links = [
+        r
+        for r in plan.links
+        if os.path.islink(join(new, r)) or not os.path.lexists(join(new, r))
+    ]
+    nested = [e for e in job.entries if os.path.lexists(os.path.join(new, e, ".git"))]
+    text = f"write .gitignore: {len(links)} link(s), {len(nested)} nested repo(s)"
+    act(job, "git", text, write_ignore, new, links, nested)
+    act(job, "git", "commit .gitignore (no push)", commit_ignore, new)
+
+
+def remove_pointer(job: Job, path: str) -> None:
+    try:
+        with open(path) as fh:
+            ours = fh.read() == job.state.get("pointer")
+    except FileNotFoundError:
+        return
+    if not ours:
+        raise FileExistsError(17, f"{path} is no longer the pointer this tool wrote")
+    os.unlink(path)
+
+
+def undo(job: Job, fn, *args) -> None:
+    fn(*args)
+    job.state["journal"].pop()
+    save_state(job)
+
+
+def rollback(slug: str, apply: bool) -> int:
+    state = load_state(slug)
+    if not state.get("journal"):
+        raise Fail(f"nothing to roll back for '{slug}' ({state_path(slug)})")
+    new, new_phys = state["new"], state["new_phys"]
+    job = Job(slug, state["old"], new, new_phys, [], apply, state=state)
+    seats = [s for s in live_seats() if rel_under(s, new_phys) is not None]
+    if seats:
+        refuse(
+            job,
+            "live seat(s) under --new; destroy them first:\n  " + "\n  ".join(seats),
+        )
+    procs = [who for who, _ in cwd_procs(new_phys)]
+    if procs:
+        listing = "processes have their cwd under --new (pid name):\n  "
+        refuse(job, listing + "\n  ".join(procs))
+    kept = new + ".rolledback"
+    for kind, src, dst in reversed(list(state["journal"])):
+        if kind == "pointer":
+            act(
+                job,
+                "remove",
+                f"{src} (the pointer)",
+                undo,
+                job,
+                remove_pointer,
+                job,
+                src,
+            )
+        elif kind == "swap":
+            text = f"{new} -> {kept} (kept: it may hold later work)"
+            act(job, "rename", text, undo, job, free_rename, new, kept)
+        else:
+            act(job, "rename", f"{dst} -> {src}", undo, job, free_rename, dst, src)
+    stale = sorted(set(state.get("stale", [])) | set(state.get("copies", {})))
+    if apply:
+        state.update(swapped=False, staged=False, copies={}, stale=stale)
+        save_state(job)
+    if stale:
+        show(
+            "note",
+            "the Claude state copies stay; move them away before migrating again:",
+        )
+        for path in stale:
+            show("", path)
+    return finish(job)
+
+
+# ── main ─────────────────────────────────────────────────────────────────────
+
+
+def finish(job: Job) -> int:
+    if not job.apply:
+        print("Dry run: nothing changed. Re-run with --apply.")
+    return 1 if job.refused else 0
+
+
+def migrate(args: argparse.Namespace) -> int:
+    slug = args.slug
+    old = os.path.realpath(args.old)
+    if not os.path.isdir(old):
+        raise Fail(f"--old {args.old} is not a folder")
+    new = os.path.abspath(args.new)
+    parent = os.path.realpath(os.path.dirname(new))
+    new_phys = os.path.join(parent, os.path.basename(new))
+    if rel_under(new_phys, old) is not None or rel_under(old, new_phys) is not None:
+        raise Fail("--old and --new overlap")
+    state = load_state(slug)
+    if state and (state.get("old"), state.get("new_phys")) != (old, new_phys):
+        raise Fail(f"slug '{slug}' belongs to another migration ({state_path(slug)})")
+    entries = read_manifest(args.infra)
+    logs = os.path.abspath(args.rewrite_logs) if args.rewrite_logs else None
+    job = Job(slug, old, new, new_phys, entries, args.apply, args.remote, logs)
+    job.lsof_wait, job.state = args.lsof_wait, state
+    job.containers = {
+        e.rsplit("/", n)[0] for e in entries for n in range(1, e.count("/") + 1)
+    }
+
+    if state.get("swapped"):
+        if os.path.islink(new) or not os.path.isdir(new):
+            raise Fail(
+                f"the state file says '{slug}' was moved, but --new is not a "
+                f"folder: {state_path(slug)}"
+            )
+        top_up(job)
+        return finish(job)
+    undo_hint = ROLLBACK.format(slug=slug)
+    if state.get("journal"):
+        raise Fail(
+            f"an earlier run stopped part-way through the swap: run `{undo_hint}`"
+        )
+
+    plan = Plan()
+    steps = (step_preflight, step_stage, step_links, step_git, step_claude)
+    steps += (step_swap, step_print)
+    for i, step in enumerate(steps):
+        print(f"== {STEPS[i]} ==", flush=True)
+        try:
+            step(job, plan)
+        except (Fail, OSError) as e:
+            print(f"migrate_seat: {STEPS[i]} failed: {e}", file=sys.stderr)
+            print(f"left: {', '.join(STEPS[i:])}", file=sys.stderr)
+            if job.state.get("journal") and not job.state.get("swapped"):
+                print(
+                    f"the swap stopped part-way; undo it: `{undo_hint}`",
+                    file=sys.stderr,
+                )
+            return 1
+    return finish(job)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        prog="migrate_seat",
+        description="Move a seat's Claude infra from a cloud folder to a local "
+        "git repo, documents linked back. Dry run unless --apply.",
+    )
+    ap.add_argument("slug", nargs="?", help="short name for this migration")
+    ap.add_argument("--old", help="the seat's cloud folder")
+    ap.add_argument("--new", help="the local folder (may be a symlink to --old now)")
+    ap.add_argument("--infra", help="manifest: one infra path per line")
+    ap.add_argument("--remote", help="git remote to add as origin and push to")
+    ap.add_argument(
+        "--rewrite-logs", metavar="DIR", help="repoint DIR's links to --new"
+    )
+    ap.add_argument("--rollback", metavar="SLUG", help="undo an earlier run's swap")
+    ap.add_argument("--apply", action="store_true", help="really do it")
+    ap.add_argument(
+        "--lsof-wait", type=float, default=10, metavar="SECONDS",
+        help="how long to wait for destroyed seats to exit (default 10)",
+    )  # fmt: skip
+    args = ap.parse_args()
+    slug = args.rollback or args.slug
+    if args.rollback and (args.slug or args.old or args.new or args.infra):
+        ap.error("--rollback takes only the slug (and --apply)")
+    if not args.rollback and not (args.slug and args.old and args.new and args.infra):
+        ap.error("need <slug>, --old, --new and --infra (or --rollback <slug>)")
+    if not re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9._-]*", slug):
+        ap.error(f"bad slug '{slug}': letters, digits, '.', '_' and '-' only")
+    if sys.platform != "darwin":
+        sys.exit("migrate_seat: macOS only")
+    try:
+        materialize_on()
+        return rollback(slug, args.apply) if args.rollback else migrate(args)
+    except (Fail, OSError) as e:
+        print(f"migrate_seat: {e}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
