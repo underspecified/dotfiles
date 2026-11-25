@@ -58,5 +58,6 @@
 .local/bin/yabai_window_insert_col
 .local/bin/yabai_window_shrink
 .ssh/config.d/agent.conf
+.ssh/config.d/tssh.conf
 Library/LaunchAgents/com.eric.good-night-nightly.plist
 Library/LaunchAgents/com.eric.menubar-tint-notify.plist
