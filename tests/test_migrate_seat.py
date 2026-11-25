@@ -536,6 +536,49 @@ def test_unknown_ignored_path_stops_before_push(fx):
     assert fx.new.is_symlink()
 
 
+def test_scheduled_tasks_lock_is_copied_but_never_tracked(fx):
+    bare = fx.tmp / "remote.git"
+    fx.git(fx.tmp, "init", "-q", "--bare", str(bare))
+    (fx.old / ".claude" / "scheduled_tasks.lock").write_text("pid 1\n")
+    fx.applied("--remote", bare)
+    assert (fx.new / ".claude" / "scheduled_tasks.lock").read_text() == "pid 1\n"
+    assert fx.git(fx.new, "ls-files", ".claude").stdout.splitlines() == [
+        ".claude/settings.json"
+    ]
+    head = fx.git(fx.new, "rev-parse", "HEAD").stdout.strip()
+    assert fx.git(bare, "rev-parse", "main").stdout.strip() == head
+
+
+@pytest.mark.parametrize("folder", ["", "sub"])
+def test_claude_folder_with_only_ignored_files_passes(fx, folder):
+    """Git would list such a folder as one ignored entry, '.claude/'."""
+    claude = fx.old / folder / ".claude"
+    if folder:
+        fx.manifest.write_text(MANIFEST + f"{folder}/.claude\n")
+        claude.mkdir()
+    else:
+        (claude / "settings.json").unlink()
+    (claude / "settings.local.json").write_text("{}\n")
+    (claude / "scheduled_tasks.lock").write_text("pid 1\n")
+    # The user's own git excludes ignore the local settings; this stands in.
+    (fx.old / ".gitignore").write_text(".DS_Store\n**/.claude/settings.local.json\n")
+    fx.applied()
+    copied = sorted(p.name for p in (fx.new / folder / ".claude").iterdir())
+    assert copied == ["scheduled_tasks.lock", "settings.local.json"]
+    tracked = fx.git(fx.new, "ls-files", str(claude.relative_to(fx.old)))
+    assert tracked.stdout == ""
+
+
+def test_files_inside_a_known_cache_folder_pass(fx):
+    cache = fx.old / "nikki" / "__pycache__"
+    cache.mkdir()
+    (cache / "day.cpython-312.pyc").write_text("bytecode\n")
+    (fx.old / ".gitignore").write_text(".DS_Store\n__pycache__/\n")
+    fx.applied()
+    assert (fx.new / "nikki" / "__pycache__" / "day.cpython-312.pyc").is_file()
+    assert fx.git(fx.new, "ls-files", "nikki/__pycache__").stdout == ""
+
+
 # ── 6. Claude state ──────────────────────────────────────────────────────────
 
 

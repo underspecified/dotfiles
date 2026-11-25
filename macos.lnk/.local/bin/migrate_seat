@@ -65,7 +65,10 @@ KNOWN_CACHES = frozenset(
         ".mcp.json",
     }
 )
-LOCAL_SETTINGS = ".claude/settings.local.json"
+# Machine state under any .claude/: copied, never tracked. The settings file is
+# ignored by the user's own git excludes; the lock by a line this tool writes.
+TASKS_LOCK = ".claude/scheduled_tasks.lock"
+CLAUDE_LOCAL = (".claude/settings.local.json", TASKS_LOCK)
 BLOCK_START = "# >>> migrate_seat: document links and nested repos (managed)"
 BLOCK_END = "# <<< migrate_seat"
 MESSAGE = "migrate_seat: {slug} infra moved out of the cloud folder"
@@ -574,7 +577,8 @@ def write_ignore(root: str, links: list[str], nested: list[str]) -> None:
     text = re.sub(block, "", text, flags=re.DOTALL)
     if text and not text.endswith("\n"):
         text += "\n"
-    lines = [ignore_line(r) for r in links]
+    lines = ["**/" + TASKS_LOCK]
+    lines += [ignore_line(r) for r in links]
     lines += [ignore_line(r, folder=True) for r in nested]
     with open(path, "w") as fh:
         fh.write(text + "\n".join([BLOCK_START, *lines, BLOCK_END]) + "\n")
@@ -588,16 +592,19 @@ def commit_all(repo: str, message: str) -> None:
 
 def check_ignored(repo: str, allowed: set[str]) -> None:
     """Nothing untracked, and nothing ignored but links, nested repos and caches."""
-    args = ("-c", "core.quotepath=off", "status", "--porcelain", "--ignored", "-z")
+    # Every file on its own line: git would otherwise show a folder that holds
+    # only ignored files as one entry, and hide what is in it.
+    args = ("status", "--porcelain", "--ignored", "--untracked-files=all", "-z")
     bad = []
-    for item in git(repo, *args).stdout.split("\0"):
+    for item in git(repo, "-c", "core.quotepath=off", *args).stdout.split("\0"):
         if not item:
             continue
         code, path = item[:2], item[3:].rstrip("/")
-        local = path == LOCAL_SETTINGS or path.endswith("/" + LOCAL_SETTINGS)
+        local = any(path == p or path.endswith("/" + p) for p in CLAUDE_LOCAL)
+        cache = not KNOWN_CACHES.isdisjoint(path.split("/"))  # it, or a folder above
         if code != "!!":
             bad.append(f"{code.strip()} {path}")
-        elif not (path in allowed or os.path.basename(path) in KNOWN_CACHES or local):
+        elif not (path in allowed or cache or local):
             bad.append(f"ignored: {path}")
     if bad:
         raise Fail(
