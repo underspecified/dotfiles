@@ -13,6 +13,7 @@
 .config/skhd
 .config/yabai
 .docker/config.json
+.gitconfig
 .homebrew
 .local/bin/agy-image
 .local/bin/borders_auto

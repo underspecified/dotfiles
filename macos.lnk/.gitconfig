@@ -1,0 +1,10 @@
+# macOS layer only (~/.gitconfig; git reads it after ~/.config/git/config).
+# Since 2026-11-25 HRI-JP's Netskope closes SSH to GitHub (ssh.github.com:443
+# and github.com:22, before the banner), so GitHub remotes go over HTTPS with
+# gh's token (the credential "https://github.com" block in ~/.config/git/config).
+# Commit signing is unaffected: it reads ~/.ssh/hri_jp locally.
+# To return to SSH, drop this file from .lnk.macos and unlink ~/.gitconfig.
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+	insteadOf = ssh://git@github.com/
+	insteadOf = ssh://git@ssh.github.com:443/
