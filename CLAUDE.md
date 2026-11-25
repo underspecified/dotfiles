@@ -48,6 +48,7 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
     - Find a signing-key override with `git config --show-origin --get user.signingkey`.
   - **Other ssh, macOS:** the 1Password agent plus an additive, passphrase-free `IdentityFile ~/.ssh/hri_jp`. 1Password does **not** serve `hri_jp` (its `agent.toml`); if it did, ssh would merge the two into one identity, and a locked 1Password would block the file.
   - **Other ssh, Linux:** ssh-agent via keychain.
+  - **GitHub on macOS goes over HTTPS:** `macos.lnk/.gitconfig` (`~/.gitconfig`) maps SSH GitHub remotes to `https://github.com/`, because Netskope has blocked SSH to GitHub since 11/25. Linux hosts keep SSH.
   - **HTTPS fallback:** `gh auth git-credential` for GitHub, and the in-memory `cache` helper for Overleaf (HTTPS-only). Never the plaintext `store` helper.
   - **gh on Linux:** log in with `gh auth login --insecure-storage`, which keeps the token in `~/.config/gh/hosts.yml` (untracked). The desktop keyring stays locked after a reboot until someone logs into the desktop, and gh then reports the token as invalid (llm-jp-2, 10-10).
 - `hooks/` is every repo's hooks dir: `core.hooksPath` is set in `.config/git/config`. One script, `_chain`, is symlinked under each hook name.
