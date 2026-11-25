@@ -18,8 +18,10 @@ launch_ws() {
     [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
         "${remote[@]}" $h -- sh -c 'tmux a -t nvitop || tmux new-session -s nvitop nvitop; exec $SHELL'
 
+    # kitty's new windows don't inherit this shell's env, so each dispatch pane
+    # is handed both gates. dispatch tries tssh first, then mosh, then ssh -t.
     for d in "$@"; do
-        kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 dispatch -C $h:$d wake
+        kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 --env DISPATCH_REMOTE_TSSH=1 dispatch -C $h:$d wake
         sleep 5
     done
 
