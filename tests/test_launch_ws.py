@@ -29,11 +29,17 @@ KITTEN_STUB = """#!/bin/bash
 
 
 def tssh_conf_hosts() -> set[str]:
-    """Hosts that tssh.conf puts in tsshd-over-TCP mode."""
-    match = re.search(r"^Host (.+)$", TSSH_CONF.read_text(), re.MULTILINE)
-    if match is None:
-        raise ValueError(f"no Host line in {TSSH_CONF}")
-    return set(match.group(1).split())
+    """Hosts that tssh.conf puts in tsshd mode: its `#!! UdpMode yes` blocks."""
+    hosts: set[str] = set()
+    block: list[str] = []
+    for line in TSSH_CONF.read_text().splitlines():
+        if line.startswith("Host "):
+            block = line.split()[1:]
+        elif line.strip() == "#!! UdpMode yes":
+            hosts.update(block)
+    if not hosts:
+        raise ValueError(f"no Host block with UdpMode yes in {TSSH_CONF}")
+    return hosts
 
 
 @pytest.fixture(scope="module")

@@ -8,9 +8,9 @@ launch_ws() {
     # carries its tsshd session over TCP (~/.ssh/config.d/tssh.conf).
     #   -t  a command run gets no pty without it, and tmux needs one
     #   --  otherwise tssh reads sh's -c as its own cipher option
-    # localhost and germputer are not in tssh.conf, so they stay on mosh.
+    # localhost is not in tssh.conf, so it stays on mosh.
     remote=(tssh -t)
-    [[ $h == localhost || $h == germputer ]] && remote=(mosh)
+    [[ $h == localhost ]] && remote=(mosh)
 
     kitten @ launch --type=tab --title=$h
     [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
