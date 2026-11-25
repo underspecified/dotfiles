@@ -86,6 +86,8 @@ brew "mas"
 brew "openjdk"
 # Scala language server
 brew "metals"
+# Remote terminal application (launch_ws, dispatch's remote wake)
+brew "mosh"
 # Lightweight PDF and XPS viewer
 brew "mupdf-tools"
 # Open-source, cross-platform JavaScript runtime environment
@@ -134,6 +136,9 @@ brew "tmux"
 brew "translate-shell"
 # Lightweight BitTorrent client
 brew "transmission-cli"
+# trzsz's ssh client, binary `tssh`: sessions to the hosts that survive drops
+# (.ssh/config.d/tssh.conf). Conflicts with the unrelated formula "tssh".
+brew "trzsz-ssh"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
 # Internet file retriever
