@@ -133,3 +133,18 @@ def test_dispatch_panes_turn_on_tssh_and_mosh(calls: list[list[str]]) -> None:
         before = argv[: argv.index("dispatch")]
         env = {before[i + 1] for i, arg in enumerate(before) if arg == "--env"}
         assert {"DISPATCH_REMOTE_MOSH=1", "DISPATCH_REMOTE_TSSH=1"} <= env
+
+
+def test_each_tab_closes_its_first_window_by_id(calls: list[list[str]]) -> None:
+    # `num:0` is window 0 of whichever tab is current when the close runs,
+    # which is another tab after a tab switch during the sleeps.
+    tab_ids = [str(1000 + n) for n, argv in enumerate(calls, 1) if "--type=tab" in argv]
+    closed = [argv[2:] for argv in calls if argv[1] == "close-window"]
+    assert tab_ids
+    assert closed == [[f"--match=id:{tab_id}"] for tab_id in tab_ids]
+
+
+def test_no_close_when_the_tab_launch_prints_no_id(tmp_path: Path) -> None:
+    calls = run_launch_ws(tmp_path, {"KITTEN_NO_ID": "1"})
+    assert calls
+    assert not [argv for argv in calls if argv[1] == "close-window"]

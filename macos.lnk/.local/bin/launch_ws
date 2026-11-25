@@ -12,7 +12,7 @@ launch_ws() {
     remote=(tssh -t)
     [[ $h == localhost ]] && remote=(mosh)
 
-    kitten @ launch --type=tab --title=$h
+    tab_win=$(kitten @ launch --type=tab --title=$h)
     [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
         "${remote[@]}" $h -- sh -c 'tmux a -t btop || tmux new-session -s btop btop; exec $SHELL'
     [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
@@ -27,7 +27,10 @@ launch_ws() {
 
     kitten @ goto-layout --match=title:$h horizontal
     sleep 5
-    kitten @ close-window --match=num:0
+    # Close the tab's first shell by the id `launch` printed. `num:0` is window 0
+    # of whichever tab is current, which is another tab after a tab switch
+    # during the sleeps.
+    [[ $tab_win ]] && kitten @ close-window --match="id:$tab_win"
     sleep 5
 }
 
