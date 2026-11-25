@@ -29,6 +29,7 @@
 .local/bin/get_macos_mode
 .local/bin/hydrate
 .local/bin/launch_ws
+.local/bin/migrate_seat
 .local/bin/open_alfred
 .local/bin/open_drafts
 .local/bin/open_finder
