@@ -9,6 +9,7 @@ Run: uv run --with pytest pytest tests/test_launch_ws.py -v
 
 import re
 import subprocess
+from collections.abc import Mapping
 from pathlib import Path
 
 import pytest
@@ -20,11 +21,19 @@ SYSTEM_PATH = "/usr/bin:/bin:/usr/sbin:/sbin"
 SEP = "\x1f"
 
 # One log line per call, each argument followed by the unit separator.
+# `kitten @ launch` prints the new window's id, so each tab launch prints one:
+# 1000 + that call's line number in the log. With KITTEN_NO_ID it fails instead.
 KITTEN_STUB = """#!/bin/bash
 {
   printf '%s\\x1f' "$@"
   echo
 } >>"${KITTEN_LOG}"
+case " $* " in
+*" --type=tab "*)
+  [[ -n "${KITTEN_NO_ID:-}" ]] && exit 1
+  echo "$((1000 + $(wc -l <"${KITTEN_LOG}")))"
+  ;;
+esac
 """
 
 
@@ -42,10 +51,10 @@ def tssh_conf_hosts() -> set[str]:
     return hosts
 
 
-@pytest.fixture(scope="module")
-def panes(tmp_path_factory: pytest.TempPathFactory) -> dict[str, list[list[str]]]:
-    """Per host, the command of each btop/nvitop pane launch_ws asks kitty for."""
-    tmp = tmp_path_factory.mktemp("launch_ws")
+def run_launch_ws(
+    tmp: Path, extra_env: Mapping[str, str] | None = None
+) -> list[list[str]]:
+    """Run the real script against the stubs; return the argv of each kitten call."""
     bin_dir = tmp / "bin"
     bin_dir.mkdir()
     (bin_dir / "kitten").write_text(KITTEN_STUB)
@@ -53,13 +62,27 @@ def panes(tmp_path_factory: pytest.TempPathFactory) -> dict[str, list[list[str]]
     for stub in bin_dir.iterdir():
         stub.chmod(0o755)
     log = tmp / "kitten.log"
-    env = {"PATH": f"{bin_dir}:{SYSTEM_PATH}", "KITTEN_LOG": str(log)}
+    env = {
+        "PATH": f"{bin_dir}:{SYSTEM_PATH}",
+        "KITTEN_LOG": str(log),
+        **(extra_env or {}),
+    }
     subprocess.run(["/bin/bash", str(SCRIPT)], env=env, check=True, timeout=30)
+    return [line.split(SEP)[:-1] for line in log.read_text().splitlines()]
 
+
+@pytest.fixture(scope="module")
+def calls(tmp_path_factory: pytest.TempPathFactory) -> list[list[str]]:
+    """Every kitten call of one full launch_ws run, in order."""
+    return run_launch_ws(tmp_path_factory.mktemp("launch_ws"))
+
+
+@pytest.fixture(scope="module")
+def panes(calls: list[list[str]]) -> dict[str, list[list[str]]]:
+    """Per host, the command of each btop/nvitop pane launch_ws asks kitty for."""
     by_host: dict[str, list[list[str]]] = {}
-    for line in log.read_text().splitlines():
+    for argv in calls:
         # @ launch --match=title:<host> <command...>
-        argv = line.split(SEP)[:-1]
         if "sh" not in argv:  # the tab itself, a dispatch pane, layout, close
             continue
         host = argv[2].removeprefix("--match=title:")
@@ -99,3 +122,29 @@ def test_fallback_starts_the_session_the_attach_looked_for(
             assert match is not None, cmd[-1]
             name, flag, session, program = match.groups()
             assert (flag, session, program) == ("-s", name, name)
+
+
+def test_dispatch_panes_turn_on_tssh_and_mosh(calls: list[list[str]]) -> None:
+    # kitty's new windows don't inherit the calling shell's env, so each
+    # dispatch pane is handed both gates. dispatch tries tssh before mosh.
+    dispatch_panes = [argv for argv in calls if "dispatch" in argv]
+    assert dispatch_panes
+    for argv in dispatch_panes:
+        before = argv[: argv.index("dispatch")]
+        env = {before[i + 1] for i, arg in enumerate(before) if arg == "--env"}
+        assert {"DISPATCH_REMOTE_MOSH=1", "DISPATCH_REMOTE_TSSH=1"} <= env
+
+
+def test_each_tab_closes_its_first_window_by_id(calls: list[list[str]]) -> None:
+    # `num:0` is window 0 of whichever tab is current when the close runs,
+    # which is another tab after a tab switch during the sleeps.
+    tab_ids = [str(1000 + n) for n, argv in enumerate(calls, 1) if "--type=tab" in argv]
+    closed = [argv[2:] for argv in calls if argv[1] == "close-window"]
+    assert tab_ids
+    assert closed == [[f"--match=id:{tab_id}"] for tab_id in tab_ids]
+
+
+def test_no_close_when_the_tab_launch_prints_no_id(tmp_path: Path) -> None:
+    calls = run_launch_ws(tmp_path, {"KITTEN_NO_ID": "1"})
+    assert calls
+    assert not [argv for argv in calls if argv[1] == "close-window"]

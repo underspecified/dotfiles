@@ -59,6 +59,14 @@ unset _agent_path
 # a non-mosh box is never broken. Force-off a host with DISPATCH_REMOTE_MOSH_<HOST>=0.
 export DISPATCH_REMOTE_MOSH=1
 
+# tank also opts in to dispatch's tssh transport, which is tried before mosh:
+# Netskope takes mosh's UDP from tank, and tssh's tsshd session rides TCP
+# (~/.ssh/config.d/tssh.conf). macOS only: the Linux hosts have no trzsz-ssh
+# client, so there every wake would print dispatch's fallback note.
+case "$OSTYPE" in
+darwin*) export DISPATCH_REMOTE_TSSH=1 ;;
+esac
+
 ##### ALIASES #####
 
 # Sourced here (not .zshrc) so aliases are available non-interactively too —
