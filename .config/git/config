@@ -110,3 +110,10 @@
 # non-interactive sessions -- exactly what happened on 2026-08-05. On Linux no
 # osxkeychain exists, so git falls back to a terminal prompt, which is the
 # intended headless behaviour anyway.
+
+# Per-host overrides: ~/.config/git/local.conf, untracked (.gitignore). Last, so
+# it wins; git skips the include where the file is missing. Used where the network
+# blocks SSH to GitHub: the file maps git@github.com: to https://github.com/, and
+# the credential block above supplies gh's token.
+[include]
+	path = ~/.config/git/local.conf

@@ -3,6 +3,7 @@
 hansei/
 nikki/
 identity.conf
+.config/git/local.conf
 
 # Per-machine project MCP config (agent-mail bus URL differs: :8765 docker buses
 # vs :18765 on dgx02/nosudo). The repo's own .mcp.json, not a deployed dotfile —
