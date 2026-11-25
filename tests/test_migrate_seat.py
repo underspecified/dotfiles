@@ -7,6 +7,7 @@ touches a real seat, ~/.claude, the dispatch bus or a real dotfiles tree.
 Run: uv run --with pytest pytest tests/test_migrate_seat.py -v
 """
 
+import json
 import os
 import re
 import stat
@@ -21,6 +22,7 @@ pytestmark = pytest.mark.skipif(sys.platform != "darwin", reason="macOS only")
 SCRIPT = Path(__file__).resolve().parents[1] / "macos.lnk/.local/bin/migrate_seat"
 SYSTEM_PATH = "/usr/bin:/bin:/usr/sbin:/sbin"
 TOOLS_REMOTE = "https://example.invalid/acme/tools.git"
+LOCAL = ".claude/settings.local.json"
 
 MANIFEST = """\
 # infra for the made-up seat "acme"
@@ -75,6 +77,16 @@ RSYNC_FAILS = "#!/bin/bash\necho 'rsync: stub partial transfer' >&2\nexit 23\n"
 def encode(path: Path | str) -> str:
     """Claude Code's project key for a physical path."""
     return re.sub(r"[^A-Za-z0-9-]", "-", str(path))
+
+
+def added_dirs(folder: Path) -> list[str]:
+    """permissions.additionalDirectories in a folder's local Claude settings."""
+    data = json.loads((folder / LOCAL).read_text())
+    return data["permissions"]["additionalDirectories"]
+
+
+def settings_lines(out: str) -> list[str]:
+    return [line for line in out.splitlines() if line.startswith("settings ")]
 
 
 def snapshot(root: Path, skip: tuple[str, ...] = (), mtimes: bool = True) -> dict:
@@ -310,7 +322,7 @@ def test_dry_run_changes_nothing(fx):
 
 def test_dry_run_prints_each_action_kind(fx):
     out = fx.migrate().stdout
-    for kind in ("copy", "link", "rewrite", "rename", "git", "dispatch"):
+    for kind in ("copy", "link", "settings", "rewrite", "rename", "git", "dispatch"):
         assert re.search(rf"^{kind}\s", out, re.MULTILINE), (
             f"no '{kind}' line in:\n{out}"
         )
@@ -498,9 +510,11 @@ def test_gitignore_covers_links(fx):
     fx.applied()
     status = fx.git(fx.new, "status", "--porcelain", "--ignored").stdout.splitlines()
     assert {s[3:] for s in status if s.startswith("!! ")} == {
+        ".claude/settings.local.json",
         "docs",
         "gadgets",
         "loose.txt",
+        "sub/.claude/",
         "sub/big",
         "tools/",
     }
@@ -794,3 +808,106 @@ def test_reapply_after_rollback_refuses_the_stale_claude_copy(fx):
     assert r.returncode != 0
     assert encode(fx.new) in r.stderr
     assert fx.new.is_symlink()
+
+
+# ── 9. additionalDirectories: writes through the document links ──────────────
+
+
+def test_settings_entry_for_root_and_each_folder_made_real(fx):
+    fx.applied()
+    assert added_dirs(fx.new) == [str(fx.old)]
+    assert added_dirs(fx.new / "sub") == [str(fx.old / "sub")]
+    # Listed whole: no document links inside, and its old path is renamed away.
+    assert not (fx.new / "widgets" / LOCAL).exists()
+    assert list(fx.old.rglob("settings.local.json")) == []
+
+
+def test_settings_keeps_existing_keys(fx):
+    existing = {
+        "autoCompactWindow": 150000,
+        "permissions": {"allow": ["Read"], "additionalDirectories": ["/made/up"]},
+    }
+    (fx.old / LOCAL).write_text(json.dumps(existing))
+    fx.applied()
+    existing["permissions"]["additionalDirectories"].append(str(fx.old))
+    assert json.loads((fx.new / LOCAL).read_text()) == existing
+
+
+def test_settings_rerun_adds_no_duplicate(fx):
+    fx.applied()
+    out = fx.applied().stdout
+    assert added_dirs(fx.new) == [str(fx.old)]
+    assert added_dirs(fx.new / "sub") == [str(fx.old / "sub")]
+    assert settings_lines(out) == []
+
+
+def test_settings_rerun_tops_up_a_seat_moved_before_this_existed(fx):
+    fx.applied()
+    (fx.new / "sub" / LOCAL).unlink()
+    out = fx.applied().stdout
+    assert added_dirs(fx.new / "sub") == [str(fx.old / "sub")]
+    assert settings_lines(out) == [
+        f"settings {fx.new / 'sub' / LOCAL}: additionalDirectories += {fx.old / 'sub'}"
+    ]
+    assert fx.git(fx.new, "status", "--porcelain").stdout == ""
+
+
+def test_dry_run_prints_one_settings_line_per_folder_and_writes_nothing(fx):
+    stage = fx.new.parent / ".staging" / "acme"
+    before = fx.whole_tree()
+    out = fx.migrate().stdout
+    assert settings_lines(out) == [
+        f"settings {stage / LOCAL}: additionalDirectories += {fx.old}",
+        f"settings {stage / 'sub' / LOCAL}: additionalDirectories += {fx.old / 'sub'}",
+    ]
+    assert fx.whole_tree() == before
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "{not json",
+        "[]",
+        '{"permissions": []}',
+        '{"permissions": {"additionalDirectories": "/made/up"}}',
+    ],
+)
+def test_refuses_settings_it_cannot_merge_before_any_destroy(fx, text):
+    (fx.old / LOCAL).write_text(text)
+    r = fx.migrate("--apply")
+    assert r.returncode != 0
+    assert "settings.local.json" in r.stderr
+    assert fx.destroyed() == set()
+    assert fx.new.is_symlink()
+
+
+def test_refuses_a_claude_folder_that_would_stay_in_the_cloud(fx):
+    """Not listed, so it would be a link: the entry would be written into --old."""
+    (fx.old / "sub" / ".claude").mkdir()
+    r = fx.migrate("--apply")
+    assert r.returncode != 0
+    assert "'sub/.claude'" in r.stderr
+    assert fx.destroyed() == set()
+    assert fx.new.is_symlink()
+
+
+def test_refuses_a_claude_folder_that_is_a_symlink(fx):
+    (fx.old / ".claude").rename(fx.old / "shared")
+    (fx.old / ".claude").symlink_to("shared")
+    r = fx.migrate("--apply")
+    assert r.returncode != 0
+    assert "'.claude'" in r.stderr
+    assert fx.destroyed() == set()
+    assert fx.new.is_symlink()
+
+
+def test_rerun_never_writes_settings_through_a_link_into_the_cloud(fx):
+    fx.applied()
+    (fx.new / "sub" / LOCAL).unlink()
+    (fx.new / "sub" / ".claude").rmdir()
+    (fx.old / "sub" / ".claude").mkdir()
+    (fx.new / "sub" / ".claude").symlink_to(fx.old / "sub" / ".claude")
+    r = fx.migrate("--apply")
+    assert r.returncode != 0
+    assert "'sub/.claude'" in r.stderr
+    assert list((fx.old / "sub" / ".claude").iterdir()) == []

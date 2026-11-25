@@ -23,7 +23,13 @@ Seats, processes, Claude project dirs and waiter markers are handled only for
 paths that stay real (--old itself, the folders made real, listed paths). A
 seat inside a folder that becomes a link keeps running.
 
-Running it again after the swap adds links for new entries in --old.
+Claude Code refuses to write through a link that leaves the working directory.
+So --old and each folder made real get their own old path added to
+permissions.additionalDirectories in their .claude/settings.local.json (a
+local, untracked file).
+
+Running it again after the swap adds links for new entries in --old, and any
+additionalDirectories entry that is missing.
 --rollback undoes the swap (step 6) and keeps the migrated tree at
 <new>.rolledback. State: ~/.local/state/migrate_seat/<slug>.json.
 """
@@ -37,6 +43,7 @@ import shutil
 import subprocess
 import sys
 import time
+from collections.abc import Collection
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -65,10 +72,11 @@ KNOWN_CACHES = frozenset(
         ".mcp.json",
     }
 )
-# Machine state under any .claude/: copied, never tracked. The settings file is
-# ignored by the user's own git excludes; the lock by a line this tool writes.
+# Machine state under any .claude/: copied, never tracked. This tool writes the
+# lines that ignore both, and adds to the settings file (see add_directory).
+SETTINGS_LOCAL = ".claude/settings.local.json"
 TASKS_LOCK = ".claude/scheduled_tasks.lock"
-CLAUDE_LOCAL = (".claude/settings.local.json", TASKS_LOCK)
+CLAUDE_LOCAL = (SETTINGS_LOCAL, TASKS_LOCK)
 BLOCK_START = "# >>> migrate_seat: document links and nested repos (managed)"
 BLOCK_END = "# <<< migrate_seat"
 MESSAGE = "migrate_seat: {slug} infra moved out of the cloud folder"
@@ -117,6 +125,7 @@ class Plan:
     reaches: dict[str, tuple[str, str]] = field(default_factory=dict)
     state_copies: list[tuple[str, str]] = field(default_factory=list)
     seats: list[str] = field(default_factory=list)  # rel paths under --old
+    settings: list[str] = field(default_factory=list)  # folders to add a dir to
 
 
 # ── small helpers ────────────────────────────────────────────────────────────
@@ -235,6 +244,71 @@ def free_rename(src: str, dst: str) -> None:
 def relink(path: str, target: str) -> None:
     os.unlink(path)
     os.symlink(target, path)
+
+
+# ── additionalDirectories: let Claude Code write through the document links ──
+
+
+def settings_dirs(path: str) -> tuple[dict, list]:
+    """A settings file's content ({} when missing) and its additionalDirectories."""
+    try:
+        with open(path) as fh:
+            data = json.load(fh)
+    except FileNotFoundError:
+        data = {}
+    except (OSError, ValueError) as e:
+        raise Fail(f"can't read {path}: {e}") from e
+    dirs = None
+    if isinstance(data, dict):
+        perms = data.setdefault("permissions", {})
+        if isinstance(perms, dict):
+            dirs = perms.setdefault("additionalDirectories", [])
+    if not isinstance(dirs, list):
+        raise Fail(f"{path}: permissions.additionalDirectories is not a list")
+    return data, dirs
+
+
+def add_directory(path: str, entry: str) -> None:
+    """Add entry to the file's additionalDirectories; keep every other key."""
+    data, dirs = settings_dirs(path)
+    if entry in dirs:
+        return
+    dirs.append(entry)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path + ".tmp", "w") as fh:
+        json.dump(data, fh, indent=2)
+        fh.write("\n")
+    os.replace(path + ".tmp", path)
+
+
+def settings_todo(job: Job, root: str, linked: Collection[str] = ()) -> list[str]:
+    """The folders made real whose settings under root lack their own old path.
+
+    Refuses a .claude (or settings file) that is a symlink, or is in `linked`
+    and so about to become one: the entry would be written into --old.
+    """
+    todo = []
+    for rel in ["", *sorted(job.containers)]:
+        local = join(rel, SETTINGS_LOCAL)
+        paths = (os.path.dirname(local), local)
+        bad = [p for p in paths if p in linked or os.path.islink(join(root, p))]
+        if bad:
+            refuse(
+                job,
+                f"'{bad[0]}' is, or would become, a link, so additionalDirectories "
+                "can't be written to a local file: list it in the manifest, as a "
+                "real file or folder",
+            )
+        elif join(job.old, rel) not in settings_dirs(join(root, local))[1]:
+            todo.append(rel)
+    return todo
+
+
+def write_settings(job: Job, root: str, rels: list[str]) -> None:
+    for rel in rels:
+        path, entry = os.path.join(join(root, rel), SETTINGS_LOCAL), join(job.old, rel)
+        text = f"{path}: additionalDirectories += {entry}"
+        act(job, "settings", text, add_directory, path, entry)
 
 
 # ── the manifest and what it means for --old ─────────────────────────────────
@@ -465,6 +539,7 @@ def step_preflight(job: Job, plan: Plan) -> None:
     scan(job, plan)
     survey(job, plan)
     plan_rewrites(job, plan)
+    plan.settings = settings_todo(job, old, plan.links)
     plan_state_copies(job, plan)
     for src, dst in plan.state_copies:
         try:
@@ -532,6 +607,7 @@ def step_stage(job: Job, plan: Plan) -> None:
     for rel in plan.links:
         src, dst = join(old, rel), join(stage, rel)
         act(job, "link", f"{dst} -> {src}", os.symlink, src, dst)
+    write_settings(job, stage, plan.settings)
 
 
 def step_links(job: Job, plan: Plan) -> None:
@@ -577,7 +653,7 @@ def write_ignore(root: str, links: list[str], nested: list[str]) -> None:
     text = re.sub(block, "", text, flags=re.DOTALL)
     if text and not text.endswith("\n"):
         text += "\n"
-    lines = ["**/" + TASKS_LOCK]
+    lines = ["**/" + p for p in CLAUDE_LOCAL]
     lines += [ignore_line(r) for r in links]
     lines += [ignore_line(r, folder=True) for r in nested]
     with open(path, "w") as fh:
@@ -768,7 +844,12 @@ def commit_ignore(repo: str) -> None:
 
 
 def top_up(job: Job) -> None:
-    """After the swap: link what is new in --old, and ignore it."""
+    """After the swap: link what is new in --old and ignore it; add missing dirs."""
+    top_up_links(job)
+    write_settings(job, job.new, settings_todo(job, job.new))
+
+
+def top_up_links(job: Job) -> None:
     old, new = job.old, job.new
     plan = Plan()
     scan(job, plan)
