@@ -46,7 +46,7 @@ When Eric says he spent time on something ("today I spent 2 hours on Y"), log it
 - Write over echo/cat heredoc
 - Never parallel Bash calls in one message (cascade failure) -- use TaskCreate
 - A read that fails with "Resource deadlock avoided" means the file is cloud-only (OneDrive, Google Drive): run `hydrate <path>` (macOS) instead of retrying
-- Never a bare `open <file|url>`: Eric's default handler is OpenIn, a picker that closes unless he clicks (and it mangled an OAuth URL). Name the app: PDF `open -a Preview`, Markdown `open -a Lettera`, URLs `open -a "Google Chrome"`, anything else `open -a <its app>`. `open -R` (reveal in Finder) is fine
+- Never a bare `open <file|url>`: Eric's default handler is OpenIn, a picker that closes unless he clicks (and it mangled an OAuth URL). Name the app: PDF `open -a Preview`, Markdown `open -a Lettera`, websites `open -a Safari` except Google and work sites (Box, RakuRaku, other HRI-JP systems) `open -a "Google Chrome"`, anything else `open -a <its app>`. `open -R` (reveal in Finder) is fine
 
 ## Script Invocation
 
