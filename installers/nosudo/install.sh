@@ -17,8 +17,8 @@
 #     curl-pipe) because it's useful as a remote-side terminfo target
 #     for `kitten ssh`, but we don't drive any GUI from here.
 #   * User-space tools only, all under ~/.local: uv, claude, otelcol, gh,
-#     btop, nvtop, gpu-burn, kitty, shellcheck, shfmt, node, trash-cli. Then
-#     runs ~/.claude/bootstrap.sh.
+#     btop, nvtop, gpu-burn, kitty, shellcheck, shfmt, node, trash-cli, tsshd.
+#     Then runs ~/.claude/bootstrap.sh.
 #   * Per-step delegation: each tool lives in its own installers/nosudo/
 #     install_<tool>.sh -- so you can re-run a single piece for debug
 #     (e.g. `bash installers/nosudo/install_node.sh`).
@@ -46,23 +46,23 @@ check_preconditions() {
   for tool in git curl wget jq tar; do
     command -v "${tool}" >/dev/null 2>&1 || missing+=("${tool}")
   done
-  if (( ${#missing[@]} > 0 )); then
+  if ((${#missing[@]} > 0)); then
     die "missing required base tools (no sudo available to install them): ${missing[*]}"
   fi
 
   # Soft warnings -- nice to have but not required to make progress.
   for tool in zsh tmux make g++; do
-    command -v "${tool}" >/dev/null 2>&1 \
-      || warn "${tool} not found -- some downstream features will be unavailable"
+    command -v "${tool}" >/dev/null 2>&1 ||
+      warn "${tool} not found -- some downstream features will be unavailable"
   done
 
-  command -v lnk >/dev/null 2>&1 \
-    || warn "lnk not on PATH -- fine for initial bootstrap, but lnk pull / status will be unavailable"
+  command -v lnk >/dev/null 2>&1 ||
+    warn "lnk not on PATH -- fine for initial bootstrap, but lnk pull / status will be unavailable"
 
   mkdir -p "${LOCAL_PREFIX}/bin"
   case ":${PATH}:" in
-    *":${LOCAL_PREFIX}/bin:"*) ;;
-    *) warn "${LOCAL_PREFIX}/bin is not on PATH -- newly installed tools won't be found until your next shell" ;;
+  *":${LOCAL_PREFIX}/bin:"*) ;;
+  *) warn "${LOCAL_PREFIX}/bin is not on PATH -- newly installed tools won't be found until your next shell" ;;
   esac
 }
 
@@ -92,18 +92,19 @@ run_user_installers() {
   #      take the longest and self-skip when their preconds aren't met.
   run_step "${LINUX_DIR}/install_uv.sh"
   run_step "${ALL_DIR}/install_claude_code.sh"
-  run_step "${ALL_DIR}/install_otelcol.sh"     "otelcol (pinned tarball -- Claude Code metrics collector, systemd --user)"
-  run_step "${CUR_DIR}/install_gh.sh"          "gh (prebuilt tarball)"
-  run_step "${CUR_DIR}/install_shellcheck.sh"  "shellcheck (prebuilt tarball -- required by .claude shellcheck_lint hook)"
-  run_step "${CUR_DIR}/install_shfmt.sh"       "shfmt (prebuilt binary -- required by .claude shellcheck_lint hook)"
-  run_step "${CUR_DIR}/install_node.sh"        "node + npm (Node LTS tarball -- required by .claude statusline build)"
-  run_step "${CUR_DIR}/install_trash.sh"       "trash-cli (uv tool -- required by .claude block-rm hook)"
-  run_step "${CUR_DIR}/install_kitty.sh"       "kitty (upstream installer -- user-space)"
-  run_step "${CUR_DIR}/install_btop.sh"        "btop (v1.3.2 pin -- C++20 + GPU support)"
-  run_step "${CUR_DIR}/install_nvtop.sh"       "nvtop (NVIDIA-only build -- self-skips when no GPU)"
-  run_step "${CUR_DIR}/install_gpu_burn.sh"    "gpu-burn (self-skips when no nvcc)"
-  run_step "${CUR_DIR}/install_autossh.sh"     "autossh (dispatch relay tunnel -- from-source)"
-  run_step "${CUR_DIR}/install_mosh.sh"        "mosh (drop-proof interactive sessions -- from-source, static protobuf)"
+  run_step "${ALL_DIR}/install_otelcol.sh" "otelcol (pinned tarball -- Claude Code metrics collector, systemd --user)"
+  run_step "${CUR_DIR}/install_gh.sh" "gh (prebuilt tarball)"
+  run_step "${CUR_DIR}/install_shellcheck.sh" "shellcheck (prebuilt tarball -- required by .claude shellcheck_lint hook)"
+  run_step "${CUR_DIR}/install_shfmt.sh" "shfmt (prebuilt binary -- required by .claude shellcheck_lint hook)"
+  run_step "${CUR_DIR}/install_node.sh" "node + npm (Node LTS tarball -- required by .claude statusline build)"
+  run_step "${CUR_DIR}/install_trash.sh" "trash-cli (uv tool -- required by .claude block-rm hook)"
+  run_step "${CUR_DIR}/install_kitty.sh" "kitty (upstream installer -- user-space)"
+  run_step "${CUR_DIR}/install_btop.sh" "btop (v1.3.2 pin -- C++20 + GPU support)"
+  run_step "${CUR_DIR}/install_nvtop.sh" "nvtop (NVIDIA-only build -- self-skips when no GPU)"
+  run_step "${CUR_DIR}/install_gpu_burn.sh" "gpu-burn (self-skips when no nvcc)"
+  run_step "${CUR_DIR}/install_autossh.sh" "autossh (dispatch relay tunnel -- from-source)"
+  run_step "${CUR_DIR}/install_mosh.sh" "mosh (drop-proof interactive sessions -- from-source, static protobuf)"
+  run_step "${ALL_DIR}/install_tsshd.sh" "tsshd (pinned tarball -- server side of tank's tssh sessions)"
 }
 
 ensure_bashrc_path() {
@@ -130,7 +131,7 @@ ensure_bashrc_path() {
   # when ~/.bashrc runs, not now.
   local tmp
   tmp="$(mktemp)"
-  cat > "${tmp}" <<'EOF'
+  cat >"${tmp}" <<'EOF'
 # >>> lnk nosudo: ~/.local/bin on PATH for non-interactive ssh >>>
 # Bash run by sshd for `ssh host cmd` is non-interactive + non-login but still
 # sources ~/.bashrc (network-stdin detection). This block sits ABOVE the
@@ -142,8 +143,8 @@ esac
 # <<< lnk nosudo: ~/.local/bin on PATH for non-interactive ssh <<<
 EOF
   if [[ -f "${rc}" ]]; then
-    printf '\n' >> "${tmp}"
-    cat "${rc}" >> "${tmp}"
+    printf '\n' >>"${tmp}"
+    cat "${rc}" >>"${tmp}"
     mv "${tmp}" "${rc}"
     log "  prepended ~/.local/bin PATH block to existing ~/.bashrc"
   else
@@ -172,7 +173,7 @@ print_summary() {
   nosudo bootstrap complete on $(hostname).
 
   Verify:
-    command -v uv claude gh btop nvtop kitty trash shellcheck shfmt node npm
+    command -v uv claude gh btop nvtop kitty trash shellcheck shfmt node npm tsshd
     ls ~/git/gpu-burn/gpu_burn 2>/dev/null
     lnk status
 
