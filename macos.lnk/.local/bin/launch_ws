@@ -4,11 +4,19 @@ launch_ws() {
     h=$1
     shift 1
 
+    # The btop and nvitop panes go over tssh: Netskope takes mosh's UDP, and tssh
+    # carries its tsshd session over TCP (~/.ssh/config.d/tssh.conf).
+    #   -t  a command run gets no pty without it, and tmux needs one
+    #   --  otherwise tssh reads sh's -c as its own cipher option
+    # localhost is not in tssh.conf, so it stays on mosh.
+    remote=(tssh -t)
+    [[ $h == localhost ]] && remote=(mosh)
+
     kitten @ launch --type=tab --title=$h
     [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
-        mosh $h -- sh -c 'tmux a -t btop || tmux new-session -t btop btop; exec $SHELL'
+        "${remote[@]}" $h -- sh -c 'tmux a -t btop || tmux new-session -s btop btop; exec $SHELL'
     [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
-        mosh $h -- sh -c 'tmux a -t nvitop || tmux new-session -t nvitop nvitop; exec $SHELL'
+        "${remote[@]}" $h -- sh -c 'tmux a -t nvitop || tmux new-session -s nvitop nvitop; exec $SHELL'
 
     for d in "$@"; do
         kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 dispatch -C $h:$d wake

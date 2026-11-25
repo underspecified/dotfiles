@@ -24,7 +24,7 @@ darwin*)
     alias safari="open -a /Applications/Safari.app"
     alias fixopenwith='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
     # trzsz-ssh with its tsshd session carried over TCP, for any host that has
-    # tsshd: Netskope takes over UDP. The five Linux hosts get the same from
+    # tsshd: Netskope takes over UDP. The six Linux hosts get the same from
     # ~/.ssh/config.d/tssh.conf, so plain `tssh <host>` is enough for them.
     alias tssht='tssh -o UdpMode=yes -o UdpProxyMode=TCP'
     ;;
