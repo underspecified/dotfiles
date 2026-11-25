@@ -18,6 +18,7 @@ Claude Code user configuration directory. Config files are tracked by `lnk` (sym
 | `agents/dont-ask.md` | Auto-approve agent definition |
 | `skills/bootstrap.sh` | Skills bootstrap script |
 | `mcp/bootstrap.sh` | MCP server bootstrap script |
+| `mcp/truststore/sitecustomize.py` | Makes the MCP servers that fetch verify TLS through the OS trust store |
 | `patches/` | Local patches against marketplace plugins + idempotent applier |
 
 ## What's Not Tracked (runtime state)
@@ -27,7 +28,7 @@ Claude Code user configuration directory. Config files are tracked by `lnk` (sym
 - `plugins/`, `cache/`, `debug/`, `telemetry/`, `statsig/`, `paste-cache/`
 - `claude-limitline-fork/` -- cloned repo, set up by bootstrap
 - `skills/*/` -- individual skill repos, cloned by bootstrap
-- `mcp/*/` -- MCP server state (if any), not tracked
+- `mcp/*/` -- MCP server state (if any), not tracked. The exception is `mcp/truststore/`, which is tracked
 
 ## Skills Architecture
 
@@ -64,13 +65,21 @@ MCP servers are registered via `claude mcp add` (stored in `~/.claude.json`, not
 
 | Server | Transport | Command |
 |--------|-----------|---------|
-| google-workspace | stdio | `uvx --exclude-newer <date> workspace-mcp==<version> --tools drive docs sheets --single-user` |
-| markitdown-mcp | stdio | `uvx --exclude-newer <date> markitdown-mcp==<version>` |
+| google-workspace | stdio | `uvx --exclude-newer <date> --with truststore==<version> workspace-mcp==<version> --tools drive docs sheets --single-user`, with env `PYTHONPATH=$HOME/.claude/mcp/truststore` |
+| markitdown-mcp | stdio | `uvx --exclude-newer <date> --with truststore==<version> markitdown-mcp==<version>`, with the same env |
 | che-ical-mcp | plugin | Managed by psychquant-claude-plugins marketplace |
 | Claude Gmail | built-in | `mcp__claude_ai_Gmail__*` |
 | Claude Calendar | built-in | `mcp__claude_ai_Google_Calendar__*` |
 | apple-mail-patrickfreyer | stdio | `uvx --exclude-newer <date> --with "mcp<2" mcp-apple-mail==<version>` (work Macs only; sends gated by `hooks/mail_send_gate.sh`) |
 | apple-mail-imdinu | stdio | `apple-mail-mcp`, via `uv tool install --exclude-newer <date> apple-mail-mcp==<version>` (work Macs only) |
+
+### TLS goes through the OS trust store
+
+The two servers that fetch (google-workspace, markitdown-mcp) verify certificates through the OS trust store, not certifi's bundle: the keychain on macOS, the system CA store on Linux (the `ca-certificates` package). certifi lacks the CA of a TLS-inspecting proxy such as HRI-JP's Netskope, so a token refresh failed with "self-signed certificate in certificate chain" (dotfiles#36).
+
+- **How:** `uvx --with truststore` installs truststore beside the server, and `PYTHONPATH` points at `mcp/truststore/`, whose `sitecustomize.py` injects it when Python starts. The server's code is untouched.
+- **Keep `mcp/truststore/` to that one file.** The servers can import anything in it.
+- **The path in the env is absolute.** Claude Code does not expand `~` there, so the bootstrap writes `$HOME` out.
 
 ### Versions are pinned
 
@@ -82,7 +91,8 @@ To bump a version:
 
 1. Open a PR that changes the variable (and the `--exclude-newer` date if the dependencies should move too; for panache, the tag and both sha256s). Never bump on a live host first.
 2. In the PR, show that a resolve at the new date gives the versions you expect: `uv pip compile --exclude-newer <date>` on the pinned requirement. For an Apple Mail server, also re-check `settings.json`'s deny list and `mail_send_gate.sh` against the new release's send-capable tools.
-3. After merge, run `bash ~/.claude/mcp/bootstrap.sh` on each host. It starts no server, adds missing entries, reinstalls `apple-mail-mcp`, and warns for each existing entry whose args differ from the pin. Edit those `args` in `~/.claude.json`, leaving `env` untouched, with no Claude sessions open, since a running session can write its old copy back. Check after a new session starts that the edit stayed. On Linux, re-run `bash ~/.claude/hooks/bootstrap.sh` for the hook tools.
+3. After merge, run `bash ~/.claude/mcp/bootstrap.sh` on each host. It starts no server, adds missing entries, reinstalls `apple-mail-mcp`, and warns for each existing entry whose args or pinned env key (`PYTHONPATH`) differ from the pin. Register such an entry again: `claude mcp remove -s user <name>`, then the bootstrap. After a new session starts, check that the entry stayed: a running session can write its old copy of `~/.claude.json` back. On Linux, re-run `bash ~/.claude/hooks/bootstrap.sh` for the hook tools.
+   - **`claude mcp remove` drops the entry's whole env.** The bootstrap puts back only the pinned key. An entry with keys of the host's own (tank's google-workspace: the client secret path, the account, the port) has to be added by hand with every key: `claude mcp add -s user --transport stdio <name> -e KEY=VALUE … -- <pinned command>`.
 
 ## Bootstrap
 

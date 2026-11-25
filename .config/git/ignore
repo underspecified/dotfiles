@@ -19,6 +19,7 @@
 .claude/skills/*/
 !.claude/skills/bootstrap.sh
 .claude/mcp/*/
+!.claude/mcp/truststore/
 !.claude/mcp/bootstrap.sh
 .claude.json
 .ssh/known_hosts.old
