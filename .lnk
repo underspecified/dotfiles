@@ -21,6 +21,7 @@
 .claude/hooks/shellcheck_lint.sh
 .claude/mcp/bootstrap.sh
 .claude/mcp/secure_google_workspace.sh
+.claude/mcp/truststore/sitecustomize.py
 .claude/patches/README.md
 .claude/patches/bootstrap.sh
 .claude/patches/hookify-global-rules.patch
