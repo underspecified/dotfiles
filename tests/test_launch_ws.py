@@ -78,3 +78,18 @@ def test_tssh_only_for_hosts_in_tssh_conf(panes: dict[str, list[list[str]]]) -> 
     # command and `sh -c '...'` loses its quoting.
     tssh_hosts = {h for h, cmds in panes.items() if any(c[0] == "tssh" for c in cmds)}
     assert tssh_hosts <= tssh_conf_hosts()
+
+
+def test_fallback_starts_the_session_the_attach_looked_for(
+    panes: dict[str, list[list[str]]],
+) -> None:
+    # `tmux new-session -t <group> <command>` is not valid tmux: -t refuses a
+    # command, so on a host with no session yet the pane ended up as a shell.
+    for cmds in panes.values():
+        for cmd in cmds:
+            match = re.search(
+                r"tmux a -t (\S+) \|\| tmux new-session (\S+) (\S+) (\S+);", cmd[-1]
+            )
+            assert match is not None, cmd[-1]
+            name, flag, session, program = match.groups()
+            assert (flag, session, program) == ("-s", name, name)

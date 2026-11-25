@@ -14,9 +14,9 @@ launch_ws() {
 
     kitten @ launch --type=tab --title=$h
     [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
-        "${remote[@]}" $h -- sh -c 'tmux a -t btop || tmux new-session -t btop btop; exec $SHELL'
+        "${remote[@]}" $h -- sh -c 'tmux a -t btop || tmux new-session -s btop btop; exec $SHELL'
     [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
-        "${remote[@]}" $h -- sh -c 'tmux a -t nvitop || tmux new-session -t nvitop nvitop; exec $SHELL'
+        "${remote[@]}" $h -- sh -c 'tmux a -t nvitop || tmux new-session -s nvitop nvitop; exec $SHELL'
 
     for d in "$@"; do
         kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 dispatch -C $h:$d wake
