@@ -12,67 +12,31 @@ For signature + default account, see `signature.md` (untracked, lives only at `~
 - Attachments count against the attention budget
 - Multiple asks for the same recipient → different channel (1-on-1, meeting), don't bundle
 
-## Send Approval
+## Drafts, never windows
 
-**Never send without per-message approval.** Always open a draft (visible compose window) for user review.
+**Never send.** Every mail is saved as a draft in Exchange's Drafts mailbox, and Eric reviews and sends it from there when he chooses.
 
-- `compose_email`: `mode: "open"`, never `"send"`
-- AppleScript: `visible:true`, never `send newMsg` (enforced by `~/.claude/hookify.block-applescript-mail-send.local.md`)
-- `threaded_reply.sh`: opens a draft by default — correct
-- **"Send X to Y" in plain English = "open a draft of X to Y."** Approval doesn't transfer.
+- **Never open a compose window.** No `mode: "open"`, no AppleScript `visible:true`, no `threaded_reply.sh`. **Why (Eric, 11/26):** "Everytime you open a composer window, I have to stop and wait … I cannot do any other work while I am waiting." That day, two reply windows opened with empty bodies.
+- **Never carry mail text on the clipboard.** One seat's text overwrote another's.
+- **"Send X to Y" in plain English = "save a draft of X to Y."** Approval doesn't transfer.
+- **Sends are gated anyway:** `mail_send_gate.sh` prompts on every send (`compose_email` `mode: "send"`, `manage_drafts` `action: "send"`), and hookify blocks AppleScript `send`.
 
-Silent send failures (AppleScript `send` → Mail.app) leave no Sent-folder confirmation. Drafts make the human the gate.
+## New mail
 
-## Composing (new emails only)
+Use `mcp__apple-mail-patrickfreyer__compose_email` with `mode: "draft"`. **Always pass `mode`:** the tool's own default is `"send"`.
 
-Use `mcp__apple-mail-patrickfreyer__compose_email`:
+- **Attachments:** attach files with `attachments` (absolute paths, comma-separated). A mail that refers to a file carries it. **Why (10/15):** a draft saying "sign the attached confidentiality agreement" went out with nothing attached.
+- **Read it back before calling it ready.** Read the saved draft from Drafts and check the recipients, subject, body and attachments. Show its actual To/CC next to the recipients you meant; a mismatch means it isn't ready. **Why (11/11):** a seat called a draft ready although its JSON showed it addressed To Eric, and he sent it to himself twice.
+- **Forbidden:** `create_rich_email_draft` and `forward_email` (both denied in settings), and `open /path/to/draft.eml`.
+- **`compose_email` doesn't thread**, even with a `Re:` subject. Never use it for a reply.
+- **If `compose_email` is unavailable,** tell the user and write the mail to a file, as for replies below.
 
-- `mode: "open"` — compose window. **Always pass `mode`:** the tool's own default is `"send"`.
-- `mode: "draft"` — silent save to Drafts
-- `mode: "send"` — immediate send. Requires an explicit ask to bypass the draft step ("send X to Y without showing me a draft"); plain "Send X to Y" still means "open a draft" per Send Approval above. `mail_send_gate.sh` makes every send (this, or `manage_drafts` `action: "send"`) prompt for confirmation.
+## Replies (interim, until email-inbox#16)
 
-Forbidden: `create_rich_email_draft`, `forward_email` (always sends; no draft mode — both denied in settings), `open /path/to/draft.eml`, AppleScript `send` against Mail.app.
+No tool yet saves a threaded reply draft without a window; <https://github.com/underspecified/email-inbox/issues/16> builds one. Until it lands:
 
-If `compose_email` is unavailable, **alert the user** and offer the visible-draft AppleScript fallback (`make new outgoing message {visible:true, ...}` with no `send` action) as a user-confirmed choice. See `~/.claude/skills/email-inbox/CLAUDE.md`.
-
-`compose_email` does NOT thread to existing email even with `Re:` subject. Use only for genuinely new outbound mail.
-
-## Replying (mandatory two-step flow)
-
-For replies, do not shortcut. `compose_email` skips threading; `reply_to_email` is Inbox-only with blank quote bodies (deprecated — do not use).
-
-**1. Inspect recipients:**
-
-```text
-bash ~/.claude/skills/email-inbox/scripts/get_recipients.sh --subject "<keyword>" [--mailbox <name>]
-```
-
-Returns JSON `{date, subject, from, to, cc, bcc}` per match — the only path to full To/CC/BCC. Use to decide reply-all vs sender-only and preserve escalation-chain CCs.
-
-**2. Compose the threaded reply:**
-
-```text
-bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh \
-  --subject "<keyword>" \
-  --mailbox "<Inbox|Sent Items|Archive>" \
-  --body-file <path> \
-  [--reply-all] [--account <name>]
-```
-
-Opens Mail with proper threading + quoted chain. Works on any mailbox. Returns JSON `{ok, subject, to, cc}`.
-
-- **Runs from all seats take turns.** Each waits up to 60 s, and a run can take about 110 s in total, so never set a Bash timeout under 120 s for it. "No window opened" means it timed out waiting: retry it.
-- **On `ok:false`, point Eric to the body copy the error names** (`~/Library/Caches/email-inbox/drafts/…`), not only the clipboard. Say plainly that the reply window may be open with an **empty body**, so he doesn't send it.
-- **Check the recipients before calling a draft ready.** Show the draft's actual To/CC (the JSON `to`/`cc`) next to the recipient you meant. A mismatch, or `ok:false`, means the draft is not ready: say so, never "ready". **Why (11/11):** a reply to Eric's own Sent mail opened To Eric; the JSON showed it, the seat called the draft ready, and he sent it to himself twice.
-
-## Attachments
-
-**A draft that needs a file either carries it, or opens with the exact file revealed and named.**
-
-- **New mail:** attach it with `compose_email`'s `attachments` (absolute paths, comma-separated).
-- **Reply:** `threaded_reply.sh` can't attach yet (<https://github.com/underspecified/email-inbox/issues/1>). When the draft opens, run `open -R <path>` so Finder shows the file, and say in the same message: "drag `<filename>` into the open draft". Don't fall back to `compose_email`: it breaks threading (In-Reply-To / References).
-
-**Why (10/15):** a draft saying "sign the attached confidentiality agreement" went out with nothing attached; the drag-in instruction was only in chat.
+1. Choose the recipients with `bash ~/.claude/skills/email-inbox/scripts/get_recipients.sh --subject "<keyword>" [--mailbox <name>]`. It returns the full To/CC/BCC, so you can decide between reply and reply-all and keep escalation CCs.
+2. Write the reply to a file in the seat's repo. Put the thread's subject, the intended To/CC and any attachment paths at the top, and report the path.
 
 ## Reading
 
