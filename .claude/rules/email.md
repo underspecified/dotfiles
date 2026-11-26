@@ -49,17 +49,20 @@ It returns the full To/CC/BCC, so you can decide between reply and reply-all and
 bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh \
   --subject "<keyword>" --mailbox "<Inbox|Sent Items|Archive>" \
   --body-file <path> --expect-to "<every To and Cc address, comma-separated>" \
-  [--reply-all] [--account <name>]
+  [--attach <absolute path>]... [--reply-all] [--account <name>]
 ```
 
-- **What it does:** saves the reply to Drafts, threaded (`Re:` subject, `In-Reply-To`, `References`) and with the original quoted. It reads the draft back before printing `{ok:true, subject, to, cc}`.
+- **What it does:**
+  - It saves the reply to Drafts, threaded (`Re:` subject, `In-Reply-To`, `References`), with the original quoted and each `--attach` file attached.
+  - It reads the draft back before printing `{ok:true, subject, to, cc, attachments}`.
+- **A reply that refers to a file carries it:** pass `--attach` once per file.
 - **A wrong recipient** closes the reply unsaved.
-- **`ok:false`** names what is wrong and where the body copy is.
-- **It never sends**, and Mail shows the reply for a few seconds without taking focus.
+- **`ok:false`** names what is wrong and where the body copy is. A second copy of the draft also gives `ok:false`: tell Eric, and don't delete anything.
+- **"Mail stopped answering":** stop and tell Eric. Never quit, kill or restart Mail yourself.
+- **It never sends.** The reply window flashes for under a second without taking focus.
 - **Runs take turns** across seats, and each takes up to about 110 s, so never set a Bash timeout under 120 s for it.
-- **Attachments aren't supported yet** (`--attach` refuses: email-inbox#16). Write the file's path at the top of your report, so Eric can attach it in Drafts.
 
-**3. Tell Eric it's ready:** the recipients, the subject and any file to attach. Then offer to open it; until opening is built, he double-clicks it in Drafts.
+**3. Tell Eric it's ready:** the recipients, the subject and the attachments. He opens it from Drafts (double-click); opening it for him isn't built.
 
 ## Reading
 
