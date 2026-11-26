@@ -31,6 +31,10 @@ System settings, Claude skills, hooks, hookify rules, MCP configs, dotfiles. **L
 - `.claude/hooks/md_format.sh` skips the Obsidian vault and files with conflict markers. Its header explains why; read it before removing a guard.
 - **Tank's launchd job `com.underspecified.dispatch.tmux-server`** (dispatch `install.sh`, #248) keeps `tmux -L dispatch` running from desktop login, so seats never run in an SSH login (no TCC, no keychain). Check with `dispatch version`; to remove it, follow dispatch's SKILL.md "tmux server job". A bootout kills every seat.
 - **With Netskope on, reach the Linux hosts with `tssh <host>`, not mosh.** Netskope takes over all UDP to them, so mosh times out; TCP passes. `macos.lnk/.ssh/config.d/tssh.conf` puts trzsz-ssh in TCP mode for llm-jp, llm-jp-2, haru-4090, haru-5090, dgx02 and germputer; the macOS alias `tssht <host>` does the same for any other host that has tsshd. dispatch's interactive `wake` follows on tank: `DISPATCH_REMOTE_TSSH=1` in `.config/zsh/.zshenv` (macOS only) and in `launch_ws`'s dispatch panes. Their tsshd is pinned in `installers/all/install_tsshd.sh`: bump it together with tank's Homebrew `trzsz-ssh`. Homebrew's `tssh` formula is a different tool.
+- **Seats run from local disk, not cloud storage** (11/26). `~/projects` is a local folder, and each PL seat in it is its own git repo with a private GitHub remote (a few stay local-only). Its documents are gitignored links back into the cloud folders.
+  - `migrate_seat` (`macos.lnk/.local/bin`) made the moves. It is a dry run unless `--apply`, and `--rollback <slug>` undoes a swap.
+  - The moved infra's cloud copies are renamed `*.migrated`. Delete them after 12/26.
+  - Paper repos in `~/git` back up to Overleaf only.
 - Don't use the legacy `setup.sh`; use `lnk`. The shell is zsh with `ZDOTDIR=~/.config/zsh`.
 
 ## Manifests
