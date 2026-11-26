@@ -9,6 +9,7 @@
 .claude/hookify.block-applescript-mail-send.local.md
 .claude/hookify.block-argv-secrets.local.md
 .claude/hookify.block-force-push.local.md
+.claude/hookify.block-gh-edit-last.local.md
 .claude/hookify.block-rm.local.md
 .claude/hookify.warn-destructive-git.local.md
 .claude/hooks/audit_python.sh
