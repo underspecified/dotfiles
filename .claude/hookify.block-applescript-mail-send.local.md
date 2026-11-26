@@ -22,7 +22,7 @@ Sending mail via raw AppleScript (`tell application "Mail" ... send newMsg`) is 
 **Mail is saved as a draft, never sent and never opened in a window** (`~/.claude/rules/email.md`):
 
 1. **New mail:** `mcp__apple-mail-patrickfreyer__compose_email` with `mode: "draft"`. Eric sends it from Drafts.
-2. **Reply:** until email-inbox#16 lands, write the reply to a file in the seat's repo and report the path.
+2. **Reply:** `bash ~/.claude/skills/email-inbox/scripts/threaded_reply.sh … --expect-to …` saves a threaded draft to Drafts.
 3. **`compose_email` not loaded:** tell the user, and write the mail to a file. No AppleScript fallback: it opens a window.
 
 Note: this hook can only inspect the bash command string. AppleScript inside a `.applescript` file invoked as `osascript path/to/file.applescript` will not be visible to the matcher — the spirit of the rule (no programmatic `send`) still applies; do not author such files.
