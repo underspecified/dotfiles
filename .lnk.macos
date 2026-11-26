@@ -12,7 +12,6 @@
 .config/popclip
 .config/skhd
 .config/yabai
-.docker/config.json
 .gitconfig
 .homebrew
 .local/bin/agy-image
