@@ -6,8 +6,8 @@ spaces=$(yabai -m query --spaces)
 CURR_SPACE=$(echo "$spaces" | jq -e '.[] | select(."has-focus" == true).index')
 NUM_SPACES=$(echo "$spaces" | jq length)
 # Spaces are 1-indexed: wrap from last back to 1
-NEXT_SPACE=$(( CURR_SPACE % NUM_SPACES + 1 ))
+NEXT_SPACE=$((CURR_SPACE % NUM_SPACES + 1))
 
-yabai -m space --focus "$NEXT_SPACE" && \
-sleep 0.01 && \
-yabai -m space --focus "$CURR_SPACE"
+yabai -m space --focus "$NEXT_SPACE" \
+  && sleep 0.01 \
+  && yabai -m space --focus "$CURR_SPACE"

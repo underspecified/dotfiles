@@ -17,15 +17,15 @@ set -euo pipefail
 # Profile: explicit ~/.config/display/env symlink if set, else host-named.
 env_link="$HOME/.config/display/env"
 if [[ -e "$env_link" ]]; then
-    profile="$env_link"
+  profile="$env_link"
 else
-    # lowercase the hostname so a lowercase profile (tank.env) matches an
-    # uppercase host (TANK) even on a case-sensitive filesystem.
-    profile="$HOME/.config/display/$(hostname -s | tr '[:upper:]' '[:lower:]').env"
+  # lowercase the hostname so a lowercase profile (tank.env) matches an
+  # uppercase host (TANK) even on a case-sensitive filesystem.
+  profile="$HOME/.config/display/$(hostname -s | tr '[:upper:]' '[:lower:]').env"
 fi
 if [[ ! -e "$profile" ]]; then
-    echo "error: no display profile ($env_link or $profile)" >&2
-    exit 1
+  echo "error: no display profile ($env_link or $profile)" >&2
+  exit 1
 fi
 # shellcheck source=/dev/null
 source "$profile"
@@ -34,15 +34,15 @@ kitty_in="$HOME/.config/kitty/display.conf.in"
 zed_in="$HOME/.config/zed/settings.json.in"
 
 if [[ -f "$kitty_in" ]]; then
-    sed -e "s|\${FONT_TERM}|${FONT_TERM}|g" \
-        -e "s|\${border_px}|${border_px}|g" \
-        "$kitty_in" > "${kitty_in%.in}"
+  sed -e "s|\${FONT_TERM}|${FONT_TERM}|g" \
+    -e "s|\${border_px}|${border_px}|g" \
+    "$kitty_in" >"${kitty_in%.in}"
 fi
 
 if [[ -f "$zed_in" ]]; then
-    sed -e "s|\${FONT_ZED_UI}|${FONT_ZED_UI}|g" \
-        -e "s|\${FONT_ZED_EDITOR}|${FONT_ZED_EDITOR}|g" \
-        "$zed_in" > "${zed_in%.in}"
+  sed -e "s|\${FONT_ZED_UI}|${FONT_ZED_UI}|g" \
+    -e "s|\${FONT_ZED_EDITOR}|${FONT_ZED_EDITOR}|g" \
+    "$zed_in" >"${zed_in%.in}"
 fi
 
 # Live-reload kitty (zed picks up settings.json via its own file watcher).

@@ -52,12 +52,12 @@ check_preconditions() {
 
   # Soft warnings -- nice to have but not required to make progress.
   for tool in zsh tmux make g++; do
-    command -v "${tool}" >/dev/null 2>&1 ||
-      warn "${tool} not found -- some downstream features will be unavailable"
+    command -v "${tool}" >/dev/null 2>&1 \
+      || warn "${tool} not found -- some downstream features will be unavailable"
   done
 
-  command -v lnk >/dev/null 2>&1 ||
-    warn "lnk not on PATH -- fine for initial bootstrap, but lnk pull / status will be unavailable"
+  command -v lnk >/dev/null 2>&1 \
+    || warn "lnk not on PATH -- fine for initial bootstrap, but lnk pull / status will be unavailable"
 
   mkdir -p "${LOCAL_PREFIX}/bin"
   case ":${PATH}:" in

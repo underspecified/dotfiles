@@ -39,7 +39,7 @@ patch_i3_desktop_files() {
   if [[ -f "${desktop_file}" ]]; then
     if ! grep -q '^DesktopNames=' "${desktop_file}"; then
       log "Patching ${desktop_file} with DesktopNames=i3..."
-      echo 'DesktopNames=i3' | sudo tee -a "${desktop_file}" > /dev/null
+      echo 'DesktopNames=i3' | sudo tee -a "${desktop_file}" >/dev/null
     fi
   fi
 }

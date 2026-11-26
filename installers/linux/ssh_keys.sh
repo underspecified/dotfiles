@@ -53,32 +53,32 @@ usage() {
 parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      --from-file)
-        [[ $# -ge 2 ]] || die "--from-file requires a path or '-'"
-        FROM_FILE="$2"
-        shift 2
-        ;;
-      --vault)
-        [[ $# -ge 2 ]] || die "--vault requires a name"
-        VAULT="$2"
-        shift 2
-        ;;
-      --item)
-        [[ $# -ge 2 ]] || die "--item requires a name"
-        ITEM="$2"
-        shift 2
-        ;;
-      --name)
-        [[ $# -ge 2 ]] || die "--name requires a key basename"
-        NAME="$2"
-        shift 2
-        ;;
-      -h|--help)
-        usage 0
-        ;;
-      *)
-        die "unknown argument: $1"
-        ;;
+    --from-file)
+      [[ $# -ge 2 ]] || die "--from-file requires a path or '-'"
+      FROM_FILE="$2"
+      shift 2
+      ;;
+    --vault)
+      [[ $# -ge 2 ]] || die "--vault requires a name"
+      VAULT="$2"
+      shift 2
+      ;;
+    --item)
+      [[ $# -ge 2 ]] || die "--item requires a name"
+      ITEM="$2"
+      shift 2
+      ;;
+    --name)
+      [[ $# -ge 2 ]] || die "--name requires a key basename"
+      NAME="$2"
+      shift 2
+      ;;
+    -h | --help)
+      usage 0
+      ;;
+    *)
+      die "unknown argument: $1"
+      ;;
     esac
   done
 }
@@ -92,7 +92,7 @@ pull_from_op() {
   ref="op://${VAULT}/${item}/private key"
   log "fetching ${ref}"
   # `op read` writes the secret to stdout; redirect with restrictive umask.
-  ( umask 077 && op read "${ref}" > "${key}" )
+  (umask 077 && op read "${ref}" >"${key}")
   [[ -s "${key}" ]] || die "op read returned empty content for ${ref}"
 }
 
@@ -100,7 +100,7 @@ install_from_file() {
   local src="$1" dest="$2"
   if [[ "${src}" == "-" ]]; then
     log "reading key bytes from stdin"
-    ( umask 077 && cat > "${dest}" )
+    (umask 077 && cat >"${dest}")
   else
     [[ -f "${src}" ]] || die "source file not found: ${src}"
     install -m 600 "${src}" "${dest}"
@@ -115,7 +115,7 @@ derive_pub() {
     return 0
   fi
   log "deriving public key: ${pub}"
-  ssh-keygen -y -f "${key}" > "${pub}"
+  ssh-keygen -y -f "${key}" >"${pub}"
   chmod 644 "${pub}"
 }
 

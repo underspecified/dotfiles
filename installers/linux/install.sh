@@ -91,11 +91,11 @@ install_google_chrome() {
 install_gh() {
   type -p wget >/dev/null || sudo apt install -y wget
   sudo mkdir -p -m 755 /etc/apt/keyrings
-  wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg |
-    sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+  wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
   sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" |
-    sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
   sudo apt update
   sudo apt install -y gh
 }
@@ -174,8 +174,8 @@ pull_private_identities() {
   if ! op whoami >/dev/null 2>&1; then
     warn "op not signed in — skipping 1P identity pull. After  eval \"\$(op signin)\"  run:"
     warn "    bash ${CUR_DIR}/ssh_keys.sh --name hri_jp"
-    [[ "${git_identity}" == "underspecified" ]] &&
-      warn "    bash ${CUR_DIR}/ssh_keys.sh --name underspecified"
+    [[ "${git_identity}" == "underspecified" ]] \
+      && warn "    bash ${CUR_DIR}/ssh_keys.sh --name underspecified"
     warn "    bash ${ALL_DIR}/setup_ssh.sh hri-jp"
     warn "    bash ${ALL_DIR}/setup_git.sh ${git_identity}"
     return
@@ -183,8 +183,8 @@ pull_private_identities() {
   # 1. Private key(s) on disk (mode 600, .pub derived, registered with keychain).
   bash "${CUR_DIR}/ssh_keys.sh" --name hri_jp || warn "failed: ssh_keys.sh --name hri_jp"
   if [[ "${git_identity}" == "underspecified" ]]; then
-    bash "${CUR_DIR}/ssh_keys.sh" --name underspecified ||
-      warn "failed: ssh_keys.sh --name underspecified"
+    bash "${CUR_DIR}/ssh_keys.sh" --name underspecified \
+      || warn "failed: ssh_keys.sh --name underspecified"
   fi
   # 2. SSH host overlay + git identity (signingkey/email) from 1P Secure Notes.
   bash "${ALL_DIR}/setup_ssh.sh" hri-jp || warn "failed: setup_ssh.sh hri-jp"

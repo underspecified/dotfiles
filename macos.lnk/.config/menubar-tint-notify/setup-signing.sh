@@ -61,14 +61,14 @@ EOF
   local openssl=/usr/bin/openssl pass
   pass="$("${openssl}" rand -hex 16)" || die "openssl rand failed"
   quiet "${openssl}" req -x509 -newkey rsa:2048 -nodes -days 7300 -config "${tmp}/req.cnf" \
-    -keyout "${tmp}/key.pem" -out "${tmp}/cert.pem" ||
-    die "openssl req failed"
+    -keyout "${tmp}/key.pem" -out "${tmp}/cert.pem" \
+    || die "openssl req failed"
   quiet "${openssl}" pkcs12 -export -name "${name}" -inkey "${tmp}/key.pem" -in "${tmp}/cert.pem" \
-    -out "${tmp}/id.p12" -passout "pass:${pass}" ||
-    die "openssl pkcs12 failed"
+    -out "${tmp}/id.p12" -passout "pass:${pass}" \
+    || die "openssl pkcs12 failed"
   # -T puts codesign on the key's access list, so signing needs no dialog.
-  security import "${tmp}/id.p12" -k "${keychain}" -f pkcs12 -P "${pass}" -T /usr/bin/codesign >/dev/null ||
-    die "security import failed"
+  security import "${tmp}/id.p12" -k "${keychain}" -f pkcs12 -P "${pass}" -T /usr/bin/codesign >/dev/null \
+    || die "security import failed"
 
   echo "created identity ${name} in ${keychain}"
 }

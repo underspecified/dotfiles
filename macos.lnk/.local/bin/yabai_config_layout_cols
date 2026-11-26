@@ -12,10 +12,10 @@ MIN_COL_WIDTH=${1:-${MIN_COL_WIDTH:-750}}
 display_w=$(yabai -m query --displays --display | jq '.frame.w | floor')
 
 # Column count: as many as fit without going below MIN_COL_WIDTH
-max_cols=$(( display_w / MIN_COL_WIDTH ))
-(( max_cols < 1 )) && max_cols=1
+max_cols=$((display_w / MIN_COL_WIDTH))
+((max_cols < 1)) && max_cols=1
 
-col_width=$(( display_w / max_cols ))
+col_width=$((display_w / max_cols))
 split_ratio=$(jq -n "$col_width / $display_w")
 
 # Apply layout
@@ -26,16 +26,16 @@ yabai -m config split_ratio "$split_ratio"
 # Previous approach fired on window_focused/application_activated, which
 # caused BSP tree mutations on every space switch (reordering windows).
 for label in window_focused_yabai_window_insert_col application_activated_yabai_window_insert_col window_created_rebalance; do
-    yabai -m signal --remove "$label" 2>/dev/null
+  yabai -m signal --remove "$label" 2>/dev/null
 done
 
 yabai -m signal --add \
-    label="window_created_insert_and_balance" \
-    event="window_created" \
-    action="$SCRIPTS_DIR/yabai_window_insert_col $max_cols $col_width && yabai -m space --balance"
+  label="window_created_insert_and_balance" \
+  event="window_created" \
+  action="$SCRIPTS_DIR/yabai_window_insert_col $max_cols $col_width && yabai -m space --balance"
 
 # Rebalance all spaces
-yabai -m query --spaces | jq -r '.[].index' |
-    xargs -I{} yabai -m space {} --balance
+yabai -m query --spaces | jq -r '.[].index' \
+  | xargs -I{} yabai -m space {} --balance
 
 echo "columns: ${max_cols}, col_width: ${col_width}px, split_ratio: ${split_ratio}, display: ${display_w}px"

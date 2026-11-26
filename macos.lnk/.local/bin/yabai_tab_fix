@@ -6,24 +6,24 @@ PATH="/opt/homebrew/bin:${PATH}"
 SCRIPTS_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]:-$0}")")"
 
 APPS=(
-    "CotEditor"
-    "Finder"
-    "Terminal"
-    "Typora"
+  "CotEditor"
+  "Finder"
+  "Terminal"
+  "Typora"
 )
 
 EVENTS=(
-    "window_moved"
-    "window_resized"
+  "window_moved"
+  "window_resized"
 )
 
 for app in "${APPS[@]}"; do
-    for event in "${EVENTS[@]}"; do
-        yabai -m signal --remove "${event}_${app}"
-        yabai -m signal --add \
-            label="${event}_${app}" \
-            app="^${app}$" \
-            event="${event}" \
-            action="${SCRIPTS_DIR}/yabai_refresh_space"
-    done
+  for event in "${EVENTS[@]}"; do
+    yabai -m signal --remove "${event}_${app}"
+    yabai -m signal --add \
+      label="${event}_${app}" \
+      app="^${app}$" \
+      event="${event}" \
+      action="${SCRIPTS_DIR}/yabai_refresh_space"
+  done
 done

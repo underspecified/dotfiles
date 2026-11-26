@@ -115,10 +115,10 @@ service_linux() {
     systemctl --user daemon-reload || die "systemctl --user daemon-reload failed"
     systemctl --user restart otelcol.service || die "cannot restart otelcol.service"
   fi
-  systemctl --user is-enabled -q otelcol.service ||
-    systemctl --user enable -q otelcol.service || die "cannot enable otelcol.service"
-  systemctl --user is-active -q otelcol.service ||
-    systemctl --user start otelcol.service || die "cannot start otelcol.service"
+  systemctl --user is-enabled -q otelcol.service \
+    || systemctl --user enable -q otelcol.service || die "cannot enable otelcol.service"
+  systemctl --user is-active -q otelcol.service \
+    || systemctl --user start otelcol.service || die "cannot start otelcol.service"
   if [[ "$(loginctl show-user "$(id -un)" -p Linger --value 2>/dev/null)" != yes ]]; then
     loginctl enable-linger "$(id -un)" || warn "linger is off: otelcol stops when you log out"
   fi

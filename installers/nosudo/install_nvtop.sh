@@ -42,7 +42,7 @@ check_build_deps() {
   # any modern compiler works (no C++23 drama like btop).
   command -v cc >/dev/null 2>&1 || command -v gcc >/dev/null 2>&1 \
     || missing+=("gcc")
-  if (( ${#missing[@]} > 0 )); then
+  if ((${#missing[@]} > 0)); then
     warn "missing build deps for nvtop: ${missing[*]}"
     warn "  Debian/Ubuntu:  sudo apt install ${missing[*]}"
     return 1
@@ -55,7 +55,7 @@ check_build_deps() {
   for pc in ncursesw libudev; do
     pkg-config --exists "${pc}" 2>/dev/null || missing_pc+=("${pc}-dev")
   done
-  if (( ${#missing_pc[@]} > 0 )); then
+  if ((${#missing_pc[@]} > 0)); then
     warn "missing pkg-config modules for nvtop: ${missing_pc[*]}"
     warn "  Debian/Ubuntu:  sudo apt install ${missing_pc[*]}"
     return 1

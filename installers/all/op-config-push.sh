@@ -14,7 +14,10 @@
 set -euo pipefail
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
-die() { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+die() {
+  printf '\033[1;31mxx\033[0m %s\n' "$*" >&2
+  exit 1
+}
 
 [[ $# -ge 2 && $# -le 3 ]] \
   || die "usage: $0 <local-file> <op-item-title> [vault]"

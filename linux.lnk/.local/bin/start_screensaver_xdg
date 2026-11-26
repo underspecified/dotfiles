@@ -5,7 +5,7 @@ set -euo pipefail
 
 LOCK_MIN=5
 IDLE_MIN=10
-IDLE_SEC=$(( IDLE_MIN * 60 ))
+IDLE_SEC=$((IDLE_MIN * 60))
 
 mode="$(darkman get)"
 # shellcheck source=/dev/null

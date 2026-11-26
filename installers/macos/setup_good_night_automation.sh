@@ -41,8 +41,8 @@ usage() { die "usage: $(basename "$0") schedule [today] HH:MM"; }
 repeat_wake_covers() {
   local h12=$(($1 % 12 == 0 ? 12 : $1 % 12)) ampm="AM" line
   (($1 >= 12)) && ampm="PM"
-  line="$(pmset -g sched | sed -n '/^Repeating power events:/,/^[^ ]/p' |
-    grep -E "^ +wake[a-z]* at $(printf '%d:%02d%s' "${h12}" "$2" "${ampm}") " || true)"
+  line="$(pmset -g sched | sed -n '/^Repeating power events:/,/^[^ ]/p' \
+    | grep -E "^ +wake[a-z]* at $(printf '%d:%02d%s' "${h12}" "$2" "${ampm}") " || true)"
   case "${line}" in
   "") return 1 ;;
   *"every day"*) return 0 ;;
@@ -106,8 +106,8 @@ cmd_schedule() {
     log "repeating power wake at $(printf '%02d:%02d' "${wh}" "${wm}") covers today — no sudo needed"
   else
     log "scheduling one-time power wake at ${wake_dt} (approve with TouchID)"
-    sudo pmset schedule wake "${wake_dt}" ||
-      die "power-wake auth cancelled/failed — agent is loaded but no wake scheduled"
+    sudo pmset schedule wake "${wake_dt}" \
+      || die "power-wake auth cancelled/failed — agent is loaded but no wake scheduled"
   fi
   warn "scheduled wake is honored only on AC power; keep the Mac plugged in"
 

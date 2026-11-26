@@ -6,14 +6,16 @@ brew install asio assimp bison bullet cmake console_bridge cppcheck \
   cunit eigen freetype graphviz opencv openssl orocos-kdl pcre poco \
   pyqt@5 python qt@5 sip spdlog tinyxml2
 
-
 # make ROS directory
 mkdir -p ~/ros_kilted
 
 # Add the openssl dir for DDS-Security
-OPENSSL_ROOT_DIR="$(brew --prefix openssl)"; export OPENSSL_ROOT_DIR
-CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH:-}:$(brew --prefix qt@5)"; export CMAKE_PREFIX_PATH
-PATH="${PATH}:$(brew --prefix qt@5)/bin"; export PATH
+OPENSSL_ROOT_DIR="$(brew --prefix openssl)"
+export OPENSSL_ROOT_DIR
+CMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH:-}:$(brew --prefix qt@5)"
+export CMAKE_PREFIX_PATH
+PATH="${PATH}:$(brew --prefix qt@5)/bin"
+export PATH
 
 # setup python environment
 cd ~/ros_kilted || exit 1
@@ -28,7 +30,7 @@ uv pip install -U \
   cryptography empy flake8 flake8-blind-except==0.1.1 flake8-builtins \
   flake8-class-newline flake8-comprehensions flake8-deprecated \
   flake8-import-order flake8-quotes \
- importlib-metadata jsonschema lark==1.1.1 lxml matplotlib mock mypy==0.931 netifaces \
+  importlib-metadata jsonschema lark==1.1.1 lxml matplotlib mock mypy==0.931 netifaces \
   psutil pydot pygraphviz pyparsing==2.4.7 \
   pytest-mock rosdep rosdistro setuptools==59.6.0 vcstool
 

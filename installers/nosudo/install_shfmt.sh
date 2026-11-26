@@ -17,15 +17,24 @@ PREFIX="${PREFIX:-${HOME}/.local}"
 main() {
   local arch tag bin_url current
   case "$(uname -m)" in
-    x86_64|amd64) arch="amd64" ;;
-    aarch64|arm64) arch="arm64" ;;
-    *) warn "unknown arch $(uname -m) -- skipping shfmt install"; return 0 ;;
+  x86_64 | amd64) arch="amd64" ;;
+  aarch64 | arm64) arch="arm64" ;;
+  *)
+    warn "unknown arch $(uname -m) -- skipping shfmt install"
+    return 0
+    ;;
   esac
 
   tag="$(curl -fsSL https://api.github.com/repos/mvdan/sh/releases/latest \
-    | jq -r '.tag_name')" || { warn "could not query shfmt latest release; skipping"; return 0; }
+    | jq -r '.tag_name')" || {
+    warn "could not query shfmt latest release; skipping"
+    return 0
+  }
   [[ -n "${tag}" && "${tag}" != "null" ]] \
-    || { warn "shfmt release lookup returned no tag; skipping"; return 0; }
+    || {
+      warn "shfmt release lookup returned no tag; skipping"
+      return 0
+    }
 
   if [[ -x "${PREFIX}/bin/shfmt" ]]; then
     # shfmt prints just "vX.Y.Z" with no extra text -- direct compare.

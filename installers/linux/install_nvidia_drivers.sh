@@ -24,8 +24,8 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib.sh"
 # Skip the whole installer when the GPU stack is already functional.
 # (Re-run-as-update should not silently swap driver providers.)
 if [[ "${NVIDIA_FORCE:-}" != "1" ]] \
-   && command -v nvidia-smi >/dev/null 2>&1 \
-   && nvidia-smi >/dev/null 2>&1; then
+  && command -v nvidia-smi >/dev/null 2>&1 \
+  && nvidia-smi >/dev/null 2>&1; then
   log "nvidia-smi works; drivers already functional, skipping (set NVIDIA_FORCE=1 to override)"
   exit 0
 fi

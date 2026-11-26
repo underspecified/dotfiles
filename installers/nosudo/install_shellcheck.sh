@@ -19,15 +19,24 @@ PREFIX="${PREFIX:-${HOME}/.local}"
 main() {
   local arch tag tar_url current
   case "$(uname -m)" in
-    x86_64|amd64) arch="x86_64" ;;
-    aarch64|arm64) arch="aarch64" ;;
-    *) warn "unknown arch $(uname -m) -- skipping shellcheck install"; return 0 ;;
+  x86_64 | amd64) arch="x86_64" ;;
+  aarch64 | arm64) arch="aarch64" ;;
+  *)
+    warn "unknown arch $(uname -m) -- skipping shellcheck install"
+    return 0
+    ;;
   esac
 
   tag="$(curl -fsSL https://api.github.com/repos/koalaman/shellcheck/releases/latest \
-    | jq -r '.tag_name')" || { warn "could not query shellcheck latest release; skipping"; return 0; }
+    | jq -r '.tag_name')" || {
+    warn "could not query shellcheck latest release; skipping"
+    return 0
+  }
   [[ -n "${tag}" && "${tag}" != "null" ]] \
-    || { warn "shellcheck release lookup returned no tag; skipping"; return 0; }
+    || {
+      warn "shellcheck release lookup returned no tag; skipping"
+      return 0
+    }
 
   if [[ -x "${PREFIX}/bin/shellcheck" ]]; then
     current="v$("${PREFIX}/bin/shellcheck" --version 2>/dev/null | awk '/^version:/{print $2}')"

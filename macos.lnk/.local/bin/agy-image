@@ -28,8 +28,8 @@ main() {
   local -a refs=()
   while (($#)); do
     case "${1}" in
-      --ref) (($# >= 2)) || fail "--ref needs an image path" ;;
-      *) fail "unknown argument: ${1}" ;;
+    --ref) (($# >= 2)) || fail "--ref needs an image path" ;;
+    *) fail "unknown argument: ${1}" ;;
     esac
     [[ -f "${2}" ]] || fail "reference image not found: ${2}"
     refs+=("${2}")
@@ -38,9 +38,9 @@ main() {
   [[ -d "${out}" || "${out}" == */ ]] && fail "<out> is a directory: ${out}"
   local fmt name stem
   case "$(lower "${out##*.}")" in
-    jpg | jpeg) fmt=jpeg ;;
-    png) fmt=png ;;
-    *) fail "<out> must end in .jpg, .jpeg or .png: ${out}" ;;
+  jpg | jpeg) fmt=jpeg ;;
+  png) fmt=png ;;
+  *) fail "<out> must end in .jpg, .jpeg or .png: ${out}" ;;
   esac
   command -v agy >/dev/null || fail "agy not found (brew install --cask antigravity-cli)"
   # Before agy runs, so a bad <out> fails without spending quota.

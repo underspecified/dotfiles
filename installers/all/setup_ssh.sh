@@ -13,8 +13,11 @@ set -euo pipefail
 
 ALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
-die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+die() {
+  printf '\033[1;31mxx\033[0m %s\n' "$*" >&2
+  exit 1
+}
 
 available_identities=(hri-jp underspecified honda)
 
@@ -40,7 +43,7 @@ prompt_for_identity() {
   printf '> ' >&2
   read -r choice
   if [[ "${choice}" =~ ^[0-9]+$ ]] \
-    && (( choice >= 1 && choice <= ${#available_identities[@]} )); then
+    && ((choice >= 1 && choice <= ${#available_identities[@]})); then
     printf '%s\n' "${available_identities[$((choice - 1))]}"
   else
     printf '%s\n' "${choice}"
@@ -50,20 +53,23 @@ prompt_for_identity() {
 dispatch() {
   local identity="$1"
   case "${identity}" in
-    -h|--help) usage; exit 0 ;;
-    hri-jp|hri_jp)
-      log "setting up hri_jp (work) SSH overlay"
-      bash "${ALL_DIR}/ssh-config-hri-jp.sh"
-      ;;
-    underspecified)
-      log "setting up underspecified (personal) SSH overlay"
-      bash "${ALL_DIR}/ssh-config-underspecified.sh"
-      ;;
-    honda)
-      log "setting up honda (Honda internal, IP-pinned) SSH overlay"
-      bash "${ALL_DIR}/ssh-config-honda.sh"
-      ;;
-    *) die "unknown identity: ${identity} (valid: ${available_identities[*]})" ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  hri-jp | hri_jp)
+    log "setting up hri_jp (work) SSH overlay"
+    bash "${ALL_DIR}/ssh-config-hri-jp.sh"
+    ;;
+  underspecified)
+    log "setting up underspecified (personal) SSH overlay"
+    bash "${ALL_DIR}/ssh-config-underspecified.sh"
+    ;;
+  honda)
+    log "setting up honda (Honda internal, IP-pinned) SSH overlay"
+    bash "${ALL_DIR}/ssh-config-honda.sh"
+    ;;
+  *) die "unknown identity: ${identity} (valid: ${available_identities[*]})" ;;
   esac
 }
 

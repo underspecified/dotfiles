@@ -8,7 +8,7 @@ MODPROBE_FILE="/etc/modprobe.d/usb-autosuspend.conf"
 UDEV_FILE="/etc/udev/rules.d/50-usb-power.rules"
 
 echo "Writing ${MODPROBE_FILE}..."
-sudo tee "${MODPROBE_FILE}" > /dev/null << 'EOF'
+sudo tee "${MODPROBE_FILE}" >/dev/null <<'EOF'
 # Disable USB autosuspend globally on desktop systems.
 # Prevents xHCI host controllers from autosuspending and freezing
 # connected keyboards and mice during long screen-off periods.
@@ -16,7 +16,7 @@ options usbcore autosuspend=-1
 EOF
 
 echo "Writing ${UDEV_FILE}..."
-sudo tee "${UDEV_FILE}" > /dev/null << 'EOF'
+sudo tee "${UDEV_FILE}" >/dev/null <<'EOF'
 # Explicitly set USB root hubs (Linux Foundation, vendor 1d6b) to never
 # autosuspend. Complements the modprobe default — udev applies at hotplug
 # time so already-connected devices are covered without a reboot.

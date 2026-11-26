@@ -18,15 +18,24 @@ PREFIX="${PREFIX:-${HOME}/.local}"
 main() {
   local arch tag tar_url current
   case "$(uname -m)" in
-    x86_64|amd64) arch="linux_amd64" ;;
-    aarch64|arm64) arch="linux_arm64" ;;
-    *) warn "unknown arch $(uname -m) -- skipping gh install"; return 0 ;;
+  x86_64 | amd64) arch="linux_amd64" ;;
+  aarch64 | arm64) arch="linux_arm64" ;;
+  *)
+    warn "unknown arch $(uname -m) -- skipping gh install"
+    return 0
+    ;;
   esac
 
   tag="$(curl -fsSL https://api.github.com/repos/cli/cli/releases/latest \
-    | jq -r '.tag_name')" || { warn "could not query gh latest release; skipping"; return 0; }
+    | jq -r '.tag_name')" || {
+    warn "could not query gh latest release; skipping"
+    return 0
+  }
   [[ -n "${tag}" && "${tag}" != "null" ]] \
-    || { warn "gh release lookup returned no tag; skipping"; return 0; }
+    || {
+      warn "gh release lookup returned no tag; skipping"
+      return 0
+    }
 
   if [[ -x "${PREFIX}/bin/gh" ]]; then
     current="v$("${PREFIX}/bin/gh" --version 2>/dev/null | awk 'NR==1{print $3}')"

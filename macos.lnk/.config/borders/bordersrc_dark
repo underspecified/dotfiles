@@ -1,14 +1,14 @@
 #!/bin/bash
 
 options=(
-    active_color=0xff4695f7
-    ax_focus=true
-    blacklist="SoundSource"
-    hidpi=on
-    inactive_color=0xff72898f
-    #order=above
-	style=round
-	width=10.0
+  active_color=0xff4695f7
+  ax_focus=true
+  blacklist="SoundSource"
+  hidpi=on
+  inactive_color=0xff72898f
+  #order=above
+  style=round
+  width=10.0
 )
 
 # Detach output: when this starts the daemon, an inherited stdout pipe stays

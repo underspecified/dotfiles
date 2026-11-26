@@ -12,12 +12,12 @@ source "$HOME/.local/share/colors/selenized_${mode}.env"
 source "$HOME/.config/display/env"
 
 fmt() {
-    echo "#$(echo "$1" | tr '[:lower:]' '[:upper:]')"
+  echo "#$(echo "$1" | tr '[:lower:]' '[:upper:]')"
 }
 
 if [[ -f "${1:-}" ]]; then
-    # shellcheck source=/dev/null
-    source "$1"
+  # shellcheck source=/dev/null
+  source "$1"
 fi
 font_pt="${font}:size=${FONT_DMENU}"
 

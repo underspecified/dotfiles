@@ -1,37 +1,37 @@
 #!/bin/bash
 
 launch_ws() {
-    h=$1
-    shift 1
+  h=$1
+  shift 1
 
-    # The btop and nvitop panes go over tssh: Netskope takes mosh's UDP, and tssh
-    # carries its tsshd session over TCP (~/.ssh/config.d/tssh.conf).
-    #   -t  a command run gets no pty without it, and tmux needs one
-    #   --  otherwise tssh reads sh's -c as its own cipher option
-    # localhost is not in tssh.conf, so it stays on mosh.
-    remote=(tssh -t)
-    [[ $h == localhost ]] && remote=(mosh)
+  # The btop and nvitop panes go over tssh: Netskope takes mosh's UDP, and tssh
+  # carries its tsshd session over TCP (~/.ssh/config.d/tssh.conf).
+  #   -t  a command run gets no pty without it, and tmux needs one
+  #   --  otherwise tssh reads sh's -c as its own cipher option
+  # localhost is not in tssh.conf, so it stays on mosh.
+  remote=(tssh -t)
+  [[ $h == localhost ]] && remote=(mosh)
 
-    tab_win=$(kitten @ launch --type=tab --title=$h)
-    [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
-        "${remote[@]}" $h -- sh -c 'tmux a -t btop || tmux new-session -s btop btop; exec $SHELL'
-    [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
-        "${remote[@]}" $h -- sh -c 'tmux a -t nvitop || tmux new-session -s nvitop nvitop; exec $SHELL'
+  tab_win=$(kitten @ launch --type=tab --title=$h)
+  [[ "$BTOP" ]] && kitten @ launch --match=title:$h \
+    "${remote[@]}" $h -- sh -c 'tmux a -t btop || tmux new-session -s btop btop; exec $SHELL'
+  [[ "$NVITOP" ]] && kitten @ launch --match=title:$h \
+    "${remote[@]}" $h -- sh -c 'tmux a -t nvitop || tmux new-session -s nvitop nvitop; exec $SHELL'
 
-    # kitty's new windows don't inherit this shell's env, so each dispatch pane
-    # is handed both gates. dispatch tries tssh first, then mosh, then ssh -t.
-    for d in "$@"; do
-        kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 --env DISPATCH_REMOTE_TSSH=1 dispatch -C $h:$d wake
-        sleep 5
-    done
-
-    kitten @ goto-layout --match=title:$h horizontal
+  # kitty's new windows don't inherit this shell's env, so each dispatch pane
+  # is handed both gates. dispatch tries tssh first, then mosh, then ssh -t.
+  for d in "$@"; do
+    kitten @ launch --match=title:$h --env DISPATCH_REMOTE_MOSH=1 --env DISPATCH_REMOTE_TSSH=1 dispatch -C $h:$d wake
     sleep 5
-    # Close the tab's first shell by the id `launch` printed. `num:0` is window 0
-    # of whichever tab is current, which is another tab after a tab switch
-    # during the sleeps.
-    [[ $tab_win ]] && kitten @ close-window --match="id:$tab_win"
-    sleep 5
+  done
+
+  kitten @ goto-layout --match=title:$h horizontal
+  sleep 5
+  # Close the tab's first shell by the id `launch` printed. `num:0` is window 0
+  # of whichever tab is current, which is another tab after a tab switch
+  # during the sleeps.
+  [[ $tab_win ]] && kitten @ close-window --match="id:$tab_win"
+  sleep 5
 }
 
 # No `ccp stage` here: local (tank) sessions use the keychain login, because
@@ -39,7 +39,7 @@ launch_ws() {
 # CLAUDE_CODE_OAUTH_TOKEN (Eric, 2026-10-06). Remote hosts keep whatever
 # `ccp fleet switch --hosts` last staged (persists until their next reboot).
 
-BTOP=0 NVITOP=0 launch_ws localhost '~/projects' '~/projects/cambridge' '~/projects/llm'  '~/projects/settings' '~/haru.md'
+BTOP=0 NVITOP=0 launch_ws localhost '~/projects' '~/projects/cambridge' '~/projects/llm' '~/projects/settings' '~/haru.md'
 BTOP=1 NVITOP=1 launch_ws dgx02 '~/git/llm_eval'
 BTOP=1 NVITOP=1 launch_ws llm-jp '~/git/apps' '~/git/llm_eval'
 BTOP=1 NVITOP=1 launch_ws llm-jp-2 '~/git/apps' '~/git/llm_eval'

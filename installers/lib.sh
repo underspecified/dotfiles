@@ -8,9 +8,12 @@
 
 # --- logging --------------------------------------------------------------
 
-log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m!!\033[0m %s\n' "$*" >&2; }
-die()  { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+die() {
+  printf '\033[1;31mxx\033[0m %s\n' "$*" >&2
+  exit 1
+}
 
 # --- clone_or_pull <url> <dest> -------------------------------------------
 #
@@ -92,6 +95,6 @@ apt_ensure_repo() {
   fi
 
   if [[ ! -f "${list_path}" ]] || ! grep -qF "${list_line}" "${list_path}"; then
-    echo "${list_line}" | sudo tee "${list_path}" > /dev/null
+    echo "${list_line}" | sudo tee "${list_path}" >/dev/null
   fi
 }
