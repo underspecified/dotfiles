@@ -8,7 +8,6 @@ sudo apt remove docker.io docker-ce docker-ce-cli containerd.io
 sudo apt update
 sudo apt install -y uidmap dbus-user-session
 
-
 ### 2. Install Rootless Docker
 # Download and run the rootless installation script
 curl -fsSL https://get.docker.com/rootless | sh

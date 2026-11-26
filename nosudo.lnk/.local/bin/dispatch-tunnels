@@ -25,10 +25,10 @@ export PATH="$HOME/.local/bin:$PATH"
 # host → local forward port. Names only (no IPs); the secret llm-jp HostName
 # lives in the dgx02-local ~/.ssh/config.d/relay-local.conf.
 declare -A PORTS=(
-  [tank]=9101
-  [germputer]=9102
-  [llm-jp-2]=9103
-  [llm-jp]=9104
+  ["tank"]=9101
+  ["germputer"]=9102
+  ["llm-jp-2"]=9103
+  ["llm-jp"]=9104
 )
 
 pids=()

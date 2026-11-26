@@ -18,13 +18,13 @@
 set -euo pipefail
 
 _unpause_dunst() {
-    if command -v dunstctl &>/dev/null; then
-        dunstctl set-paused false 2>/dev/null || true
-    fi
+  if command -v dunstctl &>/dev/null; then
+    dunstctl set-paused false 2>/dev/null || true
+  fi
 }
 
 if command -v dunstctl &>/dev/null; then
-    dunstctl set-paused true 2>/dev/null || true
+  dunstctl set-paused true 2>/dev/null || true
 fi
 trap _unpause_dunst EXIT INT TERM HUP
 
@@ -36,5 +36,5 @@ slock
 # Block until no slock process remains for this user. When the forked
 # child exits (user types correct password), the EXIT trap unpauses dunst.
 while pgrep -u "$USER" -x slock >/dev/null 2>&1; do
-    sleep 1
+  sleep 1
 done

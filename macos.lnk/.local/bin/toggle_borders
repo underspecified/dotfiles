@@ -2,17 +2,17 @@
 set -euo pipefail
 
 toggle_borders() {
-    "${HOME}/.config/borders/bordersrc_$1"
+  "${HOME}/.config/borders/bordersrc_$1"
 }
 
 if [[ "${1:-}" == "dark" ]]; then
-    mode="dark"
+  mode="dark"
 elif [[ "${1:-}" == "light" ]]; then
-    mode="light"
+  mode="light"
 elif [[ "$(get_macos_mode)" == "light" ]]; then
-    mode="dark"
+  mode="dark"
 else
-    mode="light"
+  mode="light"
 fi
 
 echo "toggle_borders => ${mode}"

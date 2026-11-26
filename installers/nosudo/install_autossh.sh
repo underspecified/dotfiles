@@ -49,7 +49,10 @@ verify_sha() {
     warn "AUTOSSH_SHA256 unset; skipping integrity check for ${file}"
     return 0
   fi
-  command -v sha256sum >/dev/null 2>&1 || { warn "sha256sum absent; skipping check"; return 0; }
+  command -v sha256sum >/dev/null 2>&1 || {
+    warn "sha256sum absent; skipping check"
+    return 0
+  }
   local got
   got="$(sha256sum "${file}" | awk '{print $1}')"
   [[ "${got}" == "${AUTOSSH_SHA256}" ]] \
@@ -83,7 +86,7 @@ main() {
   [[ -d "${src}" ]] || die "unexpected tarball layout (no ${src})"
 
   log "building autossh (./configure && make)"
-  ( cd "${src}" && ./configure --prefix="${PREFIX}" >/dev/null && make >/dev/null )
+  (cd "${src}" && ./configure --prefix="${PREFIX}" >/dev/null && make >/dev/null)
 
   install -m 755 "${src}/autossh" "${DEST}"
   log "installed: ${DEST} ($("${DEST}" -V 2>&1 | head -1))"

@@ -9,42 +9,42 @@ PATH="${HOME}/.config/aerospace/bin:/opt/homebrew/bin:${PATH}"
 log() { echo "$*" 1>&2; }
 
 get_all_window_ids() {
-    local ws="$1"
-    aerospace list-windows --workspace "${ws}" --json \
-      | jq '.[]."window-id"'
+  local ws="$1"
+  aerospace list-windows --workspace "${ws}" --json \
+    | jq '.[]."window-id"'
 }
 
 arrange_ws() {
-    local ws="$1"
-    local windows i dir
-    aerospace flatten-workspace-tree --workspace "${ws}"
+  local ws="$1"
+  local windows i dir
+  aerospace flatten-workspace-tree --workspace "${ws}"
 
-    mapfile -t windows < <(get_all_window_ids "${ws}")
-    log "windows: ${windows[*]}"
+  mapfile -t windows < <(get_all_window_ids "${ws}")
+  log "windows: ${windows[*]}"
 
-    for i in "${!windows[@]}"; do
-        log "i: ${i}"
-        if (( i % 2 == 0 )); then
-            dir="left"
-        else
-            dir="right"
-        fi
-        if (( i < 2 )); then
-            aerospace layout h_tiles --window-id "${windows[$i]}"
-            aerospace move "${dir}" --window-id "${windows[$i]}"
-        else
-            aerospace join-with "${dir}" --window-id "${windows[$i]}"
-            aerospace layout accordion --window-id "${windows[$i]}"
-        fi
-    done
+  for i in "${!windows[@]}"; do
+    log "i: ${i}"
+    if ((i % 2 == 0)); then
+      dir="left"
+    else
+      dir="right"
+    fi
+    if ((i < 2)); then
+      aerospace layout h_tiles --window-id "${windows[$i]}"
+      aerospace move "${dir}" --window-id "${windows[$i]}"
+    else
+      aerospace join-with "${dir}" --window-id "${windows[$i]}"
+      aerospace layout accordion --window-id "${windows[$i]}"
+    fi
+  done
 }
 
 if [[ $# -eq 0 ]]; then
-    mapfile -t workspaces < <(aerospace list-workspaces --monitor mouse)
+  mapfile -t workspaces < <(aerospace list-workspaces --monitor mouse)
 else
-    workspaces=("$@")
+  workspaces=("$@")
 fi
 log "workspaces: ${#workspaces[@]} ${workspaces[*]}"
 for ws in "${workspaces[@]}"; do
-    arrange_ws "${ws}"
+  arrange_ws "${ws}"
 done

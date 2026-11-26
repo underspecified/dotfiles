@@ -2,10 +2,10 @@
 set -euo pipefail
 
 yabai_window_shrink() {
-    # Outer parens are nested subshells, not arithmetic -- the space after
-    # the first ( disambiguates for the parser.
-    ( (yabai -m window east --resize left:-20:0 && echo "E<-") \
-      && (yabai -m window west --resize right:20:0 && echo "W->") ) \
+  # Outer parens are nested subshells, not arithmetic -- the space after
+  # the first ( disambiguates for the parser.
+  ( (yabai -m window east --resize left:-20:0 && echo "E<-") \
+    && (yabai -m window west --resize right:20:0 && echo "W->")) \
     || (yabai -m window --resize left:20:0 && echo "L->") \
     || (yabai -m window --resize right:-20:0 && echo "R<-")
 }

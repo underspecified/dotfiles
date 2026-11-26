@@ -8,12 +8,12 @@ col_width=${2:-800}
 # Count columns by binning tiled window x-positions into column-width slots.
 # BSP balancing doesn't produce pixel-perfect alignment, so exact x comparison
 # fails — dividing by col_width and flooring groups nearby windows correctly.
-num_cols=$(yabai -m query --windows --space |
-    jq --arg cw "$col_width" \
+num_cols=$(yabai -m query --windows --space \
+  | jq --arg cw "$col_width" \
     '[.[] | select(."is-floating" == false) | .frame.x / ($cw | tonumber) | floor] | unique | length')
 
-if (( num_cols < max_cols )); then
-    yabai -m window --insert east
+if ((num_cols < max_cols)); then
+  yabai -m window --insert east
 else
-    yabai -m window --insert south
+  yabai -m window --insert south
 fi

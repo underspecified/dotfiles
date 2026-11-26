@@ -54,13 +54,13 @@ ensure_mcp() {
       ${flags[@]+"${flags[@]}"} -- "$@" || FAILED="${FAILED} ${name}"
     return
   fi
-  [[ "${have}" == "${want}" ]] ||
-    echo "!! ${name}: registered args differ from the pin; register it again with: ${want}"
+  [[ "${have}" == "${want}" ]] \
+    || echo "!! ${name}: registered args differ from the pin; register it again with: ${want}"
   for kv in ${env[@]+"${env[@]}"}; do
     # Compared inside jq, so a registered value is never printed.
     jq -e --arg n "${name}" --arg k "${kv%%=*}" --arg v "${kv#*=}" \
-      '.mcpServers[$n].env[$k] == $v' "${CLAUDE_JSON}" >/dev/null 2>&1 ||
-      echo "!! ${name}: env ${kv%%=*} is missing or differs from the pin; want ${kv}"
+      '.mcpServers[$n].env[$k] == $v' "${CLAUDE_JSON}" >/dev/null 2>&1 \
+      || echo "!! ${name}: env ${kv%%=*} is missing or differs from the pin; want ${kv}"
   done
 }
 
@@ -70,8 +70,8 @@ command -v jq >/dev/null 2>&1 || {
   exit 1
 }
 # Python skips a PYTHONPATH entry that does not exist, without a word.
-[[ -f "${TRUSTSTORE_DIR}/sitecustomize.py" ]] ||
-  echo "!! ${TRUSTSTORE_DIR}/sitecustomize.py is missing (run lnk pull): TLS falls back to certifi"
+[[ -f "${TRUSTSTORE_DIR}/sitecustomize.py" ]] \
+  || echo "!! ${TRUSTSTORE_DIR}/sitecustomize.py is missing (run lnk pull): TLS falls back to certifi"
 
 # google-workspace: Drive, Docs, Sheets (filtered, no Gmail/Calendar bloat)
 ensure_mcp google-workspace -e "PYTHONPATH=${TRUSTSTORE_DIR}" \
@@ -94,8 +94,8 @@ if [[ "$(uname -s)" == "Darwin" && -d "${HOME}/Library/CloudStorage/OneDrive-HRI
   # dependency cutoff (recorded in its receipt for later `uv tool upgrade`s).
   echo "Installing ${APPLE_MAIL_MCP} (deps as of ${TOOL_EXCLUDE_NEWER})"
   uv tool install --force --prerelease allow \
-    --exclude-newer "${TOOL_EXCLUDE_NEWER}" "${APPLE_MAIL_MCP}" ||
-    FAILED="${FAILED} apple-mail-mcp"
+    --exclude-newer "${TOOL_EXCLUDE_NEWER}" "${APPLE_MAIL_MCP}" \
+    || FAILED="${FAILED} apple-mail-mcp"
   ensure_mcp apple-mail-imdinu apple-mail-mcp
 else
   echo "Skipping Apple Mail MCPs: not a work Mac (no ~/Library/CloudStorage/OneDrive-HRI-JP)"

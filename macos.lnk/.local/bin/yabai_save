@@ -18,11 +18,11 @@ timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Build snapshot JSON
 jq -n \
-    --arg ts "$timestamp" \
-    --argjson windows "$windows" \
-    --argjson spaces "$spaces" \
-    --argjson displays "$displays" \
-    '{
+  --arg ts "$timestamp" \
+  --argjson windows "$windows" \
+  --argjson spaces "$spaces" \
+  --argjson displays "$displays" \
+  '{
         timestamp: $ts,
         displays: [$displays[] | {index, uuid, frame}],
         spaces: [$spaces[] | {index, label, display}],
@@ -33,16 +33,16 @@ jq -n \
             "is-floating": .["is-floating"],
             frame
         }]
-    }' > "$SNAPSHOT"
+    }' >"$SNAPSHOT"
 
 window_count=$(jq '.windows | length' "$SNAPSHOT")
 echo "saved $window_count windows to $SNAPSHOT" >&2
 
 # Archive if requested
 if [[ "${1:-}" == "--archive" ]]; then
-    archive_dir="$STATE_DIR/snapshots"
-    mkdir -p "$archive_dir"
-    archive_file="$archive_dir/$(date +%Y%m%d_%H%M%S).json"
-    cp "$SNAPSHOT" "$archive_file"
-    echo "archived to $archive_file" >&2
+  archive_dir="$STATE_DIR/snapshots"
+  mkdir -p "$archive_dir"
+  archive_file="$archive_dir/$(date +%Y%m%d_%H%M%S).json"
+  cp "$SNAPSHOT" "$archive_file"
+  echo "archived to $archive_file" >&2
 fi

@@ -16,9 +16,9 @@ usage() {
 }
 
 case "${1:-}" in
-  dark) background="E9F1F3" ;;
-  light) background="1F1E0B" ;;
-  *) usage ;;
+dark) background="E9F1F3" ;;
+light) background="1F1E0B" ;;
+*) usage ;;
 esac
 if [[ -n "${2:-}" ]]; then
   [[ "${2}" =~ ^[0-9A-Fa-f]{6}$ ]] || usage

@@ -44,22 +44,22 @@ bounce_apps() {
 main() {
   local do_apps=0
   case "${1:-}" in
-    --apps) do_apps=1 ;;
-    -h | --help)
-      # Print the leading header block: skip the shebang, print contiguous
-      # comment lines, stop at the first line of code.
-      awk 'NR==1{next} /^#/{sub(/^# ?/,""); print; next} {exit}' "${BASH_SOURCE[0]}"
-      exit 0
-      ;;
-    "") ;;
-    *)
-      log "unknown arg: $1 (usage: fix_audio [--apps])"
-      exit 2
-      ;;
+  --apps) do_apps=1 ;;
+  -h | --help)
+    # Print the leading header block: skip the shebang, print contiguous
+    # comment lines, stop at the first line of code.
+    awk 'NR==1{next} /^#/{sub(/^# ?/,""); print; next} {exit}' "${BASH_SOURCE[0]}"
+    exit 0
+    ;;
+  "") ;;
+  *)
+    log "unknown arg: $1 (usage: fix_audio [--apps])"
+    exit 2
+    ;;
   esac
 
   restart_coreaudio
-  (( do_apps )) && bounce_apps
+  ((do_apps)) && bounce_apps
   exit 0
 }
 

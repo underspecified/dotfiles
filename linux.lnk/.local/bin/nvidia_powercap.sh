@@ -12,7 +12,10 @@ set -uo pipefail
 PL_WATTS="${1:-${NVIDIA_PL_WATTS:-500}}"
 CLOCK_MAX="${2:-${NVIDIA_CLOCK_MAX:-2600}}"
 
-die() { echo "error: $*" >&2; exit 1; }
+die() {
+  echo "error: $*" >&2
+  exit 1
+}
 
 # Re-exec under sudo if not already root, preserving args.
 ensure_root() {
@@ -28,10 +31,10 @@ clamp_power_limit() {
   min="$(nvidia-smi -q -d POWER | awk -F: '/Min Power Limit/ {gsub(/[^0-9.]/,"",$2); print int($2); exit}')"
   max="$(nvidia-smi -q -d POWER | awk -F: '/Max Power Limit/ {gsub(/[^0-9.]/,"",$2); print int($2); exit}')"
   [[ -n "${min}" && -n "${max}" ]] || die "could not read power-limit range from nvidia-smi"
-  if (( requested < min )); then
+  if ((requested < min)); then
     echo "requested ${requested}W below floor; clamping to ${min}W" >&2
     requested="${min}"
-  elif (( requested > max )); then
+  elif ((requested > max)); then
     echo "requested ${requested}W above ceiling; clamping to ${max}W" >&2
     requested="${max}"
   fi
@@ -71,10 +74,14 @@ main() {
 
   # Read-only / help paths need no privileges.
   case "${1:-}" in
-    --show)  show_state; exit 0 ;;
-    -h|--help)
-      grep '^# ' "$0" | sed 's/^# //'
-      exit 0 ;;
+  --show)
+    show_state
+    exit 0
+    ;;
+  -h | --help)
+    grep '^# ' "$0" | sed 's/^# //'
+    exit 0
+    ;;
   esac
 
   # Everything below mutates GPU state; escalate once, then re-enter as root.

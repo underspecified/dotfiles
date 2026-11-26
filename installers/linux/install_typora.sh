@@ -14,7 +14,7 @@ fi
 
 ### Install Typora
 # Trust file written with `tee >` (truncating) -- idempotent.
-wget -qO- https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc > /dev/null
+wget -qO- https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc >/dev/null
 
 # Add Typora's repository only if not already present.
 if ! grep -qF "typora.io/linux" /etc/apt/sources.list.d/*.list /etc/apt/sources.list 2>/dev/null; then

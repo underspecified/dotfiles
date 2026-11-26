@@ -2,7 +2,7 @@
 set -euo pipefail
 
 toggle_macos_mode() {
-    osascript -l JavaScript "-" "$1" <<- EOF
+  osascript -l JavaScript "-" "$1" <<-EOF
 
 function run(args) {
 	const systemEvents = Application("System Events")
@@ -15,13 +15,13 @@ EOF
 
 curr="$(get_macos_mode)"
 if [[ "${1:-}" == "dark" ]]; then
-    mode="dark"
+  mode="dark"
 elif [[ "${1:-}" == "light" ]]; then
-    mode="light"
+  mode="light"
 elif [[ "${curr}" == "light" ]]; then
-    mode="dark"
+  mode="dark"
 else
-    mode="light"
+  mode="light"
 fi
 
 echo "toggle_macos_mode => ${mode}"

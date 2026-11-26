@@ -19,8 +19,8 @@ ensure_rosetta() {
     return 0
   fi
   log "Rosetta: missing, installing (needs sudo)"
-  sudo /usr/sbin/softwareupdate --install-rosetta --agree-to-license ||
-    die "Rosetta install failed"
+  sudo /usr/sbin/softwareupdate --install-rosetta --agree-to-license \
+    || die "Rosetta install failed"
   rosetta_works || die "Rosetta installed but x86_64 binaries still don't run"
   log "Rosetta: installed"
 }

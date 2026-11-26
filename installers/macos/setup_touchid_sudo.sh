@@ -39,7 +39,7 @@ ensure_pam_reattach() {
 write_sudo_local() {
   local tmp
   tmp="$(mktemp)"
-  cat > "${tmp}" <<EOF
+  cat >"${tmp}" <<EOF
 auth optional ${reattach_so}
 auth sufficient pam_tid.so
 EOF

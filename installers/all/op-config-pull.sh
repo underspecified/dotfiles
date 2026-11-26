@@ -13,7 +13,10 @@
 set -euo pipefail
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
-die() { printf '\033[1;31mxx\033[0m %s\n' "$*" >&2; exit 1; }
+die() {
+  printf '\033[1;31mxx\033[0m %s\n' "$*" >&2
+  exit 1
+}
 
 [[ $# -ge 2 && $# -le 3 ]] \
   || die "usage: $0 <op-item-title> <local-file> [vault]"
@@ -34,7 +37,7 @@ mkdir -p "$(dirname "${local_file}")"
 # empty one -- shell `>` redirect truncates before the command runs.
 tmp_file="$(mktemp "${local_file}.XXXXXX")"
 trap 'rm -f "${tmp_file}"' EXIT
-op read "op://${vault}/${item_title}/notesPlain" > "${tmp_file}"
+op read "op://${vault}/${item_title}/notesPlain" >"${tmp_file}"
 chmod 600 "${tmp_file}"
 mv "${tmp_file}" "${local_file}"
 trap - EXIT

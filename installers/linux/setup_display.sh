@@ -41,14 +41,14 @@ fi
 if [[ -z "$choice" ]]; then
   echo "Available display profiles:"
   for i in "${!profiles[@]}"; do
-    printf "  %d) %s\n" "$((i+1))" "${profiles[$i]}"
+    printf "  %d) %s\n" "$((i + 1))" "${profiles[$i]}"
   done
   read -r -p "Select profile [1-${#profiles[@]}]: " idx
-  if ! [[ "$idx" =~ ^[0-9]+$ ]] || (( idx < 1 || idx > ${#profiles[@]} )); then
+  if ! [[ "$idx" =~ ^[0-9]+$ ]] || ((idx < 1 || idx > ${#profiles[@]})); then
     echo "error: invalid selection" >&2
     exit 1
   fi
-  choice="${profiles[$((idx-1))]}"
+  choice="${profiles[$((idx - 1))]}"
 fi
 
 target="${choice}.env"

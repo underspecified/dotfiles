@@ -7,14 +7,14 @@ export PATH="${HOME}/.local/bin:${PATH}"
 echo "DARKMODE: ${DARKMODE:-}" | tee -a "${LOG_DIR}/darkmode.log" 2>&1
 
 if [[ -n "${DARKMODE+x}" ]]; then
-    if [[ "${DARKMODE}" == "1" ]]; then
-        mode="dark"
-    else
-        mode="light"
-    fi
-    (
-        toggle_borders "${mode}"
-        toggle_pdf_expert "${mode}"
-        claude_theme_toggle "${mode}" --push
-    ) | tee -a "${LOG_DIR}/darkmode.log" 2>&1
+  if [[ "${DARKMODE}" == "1" ]]; then
+    mode="dark"
+  else
+    mode="light"
+  fi
+  (
+    toggle_borders "${mode}"
+    toggle_pdf_expert "${mode}"
+    claude_theme_toggle "${mode}" --push
+  ) | tee -a "${LOG_DIR}/darkmode.log" 2>&1
 fi

@@ -113,8 +113,8 @@ if [[ "${CMD_LINE}" =~ (^|[[:space:]]|&|\;)git([[:space:]]+-C[[:space:]]+[^[:spa
   # guard AND the nag below. Gate on rev-parse so a mis-resolved or non-repo
   # REPO_DIR degrades to "skip the guard" instead of "kill the hook".
   if git -C "${REPO_DIR}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    LARGE_FILES=$(git -C "${REPO_DIR}" diff --cached --name-only --diff-filter=AM 2>/dev/null |
-      while IFS= read -r f; do
+    LARGE_FILES=$(git -C "${REPO_DIR}" diff --cached --name-only --diff-filter=AM 2>/dev/null \
+      | while IFS= read -r f; do
         [ -z "${f}" ] && continue
         [ -f "${REPO_DIR}/${f}" ] || continue
         sz=$(stat -c%s "${REPO_DIR}/${f}" 2>/dev/null || stat -f%z "${REPO_DIR}/${f}" 2>/dev/null || echo 0)

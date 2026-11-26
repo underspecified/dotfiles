@@ -19,7 +19,7 @@ ULTRAWIDE_RATIO=${ULTRAWIDE_RATIO:-2.0}
 layout=$(
   yabai -m query --displays --display \
     | jq -r --argjson t "${ULTRAWIDE_RATIO}" \
-        'if (.frame.w / .frame.h) >= $t then "horizontal" else "tall" end'
+      'if (.frame.w / .frame.h) >= $t then "horizontal" else "tall" end'
 ) || exit 0
 
 exec "${HOME}/.local/bin/kitty_layout_${layout}"

@@ -15,7 +15,10 @@ file="$(jq -r '.tool_input.file_path // empty' 2>/dev/null)"
 # -i 2: rules/bash.md mandates 2-space indentation, no tabs. shfmt defaults to
 # tabs, so an unflagged run makes the formatter fight the documented convention
 # on every shell file it touches.
-shfmt -i 2 -w "${file}"
+# -bn: rules/bash.md (Pipes in Scripts) puts |, && and || at the start of the
+# continuation line. Without it shfmt moves them to the end of the line before,
+# so an edit to any script rewrote every such line in it (dotfiles#42).
+shfmt -i 2 -bn -w "${file}"
 
 if ! output=$(shellcheck "${file}" 2>&1); then
   jq -n \

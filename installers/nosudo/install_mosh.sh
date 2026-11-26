@@ -62,7 +62,10 @@ verify_sha() {
     warn "no sha256 pinned for $(basename "${file}"); skipping integrity check"
     return 0
   fi
-  command -v sha256sum >/dev/null 2>&1 || { warn "sha256sum absent; skipping check"; return 0; }
+  command -v sha256sum >/dev/null 2>&1 || {
+    warn "sha256sum absent; skipping check"
+    return 0
+  }
   local got
   got="$(sha256sum "${file}" | awk '{print $1}')"
   [[ "${got}" == "${want}" ]] || die "sha256 mismatch for $(basename "${file}"): got ${got}, expected ${want}"

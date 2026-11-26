@@ -14,31 +14,31 @@ set -euo pipefail
 THEMES="${HOME}/.claude/themes"
 
 claude_theme_toggle() {
-    local mode="$1" target
-    if [[ "${mode}" == "dark" ]]; then
-        target="selenized-dark.json"
-    else
-        target="selenized-light.json"
-    fi
-    if [[ ! -e "${THEMES}/${target}" ]]; then
-        echo "claude_theme_toggle: missing ${THEMES}/${target}" >&2
-        return 1
-    fi
-    # Write the statusline (claude-limitline) override FIRST. If swapping the
-    # theme symlink below causes Claude to re-run the statusLine command (a theme
-    # reload is a session state-change, like the events that do trigger it), the
-    # override is already current -- the statusline refreshes in the same frame
-    # with no stale flash. An untracked file honored by the fork's index.ts keeps
-    # the lnk-tracked claude-limitline.json static; atomic write so a mid-render
-    # read never sees a partial value.
-    local override="${HOME}/.claude/.claude-limitline-theme"
-    local tmp="${override}.tmp.$$"
-    printf 'selenized-%s\n' "${mode}" > "${tmp}" && mv -f "${tmp}" "${override}"
+  local mode="$1" target
+  if [[ "${mode}" == "dark" ]]; then
+    target="selenized-dark.json"
+  else
+    target="selenized-light.json"
+  fi
+  if [[ ! -e "${THEMES}/${target}" ]]; then
+    echo "claude_theme_toggle: missing ${THEMES}/${target}" >&2
+    return 1
+  fi
+  # Write the statusline (claude-limitline) override FIRST. If swapping the
+  # theme symlink below causes Claude to re-run the statusLine command (a theme
+  # reload is a session state-change, like the events that do trigger it), the
+  # override is already current -- the statusline refreshes in the same frame
+  # with no stale flash. An untracked file honored by the fork's index.ts keeps
+  # the lnk-tracked claude-limitline.json static; atomic write so a mid-render
+  # read never sees a partial value.
+  local override="${HOME}/.claude/.claude-limitline-theme"
+  local tmp="${override}.tmp.$$"
+  printf 'selenized-%s\n' "${mode}" >"${tmp}" && mv -f "${tmp}" "${override}"
 
-    # Then swap the theme symlink -- Claude watches ~/.claude/themes/ and
-    # hot-reloads the TUI on the retarget. Relative symlink (same dir) so it stays
-    # valid on any box; atomic swap.
-    ln -sf "${target}" "${THEMES}/selenized.json"
+  # Then swap the theme symlink -- Claude watches ~/.claude/themes/ and
+  # hot-reloads the TUI on the retarget. Relative symlink (same dir) so it stays
+  # valid on any box; atomic swap.
+  ln -sf "${target}" "${THEMES}/selenized.json"
 }
 
 # Fleet hosts for --push, resolved DYNAMICALLY (no static list to maintain).
@@ -47,66 +47,69 @@ claude_theme_toggle() {
 # control socket (matches kitty.conf `listen_on`) so host discovery works even
 # from the env-less macOS dark-mode daemon, which has no KITTY_LISTEN_ON.
 fleet_hosts() {
-    if [[ -n "${hosts_override}" ]]; then
-        printf '%s' "${hosts_override}" | tr ' ' '\n'
-        return
-    fi
-    if [[ -n "${DISPATCH_HOSTS:-}" ]]; then
-        printf '%s' "${DISPATCH_HOSTS}" | tr ' ' '\n'
-        return
-    fi
-    # `dispatch list` discovers hosts by querying kitty over its control socket,
-    # so BOTH `dispatch` (~/.local/bin) and `kitty` (Homebrew) must resolve here.
-    # A launchd/darkman daemon runs with a minimal PATH that omits Homebrew's dir
-    # (/opt/homebrew on Apple Silicon, /usr/local on Intel), so kitty isn't found
-    # and discovery silently returns zero hosts -- the whole --push reaches no one.
-    # Prepend the likely tool dirs (harmless when absent) so --push works from the
-    # env-less daemon that is its main caller.
-    local disc_path="${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}"
-    PATH="${disc_path}" KITTY_LISTEN_ON="${KITTY_LISTEN_ON:-unix:/tmp/mykitty}" \
-        dispatch list 2>/dev/null \
-        | awk 'NR>2 && ($1=="attached" || $1=="detached") && $4!="local" {print $4}' \
-        | sort -u
+  if [[ -n "${hosts_override}" ]]; then
+    printf '%s' "${hosts_override}" | tr ' ' '\n'
+    return
+  fi
+  if [[ -n "${DISPATCH_HOSTS:-}" ]]; then
+    printf '%s' "${DISPATCH_HOSTS}" | tr ' ' '\n'
+    return
+  fi
+  # `dispatch list` discovers hosts by querying kitty over its control socket,
+  # so BOTH `dispatch` (~/.local/bin) and `kitty` (Homebrew) must resolve here.
+  # A launchd/darkman daemon runs with a minimal PATH that omits Homebrew's dir
+  # (/opt/homebrew on Apple Silicon, /usr/local on Intel), so kitty isn't found
+  # and discovery silently returns zero hosts -- the whole --push reaches no one.
+  # Prepend the likely tool dirs (harmless when absent) so --push works from the
+  # env-less daemon that is its main caller.
+  local disc_path="${HOME}/.local/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}"
+  PATH="${disc_path}" KITTY_LISTEN_ON="${KITTY_LISTEN_ON:-unix:/tmp/mykitty}" \
+    dispatch list 2>/dev/null \
+    | awk 'NR>2 && ($1=="attached" || $1=="detached") && $4!="local" {print $4}' \
+    | sort -u
 }
 
 # Run the local swap on each fleet host over SSH -- explicit mode, and NO --push
 # so the remote stays a leaf (no recursion). Parallel + best-effort; the caller
 # backgrounds this whole function so the local flip never waits on it.
 fleet_push() {
-    local mode="$1" host
-    while IFS= read -r host; do
-        [[ -z "${host}" ]] && continue
-        ssh -n -o BatchMode=yes -o ConnectTimeout=3 "${host}" \
-            "bash ~/.local/bin/claude_theme_toggle ${mode}" >/dev/null 2>&1 &
-    done < <(fleet_hosts)
-    wait
+  local mode="$1" host
+  while IFS= read -r host; do
+    [[ -z "${host}" ]] && continue
+    ssh -n -o BatchMode=yes -o ConnectTimeout=3 "${host}" \
+      "bash ~/.local/bin/claude_theme_toggle ${mode}" >/dev/null 2>&1 &
+  done < <(fleet_hosts)
+  wait
 }
 
 mode=""
 push=0
 hosts_override=""
 while [[ $# -gt 0 ]]; do
-    case "$1" in
-        dark|light) mode="$1" ;;
-        --push)     push=1 ;;
-        --hosts)    shift; hosts_override="${1:-}" ;;
-        *) echo "claude_theme_toggle: ignoring unknown arg: $1" >&2 ;;
-    esac
+  case "$1" in
+  dark | light) mode="$1" ;;
+  --push) push=1 ;;
+  --hosts)
     shift
+    hosts_override="${1:-}"
+    ;;
+  *) echo "claude_theme_toggle: ignoring unknown arg: $1" >&2 ;;
+  esac
+  shift
 done
 
 if [[ "${mode}" != "dark" && "${mode}" != "light" ]]; then
-    # No explicit mode: detect the current OS appearance. macOS via get_macos_mode;
-    # Linux via darkman. (Both hooks pass an explicit mode, so this only runs on
-    # manual invocation.)
-    if command -v get_macos_mode >/dev/null 2>&1; then
-        mode="$(get_macos_mode)"
-    elif command -v darkman >/dev/null 2>&1; then
-        mode="$(darkman get)"
-    else
-        echo "claude_theme_toggle: no mode given and no get_macos_mode/darkman found" >&2
-        exit 1
-    fi
+  # No explicit mode: detect the current OS appearance. macOS via get_macos_mode;
+  # Linux via darkman. (Both hooks pass an explicit mode, so this only runs on
+  # manual invocation.)
+  if command -v get_macos_mode >/dev/null 2>&1; then
+    mode="$(get_macos_mode)"
+  elif command -v darkman >/dev/null 2>&1; then
+    mode="$(darkman get)"
+  else
+    echo "claude_theme_toggle: no mode given and no get_macos_mode/darkman found" >&2
+    exit 1
+  fi
 fi
 
 echo "claude_theme_toggle => ${mode}"
@@ -116,6 +119,6 @@ claude_theme_toggle "${mode}"
 # local flip never blocks on a slow/down box; the fan-out omits --push, so a box
 # reached over SSH never re-fans-out (no recursion).
 if [[ "${push}" == 1 ]]; then
-    fleet_push "${mode}" >/dev/null 2>&1 &
-    disown 2>/dev/null || true
+  fleet_push "${mode}" >/dev/null 2>&1 &
+  disown 2>/dev/null || true
 fi

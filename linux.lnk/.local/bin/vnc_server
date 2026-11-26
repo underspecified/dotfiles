@@ -14,7 +14,10 @@ RFBPORT=5900
 XAUTH="/run/user/$(id -u)/gdm/Xauthority"
 LOG="${HOME}/.x11vnc.log"
 
-die() { echo "vnc_server: $*" >&2; exit 1; }
+die() {
+  echo "vnc_server: $*" >&2
+  exit 1
+}
 
 start() {
   command -v x11vnc >/dev/null || die "x11vnc not installed"
@@ -42,8 +45,8 @@ status() {
 }
 
 case "${1:-restart}" in
-  restart | start) start ;;
-  stop) stop ;;
-  status) status ;;
-  *) die "usage: vnc_server [restart|status|stop]" ;;
+restart | start) start ;;
+stop) stop ;;
+status) status ;;
+*) die "usage: vnc_server [restart|status|stop]" ;;
 esac

@@ -48,7 +48,7 @@ pick_compiler() {
   if command -v g++ >/dev/null 2>&1; then
     local major
     major="$(g++ -dumpversion 2>/dev/null | cut -d. -f1)"
-    if [[ "${major}" =~ ^[0-9]+$ ]] && (( major >= 11 )); then
+    if [[ "${major}" =~ ^[0-9]+$ ]] && ((major >= 11)); then
       echo "g++"
       return
     fi

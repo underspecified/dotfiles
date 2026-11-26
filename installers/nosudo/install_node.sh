@@ -21,9 +21,12 @@ PREFIX="${PREFIX:-${HOME}/.local}"
 main() {
   local arch tag tar_url current
   case "$(uname -m)" in
-    x86_64|amd64) arch="linux-x64" ;;
-    aarch64|arm64) arch="linux-arm64" ;;
-    *) warn "unknown arch $(uname -m) -- skipping node install"; return 0 ;;
+  x86_64 | amd64) arch="linux-x64" ;;
+  aarch64 | arm64) arch="linux-arm64" ;;
+  *)
+    warn "unknown arch $(uname -m) -- skipping node install"
+    return 0
+    ;;
   esac
 
   # nodejs.org/dist/index.json: array of releases (newest first), each
@@ -31,9 +34,15 @@ main() {
   # where lts != false is the latest LTS release.
   tag="$(curl -fsSL https://nodejs.org/dist/index.json \
     | jq -r 'map(select(.lts != false)) | first.version')" \
-    || { warn "could not query node LTS releases; skipping"; return 0; }
+    || {
+      warn "could not query node LTS releases; skipping"
+      return 0
+    }
   [[ -n "${tag}" && "${tag}" != "null" ]] \
-    || { warn "node release lookup returned no tag; skipping"; return 0; }
+    || {
+      warn "node release lookup returned no tag; skipping"
+      return 0
+    }
 
   if [[ -x "${PREFIX}/bin/node" ]]; then
     current="$("${PREFIX}/bin/node" --version 2>/dev/null)"

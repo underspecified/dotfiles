@@ -66,8 +66,8 @@ apt_install() {
   (($#)) || return 0
   log "apt-get install $*"
   sudo -n apt-get update -qq >/dev/null 2>&1
-  sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "$@" >/dev/null 2>&1 ||
-    {
+  sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "$@" >/dev/null 2>&1 \
+    || {
       warn "apt-get install failed for: $*"
       return 1
     }
@@ -84,8 +84,8 @@ uv_tool() {
     return 1
   }
   log "uv tool install ${pkg}==${ver}"
-  uv tool install --exclude-newer "${UV_TOOL_EXCLUDE_NEWER}" "${pkg}==${ver}" >/dev/null 2>&1 ||
-    {
+  uv tool install --exclude-newer "${UV_TOOL_EXCLUDE_NEWER}" "${pkg}==${ver}" >/dev/null 2>&1 \
+    || {
       warn "uv tool install ${pkg}==${ver} failed"
       return 1
     }
@@ -126,11 +126,11 @@ install_panache_linux() {
     tmp="$(mktemp -d)"
     log "installing panache ${tag} -> ${PREFIX}/bin"
     if ! {
-      curl -fsSL -o "${tmp}/p.tgz" "${url}" &&
-        echo "${sha}  ${tmp}/p.tgz" | sha256sum -c --status - &&
-        tar -xzf "${tmp}/p.tgz" -C "${tmp}" &&
-        mkdir -p "${PREFIX}/bin" &&
-        install -m 755 "${tmp}/panache" "${PREFIX}/bin/panache"
+      curl -fsSL -o "${tmp}/p.tgz" "${url}" \
+        && echo "${sha}  ${tmp}/p.tgz" | sha256sum -c --status - \
+        && tar -xzf "${tmp}/p.tgz" -C "${tmp}" \
+        && mkdir -p "${PREFIX}/bin" \
+        && install -m 755 "${tmp}/panache" "${PREFIX}/bin/panache"
     }; then
       warn "panache download, sha256 check, extract or install failed"
       rm -rf "${tmp}"
@@ -138,8 +138,8 @@ install_panache_linux() {
     fi
     rm -rf "${tmp}"
   fi
-  [[ "$(command -v panache)" == "${PREFIX}/bin/panache" ]] ||
-    warn "panache on PATH ($(command -v panache)) shadows ${PREFIX}/bin/panache"
+  [[ "$(command -v panache)" == "${PREFIX}/bin/panache" ]] \
+    || warn "panache on PATH ($(command -v panache)) shadows ${PREFIX}/bin/panache"
 }
 
 # --- per-platform ---------------------------------------------------------
@@ -160,12 +160,12 @@ install_macos() {
     log "all hook tools already present"
   fi
   # Formulae aren't version-pinned: list what is installed.
-  brew list --versions ruff rumdl panache shfmt shellcheck jq 2>/dev/null |
-    sed 's/^/  installed: /'
+  brew list --versions ruff rumdl panache shfmt shellcheck jq 2>/dev/null \
+    | sed 's/^/  installed: /'
   # Report staleness rather than forcing it: panache 2->3 changes formatting
   # behaviour, and this is the highest-blast-radius PL. Upgrade deliberately.
-  brew outdated --formula ruff rumdl panache shfmt shellcheck jq 2>/dev/null |
-    sed 's/^/  outdated (not auto-upgraded): /'
+  brew outdated --formula ruff rumdl panache shfmt shellcheck jq 2>/dev/null \
+    | sed 's/^/  outdated (not auto-upgraded): /'
 }
 
 install_linux() {

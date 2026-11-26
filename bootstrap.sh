@@ -21,14 +21,14 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 dispatch_linux() {
   # Honor explicit LNK_HOST first -- predictable for re-runs and CI.
   case "${LNK_HOST:-}" in
-    nosudo)
-      exec bash "${REPO_DIR}/installers/nosudo/install.sh"
-      ;;
-    "")
-      ;;
-    *)
-      echo "bootstrap.sh: unknown LNK_HOST='${LNK_HOST}' -- ignoring, using OS default" >&2
-      ;;
+  nosudo)
+    exec bash "${REPO_DIR}/installers/nosudo/install.sh"
+    ;;
+  "")
+    ;;
+  *)
+    echo "bootstrap.sh: unknown LNK_HOST='${LNK_HOST}' -- ignoring, using OS default" >&2
+    ;;
   esac
 
   # Auto-detect: no passwordless sudo => assume nosudo host. `sudo -n true`
@@ -45,14 +45,14 @@ dispatch_linux() {
 }
 
 case "$(uname -s)" in
-  Darwin)
-    exec bash "${REPO_DIR}/installers/macos/bootstrap_finish.sh"
-    ;;
-  Linux)
-    dispatch_linux
-    ;;
-  *)
-    echo "bootstrap.sh: unsupported OS '$(uname -s)'" >&2
-    exit 1
-    ;;
+Darwin)
+  exec bash "${REPO_DIR}/installers/macos/bootstrap_finish.sh"
+  ;;
+Linux)
+  dispatch_linux
+  ;;
+*)
+  echo "bootstrap.sh: unsupported OS '$(uname -s)'" >&2
+  exit 1
+  ;;
 esac

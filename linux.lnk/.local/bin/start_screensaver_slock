@@ -27,7 +27,7 @@ LOCK_MIN=5
 IDLE_MIN=10
 
 # DPMS monitor power-off (display-side only, unrelated to the locker).
-xset dpms 0 0 $(( IDLE_MIN * 60 ))
+xset dpms 0 0 $((IDLE_MIN * 60))
 
 # Replace any existing xautolock instance.
 pkill -x xautolock 2>/dev/null || true
@@ -39,8 +39,8 @@ pkill -x xautolock 2>/dev/null || true
 # -corners 0...0 : disable hot-corner behaviors (no accidental
 #                  early-lock or lock-disable from cursor corners)
 xautolock \
-    -time "${LOCK_MIN}" \
-    -locker "${HOME}/.local/bin/lock_screen_slock" \
-    -detectsleep \
-    -corners 0000 \
-    &
+  -time "${LOCK_MIN}" \
+  -locker "${HOME}/.local/bin/lock_screen_slock" \
+  -detectsleep \
+  -corners 0000 \
+  &
