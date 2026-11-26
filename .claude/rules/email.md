@@ -25,6 +25,8 @@ For signature + default account, see `signature.md` (untracked, lives only at `~
 
 Use `mcp__apple-mail-patrickfreyer__compose_email` with `mode: "draft"`. **Always pass `mode`:** the tool's own default is `"send"`.
 
+- **Recipients:** comma-separated with **no space** (`a@x.jp,b@x.jp`). **Why (11/26):** `"a@x.jp, b@x.jp"` saved a draft with no To header at all, while the tool reported both recipients.
+- **Extra copies:** each call leaves a hidden copy open in Mail that can autosave duplicates into Drafts, even after you delete one. Don't chase them: tell Eric how many copies there are. Quitting Mail clears them.
 - **Attachments:** attach files with `attachments` (absolute paths, comma-separated). A mail that refers to a file carries it. **Why (10/15):** a draft saying "sign the attached confidentiality agreement" went out with nothing attached.
 - **Read it back before calling it ready.** Read the saved draft from Drafts and check the recipients, subject, body and attachments. Show its actual To/CC next to the recipients you meant; a mismatch means it isn't ready. **Why (11/11):** a seat called a draft ready although its JSON showed it addressed To Eric, and he sent it to himself twice.
 - **Forbidden:** `create_rich_email_draft` and `forward_email` (both denied in settings), and `open /path/to/draft.eml`.
