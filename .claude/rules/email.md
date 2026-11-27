@@ -23,15 +23,20 @@ For signature + default account, see `signature.md` (untracked, lives only at `~
 
 ## New mail
 
-Use `mcp__apple-mail-patrickfreyer__compose_email` with `mode: "draft"`. **Always pass `mode`:** the tool's own default is `"send"`.
+```text
+bash ~/.claude/skills/email-inbox/scripts/new_draft.sh \
+  --to "<addr>[,<addr>...]" [--cc "<addr>[,<addr>...]"] \
+  --subject "<subject>" --body-file <path> \
+  [--attach <absolute path>]... [--account <name>]
+```
 
-- **Recipients:** comma-separated with **no space** (`a@x.jp,b@x.jp`). **Why (11/26):** `"a@x.jp, b@x.jp"` saved a draft with no To header at all, while the tool reported both recipients. Recipients, even one, can be missing from the first saved copy (admin, 11/26), so the read-back below is the real check. **If it shows no To, read back again after 30 s before reporting it:** on 11/27, a copy saved 20 s later had all three recipients. A fix is email-inbox#20.
-- **Extra copies:** each call leaves a hidden copy open in Mail that can autosave duplicates into Drafts, even after you delete one. Don't chase them: tell Eric how many copies there are. Quitting Mail clears them.
-- **Attachments:** attach files with `attachments` (absolute paths, comma-separated). A mail that refers to a file carries it. **Why (10/15):** a draft saying "sign the attached confidentiality agreement" went out with nothing attached.
-- **Read it back before calling it ready.** Read the saved draft from Drafts and check the recipients, subject, body and attachments. Show its actual To/CC next to the recipients you meant; a mismatch means it isn't ready. **Why (11/11):** a seat called a draft ready although its JSON showed it addressed To Eric, and he sent it to himself twice.
-- **Forbidden:** `create_rich_email_draft` and `forward_email` (both denied in settings), and `open /path/to/draft.eml`.
-- **`compose_email` doesn't thread**, even with a `Re:` subject. Never use it for a reply.
-- **If `compose_email` is unavailable,** tell the user and write the mail to a file in the seat's repo (recipients and subject at the top), and report its path.
+- **What it does:** it saves the mail to Drafts and reads it back before printing `{ok:true, subject, to, cc, attachments}`: To and Cc as passed, the subject, the body, exactly the `--attach` files, and one copy.
+- **A mail that refers to a file carries it:** pass `--attach` once per file. **Why (10/15):** a draft saying "sign the attached confidentiality agreement" went out with nothing attached.
+- **Only addresses reach Mail:** `Name <address>` is accepted, but the name is dropped.
+- **Everything else is as for replies (below):** a wrong recipient closes the mail unsaved; relay `ok:false` as it is and delete nothing; on "Mail stopped answering", stop and tell Eric; a Bash timeout of at least 120 s; then tell Eric it's ready, with the To/CC it read back next to the recipients you meant. **Why (11/11):** a seat called a draft ready although its JSON showed it addressed To Eric, and he sent it to himself twice.
+- **Not for replies:** it doesn't thread. Use `threaded_reply.sh`.
+- **Never `compose_email`:** its drafts lost their To (11/26, 11/27), and its hidden copies autosaved duplicates (email-inbox#20). **Also forbidden:** `create_rich_email_draft` and `forward_email` (both denied in settings), and `open /path/to/draft.eml`.
+- **If the script can't run,** tell the user and write the mail to a file in the seat's repo (recipients and subject at the top), and report its path.
 
 ## Replies
 
